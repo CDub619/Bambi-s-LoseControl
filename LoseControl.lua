@@ -104,7 +104,7 @@ local Masque = LibStub("Masque", true)
 -------------------------------------------------------------------------------
 -- Thanks to all the people on the Curse.com and WoWInterface forums who help keep this list up to date :)
 local TreesPrioCastedSpells = {
-	[205636]   = 10,
+	[47540]   = 10,
 }
 
 local interruptsIds = {
@@ -2665,18 +2665,29 @@ end
 -------------------------------------------------------------------------------
 -- Global references for attaching icons to various unit frames
 local anchors = {
-	None = {}, -- empty but necessary
+	None = {
+   		player = "PartyAnchor5", --Chris
+			party1 = "PartyAnchor1", --Chris
+			party2 = "PartyAnchor2", --Chris
+			party3 = "PartyAnchor3", --Chris
+			party4 = "PartyAnchor4",
+			arena1      = "GladiusClassIconFramearena1",
+			arena2      = "GladiusClassIconFramearena2",
+			arena3      = "GladiusClassIconFramearena3",
+			arena4      = "GladiusClassIconFramearena4",
+			arena5      = "GladiusClassIconFramearena5",
+	}, -- empty but necessary
 	Blizzard = {
-		player       =  "PartyAnchor5", --Chris
+		player       = "PlayerPortrait",
 		pet          = "PetPortrait",
 		target       = "TargetFramePortrait",
 		targettarget = "TargetFrameToTPortrait",
 		focus        = "FocusFramePortrait",
 		focustarget  = "FocusFrameToTPortrait",
-			party1 = "PartyAnchor1", --Chris
-			party2 = "PartyAnchor2", --Chris
-			party3 = "PartyAnchor3", --Chris
-			party4 = "PartyAnchor4", --Chris
+		party1       = "PartyMemberFrame1Portrait",
+		party2       = "PartyMemberFrame2Portrait",
+		party3       = "PartyMemberFrame3Portrait",
+		party4       = "PartyMemberFrame4Portrait",
 		--party1pet    = "PartyMemberFrame1PetFramePortrait",
 		--party2pet    = "PartyMemberFrame2PetFramePortrait",
 		--party3pet    = "PartyMemberFrame3PetFramePortrait",
@@ -2760,7 +2771,7 @@ local DBdefaults = {
 	version = 6.2, -- This is the settings version, not necessarily the same as the LoseControl version
 	noCooldownCount = false,
 	noBlizzardCooldownCount = true,
-	noLossOfControlCooldown = false,
+	noLossOfControlCooldown = false, --Chris Need to Test what is better
 	disablePartyInBG = true,
 	disableArenaInBG = true,
 	disablePartyInRaid = true,
@@ -2776,7 +2787,7 @@ local DBdefaults = {
 	showNPCInterruptsFocus = true,
 	showNPCInterruptsTargetTarget = true,
 	showNPCInterruptsFocusTarget = true,
-	duplicatePlayerPortrait = false,
+	duplicatePlayerPortrait = true,
 	customSpellIds = { },
 	priority = {		-- higher numbers have more priority; 0 = disabled
 			CC = 100,
@@ -2827,7 +2838,7 @@ local DBdefaults = {
 			enabled = true,
 			size = 48, --CHRIS
 			alpha = 1,
-			anchor = "Blizzard",
+			anchor = "None",
 			categoriesEnabled = {
 				buff = {
 					friendly = { CC = true,  Silence = true, RootPhyiscal = true, RootMagic = true, Root = true,  ImmunePlayer = true,  Disarm_Warning = true,  CC_Warning = true, Enemy_Smoke_Bomb = true,  Stealth = true, Immune = true, ImmuneSpell = true, ImmunePhysical = true, AuraMastery_Cast_Auras = true,
@@ -2846,23 +2857,27 @@ local DBdefaults = {
 		},
 		player2 = {
 			enabled = true,
-			size = 56,
+			size = 62,
 			alpha = 1,
 			anchor = "Blizzard",
 			categoriesEnabled = {
 				buff = {
-					friendly = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true, Root = true,  Snare = true }
+					friendly = { CC = true,  Silence = true, RootPhyiscal = true, RootMagic = true, Root = true,  ImmunePlayer = true,  Disarm_Warning = true,  CC_Warning = true, Enemy_Smoke_Bomb = true,  Stealth = true, Immune = true, ImmuneSpell = true, ImmunePhysical = true, AuraMastery_Cast_Auras = true,
+					ROP_Vortex = true , Disarm = true, Haste_Reduction = true, Dmg_Hit_Reduction = true, AOE_DMG_Modifiers = true, Friendly_Smoke_Bomb = true, AOE_Spell_Refections = true, Trees = true, Speed_Increases = true, Freedoms = true, Friendly_Defensives = true, Mana_Regen = true, CC_Reduction = true, Personal_Offensives = true, Peronsal_Defensives = true, Movable_Cast_Auras = true,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true, PvE = true, Other = true }
 				},
-				debuff = {
-					friendly = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true, Root = true,  Snare = true }
-				},
+					debuff ={
+						friendly = { CC = true,  Silence = true, RootPhyiscal = true, RootMagic = true, Root = true,  ImmunePlayer = true,  Disarm_Warning = true,  CC_Warning = true, Enemy_Smoke_Bomb = true,  Stealth = true, Immune = true, ImmuneSpell = true, ImmunePhysical = true, AuraMastery_Cast_Auras = true,
+						ROP_Vortex = true , Disarm = true, Haste_Reduction = true, Dmg_Hit_Reduction = true, AOE_DMG_Modifiers = true, Friendly_Smoke_Bomb = true, AOE_Spell_Refections = true, Trees = true, Speed_Increases = true, Freedoms = true, Friendly_Defensives = true, Mana_Regen = true, CC_Reduction = true, Personal_Offensives = true, Peronsal_Defensives = true, Movable_Cast_Auras = true,
+						SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true, PvE = true, Other = true }
+			},
 				interrupt = {
 					friendly = true
 				}
 			}
 		},
 		pet = {
-			enabled = false,
+			enabled = true,
 			size = 36,
 			alpha = 1,
 			anchor = "Blizzard",
@@ -2879,8 +2894,8 @@ local DBdefaults = {
 			}
 		},
 		target = {
-			enabled = false,
-			size = 56,
+			enabled = true,
+			size = 62,
 			alpha = 1,
 			anchor = "Blizzard",
 			categoriesEnabled = {
@@ -2899,7 +2914,7 @@ local DBdefaults = {
 			}
 		},
 		targettarget = {
-			enabled = false,
+			enabled = true,
 			size = 36,
 			alpha = 1,
 			anchor = "Blizzard",
@@ -2919,8 +2934,8 @@ local DBdefaults = {
 			}
 		},
 		focus = {
-			enabled = false,
-			size = 56,
+			enabled = true,
+			size = 62,
 			alpha = 1,
 			anchor = "Blizzard",
 			categoriesEnabled = {
@@ -2939,7 +2954,7 @@ local DBdefaults = {
 			}
 		},
 		focustarget = {
-			enabled = false,
+			enabled = true,
 			size = 36,
 			alpha = 1,
 			anchor = "Blizzard",
@@ -2962,7 +2977,7 @@ local DBdefaults = {
 			enabled = true,
 			size = 64,
 			alpha = 1,
-			anchor = "Blizzard",
+			anchor = "None",
 			categoriesEnabled = {
 				buff = {
 					friendly = { CC = true,  Silence = true, RootPhyiscal = true, RootMagic = true, Root = true,  ImmunePlayer = false,  Disarm_Warning = false,  CC_Warning = false, Enemy_Smoke_Bomb = true,  Stealth = false, Immune = true, ImmuneSpell = true, ImmunePhysical = true, AuraMastery_Cast_Auras = false,
@@ -2983,7 +2998,7 @@ local DBdefaults = {
 			enabled = true,
 			size = 64,
 			alpha = 1,
-			anchor = "Blizzard",
+			anchor = "None",
 			categoriesEnabled = {
 				buff = {
 					friendly = { CC = true,  Silence = true, RootPhyiscal = true, RootMagic = true, Root = true,  ImmunePlayer = false,  Disarm_Warning = false,  CC_Warning = false, Enemy_Smoke_Bomb = true,  Stealth = false, Immune = true, ImmuneSpell = true, ImmunePhysical = true, AuraMastery_Cast_Auras = false,
@@ -3004,7 +3019,7 @@ local DBdefaults = {
 			enabled = true,
 			size = 64,
 			alpha = 1,
-			anchor = "Blizzard",
+			anchor = "None",
 			categoriesEnabled = {
 				buff = {
 					friendly = { CC = true,  Silence = true, RootPhyiscal = true, RootMagic = true, Root = true,  ImmunePlayer = false,  Disarm_Warning = false,  CC_Warning = false, Enemy_Smoke_Bomb = true,  Stealth = false, Immune = true, ImmuneSpell = true, ImmunePhysical = true, AuraMastery_Cast_Auras = false,
@@ -3025,7 +3040,7 @@ local DBdefaults = {
 			enabled = true,
 			size = 64,
 			alpha = 1,
-			anchor = "Blizzard",
+			anchor = "None",
 			categoriesEnabled = {
 				buff = {
 					friendly = { CC = true,  Silence = true, RootPhyiscal = true, RootMagic = true, Root = true,  ImmunePlayer = false,  Disarm_Warning = false,  CC_Warning = false, Enemy_Smoke_Bomb = true,  Stealth = false, Immune = true, ImmuneSpell = true, ImmunePhysical = true, AuraMastery_Cast_Auras = false,
@@ -3043,10 +3058,10 @@ local DBdefaults = {
 			}
 		},
 		arena1 = {
-			enabled = false,
+			enabled = true,
 			size = 28,
 			alpha = 1,
-			anchor = "Blizzard",
+			anchor = "None",
 			categoriesEnabled = {
 				buff = {
 					friendly = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true },
@@ -3063,10 +3078,10 @@ local DBdefaults = {
 			}
 		},
 		arena2 = {
-			enabled = false,
+			enabled = true,
 			size = 28,
 			alpha = 1,
-			anchor = "Blizzard",
+			anchor = "None",
 			categoriesEnabled = {
 				buff = {
 					friendly = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true },
@@ -3083,10 +3098,10 @@ local DBdefaults = {
 			}
 		},
 		arena3 = {
-			enabled = false,
+			enabled = true,
 			size = 28,
 			alpha = 1,
-			anchor = "Blizzard",
+			anchor = "None",
 			categoriesEnabled = {
 				buff = {
 					friendly = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true },
@@ -3103,10 +3118,10 @@ local DBdefaults = {
 			}
 		},
 		arena4 = {
-			enabled = false,
+			enabled = true,
 			size = 28,
 			alpha = 1,
-			anchor = "Blizzard",
+			anchor = "None",
 			categoriesEnabled = {
 				buff = {
 					friendly = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true },
@@ -3123,10 +3138,10 @@ local DBdefaults = {
 			}
 		},
 		arena5 = {
-			enabled = false,
+			enabled = true,
 			size = 28,
 			alpha = 1,
-			anchor = "Blizzard",
+			anchor = "None",
 			categoriesEnabled = {
 				buff = {
 					friendly = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true },
@@ -3182,10 +3197,8 @@ locBliz:RegisterEvent("LOSS_OF_CONTROL_ADDED")
 locBliz:SetScript("OnEvent", function(self, event, ...)
 	if (event == "LOSS_OF_CONTROL_ADDED") then
 	for i = 1, 40 do
-	   if ( not data ) then
-		   data = C_LossOfControl.GetActiveLossOfControlData(i);
-		 end
-	 	if not data.spellID then break end
+	  local data = C_LossOfControl.GetActiveLossOfControlData(i);
+	 	if not data then break end
 		  local locType = data.locType;
 		 	local spellID = data.spellID;
 		 	local text = data.displayText;
@@ -3196,71 +3209,59 @@ locBliz:SetScript("OnEvent", function(self, event, ...)
 		 	local lockoutSchool = data.lockoutSchool;
 		 	local priority = data.priority;
 		 	local displayType = data.displayType;
-		  	if not spellIds[spellID] then
-						if locType == ("STUN_MECHANIC" or "PACIFY" or "STUN" or "FEAR" or "CHARM" or "CONFUSE" or "POSSESS") then
-							 print("Found New CC",locType,"", spellID)
-							 locType = "CC"
-							 spellIds[spellID]  = {}
-							 spellIds[spellID] = locType
-							 local name, instanceType, _, _, _, _, _, instanceID, _, _ = GetInstanceInfo()
-							 local ZoneName = GetZoneText()
-							 LoseControlDB.Spells[spellID] ={}
-							 LoseControlDB.Spells[spellID] = locType
-							 LoseControlDB.SpellsInfo[ZoneName.." "..name.." instanceID: "..instanceID.." spellId: "..spellID] = locType
-						elseif locType == "DISARM" then
-							 print("Found New CC",locType,"", spellID)
-						   locType = "Disarm"
-							 spellIds[spellID]  = {}
-							 spellIds[spellID] = locType
-							 local name, instanceType, _, _, _, _, _, instanceID, _, _ = GetInstanceInfo()
-							 local ZoneName = GetZoneText()
-							 LoseControlDB.Spells[spellID] ={}
-							 LoseControlDB.Spells[spellID] = locType
-							 LoseControlDB.SpellsInfo[ZoneName.." "..name.." instanceID: "..instanceID.." spellId: "..spellID] = locType
-						 elseif locType == ("PACIFYSILENCE" or "SILENCE") then
-						    print("Found New CC",locType,"", spellID)
-						 	  locType = "Silence"
-								spellIds[spellID]  = {}
-								spellIds[spellID] = locType
+		  	if not spellIds[spellID] and  (lockoutSchool == 0 or nil or false) then
+					  	if locType == ("STUN_MECHANIC" or "PACIFY" or "STUN" or "FEAR" or "CHARM" or "CONFUSE" or "POSSESS" or "FEAR_MECHANIC" or "FEAR") then
+								 print("Found New CC",locType,"", spellID)
+								 local Type = "CC"
+								 spellIds[spellID] = Type
+								 local name, instanceType, _, _, _, _, _, instanceID, _, _ = GetInstanceInfo()
+								 local ZoneName = GetZoneText()
+								 LoseControlDB.Spells[spellID] = locType
+								 LoseControlDB.SpellsInfo[ZoneName.." "..name.." instanceID: "..instanceID.." spellId: "..spellID.." "..locType] = Type
+							elseif locType == "DISARM" then
+								 print("Found New Disarm",locType,"", spellID)
+							   local Type = "Disarm"
+								 spellIds[spellID] = Type
+								 local name, instanceType, _, _, _, _, _, instanceID, _, _ = GetInstanceInfo()
+								 local ZoneName = GetZoneText()
+								 LoseControlDB.Spells[spellID] = locType
+								 LoseControlDB.SpellsInfo[ZoneName.." "..name.." instanceID: "..instanceID.." spellId: "..spellID.." "..locType] = Type
+						  elseif locType == ("PACIFYSILENCE" or "SILENCE") then
+						    print("Found New Silence",locType,"", spellID)
+						 	  local Type = "Silence"
+								spellIds[spellID] = Type
 								local name, instanceType, _, _, _, _, _, instanceID, _, _ = GetInstanceInfo()
  							  local ZoneName = GetZoneText()
-								LoseControlDB.Spells[spellID] ={}
-								LoseControlDB.Spells[spellID] = locType
-								LoseControlDB.SpellsInfo[ZoneName.." "..name.." instanceID: "..instanceID.." spellId: "..spellID] = locType
+								LoseControlDB.Spells[spellID] = Type
+								LoseControlDB.SpellsInfo[ZoneName.." "..name.." instanceID: "..instanceID.." spellId: "..spellID.." "..locType] = Type
 							elseif locType == "ROOT" then
-							  	print("Found New CC",locType,"", spellID)
-									locType = "Root"
-									spellIds[spellID]  = {}
-									spellIds[spellID] = locType
-									local name, instanceType, _, _, _, _, _, instanceID, _, _ = GetInstanceInfo()
-									local ZoneName = GetZoneText()
-									LoseControlDB.Spells[spellID] ={}
-									LoseControlDB.Spells[spellID] = locType
-									LoseControlDB.SpellsInfo[ZoneName.." "..name.." instanceID: "..instanceID.." spellId: "..spellID] = locType
-							elseif loctype == "SCHOOL_INTERRUPT" then
-								print("Found New CC",locType,"", spellID)
-								locType = "Interrupt"
-								interruptsIds[spellID]  = {}
-								interruptsIds[spellID] = duration
+						  	print("Found New Root",locType,"", spellID)
+								local Type = "Root"
+								spellIds[spellID] = Type
 								local name, instanceType, _, _, _, _, _, instanceID, _, _ = GetInstanceInfo()
- 							  local ZoneName = GetZoneText()
-								LoseControlDB.InterruptSpells[spellID] ={}
-								LoseControlDB.InterruptSpells[spellID] = duration
-								LoseControlDB.InterruptSpellsInfo[ZoneName.." "..name.." instanceID: "..instanceID.." spellId: "..spellID] = duration
+								local ZoneName = GetZoneText()
+								LoseControlDB.Spells[spellID] = locType
+								LoseControlDB.SpellsInfo[ZoneName.." "..name.." instanceID: "..instanceID.." spellId: "..spellID.." "..locType] = Type
 							else
-								print("Found New CC",locType,"", spellID)
-								locType = "Other"
-								spellIds[spellID]  = {}
-								spellIds[spellID] = locType
+								print("Found New Other",locType,"", spellID)
+								local Type = "Other"
+								spellIds[spellID] = Type
 								local name, instanceType, _, _, _, _, _, instanceID, _, _ = GetInstanceInfo()
  					  		local ZoneName = GetZoneText()
-								LoseControlDB.Spells[spellID] ={}
 								LoseControlDB.Spells[spellID] = locType
-								LoseControlDB.SpellsInfo[ZoneName.." "..name.." instanceID: "..instanceID.." spellId: "..spellID] = locType
+								LoseControlDB.SpellsInfo[ZoneName.." "..name.." instanceID: "..instanceID.." spellId: "..spellID.." "..locType] = Type
 							end
-				  end
-		  end
-		end
+			  elseif (not interruptsIds[spellID]) and lockoutSchool > 0 then
+					print("Found New Interrupt",locType,"", spellID)
+					interruptsIds[spellID] = duration
+					local name, instanceType, _, _, _, _, _, instanceID, _, _ = GetInstanceInfo()
+					local ZoneName = GetZoneText()
+					LoseControlDB.InterruptSpells[spellID] = duration
+					LoseControlDB.InterruptSpellsInfo[ZoneName.." "..name.." instanceID: "..instanceID.." spellId: "..spellID] = duration
+				else
+				end
+	end
+	end
 end)
 
 
@@ -3274,11 +3275,13 @@ local function GetDebuffText(unitId, debuffNum)
 	tooltip:SetUnitDebuff(unitId, debuffNum)
 	snarestring = tl2:GetText()
 	tooltip:Hide()
+	if snarestring then
 		if string.match(snarestring, "Movement") then
 		return true
 	  else
 		return false
 		end
+	end
 end
 
 
@@ -3933,7 +3936,7 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 	if self.unitId == "target" then
 		-- Check Interrupts
 		local _, event, _, sourceGUID, _, sourceFlags, _, destGUID, _, _, _, spellId, _, _, _, _, spellSchool = CombatLogGetCurrentEventInfo()
-		if (destGUID ~= nil) then
+		if (destGUID ~= nil) and  (UnitGUID("player") ~= destGUID) then --Stops if player
 			if (event == "SPELL_INTERRUPT") then
 				local duration = interruptsIds[spellId]
 				if (duration ~= nil) then
@@ -4115,13 +4118,11 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 			-----------------------------------------------------------------------------------------------------------------
 			if unitId == "player" and not spellIds[spellId] then
 				if GetDebuffText(unitId, i) then
-					print("Found New CC SNARE",spellId,"", name)
-					spellIds[spellId]  = {}
+					print("Found New CC SNARE",spellId,"", name,"", snarestring)
 					spellIds[spellId] = "Snare"
 					local spellCategory = spellIds[spellId]
 					local Priority = priority[spellCategory]
 					tblinsert(buffs,  {["col1"] = priority[spellCategory] ,["col2"]  = expirationTime-duration , ["col3"] =  {["Name"]=  name, ["duration"] = duration, ["expirationTime"] = expirationTime,  ["icon"] = icon, ["localForceEventUnitAuraAtEnd"] = localForceEventUnitAuraAtEnd }})
-					LoseControlDB.Spells[spellId] ={}
 					LoseControlDB.Spells[spellId] = spellIds[spellId]
 					local Name, instanceType, _, _, _, _, _, instanceID, _, _ = GetInstanceInfo()
 					local ZoneName = GetZoneText()
@@ -4326,7 +4327,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 						if Priority then
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 							local localForceEventUnitAuraAtEnd = false
-							tblinsert(buffs,  {["col1"] = Priority ,["col2"]  = expirationTime-duration , ["col3"] =  {["Name"]=  name, ["duration"] = duration, ["expirationTime"] = expirationTime,  ["icon"] = icon, ["localForceEventUnitAuraAtEnd"] = localForceEventUnitAuraAtEnd }}) -- this will create a table to show the newest buffs
+							tblinsert(buffs,  {["col1"] = Priority ,["col2"]  = expirationTime-duration , ["col3"] =  {["Name"]=  name, ["duration"] = duration, ["expirationTime"] = expirationTime,  ["icon"] = icon, ["localForceEventUnitAuraAtEnd"] = localForceEventUnitAuraAtEnd }}) -- this will create a table to show the newest cleu
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 							if spellSchool then -- Stop Interrupt Check when Trees
 								for schoolIntId, _ in pairs(spellSchoolInteruptsTable) do
@@ -4417,7 +4418,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 ----------------------------------------------------------------------
 --Filters for Newest
 ----------------------------------------------------------------------
-	if buffs[1] then -- THINK OF CHANGING THIS TO #buffs
+if buffs[1] and buffs[1].col1 ~= LoseControlDB.priority.Interrupt then -- THINK OF CHANGING THIS TO #buffs, LoseControlDB.priority.Interrupt MAKES IT so it shows the highest Kicks and works with the school lockouts correctly
 	table.sort(buffs, cmp_col1)
 	table.sort(buffs, cmp_col1_col2)
 	--print(dump(buffs))
@@ -4425,8 +4426,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 	Duration = buffs[1].col3.duration
 	Icon = buffs[1].col3.icon
 	forceEventUnitAuraAtEnd = buffs[1].col3.localForceEventUnitAuraAtEnd
-  --print(LossOfControlFramespellID)
-	end
+end
 -----------------------------------------------------------------------
 	if maxExpirationTime == 0 then -- no (de)buffs found
 		self.maxExpirationTime = 0
@@ -4463,7 +4463,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 				self.iconInterruptBackground:Hide()
 			end
 		end
-		if self.frame.anchor == "BlizzardX" then  --CHRIS DISABLE SQ
+		if self.frame.anchor == "Blizzard" then  --CHRIS DISABLE SQ
 			SetPortraitToTexture(self.texture, Icon) -- Sets the texture to be displayed from a file applying a circular opacity mask making it look round like portraits
 			self:SetSwipeTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMaskSmall")
 			self:SetSwipeColor(0, 0, 0, 0.6)	-- Adjust the alpha of this mask to similar levels of the normal swipe cooldown texture
