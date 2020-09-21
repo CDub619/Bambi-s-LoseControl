@@ -4440,7 +4440,7 @@ end
 		self:GetParent():Hide()
 	elseif maxExpirationTime ~= self.maxExpirationTime then -- this is a different (de)buff, so initialize the cooldown
 		self.maxExpirationTime = maxExpirationTime
-		if self.anchor ~= UIParent then
+			if self.anchor ~= UIParent then
 			self:SetFrameLevel(self.anchor:GetParent():GetFrameLevel()+((self.frame.anchor ~= "None" and self.frame.anchor ~= "Blizzard") and 3 or 0)) -- must be dynamic, frame level changes all the time
 			if not self.drawlayer and self.anchor.GetDrawLayer then
 				self.drawlayer = self.anchor:GetDrawLayer() -- back up the current draw layer
@@ -4504,9 +4504,18 @@ end
 			self:SetCooldown(GetTime(), 0)
 			self:SetCooldown(GetTime(), 0)	--needs execute two times (or the icon can dissapear; yes, it's weird...)
 		end
-		--UIFrameFadeOut(self, Duration, self.frame.alpha, 0)
-		self:GetParent():SetAlpha(self.frame.alpha) -- hack to apply transparency to the cooldown timer
-	end
+					if (self.unitId == "arena1") or (self.unitId == "arena2") or (self.unitId == "arena3") then --Chris sets alpha timer inherot of frame of selected units
+						self:GetParent():SetAlpha(self.anchor:GetAlpha())
+						--print(self.frame.alpha )
+						--print(self.frame.anchor)
+						--print(self.unitId)
+						--print(self.frame.alpha)
+			  	else
+						--UIFrameFadeOut(self, Duration, self.frame.alpha, 0)
+						self:GetParent():SetAlpha(self.frame.alpha) -- hack to apply transparency to the cooldown timer
+						--print(self.frame.alpha)
+					end
+		end
 end
 
 function LoseControl:PLAYER_FOCUS_CHANGED()
