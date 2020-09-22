@@ -98,17 +98,19 @@ local InterruptAuras = { }
 local SmokeBombAurasF = { }
 local SmokeBombAurasE = { }
 local TreesPrioCastedSpells = { }
+local Arenastealth = {}
+local arenaunseen = {}
 local origSpellIdsChanged = { }
 local Masque = LibStub("Masque", true)
 
 -------------------------------------------------------------------------------
 -- Thanks to all the people on the Curse.com and WoWInterface forums who help keep this list up to date :)
 local TreesPrioCastedSpells = {
-	[47540]   = 60,
+	--[[[47540]   = 60,
 	[605] =10,
 	[186263] =9,
 	[93402] = 3,
-	[8921] =6,
+	[8921] =6,]]
 }
 
 local interruptsIds = {
@@ -136,12 +138,12 @@ local interruptsIds = {
 }
 
 local spellIds = {
-	--[17] = "CC",
+	--[[[17] = "CC",
 	[212183] = "Friendly_Smoke_Bomb",
-	[17] = "Silence",
+	--[17] = "Silence",
 	[6788] = "Silence",
 	[21562]= "Silence",
-	[194384]= "RootMagic_Special",
+	--[194384]= "RootMagic_Special",
 	[81782] = "Silence",
 	[111759] = "Silence",
 	[5215] = "Friendly_Smoke_Bomb",
@@ -149,7 +151,24 @@ local spellIds = {
 	[33763] = "CC",
 	[774] = "CC",
 	[279793] = "CC",
-	[48438] = "Snare",
+	[48438] = "Snare",]]
+
+	[66] = "Stealth", --Invis
+	[32612] = "Stealth", --Invis
+	[110960] = "Stealth", --Invis
+	[198158] = "Stealth", -- Mass Invis
+	[5215] = "Stealth", --Prowl
+
+	[1784] = "Stealth", --Stealth
+	[115191] = "Stealth", --Stealth
+	[11327] = "Stealth", --Vanish
+	[207736] = "Stealth",	-- Shadowy Duel
+
+	[199483] = "Stealth", --Camo
+	[5384] = "Stealth", --Fiegn Death
+
+	[58984] = "Stealth", --Meld
+
 
 	----------------
 	-- Demonhunter
@@ -529,7 +548,6 @@ local spellIds = {
 	[207777] = "Disarm",			-- Dismantle
 	[185767] = "Snare",				-- Cannonball Barrage
 	[212283] = "Other",				-- Symbols of Death
-	[207736] = "Other",				-- Shadowy Duel
 	[212150] = "CC",				-- Cheap Tricks (pvp honor talent) (-75%  melee & range physical hit chance)
 	[199743] = "CC",				-- Parley
 	[198222] = "Snare",				-- System Shock (pvp honor talent) (90% slow)
@@ -3505,6 +3523,7 @@ end)
 
 
 
+
 local tooltip = CreateFrame("GameTooltip", "DebuffTextDebuffScanTooltip", UIParent, "GameTooltipTemplate")
 local tl2 = DebuffTextDebuffScanTooltipTextLeft2
 local snarestring = snarestring
@@ -4147,7 +4166,8 @@ local function UpdateUnitAuraByUnitGUID(unitGUID, typeUpdate)
 	end
 end
 
-function LoseControl:ARENA_OPPONENT_UPDATE()
+function LoseControl:ARENA_OPPONENT_UPDATE(unit, arg2)
+
 	local unitId = self.unitId
 	local frame = self.frame
 	if (frame == nil) or (unitId == nil) or not(strfind(unitId, "arena")) then
@@ -4161,6 +4181,29 @@ function LoseControl:ARENA_OPPONENT_UPDATE()
 	)
 	self.unitGUID = UnitGUID(self.unitId)
 	self:CheckSUFUnitsAnchors(true)
+------------------------------------------------------------------------------
+--Needed to Sync with Gladius Chris
+------------------------------------------------------------------------------
+	if (unit =="arena1") or (unit =="arena2") or (unit =="arena3") then
+		if arg2 == "seen" then
+				arenaunseen[unit] = nil
+				Arenastealth[unit] = nil
+		elseif arg2 == "unseen" then
+				arenaunseen[unit] = true
+				self:UNIT_AURA(unit, nil) -- may need to fire this more to sync correctly with Gladius ?
+			-- enemy left arena
+		elseif arg2 == "destroyed" then
+			arenaunseen[unit] = nil
+			Arenastealth[unit] = nil
+			self:UNIT_AURA(unit, nil)
+		-- arena over
+		elseif arg2 == "cleared" then
+			arenaunseen[unit] = nil
+			Arenastealth[unit] = nil
+			 --print(unitId.."cleared")
+		end
+	end
+
 	if enabled and not self.unlockMode then
 		self:UNIT_AURA(unitId, 0)
 	end
@@ -4286,7 +4329,7 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 		-----------------------------------------------------------------------------------------------------------------
 		if ((event == "SPELL_CAST_SUCCESS") and (spellId == 212182)) then
 					if sourceGUID and (bit.band(sourceFlags, COMBATLOG_OBJECT_REACTION_FRIENDLY) == COMBATLOG_OBJECT_REACTION_FRIENDLY) then
-						local duration = 6
+						local duration = 5
 						local expirationTime = GetTime() + duration
 						if (SmokeBombAurasF[sourceGUID] == nil) then
 							SmokeBombAurasF[sourceGUID] = {}
@@ -4297,7 +4340,7 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 
 		if ((event == "SPELL_CAST_SUCCESS") and (spellId == 212182)) then
 					if sourceGUID and (bit.band(sourceFlags, COMBATLOG_OBJECT_REACTION_HOSTILE) == COMBATLOG_OBJECT_REACTION_HOSTILE) then
-						local duration = 6
+						local duration = 5
 						local expirationTime = GetTime() + duration
 						if (SmokeBombAurasE[sourceGUID] == nil) then
 							SmokeBombAurasE[sourceGUID] = {}
@@ -4329,7 +4372,6 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 			--Cold Snap Reset
 			-----------------------------------------------------------------------------------------------------------------
 		if ((sourceGUID ~= nil) and (event == "SPELL_CAST_SUCCESS") and (spellId == 235219)) then
-					print("snap")
 			local needUpdateUnitAura = false
 			if (InterruptAuras[sourceGUID] ~= nil) then
 				for k, v in pairs(InterruptAuras[sourceGUID]) do
@@ -4406,7 +4448,8 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 	local maxExpirationTime = 0
 	local newExpirationTime = 0
 	local maxPriorityIsInterrupt = false
-	local Icon, Duration
+	local Icon, Duration, Hue
+	local LayeredHue = nil
 	local forceEventUnitAuraAtEnd = false
 	local buffs= {}
 	self.lastTimeUnitAuraEvent = GetTime()
@@ -4417,6 +4460,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 		for i = 1, 40 do
 			local localForceEventUnitAuraAtEnd = false
 			local name, icon, _, _, duration, expirationTime, source, _, _, spellId = UnitAura(unitId, i, "HARMFUL")
+			local hue
 			if not spellId then break end -- no more debuffs, terminate the loop
 			if (self.unitId == "targettarget") or (self.unitId == "focustarget") then
 				if debug then print(unitId, "debuff", i, ")", name, "|", duration, "|", expirationTime, "|", spellId) end
@@ -4462,27 +4506,70 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 								end
 				end
 			end
+
+			-----------------------------------------------------------------------------------------------------------------
+			--Stealth
+			-----------------------------------------------------------------------------------------------------------------
+			if (spellIds[spellId] == "Stealth")  and ((unitId == "arena1") or (unitId == "arena2") or (unitId == "arena3")) then
+					if not Arenastealth[unitId] == nil then
+						Arenastealth[unitId] = {}
+					end
+					if (spellId == 207736) then --Shodowey Duel friendly on enemyy, enemy frame (white)
+						if source then
+							if (UnitGUID(source) == UnitGUID("party1")) or(UnitGUID(source) == UnitGUID("party2")) or (UnitGUID(source) == UnitGUID("player")) then
+							--print("friendly duel on enemy should be white",source, unitId)
+							end
+						end
+					end
+					if (spellId == 207736) then --Shodowey Duel enemy on friendly, enemy frame (red)
+						if source then
+							if (UnitGUID(source) == UnitGUID("arena1")) or(UnitGUID(source) == UnitGUID("arena2")) or (UnitGUID(source) == UnitGUID("arena3")) then
+							--print("enemy duel on friend should be red",source, unitId)
+							hue = "Red_No_Desaturate"
+							end
+						end
+					end
+					Arenastealth[unitId] =  {["col1"] = priority[spellCategory] ,["col2"]  = GetTime() , ["col3"] =  {["Name"]=  name, ["duration"] = duration, ["expirationTime"] = expirationTime,  ["icon"] = icon, ["localForceEventUnitAuraAtEnd"] = localForceEventUnitAuraAtEnd, ["Unit"] = unitId, }}
+			end
+
+			if (spellId == 207736) and ((unitId == "player") or (unitId == "party1") or (unitId == "party2")) then --Shodowey Duel friendly on enemyy, friendly frame (white)
+				if source then
+					if (UnitGUID(source) == UnitGUID("player")) or (UnitGUID(source) == UnitGUID("party2")) or (UnitGUID(source) == UnitGUID("party1")) then
+					--print("friendly duel by friend should be white",source, unitId)
+					end
+				end
+			end
+			if (spellId == 207736) and ((unitId == "player") or (unitId == "party1") or (unitId == "party2")) then --Shodowey Duel enemy on friendly, friendly frame (red)
+				if source then
+					if (UnitGUID(source) == UnitGUID("arena1")) or (UnitGUID(source) == UnitGUID("arena2")) or (UnitGUID(source) == UnitGUID("arena3")) then
+						--print("enemy duel on friend should be red",source, unitId)
+						hue = "Red_No_Desaturate"
+					end
+				end
+			end
 			-----------------------------------------------------------------------------------------------------------------
 			--SmokeBomb Check For Arena
 			-----------------------------------------------------------------------------------------------------------------
 			if spellId == 212183 then -- Smoke Bomb
-				if SmokeBombAurasF[UnitGUID(source)].expirationTime then
-					if SmokeBombAurasF[UnitGUID(source)].expirationTime> GetTime() then
-						duration = SmokeBombAurasF[UnitGUID(source)].duration
-						expirationTime = SmokeBombAurasF[UnitGUID(source)].expirationTime
-						spellIds[spellId] = "Friendly_Smoke_Bomb"
-					end
-				elseif SmokeBombAurasE[UnitGUID(source)].expirationTime then
+				if source then
+					if SmokeBombAurasF[UnitGUID(source)] then
+						if SmokeBombAurasF[UnitGUID(source)].expirationTime > GetTime() then
+							duration = SmokeBombAurasF[UnitGUID(source)].duration
+							expirationTime = SmokeBombAurasF[UnitGUID(source)].expirationTime
+							spellIds[spellId] = "Friendly_Smoke_Bomb"
+					  end
+					elseif SmokeBombAurasE[UnitGUID(source)] then
 						if SmokeBombAurasE[UnitGUID(source)].expirationTime> GetTime()  then
 							duration = SmokeBombAurasE[UnitGUID(source)].duration
 							expirationTime = SmokeBombAurasE[UnitGUID(source)].expirationTime
 							spellIds[spellId] = "Enemy_Smoke_Bomb"
-							icon = "Enemy_Smoke_Bomb"
+							LayeredHue ="Red"
 					  end
-				  --[[elseif spellId == 212183 and unitId == "player" then -- Smoke Bomb (don't show countdown)
-							expirationTime = 0]]
-				  else
-				  end
+					  --[[elseif spellId == 212183 and unitId == "player" then -- Smoke Bomb (don't show countdown)
+								expirationTime = 0]]
+					  else
+					 end
+					end
 			  end
 
 			-----------------------------------------------------------------------------------------------------------------
@@ -4545,6 +4632,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 						newExpirationTime = expirationTime - duration
 						Icon = icon
 						forceEventUnitAuraAtEnd = localForceEventUnitAuraAtEnd
+						Hue = hue
 					elseif Priority > maxPriority then
 						maxPriority = Priority
 						maxExpirationTime = expirationTime
@@ -4552,6 +4640,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 						Duration = duration
 						Icon = icon
 						forceEventUnitAuraAtEnd = localForceEventUnitAuraAtEnd
+						Hue = hue
 					end
 				end
 			end
@@ -4561,6 +4650,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 		for i = 1, 40 do
 			local localForceEventUnitAuraAtEnd = false
 			local name, icon, _, _, duration, expirationTime, _, _, _, spellId = UnitAura(unitId, i)
+			local hue
 			if not spellId then break end -- no more debuffs, terminate the loop
 			if debug then print(unitId, "buff", i, ")", name, "|", duration, "|", expirationTime, "|", spellId) end
 
@@ -4583,6 +4673,23 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 					end
 				end
 			end
+			-----------------------------------------------------------------------------
+			--Stealths
+			------------------------------------------------------------------------------
+			if (spellIds[spellId] == "Stealth")  and ((unitId == "arena1") or (unitId == "arena2") or (unitId == "arena3")) then
+					if not Arenastealth[unitId] == nil then
+						Arenastealth[unitId] = {}
+					end
+					if (spellId == 198158) then --Mass Invis
+						if source then
+							if (UnitGUID(source) ~= UnitGUID(unitId)) then
+								duration = 5
+						  	expirationTime = GetTime() + duration
+							end
+						end
+				  end
+				  Arenastealth[unitId] =  {["col1"] = priority[spellCategory] ,["col2"]  = GetTime() , ["col3"] =  {["Name"]=  name, ["duration"] = duration, ["expirationTime"] = expirationTime,  ["icon"] = icon, ["localForceEventUnitAuraAtEnd"] = localForceEventUnitAuraAtEnd, ["Unit"] = unitId, }}
+			end
 
 			local spellCategory = spellIds[spellId]
 			local Priority = priority[spellCategory]
@@ -4596,12 +4703,14 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 						newExpirationTime = expirationTime - duration
 						Icon = icon
 						forceEventUnitAuraAtEnd = localForceEventUnitAuraAtEnd
+						Hue = hue
 					elseif Priority > maxPriority then
 						maxPriority = Priority
 						maxExpirationTime = expirationTime
 						newExpirationTime = expirationTime - duration
 						Duration = duration
 						Icon = icon
+						Hue = hue
 						forceEventUnitAuraAtEnd = localForceEventUnitAuraAtEnd
 					end
 				end
@@ -4740,6 +4849,32 @@ if buffs[1] and ((buffs[1].col1 == LoseControlDB.priority.Snare) or (buffs[1].co
 	forceEventUnitAuraAtEnd = buffs[1].col3.localForceEventUnitAuraAtEnd
 end
 -----------------------------------------------------------------------
+--Stealth
+-------------------------------------------------------------------------
+	if arenaunseen[unitId] and (not UnitExists(unitId)) then
+			     if Arenastealth[unitId] then
+						print(unitId, "unseen no exist")
+						print(dump(buffs))
+						maxExpirationTime = Arenastealth[unitId].col3.expirationTime
+						Duration = Arenastealth[unitId].col3.duration
+						Icon = Arenastealth[unitId].col3.icon
+						Priority = 100
+						maxPriority = Priority
+						forceEventUnitAuraAtEnd = Arenastealth[unitId].col3.localForceEventUnitAuraAtEnd
+						if (Duration > 0) and (maxExpirationTime > GetTime()) then
+						C_Timer.After(maxExpirationTime - GetTime(), function() self:UNIT_AURA(unitId, nil) end)
+						print("will re fire",  Arenastealth[unitId].col3.Name)
+					  end
+						if maxExpirationTime - .1 < GetTime() then
+							print("setting icon to perma",  Arenastealth[unitId].col3.Name)
+								maxExpirationTime =  GetTime() + 1
+								Duration = 0
+								Priority = 100
+								maxPriority = Priority
+						end
+			end
+	end
+
 	if maxExpirationTime == 0 then -- no (de)buffs found
 		self.maxExpirationTime = 0
 		if self.anchor ~= UIParent and self.drawlayer then
@@ -4780,14 +4915,25 @@ end
 			self:SetSwipeTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMaskSmall")
 			self:SetSwipeColor(0, 0, 0, 0.6)	-- Adjust the alpha of this mask to similar levels of the normal swipe cooldown texture
 		else
-			if Icon == "Enemy_Smoke_Bomb" then -- Changes Hue to Red
-			local _, _, Icon = GetSpellInfo(212183) --Smoke Bomb Icon
-			self.texture:SetTexture(Icon)   --Set Smoke Bomb Icon
-			self.texture:SetDesaturated(1) --Destaurate Smoke Bomb Icon
-			self.texture:SetVertexColor(1, 0, 0); --Red Hue Set For Smoke Bomb Icon
-			self:SetSwipeColor(0, 0, 0, 0.8)	-- This is the default alpha of the normal swipe cooldown texture
+			if Hue == "Red" then -- Changes Icon Hue to Red
+				self.texture:SetTexture(Icon)   --Set Smoke Bomb Icon
+				self.texture:SetDesaturated(1) --Destaurate Smoke Bomb Icon
+				self.texture:SetVertexColor(1, 0, 0); --Red Hue Set For Smoke Bomb Icon
+				self:SetSwipeColor(0, 0, 0, 0.8)	-- This is the default alpha of the normal swipe cooldown texture
+			elseif Hue == "Red_No_Desaturate" then -- Changes Hue to Red and any Icon Greater , could indicate in a barrier or smoke bomb etc..
+			 self.texture:SetTexture(Icon)   --Set Smoke Bomb Icon
+			 self.texture:SetDesaturated(nil) --Destaurate Smoke Bomb Icon
+			 self.texture:SetVertexColor(1, 0, 0); --Red Hue Set For Smoke Bomb Icon
+			 self:SetSwipeColor(0, 0, 0, 0.8)	-- This is the default alpha of the normal swipe cooldown texture
+		  elseif LayeredHue == "Red" then -- Changes Hue to Red and any Icon Greater , could indicate in a barrier or smoke bomb etc..
+				self.texture:SetTexture(Icon)   --Set Smoke Bomb Icon
+				self.texture:SetDesaturated(1) --Destaurate Smoke Bomb Icon
+				self.texture:SetVertexColor(1, 0, 0); --Red Hue Set For Smoke Bomb Icon
+				self:SetSwipeColor(0, 0, 0, 0.8)	-- This is the default alpha of the normal swipe cooldown texture
 			else
 				self.texture:SetTexture(Icon)
+				self.texture:SetDesaturated(nil) --Destaurate Smoke Bomb Icon
+				self.texture:SetVertexColor(1, 1, 1)
 				self:SetSwipeColor(0, 0, 0, 0.8)
 			end
 		end
@@ -4829,6 +4975,9 @@ end
 					end
 		end
 end
+
+
+
 
 function LoseControl:PLAYER_FOCUS_CHANGED()
 	--if (debug) then print("PLAYER_FOCUS_CHANGED") end
