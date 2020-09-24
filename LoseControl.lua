@@ -95,8 +95,7 @@ local debug = false -- type "/lc debug on" if you want to see UnitAura info logg
 local LCframes = {}
 local LCframeplayer2
 local InterruptAuras = { }
-local SmokeBombAurasF = { }
-local SmokeBombAurasE = { }
+local SmokeBombAuras = { }
 local TreesPrioCastedSpells = { }
 local Arenastealth = {}
 local arenaunseen = {}
@@ -106,11 +105,11 @@ local Masque = LibStub("Masque", true)
 -------------------------------------------------------------------------------
 -- Thanks to all the people on the Curse.com and WoWInterface forums who help keep this list up to date :)
 local TreesPrioCastedSpells = {
-	--[[[47540]   = 60,
+	[47540]   = 60,
 	[605] =10,
 	[186263] =9,
 	[93402] = 3,
-	[8921] =6,]]
+	[8921] =6,
 }
 
 local interruptsIds = {
@@ -3321,12 +3320,20 @@ local DBdefaults = {
 			anchor = "None",
 			categoriesEnabled = {
 				buff = {
-					friendly = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true },
-					enemy    = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true }
+					friendly = {CC = true,  Silence = true, RootPhyiscal_Special = true, RootMagic_Special = true, Root = true,  ImmunePlayer = false,  Disarm_Warning = false,  CC_Warning = false, Enemy_Smoke_Bomb = true,  Stealth = true, Immune = true, ImmuneSpell = true, ImmunePhysical = true, AuraMastery_Cast_Auras = false,
+					ROP_Vortex = true , Disarm = true, Haste_Reduction = true, Dmg_Hit_Reduction = true, AOE_DMG_Modifiers = true, Friendly_Smoke_Bomb = true, AOE_Spell_Refections = true, Trees = true, Speed_Increases = true, Freedoms = true, Friendly_Defensives = false, Mana_Regen = false, CC_Reduction = true, Personal_Offensives = false, Peronsal_Defensives = false, Movable_Cast_Auras = false,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true, PvE = true, Other = true },
+					enemy    = { CC = true,  Silence = true, RootPhyiscal_Special = true, RootMagic_Special = true, Root = true,  ImmunePlayer = false,  Disarm_Warning = false,  CC_Warning = false, Enemy_Smoke_Bomb = true,  Stealth = true, Immune = true, ImmuneSpell = true, ImmunePhysical = true, AuraMastery_Cast_Auras = false,
+					ROP_Vortex = true , Disarm = true, Haste_Reduction = true, Dmg_Hit_Reduction = true, AOE_DMG_Modifiers = true, Friendly_Smoke_Bomb = true, AOE_Spell_Refections = true, Trees = true, Speed_Increases = true, Freedoms = true, Friendly_Defensives = false, Mana_Regen = false, CC_Reduction = true, Personal_Offensives = false, Peronsal_Defensives = false, Movable_Cast_Auras = false,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true, PvE = true, Other = true }
 				},
 				debuff = {
-					friendly = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true },
-					enemy    = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true }
+					friendly = {CC = true,  Silence = true, RootPhyiscal_Special = true, RootMagic_Special = true, Root = true,  ImmunePlayer = false,  Disarm_Warning = false,  CC_Warning = false, Enemy_Smoke_Bomb = true,  Stealth = true, Immune = true, ImmuneSpell = true, ImmunePhysical = true, AuraMastery_Cast_Auras = false,
+					ROP_Vortex = true , Disarm = true, Haste_Reduction = true, Dmg_Hit_Reduction = true, AOE_DMG_Modifiers = true, Friendly_Smoke_Bomb = true, AOE_Spell_Refections = true, Trees = true, Speed_Increases = true, Freedoms = true, Friendly_Defensives = false, Mana_Regen = false, CC_Reduction = true, Personal_Offensives = false, Peronsal_Defensives = false, Movable_Cast_Auras = false,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true, PvE = true, Other = true},
+					enemy    = {CC = true,  Silence = true, RootPhyiscal_Special = true, RootMagic_Special = true, Root = true,  ImmunePlayer = false,  Disarm_Warning = false,  CC_Warning = false, Enemy_Smoke_Bomb = true,  Stealth = true, Immune = true, ImmuneSpell = true, ImmunePhysical = true, AuraMastery_Cast_Auras = false,
+					ROP_Vortex = true , Disarm = true, Haste_Reduction = true, Dmg_Hit_Reduction = true, AOE_DMG_Modifiers = true, Friendly_Smoke_Bomb = true, AOE_Spell_Refections = true, Trees = true, Speed_Increases = true, Freedoms = true, Friendly_Defensives = false, Mana_Regen = false, CC_Reduction = true, Personal_Offensives = false, Peronsal_Defensives = false, Movable_Cast_Auras = false,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true, PvE = true, Other = true}
 				},
 				interrupt = {
 					friendly = true,
@@ -3341,12 +3348,20 @@ local DBdefaults = {
 			anchor = "None",
 			categoriesEnabled = {
 				buff = {
-					friendly = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true },
-					enemy    = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true }
+					friendly = {CC = true,  Silence = true, RootPhyiscal_Special = true, RootMagic_Special = true, Root = true,  ImmunePlayer = false,  Disarm_Warning = false,  CC_Warning = false, Enemy_Smoke_Bomb = true,  Stealth = true, Immune = true, ImmuneSpell = true, ImmunePhysical = true, AuraMastery_Cast_Auras = false,
+					ROP_Vortex = true , Disarm = true, Haste_Reduction = true, Dmg_Hit_Reduction = true, AOE_DMG_Modifiers = true, Friendly_Smoke_Bomb = true, AOE_Spell_Refections = true, Trees = true, Speed_Increases = true, Freedoms = true, Friendly_Defensives = false, Mana_Regen = false, CC_Reduction = true, Personal_Offensives = false, Peronsal_Defensives = false, Movable_Cast_Auras = false,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true, PvE = true, Other = true },
+					enemy    = { CC = true,  Silence = true, RootPhyiscal_Special = true, RootMagic_Special = true, Root = true,  ImmunePlayer = false,  Disarm_Warning = false,  CC_Warning = false, Enemy_Smoke_Bomb = true,  Stealth = true, Immune = true, ImmuneSpell = true, ImmunePhysical = true, AuraMastery_Cast_Auras = false,
+					ROP_Vortex = true , Disarm = true, Haste_Reduction = true, Dmg_Hit_Reduction = true, AOE_DMG_Modifiers = true, Friendly_Smoke_Bomb = true, AOE_Spell_Refections = true, Trees = true, Speed_Increases = true, Freedoms = true, Friendly_Defensives = false, Mana_Regen = false, CC_Reduction = true, Personal_Offensives = false, Peronsal_Defensives = false, Movable_Cast_Auras = false,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true, PvE = true, Other = true }
 				},
 				debuff = {
-					friendly = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true },
-					enemy    = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true }
+					friendly = {CC = true,  Silence = true, RootPhyiscal_Special = true, RootMagic_Special = true, Root = true,  ImmunePlayer = false,  Disarm_Warning = false,  CC_Warning = false, Enemy_Smoke_Bomb = true,  Stealth = true, Immune = true, ImmuneSpell = true, ImmunePhysical = true, AuraMastery_Cast_Auras = false,
+					ROP_Vortex = true , Disarm = true, Haste_Reduction = true, Dmg_Hit_Reduction = true, AOE_DMG_Modifiers = true, Friendly_Smoke_Bomb = true, AOE_Spell_Refections = true, Trees = true, Speed_Increases = true, Freedoms = true, Friendly_Defensives = false, Mana_Regen = false, CC_Reduction = true, Personal_Offensives = false, Peronsal_Defensives = false, Movable_Cast_Auras = false,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true, PvE = true, Other = true},
+					enemy    = {CC = true,  Silence = true, RootPhyiscal_Special = true, RootMagic_Special = true, Root = true,  ImmunePlayer = false,  Disarm_Warning = false,  CC_Warning = false, Enemy_Smoke_Bomb = true,  Stealth = true, Immune = true, ImmuneSpell = true, ImmunePhysical = true, AuraMastery_Cast_Auras = false,
+					ROP_Vortex = true , Disarm = true, Haste_Reduction = true, Dmg_Hit_Reduction = true, AOE_DMG_Modifiers = true, Friendly_Smoke_Bomb = true, AOE_Spell_Refections = true, Trees = true, Speed_Increases = true, Freedoms = true, Friendly_Defensives = false, Mana_Regen = false, CC_Reduction = true, Personal_Offensives = false, Peronsal_Defensives = false, Movable_Cast_Auras = false,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true, PvE = true, Other = true}
 				},
 				interrupt = {
 					friendly = true,
@@ -3361,12 +3376,20 @@ local DBdefaults = {
 			anchor = "None",
 			categoriesEnabled = {
 				buff = {
-					friendly = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true },
-					enemy    = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true }
+					friendly = {CC = true,  Silence = true, RootPhyiscal_Special = true, RootMagic_Special = true, Root = true,  ImmunePlayer = false,  Disarm_Warning = false,  CC_Warning = false, Enemy_Smoke_Bomb = true,  Stealth = true, Immune = true, ImmuneSpell = true, ImmunePhysical = true, AuraMastery_Cast_Auras = false,
+					ROP_Vortex = true , Disarm = true, Haste_Reduction = true, Dmg_Hit_Reduction = true, AOE_DMG_Modifiers = true, Friendly_Smoke_Bomb = true, AOE_Spell_Refections = true, Trees = true, Speed_Increases = true, Freedoms = true, Friendly_Defensives = false, Mana_Regen = false, CC_Reduction = true, Personal_Offensives = false, Peronsal_Defensives = false, Movable_Cast_Auras = false,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true, PvE = true, Other = true },
+					enemy    = { CC = true,  Silence = true, RootPhyiscal_Special = true, RootMagic_Special = true, Root = true,  ImmunePlayer = false,  Disarm_Warning = false,  CC_Warning = false, Enemy_Smoke_Bomb = true,  Stealth = true, Immune = true, ImmuneSpell = true, ImmunePhysical = true, AuraMastery_Cast_Auras = false,
+					ROP_Vortex = true , Disarm = true, Haste_Reduction = true, Dmg_Hit_Reduction = true, AOE_DMG_Modifiers = true, Friendly_Smoke_Bomb = true, AOE_Spell_Refections = true, Trees = true, Speed_Increases = true, Freedoms = true, Friendly_Defensives = false, Mana_Regen = false, CC_Reduction = true, Personal_Offensives = false, Peronsal_Defensives = false, Movable_Cast_Auras = false,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true, PvE = true, Other = true }
 				},
 				debuff = {
-					friendly = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true },
-					enemy    = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true }
+					friendly = {CC = true,  Silence = true, RootPhyiscal_Special = true, RootMagic_Special = true, Root = true,  ImmunePlayer = false,  Disarm_Warning = false,  CC_Warning = false, Enemy_Smoke_Bomb = true,  Stealth = true, Immune = true, ImmuneSpell = true, ImmunePhysical = true, AuraMastery_Cast_Auras = false,
+					ROP_Vortex = true , Disarm = true, Haste_Reduction = true, Dmg_Hit_Reduction = true, AOE_DMG_Modifiers = true, Friendly_Smoke_Bomb = true, AOE_Spell_Refections = true, Trees = true, Speed_Increases = true, Freedoms = true, Friendly_Defensives = false, Mana_Regen = false, CC_Reduction = true, Personal_Offensives = false, Peronsal_Defensives = false, Movable_Cast_Auras = false,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true, PvE = true, Other = true},
+					enemy    = {CC = true,  Silence = true, RootPhyiscal_Special = true, RootMagic_Special = true, Root = true,  ImmunePlayer = false,  Disarm_Warning = false,  CC_Warning = false, Enemy_Smoke_Bomb = true,  Stealth = true, Immune = true, ImmuneSpell = true, ImmunePhysical = true, AuraMastery_Cast_Auras = false,
+					ROP_Vortex = true , Disarm = true, Haste_Reduction = true, Dmg_Hit_Reduction = true, AOE_DMG_Modifiers = true, Friendly_Smoke_Bomb = true, AOE_Spell_Refections = true, Trees = true, Speed_Increases = true, Freedoms = true, Friendly_Defensives = false, Mana_Regen = false, CC_Reduction = true, Personal_Offensives = false, Peronsal_Defensives = false, Movable_Cast_Auras = false,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true, PvE = true, Other = true}
 				},
 				interrupt = {
 					friendly = true,
@@ -3521,7 +3544,24 @@ locBliz:SetScript("OnEvent", function(self, event, ...)
 	end
 end)
 
+local ArenaSeen = CreateFrame("Frame")
+ArenaSeen:RegisterEvent("ARENA_OPPONENT_UPDATE")
+ArenaSeen:SetScript("OnEvent", function(self, event, ...)
+	local unit, arg2 = ...;
+	if (event == "ARENA_OPPONENT_UPDATE") then
+	if (unit =="arena1") or (unit =="arena2") or (unit =="arena3") then
+		if arg2 == "seen" then
+			Arenastealth[unit] = nil
+		elseif arg2 == "unseen" then
 
+		elseif arg2 == "destroyed" then
+			Arenastealth[unit] = nil
+		elseif arg2 == "cleared" then
+			Arenastealth[unit] = nil
+		end
+	end
+end
+end)
 
 
 local tooltip = CreateFrame("GameTooltip", "DebuffTextDebuffScanTooltip", UIParent, "GameTooltipTemplate")
@@ -4166,7 +4206,7 @@ local function UpdateUnitAuraByUnitGUID(unitGUID, typeUpdate)
 	end
 end
 
-function LoseControl:ARENA_OPPONENT_UPDATE(unit, arg2)
+function LoseControl:ARENA_OPPONENT_UPDATE()
 
 	local unitId = self.unitId
 	local frame = self.frame
@@ -4181,28 +4221,7 @@ function LoseControl:ARENA_OPPONENT_UPDATE(unit, arg2)
 	)
 	self.unitGUID = UnitGUID(self.unitId)
 	self:CheckSUFUnitsAnchors(true)
-------------------------------------------------------------------------------
---Needed to Sync with Gladius Chris
-------------------------------------------------------------------------------
-	if (unit =="arena1") or (unit =="arena2") or (unit =="arena3") then
-		if arg2 == "seen" then
-				arenaunseen[unit] = nil
-				Arenastealth[unit] = nil
-		elseif arg2 == "unseen" then
-				arenaunseen[unit] = true
-				self:UNIT_AURA(unit, nil) -- may need to fire this more to sync correctly with Gladius ?
-			-- enemy left arena
-		elseif arg2 == "destroyed" then
-			arenaunseen[unit] = nil
-			Arenastealth[unit] = nil
-			self:UNIT_AURA(unit, nil)
-		-- arena over
-		elseif arg2 == "cleared" then
-			arenaunseen[unit] = nil
-			Arenastealth[unit] = nil
-			 --print(unitId.."cleared")
-		end
-	end
+
 
 	if enabled and not self.unlockMode then
 		self:UNIT_AURA(unitId, 0)
@@ -4218,7 +4237,7 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 	if self.unitId == "target" then
 		-- Check Interrupts
 		local _, event, _, sourceGUID, _, sourceFlags, _, destGUID, _, _, _, spellId, _, _, _, _, spellSchool = CombatLogGetCurrentEventInfo()
-		if (destGUID ~= nil) then--and  (UnitGUID("player") ~= destGUID) then --Diables Kicks for Player
+		if (destGUID ~= nil) and (UnitGUID("player") ~= destGUID) then --Diables Kicks for Player
 			if (event == "SPELL_INTERRUPT") then
 				local duration = interruptsIds[spellId]
 				if (duration ~= nil) then
@@ -4255,11 +4274,15 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 					tblinsert(InterruptAuras[destGUID], { ["spellId"] = spellId, ["duration"] = duration, ["expirationTime"] = expirationTime, ["priority"] = priority, ["icon"] = icon, ["spellSchool"] = spellSchool })
 					UpdateUnitAuraByUnitGUID(destGUID, -20)
 				end
-			elseif (((event == "UNIT_DIED") or (event == "UNIT_DESTROYED") or (event == "UNIT_DISSIPATES")) and (select(2, GetPlayerInfoByGUID(destGUID)) ~= "HUNTER")) then
-				if (InterruptAuras[destGUID] ~= nil) then
+			elseif (((event == "UNIT_DIED") or (event == "UNIT_DESTROYED") or (event == "UNIT_DISSIPATES")) and (select(2, GetPlayerInfoByGUID(destGUID)) ~= "HUNTER")) then --may need to use UNIT_AURA check for Fiegn Death here to make more accurate
+					if (InterruptAuras[destGUID] ~= nil) then --reset if the source of the kick dies
 					InterruptAuras[destGUID] = nil
 					UpdateUnitAuraByUnitGUID(destGUID, -21)
-				end
+			  	end
+					if (SmokeBombAuras[destGUID] ~= nil) then --reset if the source of the bomb dies
+					SmokeBombAuras[destGUID] = nil
+					UpdateUnitAuraByUnitGUID(destGUID, -21)
+				  end
 			end
 		end
    	-- Check Channel Interrupts for player
@@ -4324,30 +4347,34 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 						end
 					end
 
+			-----------------------------------------------------------------------------------------------------------------
+			--Reset Stealth Table if Unit Dies
+			-----------------------------------------------------------------------------------------------------------------
+			if ((event == "UNIT_DIED") or (event == "UNIT_DESTROYED") or (event == "UNIT_DISSIPATES")) and ((destGUID == UnitGUID("arena1")) or (destGUID == UnitGUID("arena2")) or (destGUID == UnitGUID("arena3"))) then
+					if (destGUID == UnitGUID("arena1")) then
+						Arenastealth["arena1"] = nil
+					elseif (destGUID == UnitGUID("arena2")) then
+						Arenastealth["arena2"] = nil
+					elseif (destGUID == UnitGUID("arena3")) then
+						Arenastealth["arena3"] = nil
+					end
+			end
+
+
+
 		-----------------------------------------------------------------------------------------------------------------
 		--SmokeBomb Check, do not need speperate prio for cleu + aura
 		-----------------------------------------------------------------------------------------------------------------
-		if ((event == "SPELL_CAST_SUCCESS") and (spellId == 212182)) then
-					if sourceGUID and (bit.band(sourceFlags, COMBATLOG_OBJECT_REACTION_FRIENDLY) == COMBATLOG_OBJECT_REACTION_FRIENDLY) then
-						local duration = 5
-						local expirationTime = GetTime() + duration
-						if (SmokeBombAurasF[sourceGUID] == nil) then
-							SmokeBombAurasF[sourceGUID] = {}
-						end
-						SmokeBombAurasF[sourceGUID] = { ["duration"] = duration, ["expirationTime"] = expirationTime }
+					if ((event == "SPELL_CAST_SUCCESS") and (spellId == 212182)) then
+						if (sourceGUID ~= nil) then
+							local duration = 5
+							local expirationTime = GetTime() + duration
+							if (SmokeBombAuras[sourceGUID] == nil) then
+								SmokeBombAuras[sourceGUID] = {}
+							end
+					  	SmokeBombAuras[sourceGUID] = { ["duration"] = duration, ["expirationTime"] = expirationTime }
+					  end
 					end
-				end
-
-		if ((event == "SPELL_CAST_SUCCESS") and (spellId == 212182)) then
-					if sourceGUID and (bit.band(sourceFlags, COMBATLOG_OBJECT_REACTION_HOSTILE) == COMBATLOG_OBJECT_REACTION_HOSTILE) then
-						local duration = 5
-						local expirationTime = GetTime() + duration
-						if (SmokeBombAurasE[sourceGUID] == nil) then
-							SmokeBombAurasE[sourceGUID] = {}
-						end
-						SmokeBombAurasE[sourceGUID] = { ["duration"] = duration, ["expirationTime"] = expirationTime }
-					end
-				end
 
 			-----------------------------------------------------------------------------------------------------------------
 			--Trees Check (if Tress dies it will not update currently not sure how to track that)
@@ -4355,9 +4382,9 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 			if ((event == "SPELL_CAST_SUCCESS") and (TreesPrioCastedSpells[spellId])) then
 				local priority = LoseControlDB.priority.Trees
 					if (sourceGUID == UnitGUID("arena1")) or (sourceGUID == UnitGUID("arena2")) or (sourceGUID == UnitGUID("arena3")) then
-					priority = LoseControlDB.priorityArena.Trees
-					priority = 0 --disables trees for arena units
-					end
+						priority = LoseControlDB.priorityArena.Trees
+						priority = 0 --disables trees for arena units
+						end
 				local duration = TreesPrioCastedSpells[spellId]
 				local expirationTime = GetTime() + duration
 				local _, _, icon = GetSpellInfo(spellId)
@@ -4394,47 +4421,28 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 		end
 
 	elseif (self.unitId == "targettarget" and self.unitGUID ~= nil and (not(LoseControlDB.disablePlayerTargetTarget) or (self.unitGUID ~= playerGUID)) and (not(LoseControlDB.disableTargetTargetTarget) or (self.unitGUID ~= LCframes.target.unitGUID))) or (self.unitId == "focustarget" and self.unitGUID ~= nil and (not(LoseControlDB.disablePlayerFocusTarget) or (self.unitGUID ~= playerGUID)) and (not(LoseControlDB.disableFocusFocusTarget) or (self.unitGUID ~= LCframes.focus.unitGUID))) then
-		-- Manage targettarget/focustarget UNIT_AURA triggers
-		local _, event, _, _, _, _, _, destGUID = CombatLogGetCurrentEventInfo()
-		if (destGUID ~= nil and destGUID == self.unitGUID) then
-			if (event == "SPELL_AURA_APPLIED") or (event == "SPELL_PERIODIC_AURA_APPLIED") or
-			 (event == "SPELL_AURA_REMOVED") or (event == "SPELL_PERIODIC_AURA_REMOVED") or
-			 (event == "SPELL_AURA_APPLIED_DOSE") or (event == "SPELL_PERIODIC_AURA_APPLIED_DOSE") or
-			 (event == "SPELL_AURA_REMOVED_DOSE") or (event == "SPELL_PERIODIC_AURA_REMOVED_DOSE") or
-			 (event == "SPELL_AURA_REFRESH") or (event == "SPELL_PERIODIC_AURA_REFRESH") or
-			 (event == "SPELL_AURA_BROKEN") or (event == "SPELL_PERIODIC_AURA_BROKEN") or
-			 (event == "SPELL_AURA_BROKEN_SPELL") or (event == "SPELL_PERIODIC_AURA_BROKEN_SPELL") or
-			 (event == "UNIT_DIED") or (event == "UNIT_DESTROYED") or (event == "UNIT_DISSIPATES") then
-				local timeCombatLogAuraEvent = GetTime()
-				C_Timer.After(0.01, function()	-- execute in some close next frame to accurate use of UnitAura function
-					if ((not self.unlockMode) and (self.lastTimeUnitAuraEvent ~= timeCombatLogAuraEvent)) then
-						self:UNIT_AURA(self.unitId, 3)
-					end
-				end)
-			end
-		end
-	elseif (self.unitId == "targettarget" and self.unitGUID ~= nil and (not(LoseControlDB.disablePlayerTargetTarget) or (self.unitGUID ~= playerGUID)) and (not(LoseControlDB.disableTargetTargetTarget) or (self.unitGUID ~= LCframes.target.unitGUID))) or (self.unitId == "focustarget" and self.unitGUID ~= nil and (not(LoseControlDB.disablePlayerFocusTarget) or (self.unitGUID ~= playerGUID)) and (not(LoseControlDB.disableFocusFocusTarget) or (self.unitGUID ~= LCframes.focus.unitGUID))) then
-		-- Manage targettarget/focustarget UNIT_AURA triggers
-		local _, event, _, _, _, _, _, sourceGUID = CombatLogGetCurrentEventInfo()
-		if (sourceGUID ~= nil and sourceGUID == self.unitGUID) then
-			if (event == "SPELL_AURA_APPLIED") or (event == "SPELL_PERIODIC_AURA_APPLIED") or
-			 (event == "SPELL_AURA_REMOVED") or (event == "SPELL_PERIODIC_AURA_REMOVED") or
-			 (event == "SPELL_AURA_APPLIED_DOSE") or (event == "SPELL_PERIODIC_AURA_APPLIED_DOSE") or
-			 (event == "SPELL_AURA_REMOVED_DOSE") or (event == "SPELL_PERIODIC_AURA_REMOVED_DOSE") or
-			 (event == "SPELL_AURA_REFRESH") or (event == "SPELL_PERIODIC_AURA_REFRESH") or
-			 (event == "SPELL_AURA_BROKEN") or (event == "SPELL_PERIODIC_AURA_BROKEN") or
-			 (event == "SPELL_AURA_BROKEN_SPELL") or (event == "SPELL_PERIODIC_AURA_BROKEN_SPELL") or
-			 (event == "UNIT_DIED") or (event == "UNIT_DESTROYED") or (event == "UNIT_DISSIPATES") then
-				local timeCombatLogAuraEvent = GetTime()
-				C_Timer.After(0.01, function()	-- execute in some close next frame to accurate use of UnitAura function
-					if ((not self.unlockMode) and (self.lastTimeUnitAuraEvent ~= timeCombatLogAuraEvent)) then
-						self:UNIT_AURA(self.unitId, 3)
-					end
-				end)
+			-- Manage targettarget/focustarget UNIT_AURA triggers
+			local _, event, _, _, _, _, _, destGUID = CombatLogGetCurrentEventInfo()
+			if (destGUID ~= nil and destGUID == self.unitGUID) then
+				if (event == "SPELL_AURA_APPLIED") or (event == "SPELL_PERIODIC_AURA_APPLIED") or
+				 (event == "SPELL_AURA_REMOVED") or (event == "SPELL_PERIODIC_AURA_REMOVED") or
+				 (event == "SPELL_AURA_APPLIED_DOSE") or (event == "SPELL_PERIODIC_AURA_APPLIED_DOSE") or
+				 (event == "SPELL_AURA_REMOVED_DOSE") or (event == "SPELL_PERIODIC_AURA_REMOVED_DOSE") or
+				 (event == "SPELL_AURA_REFRESH") or (event == "SPELL_PERIODIC_AURA_REFRESH") or
+				 (event == "SPELL_AURA_BROKEN") or (event == "SPELL_PERIODIC_AURA_BROKEN") or
+				 (event == "SPELL_AURA_BROKEN_SPELL") or (event == "SPELL_PERIODIC_AURA_BROKEN_SPELL") or
+				 (event == "UNIT_DIED") or (event == "UNIT_DESTROYED") or (event == "UNIT_DISSIPATES") then
+					local timeCombatLogAuraEvent = GetTime()
+					C_Timer.After(0.01, function()	-- execute in some close next frame to accurate use of UnitAura function
+						if ((not self.unlockMode) and (self.lastTimeUnitAuraEvent ~= timeCombatLogAuraEvent)) then
+							self:UNIT_AURA(self.unitId, 3)
+						end
+					end)
+				end
 			end
 		end
 	end
-end
+
 
 -- This is the main event. Check for (de)buffs and update the frame icon and cooldown.
 function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is gained/lost
@@ -4508,43 +4516,46 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 			end
 
 			-----------------------------------------------------------------------------------------------------------------
-			--Stealth
+			--Duel Stealth
 			-----------------------------------------------------------------------------------------------------------------
-			if (spellIds[spellId] == "Stealth")  and ((unitId == "arena1") or (unitId == "arena2") or (unitId == "arena3")) then
+			if (spellId == 207736) and ((unitId == "arena1") or (unitId == "arena2") or (unitId == "arena3")) then
 					if not Arenastealth[unitId] == nil then
 						Arenastealth[unitId] = {}
 					end
-					if (spellId == 207736) then --Shodowey Duel friendly on enemyy, enemy frame (white)
 						if source then
-							if (UnitGUID(source) == UnitGUID("party1")) or(UnitGUID(source) == UnitGUID("party2")) or (UnitGUID(source) == UnitGUID("player")) then
-							--print("friendly duel on enemy should be white",source, unitId)
+							if UnitIsEnemy("player", source) then --still returns true for an enemy currently under mindcontrol I can add your fix.
+								spellIds[spellId] = "Enemy_Smoke_Bomb"
+								--hue = "Red_No_Desaturate"
+								print("Enemy", source, "Entered Duel (Stealth)", unitId)
+							elseif not UnitIsEnemy("player", source) then
+								spellIds[spellId] = "Friendly_Smoke_Bomb"
+								print("Friendly", source, "Entered Duel (Stealth)", unitId)
+								if source == "player" then
+									C_Timer.After(expirationTime - GetTime(), function()
+										if Arenastealth[unitId] then
+											Arenastealth[unitId] = nil
+											print("Player Dueled", unitId, "was never Not Seen or Stealthed, Clear Cache")
+										end
+									end)
+							  end
 							end
+						else
+						 spellIds[spellId] = "Friendly_Smoke_Bomb"
 						end
-					end
-					if (spellId == 207736) then --Shodowey Duel enemy on friendly, enemy frame (red)
-						if source then
-							if (UnitGUID(source) == UnitGUID("arena1")) or(UnitGUID(source) == UnitGUID("arena2")) or (UnitGUID(source) == UnitGUID("arena3")) then
-							--print("enemy duel on friend should be red",source, unitId)
-							hue = "Red_No_Desaturate"
-							end
-						end
-					end
-					Arenastealth[unitId] =  {["col1"] = priority[spellCategory] ,["col2"]  = GetTime() , ["col3"] =  {["Name"]=  name, ["duration"] = duration, ["expirationTime"] = expirationTime,  ["icon"] = icon, ["localForceEventUnitAuraAtEnd"] = localForceEventUnitAuraAtEnd, ["Unit"] = unitId, }}
+				Arenastealth[unitId] =  {["col1"] = priority[spellCategory] ,["col2"]  = GetTime() , ["col3"] =  {["Name"]=  name, ["duration"] = duration, ["expirationTime"] = expirationTime,  ["icon"] = icon, ["localForceEventUnitAuraAtEnd"] = localForceEventUnitAuraAtEnd, ["Unit"] = unitId }}
 			end
 
-			if (spellId == 207736) and ((unitId == "player") or (unitId == "party1") or (unitId == "party2")) then --Shodowey Duel friendly on enemyy, friendly frame (white)
+			if spellId == 207736 then --Shodowey Duel enemy on friendly, friendly frame (red)
 				if source then
-					if (UnitGUID(source) == UnitGUID("player")) or (UnitGUID(source) == UnitGUID("party2")) or (UnitGUID(source) == UnitGUID("party1")) then
-					--print("friendly duel by friend should be white",source, unitId)
-					end
-				end
-			end
-			if (spellId == 207736) and ((unitId == "player") or (unitId == "party1") or (unitId == "party2")) then --Shodowey Duel enemy on friendly, friendly frame (red)
-				if source then
-					if (UnitGUID(source) == UnitGUID("arena1")) or (UnitGUID(source) == UnitGUID("arena2")) or (UnitGUID(source) == UnitGUID("arena3")) then
-						--print("enemy duel on friend should be red",source, unitId)
-						hue = "Red_No_Desaturate"
-					end
+					if UnitIsEnemy("player", source) then --still returns true for an enemy currently under mindcontrol I can add your fix.
+						spellIds[spellId] = "Enemy_Smoke_Bomb"
+						print("Enemy", source, "Entered Duel w/", unitId)
+					elseif not UnitIsEnemy("player", source) then
+						spellIds[spellId] = "Friendly_Smoke_Bomb"
+						print("Friendly", source, "Entered Duel w/", unitId)
+		  		end
+				else
+					spellIds[spellId] = "Friendly_Smoke_Bomb"
 				end
 			end
 			-----------------------------------------------------------------------------------------------------------------
@@ -4552,25 +4563,19 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 			-----------------------------------------------------------------------------------------------------------------
 			if spellId == 212183 then -- Smoke Bomb
 				if source then
-					if SmokeBombAurasF[UnitGUID(source)] then
-						if SmokeBombAurasF[UnitGUID(source)].expirationTime > GetTime() then
-							duration = SmokeBombAurasF[UnitGUID(source)].duration
-							expirationTime = SmokeBombAurasF[UnitGUID(source)].expirationTime
-							spellIds[spellId] = "Friendly_Smoke_Bomb"
-					  end
-					elseif SmokeBombAurasE[UnitGUID(source)] then
-						if SmokeBombAurasE[UnitGUID(source)].expirationTime> GetTime()  then
-							duration = SmokeBombAurasE[UnitGUID(source)].duration
-							expirationTime = SmokeBombAurasE[UnitGUID(source)].expirationTime
-							spellIds[spellId] = "Enemy_Smoke_Bomb"
-							LayeredHue ="Red"
-					  end
-					  --[[elseif spellId == 212183 and unitId == "player" then -- Smoke Bomb (don't show countdown)
-								expirationTime = 0]]
-					  else
-					 end
+					if UnitIsEnemy("player", source) then --still returns true for an enemy currently under mindcontrol I can add your fix.
+						duration = SmokeBombAuras[UnitGUID(source)].duration
+						expirationTime = SmokeBombAuras[UnitGUID(source)].expirationTime
+						spellIds[spellId] = "Enemy_Smoke_Bomb"
+					elseif not UnitIsEnemy("player", source) then
+						duration = SmokeBombAuras[UnitGUID(source)].duration
+						expirationTime = SmokeBombAuras[UnitGUID(source)].expirationTime
+						spellIds[spellId] = "Friendly_Smoke_Bomb"
 					end
-			  end
+				else
+					spellIds[spellId] = "Friendly_Smoke_Bomb"
+				end
+			end
 
 			-----------------------------------------------------------------------------------------------------------------
 			--Two debuff conidtions like Root Beam
@@ -4625,7 +4630,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 			if self.frame.categoriesEnabled.debuff[reactionToPlayer][spellCategory] then
 				if Priority then
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-					tblinsert(buffs,  {["col1"] = priority[spellCategory] ,["col2"]  = expirationTime , ["col3"] =  {["Name"]=  name, ["duration"] = duration, ["expirationTime"] = expirationTime,  ["icon"] = icon, ["localForceEventUnitAuraAtEnd"] = localForceEventUnitAuraAtEnd }}) -- this will create a table to show the highest duration debuffs
+					tblinsert(buffs,  {["col1"] = priority[spellCategory] ,["col2"]  = expirationTime , ["col3"] =  {["Name"]=  name, ["duration"] = duration, ["expirationTime"] = expirationTime,  ["icon"] = icon, ["localForceEventUnitAuraAtEnd"] = localForceEventUnitAuraAtEnd, ["Hue"] = hue, ["spellCategory"] = spellCategory }}) -- this will create a table to show the highest duration debuffs
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 					if Priority == maxPriority and expirationTime-duration > newExpirationTime then
 						maxExpirationTime = expirationTime
@@ -4676,7 +4681,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 			-----------------------------------------------------------------------------
 			--Stealths
 			------------------------------------------------------------------------------
-			if (spellIds[spellId] == "Stealth")  and ((unitId == "arena1") or (unitId == "arena2") or (unitId == "arena3")) then
+			if (spellIds[spellId] == "Stealth") and ((unitId == "arena1") or (unitId == "arena2") or (unitId == "arena3")) then
 					if not Arenastealth[unitId] == nil then
 						Arenastealth[unitId] = {}
 					end
@@ -4688,6 +4693,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 							end
 						end
 				  end
+					print(unitId, "Stealth Information Captured", name)
 				  Arenastealth[unitId] =  {["col1"] = priority[spellCategory] ,["col2"]  = GetTime() , ["col3"] =  {["Name"]=  name, ["duration"] = duration, ["expirationTime"] = expirationTime,  ["icon"] = icon, ["localForceEventUnitAuraAtEnd"] = localForceEventUnitAuraAtEnd, ["Unit"] = unitId, }}
 			end
 
@@ -4696,7 +4702,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 			if self.frame.categoriesEnabled.buff[reactionToPlayer][spellCategory] then
 				if Priority then
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-						tblinsert(buffs,  {["col1"] = priority[spellCategory] ,["col2"]  = expirationTime , ["col3"] =  {["Name"]=  name, ["duration"] = duration, ["expirationTime"] = expirationTime,  ["icon"] = icon, ["localForceEventUnitAuraAtEnd"] = localForceEventUnitAuraAtEnd }}) -- this will create a table to show the highest duration buffs
+						tblinsert(buffs,  {["col1"] = priority[spellCategory] ,["col2"]  = expirationTime , ["col3"] =  {["Name"]=  name, ["duration"] = duration, ["expirationTime"] = expirationTime,  ["icon"] = icon, ["localForceEventUnitAuraAtEnd"] = localForceEventUnitAuraAtEnd, ["Hue"] = hue, ["spellCategory"] = spellCategory }}) -- this will create a table to show the highest duration buffs
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 					if Priority == maxPriority and expirationTime-duration > newExpirationTime then
 						maxExpirationTime = expirationTime
@@ -4736,6 +4742,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 					local duration = v.duration
 					local icon = v.icon
 					local spellSchool = v.spellSchool
+					local hue
 					if (expirationTime < GetTime()) then
 						InterruptAuras[self.unitGUID][k] = nil
 						if (next(InterruptAuras[self.unitGUID]) == nil) then
@@ -4745,9 +4752,9 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 						if Priority then
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 							local localForceEventUnitAuraAtEnd = false
-							tblinsert(buffs,  {["col1"] = Priority ,["col2"]  = expirationTime , ["col3"] =  {["Name"]=  name, ["duration"] = duration, ["expirationTime"] = expirationTime,  ["icon"] = icon, ["localForceEventUnitAuraAtEnd"] = localForceEventUnitAuraAtEnd }}) -- this will create a table to show the highest duration cleu
+							tblinsert(buffs,  {["col1"] = Priority ,["col2"]  = expirationTime , ["col3"] =  {["Name"]=  name, ["duration"] = duration, ["expirationTime"] = expirationTime,  ["icon"] = icon, ["localForceEventUnitAuraAtEnd"] = localForceEventUnitAuraAtEnd, ["Hue"] = hue }}) -- this will create a table to show the highest duration cleu
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-							if spellSchool then -- Stop Interrupt Check when Trees
+							if spellSchool then -- Stop Interrupt Check when Trees Prio or SPELL_CAST_SUCCESS event
 								for schoolIntId, _ in pairs(spellSchoolInteruptsTable) do
 									if (bit_band(spellSchool, schoolIntId) > 0) then
 										spellSchoolInteruptsTable[schoolIntId][1] = true
@@ -4851,22 +4858,29 @@ end
 -----------------------------------------------------------------------
 --Stealth
 -------------------------------------------------------------------------
-	if arenaunseen[unitId] and (not UnitExists(unitId)) then
-			     if Arenastealth[unitId] then
-						print(unitId, "unseen no exist")
-						print(dump(buffs))
+	if (not UnitExists(unitId)) then
+			     if Arenastealth[unitId] then ---Need to clea
+						print(unitId, "Tryed to Stealth w/", Arenastealth[unitId].col3.Name)
 						maxExpirationTime = Arenastealth[unitId].col3.expirationTime
 						Duration = Arenastealth[unitId].col3.duration
 						Icon = Arenastealth[unitId].col3.icon
 						Priority = 100
 						maxPriority = Priority
 						forceEventUnitAuraAtEnd = Arenastealth[unitId].col3.localForceEventUnitAuraAtEnd
-						if (Duration > 0) and (maxExpirationTime > GetTime()) then
-						C_Timer.After(maxExpirationTime - GetTime(), function() self:UNIT_AURA(unitId, nil) end)
-						print("will re fire",  Arenastealth[unitId].col3.Name)
+						-- Could refire code here every frame w/ C_Timer.After untill self:GetParent():SetAlpha(self.anchor:GetAlpha()) ==.5
+						if Arenastealth[unitId].col3.Hue then
+							Hue = Arenastealth[unitId].col3.Hue
+						end
+						if (Duration > 0) and (maxExpirationTime > GetTime() + .1) then
+							print(unitId, "Could Re-Stealth w/ or Pop Out After", Arenastealth[unitId].col3.Name, "After", maxExpirationTime > GetTime() + .1)
+							local nextTimerUpdate = maxExpirationTime - GetTime() + .1
+							C_Timer.After(nextTimerUpdate, function()
+									self:UNIT_AURA(unitId, 4)
+									print(unitId, "Should Be Out Now")
+							end)
 					  end
 						if maxExpirationTime - .1 < GetTime() then
-							print("setting icon to perma",  Arenastealth[unitId].col3.Name)
+							  print(unitId, "Maybe Stealthed w/",  Arenastealth[unitId].col3.Name)
 								maxExpirationTime =  GetTime() + 1
 								Duration = 0
 								Priority = 100
@@ -4875,7 +4889,18 @@ end
 			end
 	end
 
-	if maxExpirationTime == 0 then -- no (de)buffs found
+	for i = 1, #buffs do --creates a layered hue for every icon when a specific priority, or spellid is present
+	if buffs[i].col1 then
+		if not buffs[i].col1 then break end
+			if buffs[i].col1 == LoseControlDB.priority.Friendly_Smoke_Bomb then
+				LayeredHue = true --problem is afterwards it refires on exit and is false need way to reset the loop after
+				Hue = "Red"
+				C_Timer.After(.1, function()	self:UNIT_AURA(unitId, 4)	end) --Could be used on the exit somehow
+			end
+		end
+	end
+
+	if (maxExpirationTime == 0) and (not LayeredHue) then -- no (de)buffs found
 		self.maxExpirationTime = 0
 		if self.anchor ~= UIParent and self.drawlayer then
 			self.anchor:SetDrawLayer(self.drawlayer) -- restore the original draw layer
@@ -4898,7 +4923,7 @@ end
 		end
 		if maxPriorityIsInterrupt then
 			if self.frame.anchor == "Blizzard" then
-				--self.iconInterruptBackground:SetTexture("Interface\\AddOns\\LoseControl\\Textures\\lc_interrupt_background_portrait") --CHRIS
+			--	self.iconInterruptBackground:SetTexture("Interface\\AddOns\\LoseControl\\Textures\\lc_interrupt_background_portrait") --CHRIS
 			else
 			--	self.iconInterruptBackground:SetTexture("Interface\\AddOns\\LoseControl\\Textures\\lc_interrupt_background") --CHRIS
 			end
@@ -4910,25 +4935,47 @@ end
 				self.iconInterruptBackground:Hide()
 			end
 		end
-		if self.frame.anchor == "Blizzard" then  --CHRIS DISABLE SQ
-			SetPortraitToTexture(self.texture, Icon) -- Sets the texture to be displayed from a file applying a circular opacity mask making it look round like portraits
-			self:SetSwipeTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMaskSmall")
-			self:SetSwipeColor(0, 0, 0, 0.6)	-- Adjust the alpha of this mask to similar levels of the normal swipe cooldown texture
+			if self.frame.anchor == "Blizzard" then  --CHRIS DISABLE SQ
+				if Hue == "Red" then -- Changes Icon Hue to Red
+				SetPortraitToTexture(self.texture, Icon) -- Sets the texture to be displayed from a file applying a circular opacity mask making it look round like portraits
+				self:SetSwipeTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMaskSmall")   --Set Smoke Bomb Icon
+				self.texture:SetDesaturated(1) --Destaurate Smoke Bomb Icon
+				self.texture:SetVertexColor(0.8, 0, 0); --Red Hue Set For Smoke Bomb Icon
+				self:SetSwipeColor(0, 0, 0, 0.6)	-- This is the default alpha of the normal swipe cooldown texture
+			elseif Hue == "Red_No_Desaturate" then -- Changes Hue to Red and any Icon Greater , could indicate in a barrier or smoke bomb etc..
+				SetPortraitToTexture(self.texture, Icon) -- Sets the texture to be displayed from a file applying a circular opacity mask making it look round like portraits
+  			self:SetSwipeTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMaskSmall")   --Set Smoke Bomb Icon
+			  self.texture:SetDesaturated(nil) --Destaurate Smoke Bomb Icon
+		  	self.texture:SetVertexColor(1, 0, 0); --Red Hue Set For Smoke Bomb Icon
+			  self:SetSwipeColor(0, 0, 0, 0.6)	-- This is the default alpha of the normal swipe cooldown texture
+		  elseif Hue == "Yellow" then -- Changes Hue to Red and any Icon Greater , could indicate in a barrier or smoke bomb etc..
+				SetPortraitToTexture(self.texture, Icon) -- Sets the texture to be displayed from a file applying a circular opacity mask making it look round like portraits
+				self:SetSwipeTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMaskSmall")   --Set Smoke Bomb Icon
+				self.texture:SetDesaturated(1) --Destaurate Smoke Bomb Icon
+				self.texture:SetVertexColor(1, 1, 0); --Red Hue Set For Smoke Bomb Icon
+				self:SetSwipeColor(0, 0, 0, 0.6)	-- This is the default alpha of the normal swipe cooldown texture
+			else
+				SetPortraitToTexture(self.texture, Icon) -- Sets the texture to be displayed from a file applying a circular opacity mask making it look round like portraits
+				self:SetSwipeTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMaskSmall")
+				self.texture:SetDesaturated(nil) --Destaurate Smoke Bomb Icon
+				self.texture:SetVertexColor(1, 1, 1)
+				self:SetSwipeColor(0, 0, 0, 0.6)
+			end
 		else
 			if Hue == "Red" then -- Changes Icon Hue to Red
 				self.texture:SetTexture(Icon)   --Set Smoke Bomb Icon
 				self.texture:SetDesaturated(1) --Destaurate Smoke Bomb Icon
-				self.texture:SetVertexColor(1, 0, 0); --Red Hue Set For Smoke Bomb Icon
+				self.texture:SetVertexColor(0.8, 0, 0); --Red Hue Set For Smoke Bomb Icon
 				self:SetSwipeColor(0, 0, 0, 0.8)	-- This is the default alpha of the normal swipe cooldown texture
 			elseif Hue == "Red_No_Desaturate" then -- Changes Hue to Red and any Icon Greater , could indicate in a barrier or smoke bomb etc..
 			 self.texture:SetTexture(Icon)   --Set Smoke Bomb Icon
 			 self.texture:SetDesaturated(nil) --Destaurate Smoke Bomb Icon
 			 self.texture:SetVertexColor(1, 0, 0); --Red Hue Set For Smoke Bomb Icon
 			 self:SetSwipeColor(0, 0, 0, 0.8)	-- This is the default alpha of the normal swipe cooldown texture
-		  elseif LayeredHue == "Red" then -- Changes Hue to Red and any Icon Greater , could indicate in a barrier or smoke bomb etc..
+		 elseif Hue == "Yellow" then -- Changes Hue to Red and any Icon Greater , could indicate in a barrier or smoke bomb etc..
 				self.texture:SetTexture(Icon)   --Set Smoke Bomb Icon
 				self.texture:SetDesaturated(1) --Destaurate Smoke Bomb Icon
-				self.texture:SetVertexColor(1, 0, 0); --Red Hue Set For Smoke Bomb Icon
+				self.texture:SetVertexColor(1, 1, 0); --Red Hue Set For Smoke Bomb Icon
 				self:SetSwipeColor(0, 0, 0, 0.8)	-- This is the default alpha of the normal swipe cooldown texture
 			else
 				self.texture:SetTexture(Icon)
