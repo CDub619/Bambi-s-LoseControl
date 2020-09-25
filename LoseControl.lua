@@ -4378,17 +4378,17 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 			--Trees Check (if Tress dies it will not update currently not sure how to track that)
 			-----------------------------------------------------------------------------------------------------------------
 			if ((event == "SPELL_CAST_SUCCESS") and (cleuPrioCastedSpells[spellId])) then
-				local priority = LoseControlDB.priority.Trees
+				local priority = LoseControlDB.priority.Trees --treated as priority buff (categoriesEnabled)
 						if (spellId == 47540) then --re-adjust spell Prio for if needed
-						priority = LoseControlDB.priority.Other
+						priority = LoseControlDB.priority.Other --treated as priority buff (categoriesEnabled)
 						end
 					if (sourceGUID == UnitGUID("arena1")) or (sourceGUID == UnitGUID("arena2")) or (sourceGUID == UnitGUID("arena3")) then
-						priority = LoseControlDB.priorityArena.Personal_Offensives
-						if (spellId == "XXXXX") then --disable for Tress and Move other to
+						priority = LoseControlDB.priorityArena.Personal_Offensives --treated as priority buff (categoriesEnabled)
+						if (spellId == "XXXXX") then
 						priority = 0 --disables specific for arena units
 						end
 						if (spellId == 47540) then --re-adjust spell Prio for if needed
-						priority = LoseControlDB.priorityArena.Personal_Offensives
+						priority = LoseControlDB.priorityArena.Personal_Offensives --treated as priority buff (categoriesEnabled)
 						end
 					end
 				local duration = cleuPrioCastedSpells[spellId]
@@ -4749,7 +4749,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 					local hue = v.hue
 					local name = v.name
 					local spellCategory = get_key_for_value( priority, Priority )
-					if Priority > 0 and (self.frame.categoriesEnabled.buff[reactionToPlayer][spellCategory] or self.frame.categoriesEnabled.interrupt[reactionToPlayer]) then
+					if ((Priority > 0) and (self.frame.categoriesEnabled.buff[reactionToPlayer][spellCategory])) or ((self.frame.categoriesEnabled.interrupt[reactionToPlayer]) and (priority.Interrupt == Priority)) then
 					if (expirationTime < GetTime()) then
 						InterruptAuras[self.unitGUID][k] = nil
 						if (next(InterruptAuras[self.unitGUID]) == nil) then
