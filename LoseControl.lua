@@ -96,7 +96,7 @@ local LCframes = {}
 local LCframeplayer2
 local InterruptAuras = { }
 local SmokeBombAuras = { }
-local TreesPrioCastedSpells = { }
+local cleuPrioCastedSpells = { }
 local Arenastealth = {}
 local arenaunseen = {}
 local origSpellIdsChanged = { }
@@ -104,7 +104,7 @@ local Masque = LibStub("Masque", true)
 
 -------------------------------------------------------------------------------
 -- Thanks to all the people on the Curse.com and WoWInterface forums who help keep this list up to date :)
-local TreesPrioCastedSpells = {
+local cleuPrioCastedSpells = {
 	[47540]   = 60,
 	[605] =10,
 	[186263] =9,
@@ -3454,6 +3454,13 @@ local function dump(o)
    end
 end
 
+function get_key_for_value( t, value )
+  for k,v in pairs(t) do
+    if v==value then return k end
+  end
+  return nil
+end
+
 
 --You will need to use a C_timer to Reset all values to nil after expiration
 --You will need to hide lossOfControlDisarm/Full/Root/Silence
@@ -4229,7 +4236,7 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 	if self.unitId == "target" then
 		-- Check Interrupts
 		local _, event, _, sourceGUID, _, sourceFlags, _, destGUID, _, _, _, spellId, _, _, _, _, spellSchool = CombatLogGetCurrentEventInfo()
-		if (destGUID ~= nil) and (UnitGUID("player") ~= destGUID) then --Diables Kicks for Player
+		if (destGUID ~= nil) then --Diables Kicks for Player
 			if (event == "SPELL_INTERRUPT") then
 				local duration = interruptsIds[spellId]
 				if (duration ~= nil) then
@@ -4255,7 +4262,7 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 					end
 					local expirationTime = GetTime() + duration
 					if debug then print("interrupt", ")", destGUID, "|", GetSpellInfo(spellId), "|", duration, "|", expirationTime, "|", spellId) end
-					local priority = LoseControlDB.priority.Interrupt
+						local priority = LoseControlDB.priority.Interrupt
 						if (destGUID == UnitGUID("arena1")) or (destGUID == UnitGUID("arena2")) or (destGUID == UnitGUID("arena3")) then
 						priority = LoseControlDB.priorityArena.Interrupt
 					  end
@@ -4278,7 +4285,7 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 			end
 		end
    	-- Check Channel Interrupts for player
-      --[[if (event == "SPELL_CAST_SUCCESS") then
+      if (event == "SPELL_CAST_SUCCESS") then
 		    if interruptsIds[spellId] then
 					     if (destGUID == UnitGUID("player")) and (select(7, UnitChannelInfo("player")) == false) then
 									local duration = interruptsIds[spellId]
@@ -4294,7 +4301,7 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 						     end
 							 end
 	      end
-      end]]
+      end
 			-- Check Channel Interrupts for arena
 				if (event == "SPELL_CAST_SUCCESS") then
 					if interruptsIds[spellId] then
@@ -4370,18 +4377,21 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 			-----------------------------------------------------------------------------------------------------------------
 			--Trees Check (if Tress dies it will not update currently not sure how to track that)
 			-----------------------------------------------------------------------------------------------------------------
-			if ((event == "SPELL_CAST_SUCCESS") and (TreesPrioCastedSpells[spellId])) then
+			if ((event == "SPELL_CAST_SUCCESS") and (cleuPrioCastedSpells[spellId])) then
 				local priority = LoseControlDB.priority.Trees
+						if (spellId == 47540) then --re-adjust spell Prio for if needed
+						priority = LoseControlDB.priority.Other
+						end
 					if (sourceGUID == UnitGUID("arena1")) or (sourceGUID == UnitGUID("arena2")) or (sourceGUID == UnitGUID("arena3")) then
 						priority = LoseControlDB.priorityArena.Personal_Offensives
 						if (spellId == "XXXXX") then --disable for Tress and Move other to
 						priority = 0 --disables specific for arena units
 						end
-						if (spellId == "XXXXX") then --re-adjust spell Prio for if needed
+						if (spellId == 47540) then --re-adjust spell Prio for if needed
 						priority = LoseControlDB.priorityArena.Personal_Offensives
 						end
 					end
-				local duration = TreesPrioCastedSpells[spellId]
+				local duration = cleuPrioCastedSpells[spellId]
 				local expirationTime = GetTime() + duration
 				local name, _, icon = GetSpellInfo(spellId)
 				if not InterruptAuras[sourceGUID]  then
@@ -4718,8 +4728,8 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 			end
 		end
 
-		-- Check interrupts
-		if ((self.unitGUID ~= nil) and (priority.Interrupt > 0) and self.frame.categoriesEnabled.interrupt[reactionToPlayer] and (UnitIsPlayer(unitId) or (((unitId ~= "target") or (LoseControlDB.showNPCInterruptsTarget)) and ((unitId ~= "focus") or (LoseControlDB.showNPCInterruptsFocus)) and ((unitId ~= "targettarget") or (LoseControlDB.showNPCInterruptsTargetTarget)) and ((unitId ~= "focustarget") or (LoseControlDB.showNPCInterruptsFocusTarget))))) then
+		-- Check interrupts or cleu
+		if ((self.unitGUID ~= nil) --[[and (priority.Interrupt > 0) and self.frame.categoriesEnabled.interrupt[reactionToPlayer]] and (UnitIsPlayer(unitId) or (((unitId ~= "target") or (LoseControlDB.showNPCInterruptsTarget)) and ((unitId ~= "focus") or (LoseControlDB.showNPCInterruptsFocus)) and ((unitId ~= "targettarget") or (LoseControlDB.showNPCInterruptsTargetTarget)) and ((unitId ~= "focustarget") or (LoseControlDB.showNPCInterruptsFocusTarget))))) then
 			local spellSchoolInteruptsTable = {
 				[1] = {false, 0},
 				[2] = {false, 0},
@@ -4738,6 +4748,8 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 					local spellSchool = v.spellSchool
 					local hue = v.hue
 					local name = v.name
+					local spellCategory = get_key_for_value( priority, Priority )
+					if Priority > 0 and (self.frame.categoriesEnabled.buff[reactionToPlayer][spellCategory] or self.frame.categoriesEnabled.interrupt[reactionToPlayer]) then
 					if (expirationTime < GetTime()) then
 						InterruptAuras[self.unitGUID][k] = nil
 						if (next(InterruptAuras[self.unitGUID]) == nil) then
@@ -4853,6 +4865,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 				end
 			end
 		end
+		end
 	end
 
 ----------------------------------------------------------------------
@@ -4888,7 +4901,7 @@ end
 			 if Arenastealth[unitId] and #buffs then ---Need to clea
 				 local foundbuff = 0
 				 for i = 1, #buffs do
-					 	if ((buffs[i].col3.expirationTime > GetTime() + .10) and (buffs[i].col3.duration ~= 0 ) and (buffs[i].col1 >= priority.Stealth)) and not ((buffs[i].col1 == priority.Snare) or (buffs[i].col1 == priority.SnareMagic30) or (buffs[i].col1 == priority.SnarePhysical30) or (buffs[i].col1 == priority.SnareMagic50) or (buffs[i].col1 == priority.SnarePosion50) or (buffs[i].col1 == priority.SnarePhysical50) or (buffs[i].col1 == priority.SnareMagical70) or (buffs[i].col1 == priority.SnarePhysical70)) then
+					 	if ((buffs[i].col3.expirationTime > GetTime() + .10) and (buffs[i].col3.duration ~= 0 ) and (buffs[i].col1 >= priority.Stealth)) then
 								maxExpirationTime = buffs[i].col3.expirationTime
 								Duration = buffs[i].col3.duration
 								Icon = buffs[i].col3.icon
