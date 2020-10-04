@@ -104,12 +104,11 @@ local Masque = LibStub("Masque", true)
 
 -------------------------------------------------------------------------------
 -- Thanks to all the people on the Curse.com and WoWInterface forums who help keep this list up to date :)
-local cleuPrioCastedSpells = {
-	[47540]   = 60, --Type Prio and line in code where its set
-	[605] = 10,
-	[186263] = 9,
-	[93402] = 3,
-	[8921] = 6,
+local cleuPrioCastedSpells = { -- nil = Do Not Show
+	[47540]   = {["duration"] = 60, ["priority"] = "Trees", ["priorityArena"] = "Trees"},
+	[8921]   = {["duration"] = 6, ["priority"] = nil, ["priorityArena"] = "Trees"},
+	[93402]   = {["duration"] = 5, ["priority"] = "Trees", ["priorityArena"] = "Trees"},
+
 }
 
 local interruptsIds = {
@@ -5281,23 +5280,24 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 			--Trees Check (if Tress dies it will not update currently not sure how to track that)
 			-----------------------------------------------------------------------------------------------------------------
 			if ((event == "SPELL_CAST_SUCCESS") and (cleuPrioCastedSpells[spellId])) then
-					local priority = LoseControlDB.priority.Trees --treated as priority buff (categoriesEnabled)
-					if (spellId == 47540) then --re-adjust spell Prio for if needed
-					priority = LoseControlDB.priority.Other --treated as priority buff (categoriesEnabled)
+
+					if cleuPrioCastedSpells[spellId].priority == nil then
+					priority = 0
+					else
+					priority = LoseControlDB.priority[cleuPrioCastedSpells[spellId].priority]
 					end
+	
 					------------------------------------------ARENA-------------------------------------------------------------------------------
 					if (sourceGUID == UnitGUID("arena1")) or (sourceGUID == UnitGUID("arena2")) or (sourceGUID == UnitGUID("arena3")) then
-					priority = LoseControlDB.priorityArena.Personal_Offensives --treated as priority buff (categoriesEnabled)
-						if (spellId == "XXXXX") then
-						priority = 0 --disables specific for arena units
-						end
-						if (spellId == 47540) then --re-adjust spell Prio for if needed
-						priority = LoseControlDB.priorityArena.Personal_Offensives --treated as priority buff (categoriesEnabled)
-						end
+					if cleuPrioCastedSpells[spellId].priorityArena == nil then
+					priority = 0
+					else
+					priority = LoseControlDB.durationTypeArena[cleuPrioCastedSpells[spellId].priorityArena]
 					end
+			  	end
 					--------------------------------------------------------------------------------------------------------------------------------
-				local duration = cleuPrioCastedSpells[spellId]
-				local expirationTime = GetTime() + duration
+				local duration = cleuPrioCastedSpells[spellId].duration
+				local expirationTime = GetTime() + cleuPrioCastedSpells[spellId].duration
 				local name, _, icon = GetSpellInfo(spellId)
 				if not InterruptAuras[sourceGUID]  then
 						InterruptAuras[sourceGUID] = {}
