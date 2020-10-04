@@ -105,17 +105,17 @@ local Masque = LibStub("Masque", true)
 -------------------------------------------------------------------------------
 -- Thanks to all the people on the Curse.com and WoWInterface forums who help keep this list up to date :)
 local cleuPrioCastedSpells = {
-	[47540]   = 60,
-	[605] =10,
-	[186263] =9,
+	[47540]   = 60, --Type Prio and line in code where its set
+	[605] = 10,
+	[186263] = 9,
 	[93402] = 3,
-	[8921] =6,
+	[8921] = 6,
 }
 
 local interruptsIds = {
 	[1766]   = 5,		-- Kick (Rogue)
 	[2139]   = 6,		-- Counterspell (Mage)
-	[6552]   = 4,		-- Pummel (Warrior)
+	[6552]   = 4,		-- Pummel (Warrior)1766
 	[13491]  = 5,		-- Pummel (Iron Knuckles Item)
 	[19647]  = 6,		-- Spell Lock (felhunter) (Warlock)
 	[29443]  = 10,		-- Counterspell (Clutch of Foresight)
@@ -134,6 +134,10 @@ local interruptsIds = {
 	[212619] = 6,		-- Call Felhunter (Warlock)
 	[217824] = 4,		-- Shield of Virtue (Protec Paladin)
 	[231665] = 3,		-- Avengers Shield (Paladin)
+}
+
+local spellIdsArena = {
+["Weakened Soul"] = "CC",
 }
 
 local spellIds = {
@@ -2823,7 +2827,7 @@ local DBdefaults = {
 			Friendly_Smoke_Bomb = 81,
 			AOE_Spell_Refections = 80,
 			Trees = 79,
-			Speed_Increases = 78,
+			Speed_Freedoms = 78,
 			Freedoms = 77,
 			Friendly_Defensives = 76,
 			Mana_Regen = 75,
@@ -2831,6 +2835,10 @@ local DBdefaults = {
 			Personal_Offensives = 73,
 			Peronsal_Defensives = 72,
 			Movable_Cast_Auras = 71,
+
+			Other = 70, --PVE only
+			PvE = 70, --PVE only
+
 			SnareSpecial = 70,
 			SnarePhysical70 = 69,
 			SnareMagical70 = 68,
@@ -2840,52 +2848,95 @@ local DBdefaults = {
 			SnarePhysical30 = 64,
 			SnareMagic30 = 63,
 			Snare = 62,
-			Other = 61,
-			PvE = 60,
+	},
+	durationType = {		-- higher numbers have more priority; 0 = disabled
+			CC = "New",
+			Silence = "New",
+			RootPhyiscal_Special = "New",
+			RootMagic_Special = "New",
+			Root = "New",
+			ImmunePlayer = "New",
+			Disarm_Warning = "New",
+			CC_Warning = "New",
+			Enemy_Smoke_Bomb = "New",
+			Stealth = "New",
+			Immune = "New",
+			ImmuneSpell = "New",
+			ImmunePhysical = "New",
+			AuraMastery_Cast_Auras = "New",
+			ROP_Vortex = "New",
+			Disarm = "New",
+			Haste_Reduction = "New",
+			Dmg_Hit_Reduction = "New",
+			Interrupt = "New",
+			AOE_DMG_Modifiers = "New",
+			Friendly_Smoke_Bomb = "New",
+			AOE_Spell_Refections = "New",
+			Trees = "New",
+			Speed_Freedoms = "New",
+			Freedoms = "New",
+			Friendly_Defensives = "New",
+			Mana_Regen = "New",
+			CC_Reduction = "New",
+			Personal_Offensives = "New",
+			Peronsal_Defensives = "New",
+			Movable_Cast_Auras = "New",
+
+			Other = "New",
+			PvE = "New",
+
+			SnareSpecial = "New",
+			SnarePhysical70 = "New",
+			SnareMagical70 = "New",
+			SnarePhysical50 = "High",
+			SnarePosion50 = "High",
+			SnareMagic50 = "High",
+			SnarePhysical30 = "High",
+			SnareMagic30 = "High",
+			Snare = "High",
+
 	},
 	priorityArena = {		-- higher numbers have more priority; 0 = disabled
-			CC = 100,
-			Silence = 99,
-			RootPhyiscal_Special = 98,
-			RootMagic_Special = 97,
-			Root = 96,
-			ImmunePlayer = 95,
-			Disarm_Warning = 94,
-			CC_Warning = 93,
-			Enemy_Smoke_Bomb = 92,
-			Stealth = 91,
-			Immune = 90,
-			ImmuneSpell = 89,
-			ImmunePhysical = 89,
-			AuraMastery_Cast_Auras = 88,
-			ROP_Vortex = 87,
-			Disarm = 86,
-			Haste_Reduction = 85,
-			Dmg_Hit_Reduction = 84,
-			Interrupt = 83,
-			AOE_DMG_Modifiers = 82,
-			Friendly_Smoke_Bomb = 81,
-			AOE_Spell_Refections = 80,
-			Trees = 79,
-			Speed_Increases = 78,
-			Freedoms = 77,
-			Friendly_Defensives = 76,
-			Mana_Regen = 75,
-			CC_Reduction = 74,
-			Personal_Offensives = 73,
-			Peronsal_Defensives = 72,
-			Movable_Cast_Auras = 71,
-			SnareSpecial = 70,
-			SnarePhysical70 = 69,
-			SnareMagical70 = 68,
-			SnarePhysical50 = 67,
-			SnarePosion50 = 66,
-			SnareMagic50 = 65,
-			SnarePhysical30 = 64,
-			SnareMagic30 = 63,
-			Snare = 62,
-			Other = 61,
-			PvE = 60,
+			Drink_Purge = 19,
+			Immune = 18,
+			CC = 17,
+			Silence = 16,
+			Interrupt = 15, -- Needs to be same
+			Special_High = 14,
+			Ranged_Major_OffenisiveCDs = 13,
+			Roots_90_Snares = 12,
+			Disarms = 11,
+			Melee_Major_OffenisiveCDs = 10,
+			Big_Defensive_CDs = 9,
+			Player_Party_OffensiveCDs = 8,
+			Small_Offenisive_CDs = 7,
+			Small_Defensive_CDs = 6,
+			Freedoms_Speed = 5,
+			Snares_WithCDs = 4,
+			Special_Low = 3,
+			Snares_Ranged_Spamable = 2,
+			Snares_Casted_Melee = 1,
+	},
+	durationTypeArena ={
+			Drink_Purge = "New",
+			Immune = "New",
+			CC = "New",
+			Silence = "New",
+			Interrupt = "New", -- Needs to be same
+			Special_High = "New",
+			Ranged_Major_OffenisiveCDs = "New",
+			Roots_90_Snares = "New",
+			Disarms = "New",
+			Melee_Major_OffenisiveCDs = "New",
+			Big_Defensive_CDs = "New",
+			Player_Party_OffensiveCDs = "New",
+			Small_Offenisive_CDs = "New",
+			Small_Defensive_CDs = "New",
+			Freedoms_Speed = "New",
+			Snares_WithCDs = "New",
+			Special_Low = "New",
+			Snares_Ranged_Spamable = "New",
+			Snares_Casted_Melee = "New",
 	},
 	frames = {
 		player = {
@@ -2917,7 +2968,7 @@ local DBdefaults = {
 						Friendly_Smoke_Bomb = true,
 						AOE_Spell_Refections = true,
 						Trees = true,
-						Speed_Increases = true,
+						Speed_Freedoms = true,
 						Freedoms = true,
 						Friendly_Defensives = true,
 						Mana_Regen = true,
@@ -2953,7 +3004,7 @@ local DBdefaults = {
 						Friendly_Smoke_Bomb = true,
 						AOE_Spell_Refections = true,
 						Trees = true,
-						Speed_Increases = true,
+						Speed_Freedoms = true,
 						Freedoms = true,
 						Friendly_Defensives = true,
 						Mana_Regen = true,
@@ -3000,7 +3051,7 @@ local DBdefaults = {
 						Friendly_Smoke_Bomb = true,
 						AOE_Spell_Refections = true,
 						Trees = true,
-						Speed_Increases = true,
+						Speed_Freedoms = true,
 						Freedoms = true,
 						Friendly_Defensives = true,
 						Mana_Regen = true,
@@ -3036,7 +3087,7 @@ local DBdefaults = {
 						Friendly_Smoke_Bomb = true,
 						AOE_Spell_Refections = true,
 						Trees = true,
-						Speed_Increases = true,
+						Speed_Freedoms = true,
 						Freedoms = true,
 						Friendly_Defensives = true,
 						Mana_Regen = true,
@@ -3061,10 +3112,74 @@ local DBdefaults = {
 			anchor = "Blizzard",
 			categoriesEnabled = {
 				buff = {
-					friendly = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true }
+					friendly = { CC = true,
+					Silence = true,
+					RootPhyiscal_Special = true,
+					RootMagic_Special = true,
+					Root = true,
+					ImmunePlayer = true,
+					Disarm_Warning = true,
+					CC_Warning = true,
+					Enemy_Smoke_Bomb = true,
+					Stealth = true, Immune = true,
+					ImmuneSpell = true,
+					ImmunePhysical = true,
+					AuraMastery_Cast_Auras = true,
+					ROP_Vortex = true ,
+					Disarm = true,
+					Haste_Reduction = true,
+					Dmg_Hit_Reduction = true,
+					AOE_DMG_Modifiers = true,
+					Friendly_Smoke_Bomb = true,
+					AOE_Spell_Refections = true,
+					Trees = true,
+					Speed_Freedoms = true,
+					Freedoms = true,
+					Friendly_Defensives = true,
+					Mana_Regen = true,
+					CC_Reduction = true,
+					Personal_Offensives = true,
+					Peronsal_Defensives = true,
+					Movable_Cast_Auras = true,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+					PvE = true,
+					Other = true,
+				 }
 				},
 				debuff = {
-					friendly = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true }
+					friendly = {CC = true,
+					Silence = true,
+					RootPhyiscal_Special = true,
+					RootMagic_Special = true,
+					Root = true,
+					ImmunePlayer = true,
+					Disarm_Warning = true,
+					CC_Warning = true,
+					Enemy_Smoke_Bomb = true,
+					Stealth = true, Immune = true,
+					ImmuneSpell = true,
+					ImmunePhysical = true,
+					AuraMastery_Cast_Auras = true,
+					ROP_Vortex = true ,
+					Disarm = true,
+					Haste_Reduction = true,
+					Dmg_Hit_Reduction = true,
+					AOE_DMG_Modifiers = true,
+					Friendly_Smoke_Bomb = true,
+					AOE_Spell_Refections = true,
+					Trees = true,
+					Speed_Freedoms = true,
+					Freedoms = true,
+					Friendly_Defensives = true,
+					Mana_Regen = true,
+					CC_Reduction = true,
+					Personal_Offensives = true,
+					Peronsal_Defensives = true,
+					Movable_Cast_Auras = true,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+					PvE = true,
+					Other = true,
+				}
 				},
 				interrupt = {
 					friendly = true
@@ -3078,12 +3193,152 @@ local DBdefaults = {
 			anchor = "Blizzard",
 			categoriesEnabled = {
 				buff = {
-					friendly = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true },
-					enemy    = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true }
+					friendly = {CC = true,
+					Silence = true,
+					RootPhyiscal_Special = true,
+					RootMagic_Special = true,
+					Root = true,
+					ImmunePlayer = true,
+					Disarm_Warning = true,
+					CC_Warning = true,
+					Enemy_Smoke_Bomb = true,
+					Stealth = true, Immune = true,
+					ImmuneSpell = true,
+					ImmunePhysical = true,
+					AuraMastery_Cast_Auras = true,
+					ROP_Vortex = true ,
+					Disarm = true,
+					Haste_Reduction = true,
+					Dmg_Hit_Reduction = true,
+					AOE_DMG_Modifiers = true,
+					Friendly_Smoke_Bomb = true,
+					AOE_Spell_Refections = true,
+					Trees = true,
+					Speed_Freedoms = true,
+					Freedoms = true,
+					Friendly_Defensives = true,
+					Mana_Regen = true,
+					CC_Reduction = true,
+					Personal_Offensives = true,
+					Peronsal_Defensives = true,
+					Movable_Cast_Auras = true,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+					PvE = true,
+					Other = true,
+
+					Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+					Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
+				 },
+					enemy    = { CC = true,
+					Silence = true,
+					RootPhyiscal_Special = true,
+					RootMagic_Special = true,
+					Root = true,
+					ImmunePlayer = true,
+					Disarm_Warning = true,
+					CC_Warning = true,
+					Enemy_Smoke_Bomb = true,
+					Stealth = true, Immune = true,
+					ImmuneSpell = true,
+					ImmunePhysical = true,
+					AuraMastery_Cast_Auras = true,
+					ROP_Vortex = true ,
+					Disarm = true,
+					Haste_Reduction = true,
+					Dmg_Hit_Reduction = true,
+					AOE_DMG_Modifiers = true,
+					Friendly_Smoke_Bomb = true,
+					AOE_Spell_Refections = true,
+					Trees = true,
+					Speed_Freedoms = true,
+					Freedoms = true,
+					Friendly_Defensives = true,
+					Mana_Regen = true,
+					CC_Reduction = true,
+					Personal_Offensives = true,
+					Peronsal_Defensives = true,
+					Movable_Cast_Auras = true,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+					PvE = true,
+					Other = true,
+
+					Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+					Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
+				 }
 				},
 				debuff = {
-					friendly = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true },
-					enemy    = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true }
+					friendly = { CC = true,
+					Silence = true,
+					RootPhyiscal_Special = true,
+					RootMagic_Special = true,
+					Root = true,
+					ImmunePlayer = true,
+					Disarm_Warning = true,
+					CC_Warning = true,
+					Enemy_Smoke_Bomb = true,
+					Stealth = true, Immune = true,
+					ImmuneSpell = true,
+					ImmunePhysical = true,
+					AuraMastery_Cast_Auras = true,
+					ROP_Vortex = true ,
+					Disarm = true,
+					Haste_Reduction = true,
+					Dmg_Hit_Reduction = true,
+					AOE_DMG_Modifiers = true,
+					Friendly_Smoke_Bomb = true,
+					AOE_Spell_Refections = true,
+					Trees = true,
+					Speed_Freedoms = true,
+					Freedoms = true,
+					Friendly_Defensives = true,
+					Mana_Regen = true,
+					CC_Reduction = true,
+					Personal_Offensives = true,
+					Peronsal_Defensives = true,
+					Movable_Cast_Auras = true,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+					PvE = true,
+					Other = true,
+
+					Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+					Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
+				 },
+					enemy    = { CC = true,
+					Silence = true,
+					RootPhyiscal_Special = true,
+					RootMagic_Special = true,
+					Root = true,
+					ImmunePlayer = true,
+					Disarm_Warning = true,
+					CC_Warning = true,
+					Enemy_Smoke_Bomb = true,
+					Stealth = true, Immune = true,
+					ImmuneSpell = true,
+					ImmunePhysical = true,
+					AuraMastery_Cast_Auras = true,
+					ROP_Vortex = true ,
+					Disarm = true,
+					Haste_Reduction = true,
+					Dmg_Hit_Reduction = true,
+					AOE_DMG_Modifiers = true,
+					Friendly_Smoke_Bomb = true,
+					AOE_Spell_Refections = true,
+					Trees = true,
+					Speed_Freedoms = true,
+					Freedoms = true,
+					Friendly_Defensives = true,
+					Mana_Regen = true,
+					CC_Reduction = true,
+					Personal_Offensives = true,
+					Peronsal_Defensives = true,
+					Movable_Cast_Auras = true,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+					PvE = true,
+					Other = true,
+
+					Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+					Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
+				}
 				},
 				interrupt = {
 					friendly = true,
@@ -3098,12 +3353,152 @@ local DBdefaults = {
 			anchor = "Blizzard",
 			categoriesEnabled = {
 				buff = {
-					friendly = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true },
-					enemy    = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true }
+					friendly = { CC = true,
+					Silence = true,
+					RootPhyiscal_Special = true,
+					RootMagic_Special = true,
+					Root = true,
+					ImmunePlayer = true,
+					Disarm_Warning = true,
+					CC_Warning = true,
+					Enemy_Smoke_Bomb = true,
+					Stealth = true, Immune = true,
+					ImmuneSpell = true,
+					ImmunePhysical = true,
+					AuraMastery_Cast_Auras = true,
+					ROP_Vortex = true ,
+					Disarm = true,
+					Haste_Reduction = true,
+					Dmg_Hit_Reduction = true,
+					AOE_DMG_Modifiers = true,
+					Friendly_Smoke_Bomb = true,
+					AOE_Spell_Refections = true,
+					Trees = true,
+					Speed_Freedoms = true,
+					Freedoms = true,
+					Friendly_Defensives = true,
+					Mana_Regen = true,
+					CC_Reduction = true,
+					Personal_Offensives = true,
+					Peronsal_Defensives = true,
+					Movable_Cast_Auras = true,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+					PvE = true,
+					Other = true,
+
+					Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+					Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
+				 },
+					enemy    = { CC = true,
+					Silence = true,
+					RootPhyiscal_Special = true,
+					RootMagic_Special = true,
+					Root = true,
+					ImmunePlayer = true,
+					Disarm_Warning = true,
+					CC_Warning = true,
+					Enemy_Smoke_Bomb = true,
+					Stealth = true, Immune = true,
+					ImmuneSpell = true,
+					ImmunePhysical = true,
+					AuraMastery_Cast_Auras = true,
+					ROP_Vortex = true ,
+					Disarm = true,
+					Haste_Reduction = true,
+					Dmg_Hit_Reduction = true,
+					AOE_DMG_Modifiers = true,
+					Friendly_Smoke_Bomb = true,
+					AOE_Spell_Refections = true,
+					Trees = true,
+					Speed_Freedoms = true,
+					Freedoms = true,
+					Friendly_Defensives = true,
+					Mana_Regen = true,
+					CC_Reduction = true,
+					Personal_Offensives = true,
+					Peronsal_Defensives = true,
+					Movable_Cast_Auras = true,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+					PvE = true,
+					Other = true,
+
+					Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+					Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
+				}
 				},
 				debuff = {
-					friendly = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true },
-					enemy    = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true }
+					friendly = {CC = true,
+					Silence = true,
+					RootPhyiscal_Special = true,
+					RootMagic_Special = true,
+					Root = true,
+					ImmunePlayer = true,
+					Disarm_Warning = true,
+					CC_Warning = true,
+					Enemy_Smoke_Bomb = true,
+					Stealth = true, Immune = true,
+					ImmuneSpell = true,
+					ImmunePhysical = true,
+					AuraMastery_Cast_Auras = true,
+					ROP_Vortex = true ,
+					Disarm = true,
+					Haste_Reduction = true,
+					Dmg_Hit_Reduction = true,
+					AOE_DMG_Modifiers = true,
+					Friendly_Smoke_Bomb = true,
+					AOE_Spell_Refections = true,
+					Trees = true,
+					Speed_Freedoms = true,
+					Freedoms = true,
+					Friendly_Defensives = true,
+					Mana_Regen = true,
+					CC_Reduction = true,
+					Personal_Offensives = true,
+					Peronsal_Defensives = true,
+					Movable_Cast_Auras = true,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+					PvE = true,
+					Other = true,
+
+					Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+					Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
+				 },
+					enemy    = { CC = true,
+					Silence = true,
+					RootPhyiscal_Special = true,
+					RootMagic_Special = true,
+					Root = true,
+					ImmunePlayer = true,
+					Disarm_Warning = true,
+					CC_Warning = true,
+					Enemy_Smoke_Bomb = true,
+					Stealth = true, Immune = true,
+					ImmuneSpell = true,
+					ImmunePhysical = true,
+					AuraMastery_Cast_Auras = true,
+					ROP_Vortex = true ,
+					Disarm = true,
+					Haste_Reduction = true,
+					Dmg_Hit_Reduction = true,
+					AOE_DMG_Modifiers = true,
+					Friendly_Smoke_Bomb = true,
+					AOE_Spell_Refections = true,
+					Trees = true,
+					Speed_Freedoms = true,
+					Freedoms = true,
+					Friendly_Defensives = true,
+					Mana_Regen = true,
+					CC_Reduction = true,
+					Personal_Offensives = true,
+					Peronsal_Defensives = true,
+					Movable_Cast_Auras = true,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+					PvE = true,
+					Other = true,
+
+					Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+					Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
+				}
 				},
 				interrupt = {
 					friendly = true,
@@ -3118,12 +3513,152 @@ local DBdefaults = {
 			anchor = "Blizzard",
 			categoriesEnabled = {
 				buff = {
-					friendly = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true },
-					enemy    = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true }
+					friendly = { CC = true,
+					Silence = true,
+					RootPhyiscal_Special = true,
+					RootMagic_Special = true,
+					Root = true,
+					ImmunePlayer = true,
+					Disarm_Warning = true,
+					CC_Warning = true,
+					Enemy_Smoke_Bomb = true,
+					Stealth = true, Immune = true,
+					ImmuneSpell = true,
+					ImmunePhysical = true,
+					AuraMastery_Cast_Auras = true,
+					ROP_Vortex = true ,
+					Disarm = true,
+					Haste_Reduction = true,
+					Dmg_Hit_Reduction = true,
+					AOE_DMG_Modifiers = true,
+					Friendly_Smoke_Bomb = true,
+					AOE_Spell_Refections = true,
+					Trees = true,
+					Speed_Freedoms = true,
+					Freedoms = true,
+					Friendly_Defensives = true,
+					Mana_Regen = true,
+					CC_Reduction = true,
+					Personal_Offensives = true,
+					Peronsal_Defensives = true,
+					Movable_Cast_Auras = true,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+					PvE = true,
+					Other = true,
+
+					Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+					Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
+				 },
+					enemy    = { CC = true,
+					Silence = true,
+					RootPhyiscal_Special = true,
+					RootMagic_Special = true,
+					Root = true,
+					ImmunePlayer = true,
+					Disarm_Warning = true,
+					CC_Warning = true,
+					Enemy_Smoke_Bomb = true,
+					Stealth = true, Immune = true,
+					ImmuneSpell = true,
+					ImmunePhysical = true,
+					AuraMastery_Cast_Auras = true,
+					ROP_Vortex = true ,
+					Disarm = true,
+					Haste_Reduction = true,
+					Dmg_Hit_Reduction = true,
+					AOE_DMG_Modifiers = true,
+					Friendly_Smoke_Bomb = true,
+					AOE_Spell_Refections = true,
+					Trees = true,
+					Speed_Freedoms = true,
+					Freedoms = true,
+					Friendly_Defensives = true,
+					Mana_Regen = true,
+					CC_Reduction = true,
+					Personal_Offensives = true,
+					Peronsal_Defensives = true,
+					Movable_Cast_Auras = true,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+					PvE = true,
+					Other = true,
+
+					Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+					Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
+				 }
 				},
 				debuff = {
-					friendly = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true },
-					enemy    = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true }
+					friendly = {CC = true,
+					Silence = true,
+					RootPhyiscal_Special = true,
+					RootMagic_Special = true,
+					Root = true,
+					ImmunePlayer = true,
+					Disarm_Warning = true,
+					CC_Warning = true,
+					Enemy_Smoke_Bomb = true,
+					Stealth = true, Immune = true,
+					ImmuneSpell = true,
+					ImmunePhysical = true,
+					AuraMastery_Cast_Auras = true,
+					ROP_Vortex = true ,
+					Disarm = true,
+					Haste_Reduction = true,
+					Dmg_Hit_Reduction = true,
+					AOE_DMG_Modifiers = true,
+					Friendly_Smoke_Bomb = true,
+					AOE_Spell_Refections = true,
+					Trees = true,
+					Speed_Freedoms = true,
+					Freedoms = true,
+					Friendly_Defensives = true,
+					Mana_Regen = true,
+					CC_Reduction = true,
+					Personal_Offensives = true,
+					Peronsal_Defensives = true,
+					Movable_Cast_Auras = true,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+					PvE = true,
+					Other = true,
+
+					Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+					Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
+				},
+					enemy    = { CC = true,
+					Silence = true,
+					RootPhyiscal_Special = true,
+					RootMagic_Special = true,
+					Root = true,
+					ImmunePlayer = true,
+					Disarm_Warning = true,
+					CC_Warning = true,
+					Enemy_Smoke_Bomb = true,
+					Stealth = true, Immune = true,
+					ImmuneSpell = true,
+					ImmunePhysical = true,
+					AuraMastery_Cast_Auras = true,
+					ROP_Vortex = true ,
+					Disarm = true,
+					Haste_Reduction = true,
+					Dmg_Hit_Reduction = true,
+					AOE_DMG_Modifiers = true,
+					Friendly_Smoke_Bomb = true,
+					AOE_Spell_Refections = true,
+					Trees = true,
+					Speed_Freedoms = true,
+					Freedoms = true,
+					Friendly_Defensives = true,
+					Mana_Regen = true,
+					CC_Reduction = true,
+					Personal_Offensives = true,
+					Peronsal_Defensives = true,
+					Movable_Cast_Auras = true,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+					PvE = true,
+					Other = true,
+
+					Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+					Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
+				 }
 				},
 				interrupt = {
 					friendly = true,
@@ -3138,12 +3673,152 @@ local DBdefaults = {
 			anchor = "Blizzard",
 			categoriesEnabled = {
 				buff = {
-					friendly = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true },
-					enemy    = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true }
+					friendly = {CC = true,
+					Silence = true,
+					RootPhyiscal_Special = true,
+					RootMagic_Special = true,
+					Root = true,
+					ImmunePlayer = true,
+					Disarm_Warning = true,
+					CC_Warning = true,
+					Enemy_Smoke_Bomb = true,
+					Stealth = true, Immune = true,
+					ImmuneSpell = true,
+					ImmunePhysical = true,
+					AuraMastery_Cast_Auras = true,
+					ROP_Vortex = true ,
+					Disarm = true,
+					Haste_Reduction = true,
+					Dmg_Hit_Reduction = true,
+					AOE_DMG_Modifiers = true,
+					Friendly_Smoke_Bomb = true,
+					AOE_Spell_Refections = true,
+					Trees = true,
+					Speed_Freedoms = true,
+					Freedoms = true,
+					Friendly_Defensives = true,
+					Mana_Regen = true,
+					CC_Reduction = true,
+					Personal_Offensives = true,
+					Peronsal_Defensives = true,
+					Movable_Cast_Auras = true,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+					PvE = true,
+					Other = true,
+
+					Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+					Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
+				},
+					enemy    = { CC = true,
+					Silence = true,
+					RootPhyiscal_Special = true,
+					RootMagic_Special = true,
+					Root = true,
+					ImmunePlayer = true,
+					Disarm_Warning = true,
+					CC_Warning = true,
+					Enemy_Smoke_Bomb = true,
+					Stealth = true, Immune = true,
+					ImmuneSpell = true,
+					ImmunePhysical = true,
+					AuraMastery_Cast_Auras = true,
+					ROP_Vortex = true ,
+					Disarm = true,
+					Haste_Reduction = true,
+					Dmg_Hit_Reduction = true,
+					AOE_DMG_Modifiers = true,
+					Friendly_Smoke_Bomb = true,
+					AOE_Spell_Refections = true,
+					Trees = true,
+					Speed_Freedoms = true,
+					Freedoms = true,
+					Friendly_Defensives = true,
+					Mana_Regen = true,
+					CC_Reduction = true,
+					Personal_Offensives = true,
+					Peronsal_Defensives = true,
+					Movable_Cast_Auras = true,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+					PvE = true,
+					Other = true,
+
+					Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+					Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
+				 }
 				},
 				debuff = {
-					friendly = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true },
-					enemy    = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true }
+					friendly = { CC = true,
+					Silence = true,
+					RootPhyiscal_Special = true,
+					RootMagic_Special = true,
+					Root = true,
+					ImmunePlayer = true,
+					Disarm_Warning = true,
+					CC_Warning = true,
+					Enemy_Smoke_Bomb = true,
+					Stealth = true, Immune = true,
+					ImmuneSpell = true,
+					ImmunePhysical = true,
+					AuraMastery_Cast_Auras = true,
+					ROP_Vortex = true ,
+					Disarm = true,
+					Haste_Reduction = true,
+					Dmg_Hit_Reduction = true,
+					AOE_DMG_Modifiers = true,
+					Friendly_Smoke_Bomb = true,
+					AOE_Spell_Refections = true,
+					Trees = true,
+					Speed_Freedoms = true,
+					Freedoms = true,
+					Friendly_Defensives = true,
+					Mana_Regen = true,
+					CC_Reduction = true,
+					Personal_Offensives = true,
+					Peronsal_Defensives = true,
+					Movable_Cast_Auras = true,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+					PvE = true,
+					Other = true,
+
+					Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+					Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
+				},
+					enemy    = { CC = true,
+					Silence = true,
+					RootPhyiscal_Special = true,
+					RootMagic_Special = true,
+					Root = true,
+					ImmunePlayer = true,
+					Disarm_Warning = true,
+					CC_Warning = true,
+					Enemy_Smoke_Bomb = true,
+					Stealth = true, Immune = true,
+					ImmuneSpell = true,
+					ImmunePhysical = true,
+					AuraMastery_Cast_Auras = true,
+					ROP_Vortex = true ,
+					Disarm = true,
+					Haste_Reduction = true,
+					Dmg_Hit_Reduction = true,
+					AOE_DMG_Modifiers = true,
+					Friendly_Smoke_Bomb = true,
+					AOE_Spell_Refections = true,
+					Trees = true,
+					Speed_Freedoms = true,
+					Freedoms = true,
+					Friendly_Defensives = true,
+					Mana_Regen = true,
+					CC_Reduction = true,
+					Personal_Offensives = true,
+					Peronsal_Defensives = true,
+					Movable_Cast_Auras = true,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+					PvE = true,
+					Other = true,
+
+					Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+					Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
+				 }
 				},
 				interrupt = {
 					friendly = true,
@@ -3181,7 +3856,7 @@ local DBdefaults = {
 						 Friendly_Smoke_Bomb = true,
 						 AOE_Spell_Refections = true,
 						 Trees = true,
-						 Speed_Increases = true,
+						 Speed_Freedoms = true,
 						 Freedoms = true,
 						 Friendly_Defensives = false,
 						 Mana_Regen = false,
@@ -3218,7 +3893,7 @@ local DBdefaults = {
 							Friendly_Smoke_Bomb = true,
 							AOE_Spell_Refections = true,
 							Trees = true,
-							Speed_Increases = true,
+							Speed_Freedoms = true,
 							Freedoms = true,
 							Friendly_Defensives = false,
 							Mana_Regen = false,
@@ -3243,14 +3918,78 @@ local DBdefaults = {
 			anchor = "None",
 			categoriesEnabled = {
 				buff = {
-					friendly = { CC = true,  Silence = true, RootPhyiscal_Special = true, RootMagic_Special = true, Root = true,  ImmunePlayer = false,  Disarm_Warning = false,  CC_Warning = false, Enemy_Smoke_Bomb = true,  Stealth = false, Immune = true, ImmuneSpell = true, ImmunePhysical = true, AuraMastery_Cast_Auras = false,
-					ROP_Vortex = true , Disarm = true, Haste_Reduction = true, Dmg_Hit_Reduction = true, AOE_DMG_Modifiers = true, Friendly_Smoke_Bomb = true, AOE_Spell_Refections = true, Trees = true, Speed_Increases = true, Freedoms = true, Friendly_Defensives = false, Mana_Regen = false, CC_Reduction = true, Personal_Offensives = false, Peronsal_Defensives = false, Movable_Cast_Auras = false,
-					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true, PvE = true, Other = true }
+					friendly = {
+						 CC = true,
+						 Silence = true,
+						 RootPhyiscal_Special = true,
+						 RootMagic_Special = true,
+						 Root = true,
+						 ImmunePlayer = false,
+						 Disarm_Warning = false,
+						 CC_Warning = false,
+						 Enemy_Smoke_Bomb = true,
+						 Stealth = false,
+						 Immune = true,
+						 ImmuneSpell = true,
+						 ImmunePhysical = true,
+						 AuraMastery_Cast_Auras = false,
+					   ROP_Vortex = true,
+						 Disarm = true,
+						 Haste_Reduction = true,
+						 Dmg_Hit_Reduction = true,
+						 AOE_DMG_Modifiers = true,
+						 Friendly_Smoke_Bomb = true,
+						 AOE_Spell_Refections = true,
+						 Trees = true,
+						 Speed_Freedoms = true,
+						 Freedoms = true,
+						 Friendly_Defensives = false,
+						 Mana_Regen = false,
+						 CC_Reduction = true,
+						 Personal_Offensives = false,
+						 Peronsal_Defensives = false,
+						 Movable_Cast_Auras = false,
+					   SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+						 PvE = true,
+						 Other = true,
+					 }
 				},
 					debuff ={
-						friendly = { CC = true,  Silence = true, RootPhyiscal_Special = true, RootMagic_Special = true, Root = true,  ImmunePlayer = false,  Disarm_Warning = false,  CC_Warning = false, Enemy_Smoke_Bomb = true,  Stealth = false, Immune = true, ImmuneSpell = true, ImmunePhysical = true, AuraMastery_Cast_Auras = false,
-						ROP_Vortex = true , Disarm = true, Haste_Reduction = true, Dmg_Hit_Reduction = true, AOE_DMG_Modifiers = true, Friendly_Smoke_Bomb = true, AOE_Spell_Refections = true, Trees = true, Speed_Increases = true, Freedoms = true, Friendly_Defensives = false, Mana_Regen = false, CC_Reduction = true, Personal_Offensives = false, Peronsal_Defensives = false, Movable_Cast_Auras = false,
-						SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true, PvE = true, Other = true }
+						friendly = {
+							CC = true,
+							Silence = true,
+							RootPhyiscal_Special = true,
+							RootMagic_Special = true,
+							Root = true,
+							ImmunePlayer = false,
+							Disarm_Warning = false,
+							CC_Warning = false,
+							Enemy_Smoke_Bomb = true,
+							Stealth = false,
+							Immune = true,
+							ImmuneSpell = true,
+							ImmunePhysical = true,
+							AuraMastery_Cast_Auras = false,
+							ROP_Vortex = true,
+							Disarm = true,
+							Haste_Reduction = true,
+							Dmg_Hit_Reduction = true,
+							AOE_DMG_Modifiers = true,
+							Friendly_Smoke_Bomb = true,
+							AOE_Spell_Refections = true,
+							Trees = true,
+							Speed_Freedoms = true,
+							Freedoms = true,
+							Friendly_Defensives = false,
+							Mana_Regen = false,
+							CC_Reduction = true,
+							Personal_Offensives = false,
+							Peronsal_Defensives = false,
+							Movable_Cast_Auras = false,
+							SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+							PvE = true,
+							Other = true,
+						}
 			},
 				interrupt = {
 					friendly = true
@@ -3264,14 +4003,78 @@ local DBdefaults = {
 			anchor = "None",
 			categoriesEnabled = {
 				buff = {
-					friendly = { CC = true,  Silence = true, RootPhyiscal_Special = true, RootMagic_Special = true, Root = true,  ImmunePlayer = false,  Disarm_Warning = false,  CC_Warning = false, Enemy_Smoke_Bomb = true,  Stealth = false, Immune = true, ImmuneSpell = true, ImmunePhysical = true, AuraMastery_Cast_Auras = false,
-					ROP_Vortex = true , Disarm = true, Haste_Reduction = true, Dmg_Hit_Reduction = true, AOE_DMG_Modifiers = true, Friendly_Smoke_Bomb = true, AOE_Spell_Refections = true, Trees = true, Speed_Increases = true, Freedoms = true, Friendly_Defensives = false, Mana_Regen = false, CC_Reduction = true, Personal_Offensives = false, Peronsal_Defensives = false, Movable_Cast_Auras = false,
-					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true, PvE = true, Other = true }
+					friendly = {
+						 CC = true,
+						 Silence = true,
+						 RootPhyiscal_Special = true,
+						 RootMagic_Special = true,
+						 Root = true,
+						 ImmunePlayer = false,
+						 Disarm_Warning = false,
+						 CC_Warning = false,
+						 Enemy_Smoke_Bomb = true,
+						 Stealth = false,
+						 Immune = true,
+						 ImmuneSpell = true,
+						 ImmunePhysical = true,
+						 AuraMastery_Cast_Auras = false,
+					   ROP_Vortex = true,
+						 Disarm = true,
+						 Haste_Reduction = true,
+						 Dmg_Hit_Reduction = true,
+						 AOE_DMG_Modifiers = true,
+						 Friendly_Smoke_Bomb = true,
+						 AOE_Spell_Refections = true,
+						 Trees = true,
+						 Speed_Freedoms = true,
+						 Freedoms = true,
+						 Friendly_Defensives = false,
+						 Mana_Regen = false,
+						 CC_Reduction = true,
+						 Personal_Offensives = false,
+						 Peronsal_Defensives = false,
+						 Movable_Cast_Auras = false,
+					   SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+						 PvE = true,
+						 Other = true,
+					 }
 				},
 					debuff ={
-						friendly = { CC = true,  Silence = true, RootPhyiscal_Special = true, RootMagic_Special = true, Root = true,  ImmunePlayer = false,  Disarm_Warning = false,  CC_Warning = false, Enemy_Smoke_Bomb = true,  Stealth = false, Immune = true, ImmuneSpell = true, ImmunePhysical = true, AuraMastery_Cast_Auras = false,
-						ROP_Vortex = true , Disarm = true, Haste_Reduction = true, Dmg_Hit_Reduction = true, AOE_DMG_Modifiers = true, Friendly_Smoke_Bomb = true, AOE_Spell_Refections = true, Trees = true, Speed_Increases = true, Freedoms = true, Friendly_Defensives = false, Mana_Regen = false, CC_Reduction = true, Personal_Offensives = false, Peronsal_Defensives = false, Movable_Cast_Auras = false,
-						SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true, PvE = true, Other = true }
+						friendly = {
+							CC = true,
+							Silence = true,
+							RootPhyiscal_Special = true,
+							RootMagic_Special = true,
+							Root = true,
+							ImmunePlayer = false,
+							Disarm_Warning = false,
+							CC_Warning = false,
+							Enemy_Smoke_Bomb = true,
+							Stealth = false,
+							Immune = true,
+							ImmuneSpell = true,
+							ImmunePhysical = true,
+							AuraMastery_Cast_Auras = false,
+							ROP_Vortex = true,
+							Disarm = true,
+							Haste_Reduction = true,
+							Dmg_Hit_Reduction = true,
+							AOE_DMG_Modifiers = true,
+							Friendly_Smoke_Bomb = true,
+							AOE_Spell_Refections = true,
+							Trees = true,
+							Speed_Freedoms = true,
+							Freedoms = true,
+							Friendly_Defensives = false,
+							Mana_Regen = false,
+							CC_Reduction = true,
+							Personal_Offensives = false,
+							Peronsal_Defensives = false,
+							Movable_Cast_Auras = false,
+							SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+							PvE = true,
+							Other = true,
+						}
 			},
 				interrupt = {
 					friendly = true
@@ -3285,14 +4088,78 @@ local DBdefaults = {
 			anchor = "None",
 			categoriesEnabled = {
 				buff = {
-					friendly = { CC = true,  Silence = true, RootPhyiscal_Special = true, RootMagic_Special = true, Root = true,  ImmunePlayer = false,  Disarm_Warning = false,  CC_Warning = false, Enemy_Smoke_Bomb = true,  Stealth = false, Immune = true, ImmuneSpell = true, ImmunePhysical = true, AuraMastery_Cast_Auras = false,
-					ROP_Vortex = true , Disarm = true, Haste_Reduction = true, Dmg_Hit_Reduction = true, AOE_DMG_Modifiers = true, Friendly_Smoke_Bomb = true, AOE_Spell_Refections = true, Trees = true, Speed_Increases = true, Freedoms = true, Friendly_Defensives = false, Mana_Regen = false, CC_Reduction = true, Personal_Offensives = false, Peronsal_Defensives = false, Movable_Cast_Auras = false,
-					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true, PvE = true, Other = true }
+					friendly = {
+						 CC = true,
+						 Silence = true,
+						 RootPhyiscal_Special = true,
+						 RootMagic_Special = true,
+						 Root = true,
+						 ImmunePlayer = false,
+						 Disarm_Warning = false,
+						 CC_Warning = false,
+						 Enemy_Smoke_Bomb = true,
+						 Stealth = false,
+						 Immune = true,
+						 ImmuneSpell = true,
+						 ImmunePhysical = true,
+						 AuraMastery_Cast_Auras = false,
+					   ROP_Vortex = true,
+						 Disarm = true,
+						 Haste_Reduction = true,
+						 Dmg_Hit_Reduction = true,
+						 AOE_DMG_Modifiers = true,
+						 Friendly_Smoke_Bomb = true,
+						 AOE_Spell_Refections = true,
+						 Trees = true,
+						 Speed_Freedoms = true,
+						 Freedoms = true,
+						 Friendly_Defensives = false,
+						 Mana_Regen = false,
+						 CC_Reduction = true,
+						 Personal_Offensives = false,
+						 Peronsal_Defensives = false,
+						 Movable_Cast_Auras = false,
+					   SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+						 PvE = true,
+						 Other = true,
+					 }
 				},
 					debuff ={
-						friendly = { CC = true,  Silence = true, RootPhyiscal_Special = true, RootMagic_Special = true, Root = true,  ImmunePlayer = false,  Disarm_Warning = false,  CC_Warning = false, Enemy_Smoke_Bomb = true,  Stealth = false, Immune = true, ImmuneSpell = true, ImmunePhysical = true, AuraMastery_Cast_Auras = false,
-						ROP_Vortex = true , Disarm = true, Haste_Reduction = true, Dmg_Hit_Reduction = true, AOE_DMG_Modifiers = true, Friendly_Smoke_Bomb = true, AOE_Spell_Refections = true, Trees = true, Speed_Increases = true, Freedoms = true, Friendly_Defensives = false, Mana_Regen = false, CC_Reduction = true, Personal_Offensives = false, Peronsal_Defensives = false, Movable_Cast_Auras = false,
-						SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true, PvE = true, Other = true }
+						friendly = {
+							CC = true,
+							Silence = true,
+							RootPhyiscal_Special = true,
+							RootMagic_Special = true,
+							Root = true,
+							ImmunePlayer = false,
+							Disarm_Warning = false,
+							CC_Warning = false,
+							Enemy_Smoke_Bomb = true,
+							Stealth = false,
+							Immune = true,
+							ImmuneSpell = true,
+							ImmunePhysical = true,
+							AuraMastery_Cast_Auras = false,
+							ROP_Vortex = true,
+							Disarm = true,
+							Haste_Reduction = true,
+							Dmg_Hit_Reduction = true,
+							AOE_DMG_Modifiers = true,
+							Friendly_Smoke_Bomb = true,
+							AOE_Spell_Refections = true,
+							Trees = true,
+							Speed_Freedoms = true,
+							Freedoms = true,
+							Friendly_Defensives = false,
+							Mana_Regen = false,
+							CC_Reduction = true,
+							Personal_Offensives = false,
+							Peronsal_Defensives = false,
+							Movable_Cast_Auras = false,
+							SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+							PvE = true,
+							Other = true,
+						}
 			},
 				interrupt = {
 					friendly = true
@@ -3306,20 +4173,24 @@ local DBdefaults = {
 			anchor = "None",
 			categoriesEnabled = {
 				buff = {
-					friendly = {CC = true,  Silence = true, RootPhyiscal_Special = true, RootMagic_Special = true, Root = true,  ImmunePlayer = false,  Disarm_Warning = false,  CC_Warning = false, Enemy_Smoke_Bomb = true,  Stealth = true, Immune = true, ImmuneSpell = true, ImmunePhysical = true, AuraMastery_Cast_Auras = false,
-					ROP_Vortex = true , Disarm = true, Haste_Reduction = true, Dmg_Hit_Reduction = true, AOE_DMG_Modifiers = true, Friendly_Smoke_Bomb = true, AOE_Spell_Refections = true, Trees = true, Speed_Increases = true, Freedoms = true, Friendly_Defensives = false, Mana_Regen = false, CC_Reduction = true, Personal_Offensives = false, Peronsal_Defensives = false, Movable_Cast_Auras = false,
-					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true, PvE = true, Other = true },
-					enemy    = { CC = true,  Silence = true, RootPhyiscal_Special = true, RootMagic_Special = true, Root = true,  ImmunePlayer = false,  Disarm_Warning = false,  CC_Warning = false, Enemy_Smoke_Bomb = true,  Stealth = true, Immune = true, ImmuneSpell = true, ImmunePhysical = true, AuraMastery_Cast_Auras = false,
-					ROP_Vortex = true , Disarm = true, Haste_Reduction = true, Dmg_Hit_Reduction = true, AOE_DMG_Modifiers = true, Friendly_Smoke_Bomb = true, AOE_Spell_Refections = true, Trees = true, Speed_Increases = true, Freedoms = true, Friendly_Defensives = false, Mana_Regen = false, CC_Reduction = true, Personal_Offensives = false, Peronsal_Defensives = false, Movable_Cast_Auras = false,
-					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true, PvE = true, Other = true }
+					friendly = {
+						Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+						Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
+						},
+					enemy    = {
+						Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+						Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
+				}
 				},
 				debuff = {
-					friendly = {CC = true,  Silence = true, RootPhyiscal_Special = true, RootMagic_Special = true, Root = true,  ImmunePlayer = false,  Disarm_Warning = false,  CC_Warning = false, Enemy_Smoke_Bomb = true,  Stealth = true, Immune = true, ImmuneSpell = true, ImmunePhysical = true, AuraMastery_Cast_Auras = false,
-					ROP_Vortex = true , Disarm = true, Haste_Reduction = true, Dmg_Hit_Reduction = true, AOE_DMG_Modifiers = true, Friendly_Smoke_Bomb = true, AOE_Spell_Refections = true, Trees = true, Speed_Increases = true, Freedoms = true, Friendly_Defensives = false, Mana_Regen = false, CC_Reduction = true, Personal_Offensives = false, Peronsal_Defensives = false, Movable_Cast_Auras = false,
-					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true, PvE = true, Other = true},
-					enemy    = {CC = true,  Silence = true, RootPhyiscal_Special = true, RootMagic_Special = true, Root = true,  ImmunePlayer = false,  Disarm_Warning = false,  CC_Warning = false, Enemy_Smoke_Bomb = true,  Stealth = true, Immune = true, ImmuneSpell = true, ImmunePhysical = true, AuraMastery_Cast_Auras = false,
-					ROP_Vortex = true , Disarm = true, Haste_Reduction = true, Dmg_Hit_Reduction = true, AOE_DMG_Modifiers = true, Friendly_Smoke_Bomb = true, AOE_Spell_Refections = true, Trees = true, Speed_Increases = true, Freedoms = true, Friendly_Defensives = false, Mana_Regen = false, CC_Reduction = true, Personal_Offensives = false, Peronsal_Defensives = false, Movable_Cast_Auras = false,
-					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true, PvE = true, Other = true}
+					friendly = {
+						Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+						Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
+				},
+					enemy    = {
+						Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+						Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
+				}
 				},
 				interrupt = {
 					friendly = true,
@@ -3334,20 +4205,24 @@ local DBdefaults = {
 			anchor = "None",
 			categoriesEnabled = {
 				buff = {
-					friendly = {CC = true,  Silence = true, RootPhyiscal_Special = true, RootMagic_Special = true, Root = true,  ImmunePlayer = false,  Disarm_Warning = false,  CC_Warning = false, Enemy_Smoke_Bomb = true,  Stealth = true, Immune = true, ImmuneSpell = true, ImmunePhysical = true, AuraMastery_Cast_Auras = false,
-					ROP_Vortex = true , Disarm = true, Haste_Reduction = true, Dmg_Hit_Reduction = true, AOE_DMG_Modifiers = true, Friendly_Smoke_Bomb = true, AOE_Spell_Refections = true, Trees = true, Speed_Increases = true, Freedoms = true, Friendly_Defensives = false, Mana_Regen = false, CC_Reduction = true, Personal_Offensives = false, Peronsal_Defensives = false, Movable_Cast_Auras = false,
-					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true, PvE = true, Other = true },
-					enemy    = { CC = true,  Silence = true, RootPhyiscal_Special = true, RootMagic_Special = true, Root = true,  ImmunePlayer = false,  Disarm_Warning = false,  CC_Warning = false, Enemy_Smoke_Bomb = true,  Stealth = true, Immune = true, ImmuneSpell = true, ImmunePhysical = true, AuraMastery_Cast_Auras = false,
-					ROP_Vortex = true , Disarm = true, Haste_Reduction = true, Dmg_Hit_Reduction = true, AOE_DMG_Modifiers = true, Friendly_Smoke_Bomb = true, AOE_Spell_Refections = true, Trees = true, Speed_Increases = true, Freedoms = true, Friendly_Defensives = false, Mana_Regen = false, CC_Reduction = true, Personal_Offensives = false, Peronsal_Defensives = false, Movable_Cast_Auras = false,
-					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true, PvE = true, Other = true }
+					friendly = {
+						Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+						Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
+						},
+					enemy    = {
+						Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+						Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
+				}
 				},
 				debuff = {
-					friendly = {CC = true,  Silence = true, RootPhyiscal_Special = true, RootMagic_Special = true, Root = true,  ImmunePlayer = false,  Disarm_Warning = false,  CC_Warning = false, Enemy_Smoke_Bomb = true,  Stealth = true, Immune = true, ImmuneSpell = true, ImmunePhysical = true, AuraMastery_Cast_Auras = false,
-					ROP_Vortex = true , Disarm = true, Haste_Reduction = true, Dmg_Hit_Reduction = true, AOE_DMG_Modifiers = true, Friendly_Smoke_Bomb = true, AOE_Spell_Refections = true, Trees = true, Speed_Increases = true, Freedoms = true, Friendly_Defensives = false, Mana_Regen = false, CC_Reduction = true, Personal_Offensives = false, Peronsal_Defensives = false, Movable_Cast_Auras = false,
-					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true, PvE = true, Other = true},
-					enemy    = {CC = true,  Silence = true, RootPhyiscal_Special = true, RootMagic_Special = true, Root = true,  ImmunePlayer = false,  Disarm_Warning = false,  CC_Warning = false, Enemy_Smoke_Bomb = true,  Stealth = true, Immune = true, ImmuneSpell = true, ImmunePhysical = true, AuraMastery_Cast_Auras = false,
-					ROP_Vortex = true , Disarm = true, Haste_Reduction = true, Dmg_Hit_Reduction = true, AOE_DMG_Modifiers = true, Friendly_Smoke_Bomb = true, AOE_Spell_Refections = true, Trees = true, Speed_Increases = true, Freedoms = true, Friendly_Defensives = false, Mana_Regen = false, CC_Reduction = true, Personal_Offensives = false, Peronsal_Defensives = false, Movable_Cast_Auras = false,
-					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true, PvE = true, Other = true}
+					friendly = {
+						Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+						Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
+				},
+					enemy    = {
+						Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+						Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
+				}
 				},
 				interrupt = {
 					friendly = true,
@@ -3362,20 +4237,24 @@ local DBdefaults = {
 			anchor = "None",
 			categoriesEnabled = {
 				buff = {
-					friendly = {CC = true,  Silence = true, RootPhyiscal_Special = true, RootMagic_Special = true, Root = true,  ImmunePlayer = false,  Disarm_Warning = false,  CC_Warning = false, Enemy_Smoke_Bomb = true,  Stealth = true, Immune = true, ImmuneSpell = true, ImmunePhysical = true, AuraMastery_Cast_Auras = false,
-					ROP_Vortex = true , Disarm = true, Haste_Reduction = true, Dmg_Hit_Reduction = true, AOE_DMG_Modifiers = true, Friendly_Smoke_Bomb = true, AOE_Spell_Refections = true, Trees = true, Speed_Increases = true, Freedoms = true, Friendly_Defensives = false, Mana_Regen = false, CC_Reduction = true, Personal_Offensives = false, Peronsal_Defensives = false, Movable_Cast_Auras = false,
-					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true, PvE = true, Other = true },
-					enemy    = { CC = true,  Silence = true, RootPhyiscal_Special = true, RootMagic_Special = true, Root = true,  ImmunePlayer = false,  Disarm_Warning = false,  CC_Warning = false, Enemy_Smoke_Bomb = true,  Stealth = true, Immune = true, ImmuneSpell = true, ImmunePhysical = true, AuraMastery_Cast_Auras = false,
-					ROP_Vortex = true , Disarm = true, Haste_Reduction = true, Dmg_Hit_Reduction = true, AOE_DMG_Modifiers = true, Friendly_Smoke_Bomb = true, AOE_Spell_Refections = true, Trees = true, Speed_Increases = true, Freedoms = true, Friendly_Defensives = false, Mana_Regen = false, CC_Reduction = true, Personal_Offensives = false, Peronsal_Defensives = false, Movable_Cast_Auras = false,
-					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true, PvE = true, Other = true }
+					friendly = {
+						Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+						Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
+						},
+					enemy    = {
+						Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+						Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
+				}
 				},
 				debuff = {
-					friendly = {CC = true,  Silence = true, RootPhyiscal_Special = true, RootMagic_Special = true, Root = true,  ImmunePlayer = false,  Disarm_Warning = false,  CC_Warning = false, Enemy_Smoke_Bomb = true,  Stealth = true, Immune = true, ImmuneSpell = true, ImmunePhysical = true, AuraMastery_Cast_Auras = false,
-					ROP_Vortex = true , Disarm = true, Haste_Reduction = true, Dmg_Hit_Reduction = true, AOE_DMG_Modifiers = true, Friendly_Smoke_Bomb = true, AOE_Spell_Refections = true, Trees = true, Speed_Increases = true, Freedoms = true, Friendly_Defensives = false, Mana_Regen = false, CC_Reduction = true, Personal_Offensives = false, Peronsal_Defensives = false, Movable_Cast_Auras = false,
-					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true, PvE = true, Other = true},
-					enemy    = {CC = true,  Silence = true, RootPhyiscal_Special = true, RootMagic_Special = true, Root = true,  ImmunePlayer = false,  Disarm_Warning = false,  CC_Warning = false, Enemy_Smoke_Bomb = true,  Stealth = true, Immune = true, ImmuneSpell = true, ImmunePhysical = true, AuraMastery_Cast_Auras = false,
-					ROP_Vortex = true , Disarm = true, Haste_Reduction = true, Dmg_Hit_Reduction = true, AOE_DMG_Modifiers = true, Friendly_Smoke_Bomb = true, AOE_Spell_Refections = true, Trees = true, Speed_Increases = true, Freedoms = true, Friendly_Defensives = false, Mana_Regen = false, CC_Reduction = true, Personal_Offensives = false, Peronsal_Defensives = false, Movable_Cast_Auras = false,
-					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true, PvE = true, Other = true}
+					friendly = {
+						Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+						Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
+				},
+					enemy    = {
+						Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+						Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
+				}
 				},
 				interrupt = {
 					friendly = true,
@@ -3390,12 +4269,24 @@ local DBdefaults = {
 			anchor = "None",
 			categoriesEnabled = {
 				buff = {
-					friendly = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true },
-					enemy    = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true }
+					friendly = {
+						Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+						Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
+						},
+					enemy    = {
+						Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+						Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
+				}
 				},
 				debuff = {
-					friendly = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true },
-					enemy    = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true }
+					friendly = {
+						Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+						Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
+				},
+					enemy    = {
+						Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+						Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
+				}
 				},
 				interrupt = {
 					friendly = true,
@@ -3410,12 +4301,24 @@ local DBdefaults = {
 			anchor = "None",
 			categoriesEnabled = {
 				buff = {
-					friendly = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true },
-					enemy    = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true }
+					friendly = {
+						Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+						Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
+						},
+					enemy    = {
+						Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+						Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
+				}
 				},
 				debuff = {
-					friendly = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true },
-					enemy    = { PvE = true,  Immune = true,  ImmuneSpell = true,  ImmunePhysical = true,  CC = true,  Silence = true,  Disarm = true,  Other = true,  Root = true,  Snare = true }
+					friendly = {
+						Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+						Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
+				},
+					enemy    = {
+						Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+						Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
+				}
 				},
 				interrupt = {
 					friendly = true,
@@ -4378,12 +5281,13 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 			--Trees Check (if Tress dies it will not update currently not sure how to track that)
 			-----------------------------------------------------------------------------------------------------------------
 			if ((event == "SPELL_CAST_SUCCESS") and (cleuPrioCastedSpells[spellId])) then
-				local priority = LoseControlDB.priority.Trees --treated as priority buff (categoriesEnabled)
-						if (spellId == 47540) then --re-adjust spell Prio for if needed
-						priority = LoseControlDB.priority.Other --treated as priority buff (categoriesEnabled)
-						end
+					local priority = LoseControlDB.priority.Trees --treated as priority buff (categoriesEnabled)
+					if (spellId == 47540) then --re-adjust spell Prio for if needed
+					priority = LoseControlDB.priority.Other --treated as priority buff (categoriesEnabled)
+					end
+					------------------------------------------ARENA-------------------------------------------------------------------------------
 					if (sourceGUID == UnitGUID("arena1")) or (sourceGUID == UnitGUID("arena2")) or (sourceGUID == UnitGUID("arena3")) then
-						priority = LoseControlDB.priorityArena.Personal_Offensives --treated as priority buff (categoriesEnabled)
+					priority = LoseControlDB.priorityArena.Personal_Offensives --treated as priority buff (categoriesEnabled)
 						if (spellId == "XXXXX") then
 						priority = 0 --disables specific for arena units
 						end
@@ -4391,6 +5295,7 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 						priority = LoseControlDB.priorityArena.Personal_Offensives --treated as priority buff (categoriesEnabled)
 						end
 					end
+					--------------------------------------------------------------------------------------------------------------------------------
 				local duration = cleuPrioCastedSpells[spellId]
 				local expirationTime = GetTime() + duration
 				local name, _, icon = GetSpellInfo(spellId)
@@ -4455,9 +5360,15 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 	if (((typeUpdate ~= nil and typeUpdate > 0) or (typeUpdate == nil and self.unitId == "targettarget") or (typeUpdate == nil and self.unitId == "focustarget")) and (self.lastTimeUnitAuraEvent == GetTime())) then return end
 	if ((self.unitId == "targettarget" or self.unitId == "focustarget") and (not UnitIsUnit(unitId, self.unitId))) then return end
 	local priority = LoseControlDB.priority
-		if (unitId == "arena1") or (unitId == "arena2") or (unitId == "arena3") then
-			priority =  LoseControlDB.priorityArena
-		end
+	local durationType = LoseControlDB.durationType
+	local spellIds = spellIds
+
+	if (unitId == "arena1") or (unitId == "arena2") or (unitId == "arena3") or (UnitGUID(unitId) == UnitGUID("arena1")) or (UnitGUID(unitId) == UnitGUID("arena2")) or (UnitGUID(unitId) == UnitGUID("arena3")) then
+		priority =  LoseControlDB.priorityArena
+		durationType =  LoseControlDB.durationTypeArena
+		spellIds = spellIdsArena
+	end
+
 	local maxPriority = 1
 	local maxExpirationTime = 0
 	local newExpirationTime = 0
@@ -4564,19 +5475,17 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 			-----------------------------------------------------------------------------------------------------------------
 			if spellId == 81261 then
 					local dt = {}
-					local et = {}
 					for i = 1, 40 do
 		      local _, _, _, _, d, e, _, _, _, s = UnitAura(unitId, i, "HARMFUL")
+					if not s then break end
 							if (spellIds[s] == "RootPhyiscal_Special") or (spellIds[s] == "RootMagic_Special") or (spellIds[s] == "Root") then
-								tblinsert(dt,  d)
-								tblinsert(et,  e)
+								tblinsert(dt,  {["duration"] = d, ["expirationTime"] = e})
 							end
 					end
 					table.sort(dt)
-					table.sort(et)
-						if dt[#dt] and et[#et] then
-							duration = dt[#dt]
-							expirationTime = et[#et]
+						if dt[#dt].duration and dt[#dt].expirationTime then
+							duration = dt[#dt].duration
+							expirationTime = dt[#dt].expirationTime
 					  else
 						end
 				end
@@ -4606,7 +5515,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 					end
 				end
 
-			local spellCategory = spellIds[spellId]
+			local spellCategory = spellIds[spellId] or spellIds[name]
 			local Priority = priority[spellCategory]
 
 			if self.frame.categoriesEnabled.debuff[reactionToPlayer][spellCategory] then
@@ -4626,22 +5535,42 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 					---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 					tblinsert(buffs,  {["col1"] = priority[spellCategory] ,["col2"]  = expirationTime , ["col3"] =  {["name"]=  name, ["duration"] = duration, ["expirationTime"] = expirationTime,  ["icon"] = icon, ["localForceEventUnitAuraAtEnd"] = localForceEventUnitAuraAtEnd, ["hue"] = hue,  }}) -- this will create a table to show the highest duration debuffs
 					---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-					if Priority == maxPriority and expirationTime-duration > newExpirationTime then
-						maxExpirationTime = expirationTime
-						newExpirationTime = expirationTime - duration
-						Icon = icon
-						forceEventUnitAuraAtEnd = localForceEventUnitAuraAtEnd
-						Hue = hue
-						Name = name
-					elseif Priority > maxPriority then
-						maxPriority = Priority
-						maxExpirationTime = expirationTime
-						newExpirationTime = expirationTime - duration
-						Duration = duration
-						Icon = icon
-						forceEventUnitAuraAtEnd = localForceEventUnitAuraAtEnd
-						Hue = hue
-						Name = name
+					if durationType[spellCategory] == "New" then     ----Something along these lines for highest duration vs newest table
+						if Priority == maxPriority and expirationTime-duration > newExpirationTime then
+							maxExpirationTime = expirationTime
+							newExpirationTime = expirationTime - duration
+							Icon = icon
+							forceEventUnitAuraAtEnd = localForceEventUnitAuraAtEnd
+							Hue = hue
+							Name = name
+						elseif Priority > maxPriority then
+							maxPriority = Priority
+							maxExpirationTime = expirationTime
+							newExpirationTime = expirationTime - duration
+							Duration = duration
+							Icon = icon
+							forceEventUnitAuraAtEnd = localForceEventUnitAuraAtEnd
+							Hue = hue
+							Name = name
+						end
+					elseif durationType[spellCategory] == "High" then
+						if Priority == maxPriority and expirationTime > maxExpirationTime then
+							maxExpirationTime = expirationTime
+							newExpirationTime = expirationTime - duration
+							Icon = icon
+							forceEventUnitAuraAtEnd = localForceEventUnitAuraAtEnd
+							Hue = hue
+							Name = name
+						elseif Priority > maxPriority then
+							maxPriority = Priority
+							maxExpirationTime = expirationTime
+							newExpirationTime = expirationTime - duration
+							Duration = duration
+							Icon = icon
+							forceEventUnitAuraAtEnd = localForceEventUnitAuraAtEnd
+							Hue = hue
+							Name = name
+						end
 					end
 				end
 			end
@@ -4686,7 +5615,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 				end
 			end
 
-			local spellCategory = spellIds[spellId]
+			local spellCategory = spellIds[spellId] or spellIds[name]
 			local Priority = priority[spellCategory]
 
 
@@ -4707,22 +5636,42 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 					---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 						tblinsert(buffs,  {["col1"] = priority[spellCategory] ,["col2"]  = expirationTime , ["col3"] =  {["name"]=  name, ["duration"] = duration, ["expirationTime"] = expirationTime,  ["icon"] = icon, ["localForceEventUnitAuraAtEnd"] = localForceEventUnitAuraAtEnd, ["hue"] = hue,  }}) -- this will create a table to show the highest duration buffs
 						---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-					if Priority == maxPriority and expirationTime-duration > newExpirationTime then
-						maxExpirationTime = expirationTime
-						newExpirationTime = expirationTime - duration
-						Icon = icon
-						forceEventUnitAuraAtEnd = localForceEventUnitAuraAtEnd
-						Hue = hue
-						Name = name
-					elseif Priority > maxPriority then
-						maxPriority = Priority
-						maxExpirationTime = expirationTime
-						newExpirationTime = expirationTime - duration
-						Duration = duration
-						Icon = icon
-						forceEventUnitAuraAtEnd = localForceEventUnitAuraAtEnd
-						Hue = hue
-						Name = name
+					if durationType[spellCategory] == "New" then     ----Something along these lines for highest duration vs newest table
+						if Priority == maxPriority and expirationTime-duration > newExpirationTime then
+							maxExpirationTime = expirationTime
+							newExpirationTime = expirationTime - duration
+							Icon = icon
+							forceEventUnitAuraAtEnd = localForceEventUnitAuraAtEnd
+							Hue = hue
+							Name = name
+						elseif Priority > maxPriority then
+							maxPriority = Priority
+							maxExpirationTime = expirationTime
+							newExpirationTime = expirationTime - duration
+							Duration = duration
+							Icon = icon
+							forceEventUnitAuraAtEnd = localForceEventUnitAuraAtEnd
+							Hue = hue
+							Name = name
+						end
+					elseif durationType[spellCategory] == "High" then
+						if Priority == maxPriority and expirationTime > maxExpirationTime then
+							maxExpirationTime = expirationTime
+							newExpirationTime = expirationTime - duration
+							Icon = icon
+							forceEventUnitAuraAtEnd = localForceEventUnitAuraAtEnd
+							Hue = hue
+							Name = name
+						elseif Priority > maxPriority then
+							maxPriority = Priority
+							maxExpirationTime = expirationTime
+							newExpirationTime = expirationTime - duration
+							Duration = duration
+							Icon = icon
+							forceEventUnitAuraAtEnd = localForceEventUnitAuraAtEnd
+							Hue = hue
+							Name = name
+						end
 					end
 				end
 			end
@@ -4784,63 +5733,124 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 									end
 								end
 							end
-							if Priority == maxPriority and expirationTime-duration > newExpirationTime then
-								maxExpirationTime = expirationTime
-								newExpirationTime = expirationTime - duration
-								Duration = duration
-								Icon = icon
-								maxPriorityIsInterrupt = true
-								forceEventUnitAuraAtEnd = false
-								Hue = hue
-								Name = name
-								local nextTimerUpdate = expirationTime - GetTime() + 0.05
-								if nextTimerUpdate < 0.05 then
-									nextTimerUpdate = 0.05
-								end
-								C_Timer.After(nextTimerUpdate, function()
-									if ((not self.unlockMode) and (self.lastTimeUnitAuraEvent == nil or self.lastTimeUnitAuraEvent < (GetTime() - 0.04))) then
-										self:UNIT_AURA(unitId, 20)
+							if durationType[spellCategory] == "New" then
+								if Priority == maxPriority and expirationTime-duration > newExpirationTime then
+									maxExpirationTime = expirationTime
+									newExpirationTime = expirationTime - duration
+									Duration = duration
+									Icon = icon
+									maxPriorityIsInterrupt = true
+									forceEventUnitAuraAtEnd = false
+									Hue = hue
+									Name = name
+									local nextTimerUpdate = expirationTime - GetTime() + 0.05
+									if nextTimerUpdate < 0.05 then
+										nextTimerUpdate = 0.05
 									end
-									for e, f in pairs(InterruptAuras) do
-										for g, h in pairs(f) do
-											if (h.expirationTime < GetTime()) then
-												InterruptAuras[e][g] = nil
+									C_Timer.After(nextTimerUpdate, function()
+										if ((not self.unlockMode) and (self.lastTimeUnitAuraEvent == nil or self.lastTimeUnitAuraEvent < (GetTime() - 0.04))) then
+											self:UNIT_AURA(unitId, 20)
+										end
+										for e, f in pairs(InterruptAuras) do
+											for g, h in pairs(f) do
+												if (h.expirationTime < GetTime()) then
+													InterruptAuras[e][g] = nil
+												end
+											end
+											if (next(InterruptAuras[e]) == nil) then
+												InterruptAuras[e] = nil
 											end
 										end
-										if (next(InterruptAuras[e]) == nil) then
-											InterruptAuras[e] = nil
+									end)
+								elseif Priority > maxPriority then
+									maxPriority = Priority
+									maxExpirationTime = expirationTime
+									newExpirationTime = expirationTime - duration
+									Duration = duration
+									Icon = icon
+									maxPriorityIsInterrupt = true
+									forceEventUnitAuraAtEnd = false
+									Hue = hue
+									Name = name
+									local nextTimerUpdate = expirationTime - GetTime() + 0.05
+									if nextTimerUpdate < 0.05 then
+										nextTimerUpdate = 0.05
+									end
+									C_Timer.After(nextTimerUpdate, function()
+										if ((not self.unlockMode) and (self.lastTimeUnitAuraEvent == nil or self.lastTimeUnitAuraEvent < (GetTime() - 0.04))) then
+											self:UNIT_AURA(unitId, 20)
 										end
-									end
-								end)
-							elseif Priority > maxPriority then
-								maxPriority = Priority
-								maxExpirationTime = expirationTime
-								newExpirationTime = expirationTime - duration
-								Duration = duration
-								Icon = icon
-								maxPriorityIsInterrupt = true
-								forceEventUnitAuraAtEnd = false
-								Hue = hue
-								Name = name
-								local nextTimerUpdate = expirationTime - GetTime() + 0.05
-								if nextTimerUpdate < 0.05 then
-									nextTimerUpdate = 0.05
-								end
-								C_Timer.After(nextTimerUpdate, function()
-									if ((not self.unlockMode) and (self.lastTimeUnitAuraEvent == nil or self.lastTimeUnitAuraEvent < (GetTime() - 0.04))) then
-										self:UNIT_AURA(unitId, 20)
-									end
-									for e, f in pairs(InterruptAuras) do
-										for g, h in pairs(f) do
-											if (h.expirationTime < GetTime()) then
-												InterruptAuras[e][g] = nil
+										for e, f in pairs(InterruptAuras) do
+											for g, h in pairs(f) do
+												if (h.expirationTime < GetTime()) then
+													InterruptAuras[e][g] = nil
+												end
+											end
+											if (next(InterruptAuras[e]) == nil) then
+												InterruptAuras[e] = nil
 											end
 										end
-										if (next(InterruptAuras[e]) == nil) then
-											InterruptAuras[e] = nil
-										end
+									end)
+								end
+							elseif durationType[spellCategory] == "High" then
+								if Priority == maxPriority and expirationTime > maxExpirationTime then
+									maxExpirationTime = expirationTime
+									newExpirationTime = expirationTime - duration
+									Duration = duration
+									Icon = icon
+									maxPriorityIsInterrupt = true
+									forceEventUnitAuraAtEnd = false
+									Hue = hue
+									Name = name
+									local nextTimerUpdate = expirationTime - GetTime() + 0.05
+									if nextTimerUpdate < 0.05 then
+										nextTimerUpdate = 0.05
 									end
-								end)
+									C_Timer.After(nextTimerUpdate, function()
+										if ((not self.unlockMode) and (self.lastTimeUnitAuraEvent == nil or self.lastTimeUnitAuraEvent < (GetTime() - 0.04))) then
+											self:UNIT_AURA(unitId, 20)
+										end
+										for e, f in pairs(InterruptAuras) do
+											for g, h in pairs(f) do
+												if (h.expirationTime < GetTime()) then
+													InterruptAuras[e][g] = nil
+												end
+											end
+											if (next(InterruptAuras[e]) == nil) then
+												InterruptAuras[e] = nil
+											end
+										end
+									end)
+								elseif Priority > maxPriority then
+									maxPriority = Priority
+									maxExpirationTime = expirationTime
+									newExpirationTime = expirationTime - duration
+									Duration = duration
+									Icon = icon
+									maxPriorityIsInterrupt = true
+									forceEventUnitAuraAtEnd = false
+									Hue = hue
+									Name = name
+									local nextTimerUpdate = expirationTime - GetTime() + 0.05
+									if nextTimerUpdate < 0.05 then
+										nextTimerUpdate = 0.05
+									end
+									C_Timer.After(nextTimerUpdate, function()
+										if ((not self.unlockMode) and (self.lastTimeUnitAuraEvent == nil or self.lastTimeUnitAuraEvent < (GetTime() - 0.04))) then
+											self:UNIT_AURA(unitId, 20)
+										end
+										for e, f in pairs(InterruptAuras) do
+											for g, h in pairs(f) do
+												if (h.expirationTime < GetTime()) then
+													InterruptAuras[e][g] = nil
+												end
+											end
+											if (next(InterruptAuras[e]) == nil) then
+												InterruptAuras[e] = nil
+											end
+										end
+									end)
+								end
 							end
 						end
 					end
@@ -4871,15 +5881,9 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 ----------------------------------------------------------------------
 --Filters for highest aura duration of specfied priority will not work for cleu , currently set for all snares
 ----------------------------------------------------------------------
-	if buffs[1] and ((buffs[1].col1 == priority.Snare) or (buffs[1].col1 == priority.SnareMagic30) or (buffs[1].col1 == priority.SnarePhysical30) or (buffs[1].col1 == priority.SnareMagic50) or (buffs[1].col1 == priority.SnarePosion50) or (buffs[1].col1 == priority.SnarePhysical50) or (buffs[1].col1 == priority.SnareMagical70) or (buffs[1].col1 == priority.SnarePhysical70)) then
+	if #buffs then
 		table.sort(buffs, cmp_col1)
 		table.sort(buffs, cmp_col1_col2)
-		maxExpirationTime = buffs[1].col3.expirationTime
-		Duration = buffs[1].col3.duration
-		Icon = buffs[1].col3.icon
-		forceEventUnitAuraAtEnd = buffs[1].col3.localForceEventUnitAuraAtEnd
-		Hue = buffs[1].col3.hue
-		Name = buffs[1].col3.name
 	end
 
 ----------------------------------------------------------------------
