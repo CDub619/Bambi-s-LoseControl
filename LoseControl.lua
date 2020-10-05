@@ -105,9 +105,9 @@ local Masque = LibStub("Masque", true)
 -------------------------------------------------------------------------------
 -- Thanks to all the people on the Curse.com and WoWInterface forums who help keep this list up to date :)
 local cleuPrioCastedSpells = { -- nil = Do Not Show
-	[47540]   = {["duration"] = 60, ["priority"] = "Trees", ["priorityArena"] = "Trees"},
-	[8921]   = {["duration"] = 6, ["priority"] = nil, ["priorityArena"] = "Trees"},
-	[93402]   = {["duration"] = 5, ["priority"] = "Trees", ["priorityArena"] = "Trees"},
+	[47540]   = {["duration"] = 60, ["priority"] = "Trees", ["priorityArena"] = nil},
+	[8921]   = {["duration"] = 6, ["priority"] = "Trees", ["priorityArena"] = nil},
+	[93402]   = {["duration"] = 5, ["priority"] = "Trees", ["priorityArena"] = nil},
 
 }
 
@@ -5286,24 +5286,26 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 					else
 					priority = LoseControlDB.priority[cleuPrioCastedSpells[spellId].priority]
 					end
-	
+
 					------------------------------------------ARENA-------------------------------------------------------------------------------
 					if (sourceGUID == UnitGUID("arena1")) or (sourceGUID == UnitGUID("arena2")) or (sourceGUID == UnitGUID("arena3")) then
 					if cleuPrioCastedSpells[spellId].priorityArena == nil then
 					priority = 0
 					else
-					priority = LoseControlDB.durationTypeArena[cleuPrioCastedSpells[spellId].priorityArena]
+					priority = LoseControlDB.priorityArena[cleuPrioCastedSpells[spellId].priorityArena]
 					end
 			  	end
 					--------------------------------------------------------------------------------------------------------------------------------
-				local duration = cleuPrioCastedSpells[spellId].duration
-				local expirationTime = GetTime() + cleuPrioCastedSpells[spellId].duration
-				local name, _, icon = GetSpellInfo(spellId)
-				if not InterruptAuras[sourceGUID]  then
-						InterruptAuras[sourceGUID] = {}
-				end
-				tblinsert(InterruptAuras[sourceGUID], { ["name"] = name, ["duration"] = duration, ["expirationTime"] = expirationTime, ["priority"] = priority, ["icon"] = icon, ["spellSchool"] = spellSchool, ["hue"] = hue })
-				UpdateUnitAuraByUnitGUID(sourceGUID, -20)
+					if priority then
+						local duration = cleuPrioCastedSpells[spellId].duration
+						local expirationTime = GetTime() + duration
+						local name, _, icon = GetSpellInfo(spellId)
+						if not InterruptAuras[sourceGUID]  then
+								InterruptAuras[sourceGUID] = {}
+						end
+						tblinsert(InterruptAuras[sourceGUID], { ["name"] = name, ["duration"] = duration, ["expirationTime"] = expirationTime, ["priority"] = priority, ["icon"] = icon, ["spellSchool"] = spellSchool, ["hue"] = hue })
+						UpdateUnitAuraByUnitGUID(sourceGUID, -20)
+					end
 			end
 
 			-----------------------------------------------------------------------------------------------------------------
