@@ -104,9 +104,9 @@ local Masque = LibStub("Masque", true)
 -------------------------------------------------------------------------------
 -- Thanks to all the people on the Curse.com and WoWInterface forums who help keep this list up to date :)
 local cleuPrioCastedSpells = { -- nil = Do Not Show
-	[47540]   = {["duration"] = 60, ["priority"] = "Trees", ["priorityArena"] = nil},
-	[8921]   = {["duration"] = 6, ["priority"] = "Trees", ["priorityArena"] = nil},
-	[93402]   = {["duration"] = 5, ["priority"] = "Trees", ["priorityArena"] = nil},
+	--[47540]   = {["duration"] = 60, ["priority"] = "Trees", ["priorityArena"] = nil},
+	--[8921]   = {["duration"] = 6, ["priority"] = "Trees", ["priorityArena"] = nil},
+	--[93402]   = {["duration"] = 5, ["priority"] = "Trees", ["priorityArena"] = nil},
 
 }
 
@@ -5513,13 +5513,15 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 					elseif not UnitIsEnemy("player", source) then
 						spellIds[spellId] = "Friendly_Smoke_Bomb"
 							if (unitId == "arena1") or (unitId == "arena2") or (unitId == "arena3") or (UnitGUID(unitId) == UnitGUID("arena1")) or (UnitGUID(unitId) == UnitGUID("arena2")) or (UnitGUID(unitId) == UnitGUID("arena3")) then
-								spellIds[spellId] = Player_Party_OffensiveCDs
+								spellIds[spellId] = Special_High
 							end
+							name = "FriendlyShadowyDuel"
 		  		end
 				else
 					spellIds[spellId] = "Friendly_Smoke_Bomb"
 					if (unitId == "arena1") or (unitId == "arena2") or (unitId == "arena3") or (UnitGUID(unitId) == UnitGUID("arena1")) or (UnitGUID(unitId) == UnitGUID("arena2")) or (UnitGUID(unitId) == UnitGUID("arena3")) then
-						spellIds[spellId] = Player_Party_OffensiveCDs
+						spellIds[spellId] = Special_High
+						name = "FriendlyShadowyDuel"
 					end
 				end
 			end
@@ -5542,13 +5544,13 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 						expirationTime = SmokeBombAuras[UnitGUID(source)].expirationTime
 						spellIds[spellId] = "Friendly_Smoke_Bomb"
 							if (unitId == "arena1") or (unitId == "arena2") or (unitId == "arena3") or (UnitGUID(unitId) == UnitGUID("arena1")) or (UnitGUID(unitId) == UnitGUID("arena2")) or (UnitGUID(unitId) == UnitGUID("arena3")) then
-								spellIds[spellId] = Player_Party_OffensiveCDs
+								spellIds[spellId] = Special_High
 							end
 					end
 				else
 					spellIds[spellId] = "Friendly_Smoke_Bomb"
 					if (unitId == "arena1") or (unitId == "arena2") or (unitId == "arena3") or (UnitGUID(unitId) == UnitGUID("arena1")) or (UnitGUID(unitId) == UnitGUID("arena2")) or (UnitGUID(unitId) == UnitGUID("arena3")) then
-						spellIds[spellId] = Player_Party_OffensiveCDs
+						spellIds[spellId] = Special_High
 					end
 				end
 			end
@@ -5943,14 +5945,14 @@ if Arenastealth[unitId] and (not UnitExists(unitId)) then
 end
 
 -----------------------------------------------------------------------
---Stealth Filter What to show while unseen
+--Stealth Filter What to show while unseen Arena Opponents
 -------------------------------------------------------------------------
 	if (not UnitExists(unitId)) then
 		if (unitId =="arena1") or (unitId =="arena2") or (unitId =="arena3") then
-			 if Arenastealth[unitId] and #buffs then ---Need to clea
+			 if Arenastealth[unitId] and #buffs then
 				 local foundbuff = 0
 				 for i = 1, #buffs do
-					 	if ((buffs[i].col3.expirationTime > GetTime() + .10) and (buffs[i].col3.duration ~= 0 ) and (buffs[i].col1 >= priority.Stealth)) then
+					 	if ((buffs[i].col3.expirationTime > GetTime() + .10) and (buffs[i].col3.duration ~= 0 ) and (buffs[i].col1 >= priority.Special_High)) then --Special_High is Stealth for Arena
 								maxExpirationTime = buffs[i].col3.expirationTime
 								Duration = buffs[i].col3.duration
 								Icon = buffs[i].col3.icon
@@ -5967,7 +5969,7 @@ end
 								foundbuff = 1
 								print(unitId, "Unseen or Stealth w/", buffs[i].col3.name)
 								break
-							elseif ((buffs[i].col1 == priority.Stealth) or (buffs[i].col3.name == "FriendlyShadowyDuel") or (buffs[i].col3.name == "EnemyShadowyDuel")) then --and ((duration == 0) or (buffs[i].col3.expirationTime < (GetTime() + .10))) then
+							elseif ((buffs[i].col1 == priority.Special_High) or (buffs[i].col3.name == "FriendlyShadowyDuel") or (buffs[i].col3.name == "EnemyShadowyDuel")) then --and ((duration == 0) or (buffs[i].col3.expirationTime < (GetTime() + .10))) then
 								maxExpirationTime = GetTime() + 1
 								Duration = 0
 								Icon = buffs[i].col3.icon
