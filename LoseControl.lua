@@ -98,7 +98,6 @@ local InterruptAuras = { }
 local SmokeBombAuras = { }
 local cleuPrioCastedSpells = { }
 local Arenastealth = {}
-local arenaunseen = {}
 local origSpellIdsChanged = { }
 local Masque = LibStub("Masque", true)
 
@@ -135,8 +134,74 @@ local interruptsIds = {
 	[231665] = 3,		-- Avengers Shield (Paladin)
 }
 
+--[[
+Drink_Purge = 19,
+Immune = 18,
+CC = 17,
+Silence = 16,
+Interrupt = 15, -- Needs to be same
+Special_High = 14,
+Ranged_Major_OffenisiveCDs = 13,
+Roots_90_Snares = 12,
+Disarms = 11,
+Melee_Major_OffenisiveCDs = 10,
+Big_Defensive_CDs = 9,
+Player_Party_OffensiveCDs = 9,
+Small_Offenisive_CDs = 8,
+Small_Defensive_CDs = 8,
+Freedoms_Speed = 8,
+Snares_WithCDs = 4,
+Special_Low = 3,
+Snares_Ranged_Spamable = 2,
+Snares_Casted_Melee = 1,
+]]
+
 local spellIdsArena = {
-["Weakened Soul"] = "CC",
+
+["Drink"] = "Drink_Purge",
+["Refreshment"] = "Drink_Purge",
+
+----------------
+-- Hunter
+----------------
+["Aspect of the Turtle"] = "Immune",
+["Freezing Trap"] = "CC"
+["Intimidation"] = "CC"
+["Scatter Shot"] = "CC"
+[202933] = "Silence" --Spider Sting
+[233022] = "Silence" --Spider Sting
+[191241] = "Special_High", --Sticky Bomb
+[199483] = "Special_High", --Camouflage
+[5384] = "Special_High", --Fiegn Death
+["Bestial Wrath"] = "Ranged_Major_OffenisiveCDs",
+["Aspect of the Wild"] = "Ranged_Major_OffenisiveCDs",
+["Aspect of the Eagle"] = "Ranged_Major_OffenisiveCDs",
+["Coordinated Assault"] = "Ranged_Major_OffenisiveCDs",
+["Trueshot"] = "Ranged_Major_OffenisiveCDs",
+["Binding Shot"] = "Roots_90_Snares",
+[162480] = "Roots_90_Snares", --Steel Trap
+[190927] = "Roots_90_Snares", --Harpoon
+[212638] = "Roots_90_Snares", --Tracker's Net
+[53148] = "Roots_90_Snares", --Charge (pet)
+[248519] = "Big_Defensive_CDs", --Interlope
+[53480] = "Big_Defensive_CDs", --Roar of Sacrifice
+[202748] = "Big_Defensive_CDs", --Survival Tactics
+[212640] = "Big_Defensive_CDs", --Mending Bandage
+["Survival of the Fittest"] = "Big_Defensive_CDs", --Survival of the Fittest
+["Viper Sting"] = "Player_Party_OffensiveCDs",
+[203268] = "Small_Offenisive_CDs", --Sticky Tar
+["Scorpid Sting"] = "Small_Offenisive_CDs",
+[54216] = "Freedoms_Speed", --Master's Call
+[118922] = "Freedoms_Speed", --Posthaste
+[186257] = "Freedoms_Speed", --Aspect of the Cheetah
+[5116] = "Snares_WithCDs", --Concussive Shot
+[204205] = "Special_Low", --Wild Protector
+[135299] = "Snares_Ranged_Spamable", --Tar Trap
+
+----------------
+-- Shaman
+----------------
+
 }
 
 local spellIds = {
@@ -2907,10 +2972,10 @@ local DBdefaults = {
 			Disarms = 11,
 			Melee_Major_OffenisiveCDs = 10,
 			Big_Defensive_CDs = 9,
-			Player_Party_OffensiveCDs = 8,
-			Small_Offenisive_CDs = 7,
-			Small_Defensive_CDs = 6,
-			Freedoms_Speed = 5,
+			Player_Party_OffensiveCDs = 9,
+			Small_Offenisive_CDs = 8,
+			Small_Defensive_CDs = 8,
+			Freedoms_Speed = 8,
 			Snares_WithCDs = 4,
 			Special_Low = 3,
 			Snares_Ranged_Spamable = 2,
@@ -5411,28 +5476,28 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 					local Name, instanceType, _, _, _, _, _, instanceID, _, _ = GetInstanceInfo()
 					local ZoneName = GetZoneText()
 					local locClass = "Creature"
-								if source then
-									local guid, name = UnitGUID(source), UnitName(source)
-									local type, zero, server_id, instance_id, zone_uid, npc_id, spawn_uid = strsplit("-",guid);
-									if type == "Creature" then
-									 print(name .. "'s NPC id is " .. npc_id)
-				 					 LoseControlDB.SpellsInfo[ZoneName.." "..Name.." instanceID: "..instanceID.." NPC: "..name .. "'s NPC id is " .. npc_id.." spellId: "..spellId] = spellIds[spellId]
-									elseif type == "Vignette" then
-									 print(name .. " is a Vignette and should have its npc_id be zero (" .. npc_id .. ").") --Vignette" refers to NPCs that appear as a rare when you first encounter them, but appear as a common after you've looted them once.
-				 					 LoseControlDB.SpellsInfo[ZoneName.." "..Name.." instanceID: "..instanceID.." NPC: "..name .. " is a Vignette and should have its npc_id be zero (" .. npc_id .. ").".." spellId: "..spellId] = spellIds[spellId]
-									elseif type == "Player" then
-									 local Class, engClass, locRace, engRace, gender, name, server = GetPlayerInfoByGUID(guid)
-									 print(Class.." "..name .. " is a player.")
-				 					 LoseControlDB.SpellsInfo[ZoneName.." "..Name.." instanceID: "..instanceID.." NPC: "..Class.." "..name .. " is a player.".." spellId: "..spellId] = spellIds[spellId]
-								  else
-									 LoseControlDB.SpellsInfo[ZoneName.." "..Name.." instanceID: ".. "spellId: "..spellId]  = spellIds[spellId]
-									end
-									locClass = Class
-								else
-									LoseControlDB.SpellsInfo[ZoneName.." "..Name.." instanceID: ".. "spellId: "..spellId]  = spellIds[spellId]
-								end
+						if source then
+						local guid, name = UnitGUID(source), UnitName(source)
+						local type, zero, server_id, instance_id, zone_uid, npc_id, spawn_uid = strsplit("-",guid);
+							if type == "Creature" then
+							 print(name .. "'s NPC id is " .. npc_id)
+		 					 LoseControlDB.SpellsInfo[ZoneName.." "..Name.." instanceID: "..instanceID.." NPC: "..name .. "'s NPC id is " .. npc_id.." spellId: "..spellId] = spellIds[spellId]
+							elseif type == "Vignette" then
+							 print(name .. " is a Vignette and should have its npc_id be zero (" .. npc_id .. ").") --Vignette" refers to NPCs that appear as a rare when you first encounter them, but appear as a common after you've looted them once.
+		 					 LoseControlDB.SpellsInfo[ZoneName.." "..Name.." instanceID: "..instanceID.." NPC: "..name .. " is a Vignette and should have its npc_id be zero (" .. npc_id .. ").".." spellId: "..spellId] = spellIds[spellId]
+							elseif type == "Player" then
+							 local Class, engClass, locRace, engRace, gender, name, server = GetPlayerInfoByGUID(guid)
+							 print(Class.." "..name .. " is a player.")
+		 					 LoseControlDB.SpellsInfo[ZoneName.." "..Name.." instanceID: "..instanceID.." NPC: "..Class.." "..name .. " is a player.".." spellId: "..spellId] = spellIds[spellId]
+						  else
+							 LoseControlDB.SpellsInfo[ZoneName.." "..Name.." instanceID: ".. "spellId: "..spellId]  = spellIds[spellId]
+							end
+							locClass = Class
+						else
+							LoseControlDB.SpellsInfo[ZoneName.." "..Name.." instanceID: ".. "spellId: "..spellId]  = spellIds[spellId]
+						end
+					end
 				end
-			end
 
 			-----------------------------------------------------------------------------------------------------------------
 			--Enemy Duel
@@ -5441,14 +5506,21 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 				if source then
 					if UnitIsEnemy("player", source) then --still returns true for an enemy currently under mindcontrol I can add your fix.
 						spellIds[spellId] = "Enemy_Smoke_Bomb"
+							if (unitId == "arena1") or (unitId == "arena2") or (unitId == "arena3") or (UnitGUID(unitId) == UnitGUID("arena1")) or (UnitGUID(unitId) == UnitGUID("arena2")) or (UnitGUID(unitId) == UnitGUID("arena3")) then
+								spellIds[spellId] = Special_High
+							end
 						name = "EnemyShadowyDuel"
 					elseif not UnitIsEnemy("player", source) then
 						spellIds[spellId] = "Friendly_Smoke_Bomb"
-						name = "FriendlyShadowyDuel"
+							if (unitId == "arena1") or (unitId == "arena2") or (unitId == "arena3") or (UnitGUID(unitId) == UnitGUID("arena1")) or (UnitGUID(unitId) == UnitGUID("arena2")) or (UnitGUID(unitId) == UnitGUID("arena3")) then
+								spellIds[spellId] = Player_Party_OffensiveCDs
+							end
 		  		end
 				else
 					spellIds[spellId] = "Friendly_Smoke_Bomb"
-					name = "FriendlyShadowyDuel"
+					if (unitId == "arena1") or (unitId == "arena2") or (unitId == "arena3") or (UnitGUID(unitId) == UnitGUID("arena1")) or (UnitGUID(unitId) == UnitGUID("arena2")) or (UnitGUID(unitId) == UnitGUID("arena3")) then
+						spellIds[spellId] = Player_Party_OffensiveCDs
+					end
 				end
 			end
 
@@ -5461,14 +5533,23 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 						duration = SmokeBombAuras[UnitGUID(source)].duration
 						expirationTime = SmokeBombAuras[UnitGUID(source)].expirationTime
 						spellIds[spellId] = "Enemy_Smoke_Bomb"
+							if (unitId == "arena1") or (unitId == "arena2") or (unitId == "arena3") or (UnitGUID(unitId) == UnitGUID("arena1")) or (UnitGUID(unitId) == UnitGUID("arena2")) or (UnitGUID(unitId) == UnitGUID("arena3")) then
+								spellIds[spellId] = Special_High
+							end
 						name = "EnemySmokeBomb"
 					elseif not UnitIsEnemy("player", source) then
 						duration = SmokeBombAuras[UnitGUID(source)].duration
 						expirationTime = SmokeBombAuras[UnitGUID(source)].expirationTime
 						spellIds[spellId] = "Friendly_Smoke_Bomb"
+							if (unitId == "arena1") or (unitId == "arena2") or (unitId == "arena3") or (UnitGUID(unitId) == UnitGUID("arena1")) or (UnitGUID(unitId) == UnitGUID("arena2")) or (UnitGUID(unitId) == UnitGUID("arena3")) then
+								spellIds[spellId] = Player_Party_OffensiveCDs
+							end
 					end
 				else
 					spellIds[spellId] = "Friendly_Smoke_Bomb"
+					if (unitId == "arena1") or (unitId == "arena2") or (unitId == "arena3") or (UnitGUID(unitId) == UnitGUID("arena1")) or (UnitGUID(unitId) == UnitGUID("arena2")) or (UnitGUID(unitId) == UnitGUID("arena3")) then
+						spellIds[spellId] = Player_Party_OffensiveCDs
+					end
 				end
 			end
 
@@ -5476,45 +5557,20 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 			--Two debuff conidtions like Root Beam
 			-----------------------------------------------------------------------------------------------------------------
 			if spellId == 81261 then
-					local dt = {}
+					local root = {}
 					for i = 1, 40 do
 		      local _, _, _, _, d, e, _, _, _, s = UnitAura(unitId, i, "HARMFUL")
-					if not s then break end
-							if (spellIds[s] == "RootPhyiscal_Special") or (spellIds[s] == "RootMagic_Special") or (spellIds[s] == "Root") then
-								tblinsert(dt,  {["duration"] = d, ["expirationTime"] = e})
-							end
-					end
-					table.sort(dt)
-						if dt[#dt].duration and dt[#dt].expirationTime then
-							duration = dt[#dt].duration
-							expirationTime = dt[#dt].expirationTime
-					  else
+						if not s then break end
+								if (spellIds[s] == "RootPhyiscal_Special") or (spellIds[s] == "RootMagic_Special") or (spellIds[s] == "Root") or (spellIds[s] == "Roots_90_Snares") then
+									tblinsert(root, {["col1"] = e, ["col2"]  = d})
+								end
 						end
-				end
-
-				-- exceptions
-				if spellId == 212638 or spellId == 212150 then	-- Tracker's Net and Cheap Tricks
-					if (UnitIsPlayer(unitId)) then
-						local _, class = UnitClass(unitId)
-						if ((class == "PRIEST") or (class == "MAGE") or (class == "WARLOCK")) then
-							break
-						elseif ((class == "SHAMAN") or (class == "DRUID")) then
-							if (unitId == "player") then
-								local specID = GetSpecialization()
-								if (specID ~= nil) then
-									specID = GetSpecializationInfo(specID);
-								end
-								if ((specID ~= nil) and (specID ~= 0) and (specID ~= 263) and (specID ~= 103) and (specID ~= 104)) then
-									break
-								end
-							else
-								local powerTypeID = UnitPowerType(unitId)
-								if ((powerTypeID ~= nil) and (powerTypeID ~= 1) and (powerTypeID ~= 3) and (powerTypeID ~= 11)) then
-									break
-								end
-							end
+						if #root then
+							table.sort(root, cmp_col1)
+							expirationTime = root[1].col1
+							duration = root[1].col2
+						else
 						end
-					end
 				end
 
 			local spellCategory = spellIds[spellId] or spellIds[name]
@@ -5592,19 +5648,6 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 				localForceEventUnitAuraAtEnd = (self.unitId == "targettarget")
 			end
 
-			-- exceptions
-			-- exception for The Breast Within
-			if (spellId == 19574) then
-				spellId = 212704
-				for j = 1, 40 do
-					local _, _, _, _, _, _, _, _, _, auxSpellId = UnitBuff(unitId, j)
-					if not auxSpellId then break end
-					if auxSpellId == 212704 then
-						spellId = 19574
-						break
-					end
-				end
-			end
 			-----------------------------------------------------------------------------
 			--Mass Invis
 			------------------------------------------------------------------------------
@@ -5951,7 +5994,6 @@ end
 
 
 	for i = 1, #buffs do --creates a layered hue for every icon when a specific priority, or spellid is present
-	if buffs[i]then
 		if not buffs[i] then break end
 			if (buffs[i].col3.name == "EnemySmokeBomb") or (buffs[i].col3.name == "EnemyShadowyDuel") then --layered hue conidition
 				if buffs[i].col3.expirationTime > GetTime() then
@@ -5965,7 +6007,7 @@ end
 				end
 			end
 		end
-	end
+
 
 	if (maxExpirationTime == 0) then -- no (de)buffs found
 		self.maxExpirationTime = 0
