@@ -1,6 +1,4 @@
 
-
-
 --[[
 -------------------------------------------
 -- Addon: LoseControl
@@ -158,27 +156,27 @@ Snares_Casted_Melee = 1,
 
 local spellIdsArena = {
 
-["Drink"] = "Drink_Purge",
-["Refreshment"] = "Drink_Purge",
-
 ----------------
 -- Hunter
 ----------------
-["Aspect of the Turtle"] = "Immune",
-["Freezing Trap"] = "CC"
-["Intimidation"] = "CC"
-["Scatter Shot"] = "CC"
-[202933] = "Silence" --Spider Sting
-[233022] = "Silence" --Spider Sting
+[186265] = "Immune", --Aspect of the Turtle
+[3355] = "CC", --Freezing Trap
+[203337] = "CC", --Freezing Trap
+[24394] = "CC", --Intimidation
+[213691] = "CC", --Scatter Shot
+[202933] = "Silence", --Spider Sting
+[233022] = "Silence", --Spider Sting
 [191241] = "Special_High", --Sticky Bomb
 [199483] = "Special_High", --Camouflage
 [5384] = "Special_High", --Fiegn Death
-["Bestial Wrath"] = "Ranged_Major_OffenisiveCDs",
-["Aspect of the Wild"] = "Ranged_Major_OffenisiveCDs",
-["Aspect of the Eagle"] = "Ranged_Major_OffenisiveCDs",
-["Coordinated Assault"] = "Ranged_Major_OffenisiveCDs",
-["Trueshot"] = "Ranged_Major_OffenisiveCDs",
-["Binding Shot"] = "Roots_90_Snares",
+[19574] = "Ranged_Major_OffenisiveCDs", --Bestial Wrath
+[212704] = "Ranged_Major_OffenisiveCDs", --The Beast Within (PvP)
+[193530] = "Ranged_Major_OffenisiveCDs", --Aspect of the Wild
+[266779] = "Ranged_Major_OffenisiveCDs", --Coordinated Assault
+[186289] = "Ranged_Major_OffenisiveCDs", --Aspect of the Eagle
+[288613] = "Ranged_Major_OffenisiveCDs", --Trueshot
+[117526] = "Roots_90_Snares", --Binding Shot
+[117405] = "Roots_90_Snares", --Binding Shot
 [162480] = "Roots_90_Snares", --Steel Trap
 [190927] = "Roots_90_Snares", --Harpoon
 [212638] = "Roots_90_Snares", --Tracker's Net
@@ -187,10 +185,11 @@ local spellIdsArena = {
 [53480] = "Big_Defensive_CDs", --Roar of Sacrifice
 [202748] = "Big_Defensive_CDs", --Survival Tactics
 [212640] = "Big_Defensive_CDs", --Mending Bandage
-["Survival of the Fittest"] = "Big_Defensive_CDs", --Survival of the Fittest
-["Viper Sting"] = "Player_Party_OffensiveCDs",
-[203268] = "Small_Offenisive_CDs", --Sticky Tar
-["Scorpid Sting"] = "Small_Offenisive_CDs",
+[281195] = "Big_Defensive_CDs", --Survival of the Fittest
+[264735] = "Big_Defensive_CDs", --Survival of the Fittest
+[202797] = "Player_Party_OffensiveCDs", --Viper Sting
+[203268] = "Small_Offenisive_CDs", --Sticky Tar (80% Attack Speed Reduction)
+[202900] = "Small_Offenisive_CDs", --Scorpid Sting (Critical Strike chance reduced by 50% for 8 sec)
 [54216] = "Freedoms_Speed", --Master's Call
 [118922] = "Freedoms_Speed", --Posthaste
 [186257] = "Freedoms_Speed", --Aspect of the Cheetah
@@ -201,6 +200,108 @@ local spellIdsArena = {
 ----------------
 -- Shaman
 ----------------
+
+["Hex"] = "CC",
+[305485] = "CC", --Lightning Lasso
+[118345] = "CC", --Pulverize
+[77505] = "CC", --Earthquake
+[197214] = "CC", --Sundering
+
+
+----------------
+-- Death Knight
+----------------
+[48707] = "Immune", --Anti-Magic Shell
+[221562] = "CC", --Asphyxiate
+[108194] = "CC", --Asphyxiate
+[91800] = "CC", --Gnaw
+[210141] = "CC", --Zombie Explosion
+[91797] = "CC", --Monstrous Blow
+[287254] = "CC", --Dead of Winter
+[207167] = "CC", --Blinding Sleet
+
+----------------
+-- Druid
+----------------
+[114108] = "Drink_Purge", --Soul of the Forest
+[5211] = "CC", --Mighty Bash
+[163505] = "CC", --Rake
+[203123] = "CC", --Maim
+[202244] = "CC", --Overrun
+[33786] = "CC", --Cyclone
+[209753] = "CC", --Cyclone
+[209753] = "CC", --Incapacitating Roar
+[2637] = "CC", --Hibernate
+
+----------------
+-- Mage
+----------------
+[45438] = "Immune", --Ice Block
+["Polymorph"] = "CC",
+[82691] = "CC", --Ring of Frost
+[31661] = "CC", --Dragon's Breath
+
+----------------
+-- Monk
+----------------
+[119381] = "CC", --Leg Sweep
+[202346] = "CC", --Double Barrel
+[202274] = "CC", --Incendiary Brew
+[198909] = "CC", --Song of Chi-ji
+[115078] = "CC", --Paralysis
+
+----------------
+-- Palladin
+----------------
+[210294] = "Drink_Purge", --Divine Favor
+[642] = "Immune", --Divine Shield
+[228050] = "Immune", --Divine Shield (PvP Guardian of the Forgotten Queen)
+[204018] = "Immune", --Blessing of Spellwarding
+[853] = "CC", --Hammer of Justice
+[20066] = "CC", --Repentance
+[105421] = "CC", --Blinding Light
+
+----------------
+-- Priest
+----------------
+[47585] = "Immune", --Dispersion
+[215769] = "Immune", --Spirit of Redemption
+[64044] = "CC", --Psychic Horror
+[200200] = "CC", --Holy Word: Chastise
+[200196] = "CC", --Holy Word: Chastise
+[87204] = "CC", --Sin and Punishment
+[9484] = "CC", --Shackle Undead
+[8122] = "CC", --Psychic Scream
+[605] = "CC", --Mind Control
+[205369] = "CC", --Mind Bomb
+[226943] = "CC", --Mind Bomb
+
+----------------
+-- Rogue
+----------------
+[] = "Immune",
+[] = "CC",
+----------------
+-- Warlock
+----------------
+[] = "CC",
+----------------
+-- Warrior
+----------------
+[] = "Immune",
+[] = "CC",
+----------------
+-- Demon Hunter
+----------------
+[] = "CC",
+----------------
+-- Misc.
+----------------
+
+["Drink"] = "Drink_Purge",
+["Refreshment"] = "Drink_Purge",
+
+[] = "CC",
 
 }
 
