@@ -2906,11 +2906,11 @@ local anchors = {
 		party4 = "PartyAnchor4",
 	},
 	Gladius = {
-		arena1      = "GladiusClassIconFramearena1",
-		arena2      = "GladiusClassIconFramearena2",
-		arena3      = "GladiusClassIconFramearena3",
-		arena4      = "GladiusClassIconFramearena4",
-		arena5      = "GladiusClassIconFramearena5",
+		arena1      = GladiusClassIconFramearena1 or nil,
+		arena2      = GladiusClassIconFramearena2 or nil,
+		arena3      = GladiusClassIconFramearena3 or nil,
+		arena4      = GladiusClassIconFramearena4 or nil,
+		arena5      = GladiusClassIconFramearena5 or nil,
 	},
 	Blizzard = {
 		player       = "PlayerPortrait",
@@ -5196,6 +5196,52 @@ function LoseControl:CheckSUFUnitsAnchors(updateFrame)
 	return true
 end
 
+function LoseControl:CheckGladiusUnitsAnchors(updateFrame)
+	if not (GladiusClassIconFramearena1 or GladiusClassIconFramearena2 or GladiusClassIconFramearena3 or GladiusClassIconFramearena4 or GladiusClassIconFramearena5) then return false end
+	local frames = { self.unitId }
+	if strfind(self.unitId, "arena") then
+		frames = { "arena1", "arena2", "arena3", "arena4", "arena5" }
+	end
+	for _, unitId in ipairs(frames) do
+			if anchors.Gladius.arena1 == nil then anchors.Gladius.arena1 = GladiusClassIconFramearena1 or nil end
+			if anchors.Gladius.arena2 == nil then anchors.Gladius.arena2 = GladiusClassIconFramearena2 or nil end
+			if anchors.Gladius.arena3 == nil then anchors.Gladius.arena3 = GladiusClassIconFramearena3 or nil end
+			if anchors.Gladius.arena3 == nil then anchors.Gladius.arena4 = GladiusClassIconFramearena4 or nil end
+			if anchors.Gladius.arena3 == nil then anchors.Gladius.arena5 = GladiusClassIconFramearena5 or nil end
+			if updateFrame and anchors.Gladius[unitId] ~= nil then
+				local frame = LoseControlDB.frames[self.fakeUnitId or unitId]
+				local icon = LCframes[unitId]
+				local newAnchor = _G[anchors[frame.anchor][unitId]] or (type(anchors[frame.anchor][unitId])=="table" and anchors[frame.anchor][unitId] or UIParent)
+			if newAnchor ~= nil and icon.anchor ~= newAnchor then
+				icon.anchor = newAnchor
+				icon:SetPoint(
+					frame.point or "CENTER",
+					icon.anchor,
+					frame.relativePoint or "CENTER",
+					frame.x or 0,
+					frame.y or 0
+				)
+				icon:GetParent():SetPoint(
+					frame.point or "CENTER",
+					icon.anchor,
+					frame.relativePoint or "CENTER",
+					frame.x or 0,
+					frame.y or 0
+				)
+				if icon.anchor:GetParent() then
+					icon:SetFrameLevel(icon.anchor:GetParent():GetFrameLevel()+((frame.anchor ~= "None" and frame.anchor ~= "Blizzard") and 3 or 0))
+				end
+				if InCombatLockdown() then
+					else
+					LoseControlOptionsPanelUnlock:Click()
+					LoseControlOptionsPanelUnlock:Click()
+					print(unitId.."Losecontrol Gladius Anchor Set")
+				end
+			end
+		end
+	end
+	return true
+end
 -- Initialize a frame's position and register for events
 function LoseControl:PLAYER_ENTERING_WORLD() -- this correctly anchors enemy arena frames that aren't created until you zone into an arena
 	local unitId = self.unitId
@@ -5216,6 +5262,12 @@ function LoseControl:PLAYER_ENTERING_WORLD() -- this correctly anchors enemy are
 			self:CheckSUFUnitsAnchors(true)
 		end)
 	end
+	if (Gladius ~= nil) and not(self:CheckGladiusUnitsAnchors(false)) and (self.GladiusDelayedSearch == nil) then
+		self.GladiusDelayedSearch = GetTime()
+		C_Timer.After(8, function()	-- delay checking to make sure all variables of the other addons are loaded
+			self:CheckGladiusUnitsAnchors(true)
+		end)
+	end
 	self.anchor = _G[anchors[frame.anchor][unitId]] or (type(anchors[frame.anchor][unitId])=="table" and anchors[frame.anchor][unitId] or UIParent)
 	self.unitGUID = UnitGUID(self.unitId)
 	self.parent:SetParent(self.anchor:GetParent()) -- or LoseControl) -- If Hide() is called on the parent frame, its children are hidden too. This also sets the frame strata to be the same as the parent's.
@@ -5226,7 +5278,6 @@ function LoseControl:PLAYER_ENTERING_WORLD() -- this correctly anchors enemy are
 	self:GetParent():SetWidth(frame.size)
 	self:GetParent():SetHeight(frame.size)
 	self:RegisterUnitEvents(enabled)
-
 	self:SetPoint(
 		frame.point or "CENTER",
 		self.anchor,
@@ -5274,6 +5325,7 @@ function LoseControl:GROUP_ROSTER_UPDATE()
 	self:RegisterUnitEvents(enabled)
 	self.unitGUID = UnitGUID(unitId)
 	self:CheckSUFUnitsAnchors(true)
+	self:CheckGladiusUnitsAnchors(true)
 	if enabled and not self.unlockMode then
 		self:UNIT_AURA(unitId, 0)
 	end
@@ -5324,6 +5376,7 @@ function LoseControl:ARENA_OPPONENT_UPDATE()
 	)
 	self.unitGUID = UnitGUID(self.unitId)
 	self:CheckSUFUnitsAnchors(true)
+	self:CheckGladiusUnitsAnchors(true)
 
 
 	if enabled and not self.unlockMode then
@@ -5332,6 +5385,7 @@ function LoseControl:ARENA_OPPONENT_UPDATE()
 end
 
 function LoseControl:ARENA_PREP_OPPONENT_SPECIALIZATIONS()
+	self:CheckGladiusUnitsAnchors(true)
 	self:ARENA_OPPONENT_UPDATE()
 end
 
@@ -5344,9 +5398,33 @@ ArenaSeen:SetScript("OnEvent", function(self, event, ...)
 	if (unit =="arena1") or (unit =="arena2") or (unit =="arena3") then
 		if arg2 == "seen" then
 			if UnitExists(unit) then
+				if (unit =="arena1") and (GladiusClassIconFramearena1) then
+					GladiusClassIconFramearena1:SetAlpha(1)
+						local guid = UnitGUID(unit)
+						UpdateUnitAuraByUnitGUID(guid, -250)
+				end
+				if (unit =="arena2") and (GladiusClassIconFramearena2) then
+					GladiusClassIconFramearena2:SetAlpha(1)
+						local guid = UnitGUID(unit)
+						UpdateUnitAuraByUnitGUID(guid, -250)
+				end
+				if (unit =="arena3") and (GladiusClassIconFramearena3) then
+					GladiusClassIconFramearena3:SetAlpha(1)
+						local guid = UnitGUID(unit)
+						UpdateUnitAuraByUnitGUID(guid, -250)
+				end
 			Arenastealth[unit] = nil
 			end
 		elseif arg2 == "unseen" then
+				--[[if (unit =="arena1") and (GladiusClassIconFramearena1) and (LoseControlarena1:IsVisible())  then
+					GladiusClassIconFramearena1:SetAlpha(0)
+				end
+				if (unit =="arena2") and (GladiusClassIconFramearena2) and (LoseControlarena2:IsVisible())  then
+					GladiusClassIconFramearena2:SetAlpha(0)
+				end
+				if (unit =="arena3") and (GladiusClassIconFramearena3) and (LoseControlarena3:IsVisible())  then
+					GladiusClassIconFramearena3:SetAlpha(0)
+				end]]
 				local guid = UnitGUID(unit)
 				UpdateUnitAuraByUnitGUID(guid, -200)
 		elseif arg2 == "destroyed" then
@@ -5665,23 +5743,27 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 			-----------------------------------------------------------------------------------------------------------------
 			if spellId == 207736 then --Shodowey Duel enemy on friendly, friendly frame (red)
 				if source then
+					--print(source)
 					if UnitIsEnemy("player", source) then --still returns true for an enemy currently under mindcontrol I can add your fix.
 						spellIds[spellId] = "Enemy_Smoke_Bomb"
+						--print(unitId.."Dueled is enemy check")
 							if (unitId == "arena1") or (unitId == "arena2") or (unitId == "arena3") or (UnitGUID(unitId) == UnitGUID("arena1")) or (UnitGUID(unitId) == UnitGUID("arena2")) or (UnitGUID(unitId) == UnitGUID("arena3")) then
-								spellIds[spellId] = Special_High
+								--print(unitId.."Enemy Dueled in Arean123 check")
+								spellIds[spellId] = "Special_High"
 							end
 						name = "EnemyShadowyDuel"
 					elseif not UnitIsEnemy("player", source) then
 						spellIds[spellId] = "Friendly_Smoke_Bomb"
 							if (unitId == "arena1") or (unitId == "arena2") or (unitId == "arena3") or (UnitGUID(unitId) == UnitGUID("arena1")) or (UnitGUID(unitId) == UnitGUID("arena2")) or (UnitGUID(unitId) == UnitGUID("arena3")) then
-								spellIds[spellId] = Special_High
+								--print(unitId.."Friendly Duel on Arean123 check")
+								spellIds[spellId] = "Special_High"
 							end
 							name = "FriendlyShadowyDuel"
 		  		end
 				else
 					spellIds[spellId] = "Friendly_Smoke_Bomb"
 					if (unitId == "arena1") or (unitId == "arena2") or (unitId == "arena3") or (UnitGUID(unitId) == UnitGUID("arena1")) or (UnitGUID(unitId) == UnitGUID("arena2")) or (UnitGUID(unitId) == UnitGUID("arena3")) then
-						spellIds[spellId] = Special_High
+						spellIds[spellId] = "Special_High"
 						name = "FriendlyShadowyDuel"
 					end
 				end
@@ -5692,26 +5774,30 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 			-----------------------------------------------------------------------------------------------------------------
 			if spellId == 212183 then -- Smoke Bomb
 				if source then
+					--print(source)
 					if UnitIsEnemy("player", source) then --still returns true for an enemy currently under mindcontrol I can add your fix.
-						duration = SmokeBombAuras[UnitGUID(source)].duration
+						duration = SmokeBombAuras[UnitGUID(source)].duration --Add a check, i rogue bombs in stealth there is a source but the cleu doesnt regester a time
 						expirationTime = SmokeBombAuras[UnitGUID(source)].expirationTime
 						spellIds[spellId] = "Enemy_Smoke_Bomb"
+						--print(unitId.."SmokeBombed is enemy check")
 							if (unitId == "arena1") or (unitId == "arena2") or (unitId == "arena3") or (UnitGUID(unitId) == UnitGUID("arena1")) or (UnitGUID(unitId) == UnitGUID("arena2")) or (UnitGUID(unitId) == UnitGUID("arena3")) then
-								spellIds[spellId] = Special_High
+								--print(unitId.."Enemy SmokeBombed in Arean123 check")
+								spellIds[spellId] = "Special_High"
 							end
 						name = "EnemySmokeBomb"
-					elseif not UnitIsEnemy("player", source) then
-						duration = SmokeBombAuras[UnitGUID(source)].duration
+					elseif not UnitIsEnemy("player", source) then --Add a check, i rogue bombs in stealth there is a source but the cleu doesnt regester a time
+						duration = SmokeBombAuras[UnitGUID(source)].duration --Add a check, i rogue bombs in stealth there is a source but the cleu doesnt regester a time
 						expirationTime = SmokeBombAuras[UnitGUID(source)].expirationTime
 						spellIds[spellId] = "Friendly_Smoke_Bomb"
 							if (unitId == "arena1") or (unitId == "arena2") or (unitId == "arena3") or (UnitGUID(unitId) == UnitGUID("arena1")) or (UnitGUID(unitId) == UnitGUID("arena2")) or (UnitGUID(unitId) == UnitGUID("arena3")) then
-								spellIds[spellId] = Special_High
+								--print(unitId.."Friendly SmokeBombed on Arean123 check")
+								spellIds[spellId] = "Special_High" --
 							end
 					end
 				else
 					spellIds[spellId] = "Friendly_Smoke_Bomb"
 					if (unitId == "arena1") or (unitId == "arena2") or (unitId == "arena3") or (UnitGUID(unitId) == UnitGUID("arena1")) or (UnitGUID(unitId) == UnitGUID("arena2")) or (UnitGUID(unitId) == UnitGUID("arena3")) then
-						spellIds[spellId] = Special_High
+						spellIds[spellId] = "Special_High"
 					end
 				end
 			end
@@ -5811,7 +5897,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 				localForceEventUnitAuraAtEnd = (self.unitId == "targettarget")
 			end
 
-			-----------------------------------------------------------------------------
+			-----------------------------------------------------------------------------w
 			--Mass Invis
 			------------------------------------------------------------------------------
 			if (spellId == 198158) then --Mass Invis
@@ -6185,7 +6271,7 @@ end
 		end
 		self:Hide()
 		self:GetParent():Hide()
-	elseif maxExpirationTime ~= self.maxExpirationTime or ((LayeredHue) or (typeUpdate == -55))  then -- this is a different (de)buff, so initialize the cooldown
+	elseif maxExpirationTime ~= self.maxExpirationTime or ((LayeredHue) or (typeUpdate == -55) or (not UnitExists(unitId)))  then -- this is a different (de)buff, so initialize the cooldown
 		self.maxExpirationTime = maxExpirationTime
 		if self.anchor ~= UIParent then
 			self:SetFrameLevel(self.anchor:GetParent():GetFrameLevel()+((self.frame.anchor ~= "None" and self.frame.anchor ~= "Blizzard") and 3 or 0)) -- must be dynamic, frame level changes all the time
@@ -6197,11 +6283,11 @@ end
 			end
 		end
 
-		if (LoseControlDB.ArenaGladiusGloss == true) and (self.unitId == "arena1") or (self.unitId == "arena2") or (self.unitId == "arena3") and (self.frame.anchor == "Gladius") then
+		if (LoseControlDB.ArenaGladiusGloss == true) and (self.unitId == "arena1") or (self.unitId == "arena2") or (self.unitId == "arena3")  or (self.unitId == "arena4") or (self.unitId == "arena5") and (self.frame.anchor == "Gladius") then
 			self.gloss:SetNormalTexture("Interface\\AddOns\\Gladius\\Images\\Gloss")
 			self.gloss.normalTexture = _G[self.gloss:GetName().."NormalTexture"]
-			self.gloss.normalTexture:SetHeight(LoseControlDB.frames[unitId].size)
-			self.gloss.normalTexture:SetWidth(LoseControlDB.frames[unitId].size)
+			self.gloss.normalTexture:SetHeight(self.frame.size)
+			self.gloss.normalTexture:SetWidth(self.frame.size)
 			self.gloss.normalTexture:SetScale(.9)
 			self.gloss.normalTexture:ClearAllPoints()
 			self.gloss.normalTexture:SetPoint("CENTER", self, "CENTER")
@@ -6237,47 +6323,47 @@ end
 				self:SetSwipeTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMaskSmall")   --Set Smoke Bomb Icon
 				self.texture:SetDesaturated(1) --Destaurate Smoke Bomb Icon
 				self.texture:SetVertexColor(1, .2, .1); --Red Hue Set For Smoke Bomb Icon
-				self:SetSwipeColor(0, 0, 0, 0.6)	-- This is the default alpha of the normal swipe cooldown texture
+				self:SetSwipeColor(0, 0, 0, 0.0)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
 			elseif Hue == "Red_No_Desaturate" then -- Changes Hue to Red and any Icon Greater , could indicate in a barrier or smoke bomb etc..
 				SetPortraitToTexture(self.texture, Icon) -- Sets the texture to be displayed from a file applying a circular opacity mask making it look round like portraits
   			self:SetSwipeTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMaskSmall")   --Set Smoke Bomb Icon
 			  self.texture:SetDesaturated(nil) --Destaurate Smoke Bomb Icon
 		  	self.texture:SetVertexColor(1, 0, 0); --Red Hue Set For Smoke Bomb Icon
-			  self:SetSwipeColor(0, 0, 0, 0.6)	-- This is the default alpha of the normal swipe cooldown texture
+			  self:SetSwipeColor(0, 0, 0, 0.0)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
 		  elseif Hue == "Yellow" then -- Changes Hue to Red and any Icon Greater , could indicate in a barrier or smoke bomb etc..
 				SetPortraitToTexture(self.texture, Icon) -- Sets the texture to be displayed from a file applying a circular opacity mask making it look round like portraits
 				self:SetSwipeTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMaskSmall")   --Set Smoke Bomb Icon
 				self.texture:SetDesaturated(1) --Destaurate Smoke Bomb Icon
 				self.texture:SetVertexColor(1, 1, 0); --Red Hue Set For Smoke Bomb Icon
-				self:SetSwipeColor(0, 0, 0, 0.6)	-- This is the default alpha of the normal swipe cooldown texture
+				self:SetSwipeColor(0, 0, 0, 0.0)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
 			else
 				SetPortraitToTexture(self.texture, Icon) -- Sets the texture to be displayed from a file applying a circular opacity mask making it look round like portraits
 				self:SetSwipeTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMaskSmall")
 				self.texture:SetDesaturated(nil) --Destaurate Smoke Bomb Icon
 				self.texture:SetVertexColor(1, 1, 1)
-				self:SetSwipeColor(0, 0, 0, 0.6)
+				self:SetSwipeColor(0, 0, 0, 0.0) ---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
 			end
 		else
 			if Hue == "Red" then -- Changes Icon Hue to Red
 				self.texture:SetTexture(Icon)   --Set Smoke Bomb Icon
 				self.texture:SetDesaturated(1) --Destaurate Smoke Bomb Icon
 				self.texture:SetVertexColor(1, .2, .1); --Red Hue Set For Smoke Bomb Icon
-				self:SetSwipeColor(0, 0, 0, 0.8)	-- This is the default alpha of the normal swipe cooldown texture
+				self:SetSwipeColor(0, 0, 0, 0.0)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
 			elseif Hue == "Red_No_Desaturate" then -- Changes Hue to Red and any Icon Greater , could indicate in a barrier or smoke bomb etc..
 			 self.texture:SetTexture(Icon)   --Set Smoke Bomb Icon
 			 self.texture:SetDesaturated(nil) --Destaurate Smoke Bomb Icon
 			 self.texture:SetVertexColor(1, 0, 0); --Red Hue Set For Smoke Bomb Icon
-			 self:SetSwipeColor(0, 0, 0, 0.8)	-- This is the default alpha of the normal swipe cooldown texture
+			 self:SetSwipeColor(0, 0, 0, 0.0)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
 		 elseif Hue == "Yellow" then -- Changes Hue to Red and any Icon Greater , could indicate in a barrier or smoke bomb etc..
 				self.texture:SetTexture(Icon)   --Set Smoke Bomb Icon
 				self.texture:SetDesaturated(1) --Destaurate Smoke Bomb Icon
 				self.texture:SetVertexColor(1, 1, 0); --Red Hue Set For Smoke Bomb Icon
-				self:SetSwipeColor(0, 0, 0, 0.8)	-- This is the default alpha of the normal swipe cooldown texture
+				self:SetSwipeColor(0, 0, 0, 0.0)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
 			else
 				self.texture:SetTexture(Icon)
 				self.texture:SetDesaturated(nil) --Destaurate Smoke Bomb Icon
 				self.texture:SetVertexColor(1, 1, 1)
-				self:SetSwipeColor(0, 0, 0, 0.8)
+				self:SetSwipeColor(0, 0, 0, 0.0) ---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
 			end
 		end
 		if forceEventUnitAuraAtEnd and maxExpirationTime > 0 and Duration > 0 then
@@ -6295,7 +6381,7 @@ end
 		self:GetParent():Show()
 		if Duration > 0 then
 			if not self:GetDrawSwipe() then
-				self:SetDrawSwipe(true)
+				self:SetDrawSwipe(false) --SET TO FALSE TO DISABLE DRAWSWIPE , ADD OPTION FOR THIS
 			end
 			self:SetCooldown( maxExpirationTime - Duration, Duration )
 		else
@@ -6305,19 +6391,25 @@ end
 			self:SetCooldown(GetTime(), 0)
 			self:SetCooldown(GetTime(), 0)	--needs execute two times (or the icon can dissapear; yes, it's weird...)
 		end
-					if (self.unitId == "arena1") or (self.unitId == "arena2") or (self.unitId == "arena3") then --Chris sets alpha timer/frame inherot of frame of selected units
+					if (self.unitId == "arena1") or (self.unitId == "arena2") or (self.unitId == "arena3") or (self.unitId == "arena4") or (self.unitId == "arena5") then --Chris sets alpha timer/frame inherot of frame of selected units
 						if self.frame.anchor == "Gladius" then
-						self:SetSize((LoseControlDB.frames[unitId].size) , (LoseControlDB.frames[unitId].size))
-						self:SetPoint("CENTER", anchors[self.frame.anchor][unitId], "CENTER")
-						self:GetParent():SetAlpha(self.anchor:GetAlpha())
-						end
-						--print(self.frame.alpha )
-						--print(self.frame.anchor)
-						--print(self.unitId)
-						--print(self.frame.alpha)
-						--print(anchors[self.frame.anchor][unitId])
+							self:GetParent():SetAlpha(self.anchor:GetAlpha())
+							if (not UnitExists(unitId)) then
+								if unitId == "arena1" and GladiusClassIconFramearena1 then
+									self:GetParent():SetAlpha(0.8)
+									GladiusClassIconFramearena1:SetAlpha(0)
+								end
+								if unitId == "arena2" and GladiusClassIconFramearena2 then
+									self:GetParent():SetAlpha(0.8)
+									GladiusClassIconFramearena2:SetAlpha(0)
+								end
+								if unitId == "arena3" and GladiusClassIconFramearena3 then
+									self:GetParent():SetAlpha(0.8)
+									GladiusClassIconFramearena3:SetAlpha(0)
+								end
+								end
+							end
 			  	else
-						--UIFrameFadeOut(self, Duration, self.frame.alpha, 0)
 						self:GetParent():SetAlpha(self.frame.alpha) -- hack to apply transparency to the cooldown timer
 				end
 		end
@@ -6337,7 +6429,7 @@ function LoseControl:PLAYER_FOCUS_CHANGED()
 end
 
 function LoseControl:PLAYER_TARGET_CHANGED()
-	--if (debug) then print("PLAYER_TARGET_CHANGED") end
+	--if (debug) then print("PLAYER_TARGET_CHANGED") endw
 	if (self.unitId == "target" or self.unitId == "targettarget") then
 		self.unitGUID = UnitGUID(self.unitId)
 		if not self.unlockMode then
@@ -6604,7 +6696,7 @@ function Unlock:OnClick()
 	else
 		_G[O.."UnlockText"]:SetText(L["Unlock"])
 		for _, v in pairs(LCframes) do
-			v.unlockMode = false
+			v.unlockMode = falseI
 			v:EnableMouse(false)
 			v:RegisterForDrag()
 			v:SetMovable(false)
@@ -6852,8 +6944,15 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 				frame.x = nil
 				frame.y = nil
 				if self.value == "Gladius" then
-					if (strfind(unitId, "arena")) then
-						portrSizeValue = 42
+					if GladiusClassIconFramearena1 then
+						local W = GladiusClassIconFramearena1:GetWidth()
+						local H = GladiusClassIconFramearena1:GetWidth()
+						print(unitId.." GladiusClassIconFrame Size "..H)
+						portrSizeValue = W
+					else
+						if (strfind(unitId, "arena")) then
+							portrSizeValue = 42
+						end
 					end
 					frame.size = portrSizeValue
 					icon:SetWidth(portrSizeValue)
@@ -6969,7 +7068,7 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 			frame.x = nil
 			frame.y = nil
 			if self.value == "Blizzard" then
-				local portrSizeValue = 56
+				local portrSizeValue = 62
 				frame.size = portrSizeValue
 				icon:SetWidth(portrSizeValue)
 				icon:SetHeight(portrSizeValue)
@@ -7632,6 +7731,7 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 			DisableFocusDeadFocusTarget:SetChecked(LoseControlDB.disableFocusDeadFocusTarget)
 		end
 		LCframes[unitId]:CheckSUFUnitsAnchors(true)
+		LCframes[unitId]:CheckGladiusUnitsAnchors(true)
 		for _, checkbuttonframe in pairs(CategoriesCheckButtons) do
 			if checkbuttonframe.auraType ~= "interrupt" then
 				checkbuttonframe.frame:SetChecked(LoseControlDB.frames[unitId].categoriesEnabled[checkbuttonframe.auraType][checkbuttonframe.reaction][checkbuttonframe.categoryType])
@@ -7741,13 +7841,14 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 		UIDropDownMenu_Initialize(AnchorDropDown, function() -- called on refresh and also every time the drop down menu is opened
 			AddItem(AnchorDropDown, L["None"], "None")
 			AddItem(AnchorDropDown, "Blizzard", "Blizzard")
-			AddItem(AnchorDropDown, "Gladius", "Gladius")
-			AddItem(AnchorDropDown, "BambiUI", "BambiUI")
+			if PartyAnchor5 then AddItem(AnchorDropDown, "BambiUI", "BambiUI") end
+			if Gladius then AddItem(AnchorDropDown, "Gladius", "Gladius") end
 			if _G[anchors["Perl"][unitId]] or (type(anchors["Perl"][unitId])=="table" and anchors["Perl"][unitId]) then AddItem(AnchorDropDown, "Perl", "Perl") end
 			if _G[anchors["XPerl"][unitId]] or (type(anchors["XPerl"][unitId])=="table" and anchors["XPerl"][unitId]) then AddItem(AnchorDropDown, "XPerl", "XPerl") end
 			if _G[anchors["LUI"][unitId]] or (type(anchors["LUI"][unitId])=="table" and anchors["LUI"][unitId]) then AddItem(AnchorDropDown, "LUI", "LUI") end
 			if _G[anchors["SUF"][unitId]] or (type(anchors["SUF"][unitId])=="table" and anchors["SUF"][unitId]) then AddItem(AnchorDropDown, "SUF", "SUF") end
 			if _G[anchors["SyncFrames"][unitId]] or (type(anchors["SyncFrames"][unitId])=="table" and anchors["SyncFrames"][unitId]) then AddItem(AnchorDropDown, "SyncFrames", "SyncFrames") end
+
 		end)
 		UIDropDownMenu_SetSelectedValue(AnchorDropDown, frame.anchor)
 		if AnchorDropDown2 then
