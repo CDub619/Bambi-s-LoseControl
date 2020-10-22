@@ -206,7 +206,8 @@ local spellIdsArena = {
 [118345] = "CC", --Pulverize
 [77505] = "CC", --Earthquake
 [197214] = "CC", --Sundering
-
+[290641] = "Special_High", --Ancestral Gift
+[8178] = "Special_High", --Grounding Totem Effect
 
 ----------------
 -- Death Knight
@@ -219,6 +220,8 @@ local spellIdsArena = {
 [91797] = "CC", --Monstrous Blow
 [287254] = "CC", --Dead of Winter
 [207167] = "CC", --Blinding Sleet
+[204490] = "Silence", --Strangulate
+[77606] = "Special_High", --Dark Simulacrum
 
 ----------------
 -- Druid
@@ -232,6 +235,8 @@ local spellIdsArena = {
 [209753] = "CC", --Cyclone
 [209753] = "CC", --Incapacitating Roar
 [2637] = "CC", --Hibernate
+[81261] = "Silence", --Solar Beam
+[5215] = "Special_High", --Prowl
 
 ----------------
 -- Mage
@@ -240,6 +245,10 @@ local spellIdsArena = {
 ["Polymorph"] = "CC",
 [82691] = "CC", --Ring of Frost
 [31661] = "CC", --Dragon's Breath
+[66] = "Special_High", --Invisibility
+[32612] = "Special_High", --Invisibility
+[110960] = "Special_High", --Greater Invisibility
+[198158] = "Special_High", --Mass Invisibility
 
 ----------------
 -- Monk
@@ -249,6 +258,7 @@ local spellIdsArena = {
 [202274] = "CC", --Incendiary Brew
 [198909] = "CC", --Song of Chi-ji
 [115078] = "CC", --Paralysis
+[209584] = "Special_High", --Zen Focus Tea
 
 ----------------
 -- Palladin
@@ -260,6 +270,7 @@ local spellIdsArena = {
 [853] = "CC", --Hammer of Justice
 [20066] = "CC", --Repentance
 [105421] = "CC", --Blinding Light
+[217824] = "Silence", --Shield of Virtue
 
 ----------------
 -- Priest
@@ -275,38 +286,79 @@ local spellIdsArena = {
 [605] = "CC", --Mind Control
 [205369] = "CC", --Mind Bomb
 [226943] = "CC", --Mind Bomb
+[15487] = "Silence", --Silence
+[289655] = "Special_High", --Holy Word: Concentration
 
 ----------------
 -- Rogue
 ----------------
-[] = "Immune",
-[] = "CC",
+[45182] = "Immune", --Cheating Death
+[1833] = "CC", --Cheap Shot
+[408] = "CC", --Kidney Shot
+[199804] = "CC", --Between the Eyes
+[2094] = "CC", --Blind
+[6770] = "CC", --Sap
+[1776] = "CC", --Gouge
+[1330] = "Silence", --Garrote - Silence
+[212183] = "Special_High", --Smoke Bomb
+[207736] = "Special_High", --Shadowy Duel
+[11327] = "Special_High", --Vanish
+[115191] = "Special_High", --Stealth
+[1784] = "Special_High", --Stealth
+
 ----------------
 -- Warlock
 ----------------
-[] = "CC",
+[30283] = "CC", --Shadowfury
+[22703] = "CC", --Infernal Awakening
+[89766] = "CC", --Axe Toss
+[213688] = "CC", --Fel Cleave
+[118699] = "CC", --Fear
+[6789] = "CC", --Mortal Coil
+[6358] = "CC", --Seduction
+[261589] = "CC", --Seduction
+[115268] = "CC", --Mesmerize
+[710] = "CC", --Bansih
+[196364] = "Silence", --Unstable Affliction
+
 ----------------
 -- Warrior
 ----------------
-[] = "Immune",
-[] = "CC",
+[46924]  = "Immune", -- Bladestorm (not immune to dmg, only to LoC)
+[227847] = "Immune", -- Bladestorm (not immune to dmg, only to LoC)
+[132169] = "CC", --Storm Bolt
+[199085] = "CC", --Warpath
+[132168] = "CC", --Shockwave
+[5246] = "CC", --Intimidating Shout
+
 ----------------
 -- Demon Hunter
 ----------------
-[] = "CC",
+[211881] = "CC", --Fel Eruption
+[179057] = "CC", --Choas Nova
+[205630] = "CC", --Illidan's Grasp
+[208618] = "CC", --Illidan's Grasp
+[221527] = "CC", --Imprison
+[217832] = "CC", --Imprison
+[207685] = "CC", --Sigil of Misery
+[213491] = "CC", --Demonic Trample
+[47476] = "Silence", --Sigil of Silence
+
 ----------------
 -- Misc.
 ----------------
 
 ["Drink"] = "Drink_Purge",
 ["Refreshment"] = "Drink_Purge",
-
-[] = "CC",
+[107079] = "CC", --Quaking Palm
+[20549] = "CC", --War Stomp
+[255654] = "CC", --Bull Rush
+[287712] = "CC", --Haymaker
 
 }
 
 local spellIds = {
-
+	[121557] = "CC",
 	[66] = "Stealth", --Invis
 	[32612] = "Stealth", --Invis
 	[110960] = "Stealth", --Invis
@@ -2845,17 +2897,21 @@ end
 -- Global references for attaching icons to various unit frames
 local anchors = {
 	None = {
-   		player = "PartyAnchor5", --Chris
-			party1 = "PartyAnchor1", --Chris
-			party2 = "PartyAnchor2", --Chris
-			party3 = "PartyAnchor3", --Chris
-			party4 = "PartyAnchor4",
-			arena1      = "GladiusClassIconFramearena1",
-			arena2      = "GladiusClassIconFramearena2",
-			arena3      = "GladiusClassIconFramearena3",
-			arena4      = "GladiusClassIconFramearena4",
-			arena5      = "GladiusClassIconFramearena5",
 	}, -- empty but necessary
+	BambiUI = {
+		player = "PartyAnchor5", --Chris
+		party1 = "PartyAnchor1", --Chris
+		party2 = "PartyAnchor2", --Chris
+		party3 = "PartyAnchor3", --Chris
+		party4 = "PartyAnchor4",
+	},
+	Gladius = {
+		arena1      = "GladiusClassIconFramearena1",
+		arena2      = "GladiusClassIconFramearena2",
+		arena3      = "GladiusClassIconFramearena3",
+		arena4      = "GladiusClassIconFramearena4",
+		arena5      = "GladiusClassIconFramearena5",
+	},
 	Blizzard = {
 		player       = "PlayerPortrait",
 		pet          = "PetPortrait",
@@ -2876,6 +2932,7 @@ local anchors = {
 		arena3      = "ArenaEnemyFrame3ClassPortrait",
 		arena4      = "ArenaEnemyFrame4ClassPortrait",
 		arena5      = "ArenaEnemyFrame5ClassPortrait",
+
 	},
 	Perl = {
 		player       = "Perl_Player_PortraitFrame",
@@ -2943,11 +3000,13 @@ local anchors = {
 -------------------------------------------------------------------------------
 -- Default settings
 local DBdefaults = {
+	ArenaGladiusGloss = true, --Add option Check Box for This
+
 	Spells = { }, --needed for added spells
 	SpellsInfo = { },
 	InterruptSpells = { },
 	InterruptSpellsInfo = { },
-	version = 6.2, -- This is the settings version, not necessarily the same as the LoseControl version
+	version = 6.21, -- This is the settings version, not necessarily the same as the LoseControl version
 	noCooldownCount = false,
 	noBlizzardCooldownCount = true,
 	noLossOfControlCooldown = false, --Chris Need to Test what is better
@@ -5077,6 +5136,7 @@ end
 
 LoseControl:RegisterEvent("ADDON_LOADED")
 
+
 function LoseControl:CheckSUFUnitsAnchors(updateFrame)
 	if not(ShadowUF and (SUFUnitplayer or SUFUnitpet or SUFUnittarget or SUFUnittargettarget or SUFHeaderpartyUnitButton1 or SUFHeaderpartyUnitButton2 or SUFHeaderpartyUnitButton3 or SUFHeaderpartyUnitButton4)) then return false end
 	local frames = { self.unitId }
@@ -6120,6 +6180,9 @@ end
 		if self.iconInterruptBackground:IsShown() then
 			self.iconInterruptBackground:Hide()
 		end
+		if self.gloss:IsShown() then
+			self.gloss:Hide()
+		end
 		self:Hide()
 		self:GetParent():Hide()
 	elseif maxExpirationTime ~= self.maxExpirationTime or ((LayeredHue) or (typeUpdate == -55))  then -- this is a different (de)buff, so initialize the cooldown
@@ -6131,6 +6194,26 @@ end
 			end
 			if self.drawlayer and self.anchor.SetDrawLayer then
 				self.anchor:SetDrawLayer("BACKGROUND") -- Temporarily put the portrait texture below the debuff texture. This is the only reliable method I've found for keeping the debuff texture visible with the cooldown spiral on top of it.
+			end
+		end
+
+		if (LoseControlDB.ArenaGladiusGloss == true) and (self.unitId == "arena1") or (self.unitId == "arena2") or (self.unitId == "arena3") and (self.frame.anchor == "Gladius") then
+			self.gloss:SetNormalTexture("Interface\\AddOns\\Gladius\\Images\\Gloss")
+			self.gloss.normalTexture = _G[self.gloss:GetName().."NormalTexture"]
+			self.gloss.normalTexture:SetHeight(LoseControlDB.frames[unitId].size)
+			self.gloss.normalTexture:SetWidth(LoseControlDB.frames[unitId].size)
+			self.gloss.normalTexture:SetScale(.9)
+			self.gloss.normalTexture:ClearAllPoints()
+			self.gloss.normalTexture:SetPoint("CENTER", self, "CENTER")
+			self.gloss:SetNormalTexture("Interface\\AddOns\\LoseControl\\Textures\\Gloss")
+			self.gloss.normalTexture:SetVertexColor(1, 1, 1, 0.4)
+			self.gloss:SetFrameLevel((self:GetParent():GetFrameLevel()) + 10)
+			if (not self.gloss:IsShown()) then
+				self.gloss:Show()
+			end
+		else
+			if self.gloss:IsShown() then
+				self.gloss:Hide()
 			end
 		end
 
@@ -6223,16 +6306,20 @@ end
 			self:SetCooldown(GetTime(), 0)	--needs execute two times (or the icon can dissapear; yes, it's weird...)
 		end
 					if (self.unitId == "arena1") or (self.unitId == "arena2") or (self.unitId == "arena3") then --Chris sets alpha timer/frame inherot of frame of selected units
+						if self.frame.anchor == "Gladius" then
+						self:SetSize((LoseControlDB.frames[unitId].size) , (LoseControlDB.frames[unitId].size))
+						self:SetPoint("CENTER", anchors[self.frame.anchor][unitId], "CENTER")
 						self:GetParent():SetAlpha(self.anchor:GetAlpha())
+						end
 						--print(self.frame.alpha )
 						--print(self.frame.anchor)
 						--print(self.unitId)
 						--print(self.frame.alpha)
+						--print(anchors[self.frame.anchor][unitId])
 			  	else
 						--UIFrameFadeOut(self, Duration, self.frame.alpha, 0)
 						self:GetParent():SetAlpha(self.frame.alpha) -- hack to apply transparency to the cooldown timer
-						--print(self.frame.alpha)
-					end
+				end
 		end
 end
 
@@ -6351,11 +6438,13 @@ function LoseControl:new(unitId)
 	if _G[op:GetName().."Border"] ~= nil then _G[op:GetName().."Border"]:SetAlpha(0) _G[op:GetName().."Border"]:Hide() end
 	if _G[op:GetName().."Icon"] ~= nil then _G[op:GetName().."Icon"]:SetAlpha(0) _G[op:GetName().."Icon"]:Hide() end
 
+
 	setmetatable(o, self)
 	self.__index = self
 
 	o:SetParent(op)
 	o.parent = op
+
 
 	o:SetDrawEdge(false)
 
@@ -6376,19 +6465,17 @@ function LoseControl:new(unitId)
 	o.text:SetPoint("BOTTOM", o, "BOTTOM")
 	o.text:Hide()
 
-	-- Rufio's code to make the frame border pretty. Maybe use this somehow to mask cooldown corners in Blizzard frames.
-	--o.overlay = o:CreateTexture(nil, "OVERLAY") -- displays the alpha mask for making rounded corners
-	--o.overlay:SetTexture("\\MINIMAP\UI-Minimap-Background")
-	--o.overlay:SetTexture("Interface\\AddOns\\LoseControl\\gloss")
-	--SetPortraitToTexture(o.overlay, "Textures\\MinimapMask")
-	--o.overlay:SetBlendMode("BLEND") -- maybe ALPHAKEY or ADD?
-	--o.overlay:SetAllPoints(o) -- anchor the texture to the frame
-	--o.overlay:SetPoint("TOPLEFT", -1, 1)
-	--o.overlay:SetPoint("BOTTOMRIGHT", 1, -1)
-	--o.overlay:SetVertexColor(0.25, 0.25, 0.25)
+
+-----------------------------------------------------------------------------------
+
 	o:Hide()
 	op:Hide()
 
+	o.gloss = CreateFrame("Button", addonName .. "Gloss" .. unitId, nil, 'ActionButtonTemplate')
+--	o.gloss:SetNormalTexture("Interface\\AddOns\\Gladius\\Images\\Gloss")
+--	o.gloss.normalTexture = _G[o.gloss:GetName().."NormalTexture"]
+--	o.gloss.normalTexture:SetVertexColor(1, 1, 1, 0.4)
+	o.gloss:Hide()
 	-- Create and initialize Interrupt Mini Icons
 	o.iconInterruptBackground = o:CreateTexture(addonName .. unitId .. "InterruptIconBackground", "ARTWORK", nil, -2)
 	--o.iconInterruptBackground:SetTexture("Interface\\AddOns\\LoseControl\\Textures\\lc_interrupt_background")
@@ -6419,7 +6506,7 @@ function LoseControl:new(unitId)
 		[64] = o.iconInterruptArcane
 	}
 	for _, v in pairs(o.iconInterruptList) do
-		v:SetAlpha(0.8)
+		v:SetAlpha(0) 															--hide Interrupt Icons was 0.8
 		v:Hide()
 		SetPortraitToTexture(v, v:GetTexture())
 		v:SetTexCoord(0.08,0.92,0.08,0.92)
@@ -6764,10 +6851,41 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 				frame.relativePoint = nil
 				frame.x = nil
 				frame.y = nil
+				if self.value == "Gladius" then
+					if (strfind(unitId, "arena")) then
+						portrSizeValue = 42
+					end
+					frame.size = portrSizeValue
+					icon:SetWidth(portrSizeValue)
+					icon:SetHeight(portrSizeValue)
+					icon:GetParent():SetWidth(portrSizeValue)
+					icon:GetParent():SetHeight(portrSizeValue)
+					if icon.MasqueGroup then
+						icon.MasqueGroup:RemoveButton(icon:GetParent())
+					end
+					_G[OptionsPanelFrame:GetName() .. "IconSizeSlider"]:SetValue(portrSizeValue)
+				end
+				if self.value == "BambiUI" then
+					if (strfind(unitId, "party")) then
+						portrSizeValue = 64
+					end
+					if unitId == "player" then
+						portrSizeValue = 48
+					end
+					frame.size = portrSizeValue
+					icon:SetWidth(portrSizeValue)
+					icon:SetHeight(portrSizeValue)
+					icon:GetParent():SetWidth(portrSizeValue)
+					icon:GetParent():SetHeight(portrSizeValue)
+					if icon.MasqueGroup then
+						icon.MasqueGroup:RemoveButton(icon:GetParent())
+					end
+					_G[OptionsPanelFrame:GetName() .. "IconSizeSlider"]:SetValue(portrSizeValue)
+				end
 				if self.value == "Blizzard" then
 					local portrSizeValue = 36
 					if (unitId == "player" or unitId == "target" or unitId == "focus") then
-						portrSizeValue = 56
+						portrSizeValue = 62
 					elseif (strfind(unitId, "arena")) then
 						portrSizeValue = 28
 					end
@@ -7623,6 +7741,8 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 		UIDropDownMenu_Initialize(AnchorDropDown, function() -- called on refresh and also every time the drop down menu is opened
 			AddItem(AnchorDropDown, L["None"], "None")
 			AddItem(AnchorDropDown, "Blizzard", "Blizzard")
+			AddItem(AnchorDropDown, "Gladius", "Gladius")
+			AddItem(AnchorDropDown, "BambiUI", "BambiUI")
 			if _G[anchors["Perl"][unitId]] or (type(anchors["Perl"][unitId])=="table" and anchors["Perl"][unitId]) then AddItem(AnchorDropDown, "Perl", "Perl") end
 			if _G[anchors["XPerl"][unitId]] or (type(anchors["XPerl"][unitId])=="table" and anchors["XPerl"][unitId]) then AddItem(AnchorDropDown, "XPerl", "XPerl") end
 			if _G[anchors["LUI"][unitId]] or (type(anchors["LUI"][unitId])=="table" and anchors["LUI"][unitId]) then AddItem(AnchorDropDown, "LUI", "LUI") end
