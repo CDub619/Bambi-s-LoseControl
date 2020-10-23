@@ -102,7 +102,7 @@ local Masque = LibStub("Masque", true)
 -------------------------------------------------------------------------------
 -- Thanks to all the people on the Curse.com and WoWInterface forums who help keep this list up to date :)
 local cleuPrioCastedSpells = { -- nil = Do Not Show
-	--[47540]   = {["duration"] = 60, ["priority"] = "Trees", ["priorityArena"] = nil},
+	--[17]   = {["duration"] = 60, ["priority"] = "Trees", ["priorityArena"] = nil},
 	--[8921]   = {["duration"] = 6, ["priority"] = "Trees", ["priorityArena"] = nil},
 	--[93402]   = {["duration"] = 5, ["priority"] = "Trees", ["priorityArena"] = nil},
 
@@ -5235,7 +5235,7 @@ function LoseControl:CheckGladiusUnitsAnchors(updateFrame)
 					else
 					LoseControlOptionsPanelUnlock:Click()
 					LoseControlOptionsPanelUnlock:Click()
-					print(unitId.."Losecontrol Gladius Anchor Set")
+					print(unitId.." Losecontrol Gladius Anchor Set")
 				end
 			end
 		end
@@ -5416,15 +5416,6 @@ ArenaSeen:SetScript("OnEvent", function(self, event, ...)
 			Arenastealth[unit] = nil
 			end
 		elseif arg2 == "unseen" then
-				--[[if (unit =="arena1") and (GladiusClassIconFramearena1) and (LoseControlarena1:IsVisible())  then
-					GladiusClassIconFramearena1:SetAlpha(0)
-				end
-				if (unit =="arena2") and (GladiusClassIconFramearena2) and (LoseControlarena2:IsVisible())  then
-					GladiusClassIconFramearena2:SetAlpha(0)
-				end
-				if (unit =="arena3") and (GladiusClassIconFramearena3) and (LoseControlarena3:IsVisible())  then
-					GladiusClassIconFramearena3:SetAlpha(0)
-				end]]
 				local guid = UnitGUID(unit)
 				UpdateUnitAuraByUnitGUID(guid, -200)
 		elseif arg2 == "destroyed" then
@@ -6214,7 +6205,7 @@ end
 										self:UNIT_AURA(unitId, -5)
 								end)
 								foundbuff = 1
-								print(unitId, "Unseen or Stealth w/", buffs[i].col3.name)
+								--print(unitId, "Unseen or Stealth w/", buffs[i].col3.name)
 								break
 							elseif ((buffs[i].col1 == priority.Special_High) or (buffs[i].col3.name == "FriendlyShadowyDuel") or (buffs[i].col3.name == "EnemyShadowyDuel")) then --and ((duration == 0) or (buffs[i].col3.expirationTime < (GetTime() + .10))) then
 								maxExpirationTime = GetTime() + 1
@@ -6224,7 +6215,7 @@ end
 								Hue = buffs[i].col3.hue
 								Name = buffs[i].col3.name
 								foundbuff = 1
-								print(unitId, "Permanent Stealthed w/", buffs[i].col3.name)
+								--print(unitId, "Permanent Stealthed w/", buffs[i].col3.name)
 								break
 							end
 						end
@@ -6235,7 +6226,7 @@ end
 							forceEventUnitAuraAtEnd = forceEventUnitAuraAtEnd
 							Hue = Hue
 							Name = Name
-							print(unitId, "No Stealth Buff Found")
+							--print(unitId, "No Stealth Buff Found")
             end
 					end
 		    end
