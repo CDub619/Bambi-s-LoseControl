@@ -2888,6 +2888,8 @@ local spellIds = {
 
 }
 
+L.spellIds = spellIds
+
 if debug then
 	for k in pairs(spellIds) do
 		local name, _, icon = GetSpellInfo(k)
@@ -5133,7 +5135,15 @@ function LoseControl:ADDON_LOADED(arg1)
 				end
 				if _G.LoseControlDB.InterruptSpells ~=nil then
 				 for k,v in pairs(_G.LoseControlDB.InterruptSpells) do interruptsIds[k] = v end --CHRIS ADDS ALL FOUND SPELLS
-			 end
+			 	end
+
+				if _G.LoseControlDB.spellEnabled == nil then
+					_G.LoseControlDB.spellEnabled = {}
+					for k in pairs(L.spellIds) do
+  				_G.LoseControlDB.spellEnabled[k]= true
+					end
+				end
+
 	end
 end
 
@@ -6842,6 +6852,15 @@ DisableLossOfControlCooldown:SetScript("OnClick", function(self)
 	end
 end)
 
+local LossOfControlSpells = CreateFrame("Button", O.."LossOfControlSpells", OptionsPanel, "OptionsButtonTemplate")
+_G[O.."LossOfControlSpells"]:SetText("Spells")
+LossOfControlSpells:SetHeight(18)
+LossOfControlSpells:SetScript("OnClick", function(self)
+L.Config:Toggle()
+--	DEFAULT_CHAT_FRAME.editBox:SetText("/ls config lock")
+--ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox,0)
+end)
+
 local Priority = OptionsPanel:CreateFontString(nil, "ARTWORK", "GameFontNormal")
 Priority:SetText(L["Priority"])
 
@@ -6894,6 +6913,8 @@ end
 -------------------------------------------------------------------------------
 -- Arrange all the options neatly
 title:SetPoint("TOPLEFT", 16, -10)
+
+LossOfControlSpells:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 100, 18)
 
 Unlock:SetPoint("TOPLEFT",  title, "BOTTOMLEFT", 110, 22)
 DisableCooldownCount:SetPoint("TOPLEFT", Unlock, "BOTTOMLEFT", 0, 6)

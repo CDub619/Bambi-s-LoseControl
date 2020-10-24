@@ -21,3 +21,4 @@
 
 localization.lua
 LoseControl.lua
+config.lua
