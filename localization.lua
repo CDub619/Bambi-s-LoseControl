@@ -528,10 +528,13 @@ else -- default English
 	L["Disarm"]      = "Disarm"
 	L["Root"]        = "Root"
 	L["Snare"]       = "Snare"
-	L["SnareMagic"]       = "SnareMagic"
+	L["SnareMagic"]  = "SnareMagic"
 	L["Immune"]      = "Immune"
 	L["ImmuneSpell"] = "Immune to Spells"
 	L["ImmunePhysical"] = "Immune to Physical"
+	L["RootPhyiscal_Special"] = "Roots Physical & Special"
+
+
 	L["Other"]       = "Other"
 	L["PvE"]         = "PvE"
 	L["player"] = "Player"

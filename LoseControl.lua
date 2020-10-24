@@ -94,7 +94,8 @@ local LCframes = {}
 local LCframeplayer2
 local InterruptAuras = { }
 local SmokeBombAuras = { }
-local cleuPrioCastedSpells = { }
+local BeamAura = { }
+local DuelAura = { }
 local Arenastealth = {}
 local origSpellIdsChanged = { }
 local Masque = LibStub("Masque", true)
@@ -130,6 +131,7 @@ local interruptsIds = {
 	[212619] = 6,		-- Call Felhunter (Warlock)
 	[217824] = 4,		-- Shield of Virtue (Protec Paladin)
 	[231665] = 3,		-- Avengers Shield (Paladin)
+	[91807] = 2,     --Shambling Rush
 }
 
 --[[
@@ -358,7 +360,7 @@ local spellIdsArena = {
 }
 
 local spellIds = {
-	[121557] = "CC",
+
 	[66] = "Stealth", --Invis
 	[32612] = "Stealth", --Invis
 	[110960] = "Stealth", --Invis
@@ -694,6 +696,7 @@ local spellIds = {
 	-- Priest
 	----------------
 	[605]    = "CC",				-- Dominate Mind
+		[81782]    = "CC",				-- Barrier
 	[64044]  = "CC",				-- Psychic Horror
 	[8122]   = "CC",				-- Psychic Scream
 	[9484]   = "CC",				-- Shackle Undead
@@ -4581,7 +4584,7 @@ local function dump(o)
    end
 end
 
-function get_key_for_value( t, value )
+local function get_key_for_value( t, value )
   for k,v in pairs(t) do
     if v==value then return k end
   end
@@ -5557,9 +5560,9 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 
 
 
-		-----------------------------------------------------------------------------------------------------------------
-		--SmokeBomb Check, do not need speperate prio for cleu + aura
-		-----------------------------------------------------------------------------------------------------------------
+					-----------------------------------------------------------------------------------------------------------------
+					--SmokeBomb Check, do not need speperate prio for cleu + aura
+					-----------------------------------------------------------------------------------------------------------------
 					if ((event == "SPELL_CAST_SUCCESS") and (spellId == 212182)) then
 						if (sourceGUID ~= nil) then
 							local duration = 5
@@ -5568,8 +5571,48 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 								SmokeBombAuras[sourceGUID] = {}
 							end
 					  	SmokeBombAuras[sourceGUID] = { ["duration"] = duration, ["expirationTime"] = expirationTime }
+							C_Timer.After(duration + 1, function()	-- execute in some close next frame to accurate use of UnitAura function
+							SmokeBombAuras[sourceGUID] = nil
+							end)
 					  end
 					end
+
+					-----------------------------------------------------------------------------------------------------------------
+					--Root Beam Check, do not need speperate prio for cleu + aura
+					-----------------------------------------------------------------------------------------------------------------
+					if ((event == "SPELL_CAST_SUCCESS") and (spellId == 78675)) then
+						if (sourceGUID ~= nil) then
+							local duration = 8
+							local expirationTime = GetTime() + duration
+							if (BeamAura[sourceGUID] == nil) then
+								BeamAura[sourceGUID] = {}
+							end
+							BeamAura[sourceGUID] = { ["duration"] = duration, ["expirationTime"] = expirationTime }
+							C_Timer.After(duration + 1, function()	-- execute in some close next frame to accurate use of UnitAura function
+							BeamAura[sourceGUID] = nil
+							end)
+						end
+					end
+
+					-----------------------------------------------------------------------------------------------------------------
+					--Duel Enemy Check, do not need speperate prio for cleu + aura
+					-----------------------------------------------------------------------------------------------------------------
+					if ((event == "SPELL_CAST_SUCCESS") and (spellId == 207736)) then
+						if (sourceGUID == UnitGUID("arena1")) or (sourceGUID == UnitGUID("arena2")) or (sourceGUID == UnitGUID("arena3")) then
+							local duration = 6
+							local expirationTime = GetTime() + duration
+							if (DuelAura[sourceGUID] == nil) then
+								DuelAura[sourceGUID] = {}
+							end
+							DuelAura[sourceGUID] = { ["duration"] = duration, ["expirationTime"] = expirationTime, ["destGUID"] = destGUID }
+							print("cleu enemy Dueled Data Stored destGUID is"..destGUID)
+							C_Timer.After(duration + 1, function()	-- execute in some close next frame to accurate use of UnitAura function
+							DuelAura[sourceGUID] = nil
+							end)
+						end
+					end
+
+
 
 			-----------------------------------------------------------------------------------------------------------------
 			--Trees Check (if Tress dies it will not update currently not sure how to track that)
@@ -5737,26 +5780,49 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 					--print(source)
 					if UnitIsEnemy("player", source) then --still returns true for an enemy currently under mindcontrol I can add your fix.
 						spellIds[spellId] = "Enemy_Smoke_Bomb"
-						--print(unitId.."Dueled is enemy check")
+						print(unitId.."Dueled is enemy check")
 							if (unitId == "arena1") or (unitId == "arena2") or (unitId == "arena3") or (UnitGUID(unitId) == UnitGUID("arena1")) or (UnitGUID(unitId) == UnitGUID("arena2")) or (UnitGUID(unitId) == UnitGUID("arena3")) then
-								--print(unitId.."Enemy Dueled in Arean123 check")
-								spellIds[spellId] = "Special_High"
+							spellIds[spellId] = "Special_High"
 							end
-						name = "EnemyShadowyDuel"
+							name = "EnemyShadowyDuel"
 					elseif not UnitIsEnemy("player", source) then
+						print(unitId.."Dueled is Friendly check")
 						spellIds[spellId] = "Friendly_Smoke_Bomb"
 							if (unitId == "arena1") or (unitId == "arena2") or (unitId == "arena3") or (UnitGUID(unitId) == UnitGUID("arena1")) or (UnitGUID(unitId) == UnitGUID("arena2")) or (UnitGUID(unitId) == UnitGUID("arena3")) then
-								--print(unitId.."Friendly Duel on Arean123 check")
-								spellIds[spellId] = "Special_High"
+							spellIds[spellId] = "Special_High"
 							end
 							name = "FriendlyShadowyDuel"
 		  		end
 				else
-					spellIds[spellId] = "Friendly_Smoke_Bomb"
-					if (unitId == "arena1") or (unitId == "arena2") or (unitId == "arena3") or (UnitGUID(unitId) == UnitGUID("arena1")) or (UnitGUID(unitId) == UnitGUID("arena2")) or (UnitGUID(unitId) == UnitGUID("arena3")) then
+						spellIds[spellId] = "Friendly_Smoke_Bomb"
+						print(unitId.."Dueled is w/o source check")
+						if (unitId == "arena1") or (unitId == "arena2") or (unitId == "arena3") or (UnitGUID(unitId) == UnitGUID("arena1")) or (UnitGUID(unitId) == UnitGUID("arena2")) or (UnitGUID(unitId) == UnitGUID("arena3")) then
+						print(unitId.."Dueled is w/o source and "..unitId)
 						spellIds[spellId] = "Special_High"
 						name = "FriendlyShadowyDuel"
-					end
+						else
+							if DuelAura[UnitGUID("arena1")] then
+								if (DuelAura[UnitGUID("arena1")].destGUID == UnitGUID(unitId)) then
+								print(DuelAura[UnitGUID("arena1")].destGUID)
+								name = "EnemyShadowyDuel"
+								spellIds[spellId] = "Enemy_Smoke_Bomb"
+								end
+							end
+							if DuelAura[UnitGUID("arena2")] then
+								if (DuelAura[UnitGUID("arena2")].destGUID == UnitGUID(unitId)) then
+								print(DuelAura[UnitGUID("arena2")].destGUID)
+								name = "EnemyShadowyDuel"
+								spellIds[spellId] = "Enemy_Smoke_Bomb"
+								end
+							end
+							if DuelAura[UnitGUID("arena3")] then
+								if (DuelAura[UnitGUID("arena3")].destGUID == UnitGUID(unitId)) then
+								print(DuelAura[UnitGUID("arena3")].destGUID)
+								name = "EnemyShadowyDuel"
+								spellIds[spellId] = "Enemy_Smoke_Bomb"
+								end
+							end
+						end
 				end
 			end
 
@@ -5764,7 +5830,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 			--SmokeBomb Check For Arena
 			-----------------------------------------------------------------------------------------------------------------
 			if spellId == 212183 then -- Smoke Bomb
-				if source then
+				if source and SmokeBombAuras[UnitGUID(source)] then
 					--print(source)
 					if UnitIsEnemy("player", source) then --still returns true for an enemy currently under mindcontrol I can add your fix.
 						duration = SmokeBombAuras[UnitGUID(source)].duration --Add a check, i rogue bombs in stealth there is a source but the cleu doesnt regester a time
@@ -5798,8 +5864,8 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 			-----------------------------------------------------------------------------------------------------------------
 			if spellId == 81261 then
 					local root = {}
-					for i = 1, 40 do
-		      local _, _, _, _, d, e, _, _, _, s = UnitAura(unitId, i, "HARMFUL")
+						for i = 1, 40 do
+			      local _, _, _, _, d, e, _, _, _, s = UnitAura(unitId, i, "HARMFUL")
 						if not s then break end
 								if (spellIds[s] == "RootPhyiscal_Special") or (spellIds[s] == "RootMagic_Special") or (spellIds[s] == "Root") or (spellIds[s] == "Roots_90_Snares") then
 									tblinsert(root, {["col1"] = e, ["col2"]  = d})
@@ -5807,9 +5873,16 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 						end
 						if #root then
 							table.sort(root, cmp_col1)
-							expirationTime = root[1].col1
-							duration = root[1].col2
-						else
+						end
+						if root[1] then
+						expirationTime = root[1].col1 + .01
+						duration = root[1].col2
+							if source and BeamAura[UnitGUID(source)] then
+								if (expirationTime - GetTime()) >  (BeamAura[UnitGUID(source)].expirationTime - GetTime()) then
+									duration = BeamAura[UnitGUID(source)].duration
+									expirationTime =BeamAura[UnitGUID(source)].expirationTime + .01
+								end
+							end
 						end
 				end
 
@@ -6227,6 +6300,15 @@ end
 							Hue = Hue
 							Name = Name
 							--print(unitId, "No Stealth Buff Found")
+							if unitId == "arena1" and GladiusClassIconFramearena1 and GladiusHealthBararena1 then
+								GladiusClassIconFramearena1:SetAlpha(GladiusHealthBararen1:GetAlpha())
+							end
+							if unitId == "arena2" and GladiusClassIconFramearena2 and GladiusHealthBararena2 then
+								GladiusClassIconFramearena2:SetAlpha(GladiusHealthBararena2:GetAlpha())
+							end
+							if unitId == "arena3" and GladiusClassIconFramearena3 and GladiusHealthBararena3 then
+								GladiusClassIconFramearena3:SetAlpha(GladiusHealthBararena3:GetAlpha())
+							end
             end
 					end
 		    end
@@ -6774,50 +6856,61 @@ local function CreateSlider(text, parent, low, high, step, globalName)
 	slider:SetWidth(160)
 	slider:SetMinMaxValues(low, high)
 	slider:SetValueStep(step)
+	slider:SetObeyStepOnDrag(obeyStep)
 	--_G[name .. "Text"]:SetText(text)
-	_G[name .. "Low"]:SetText(low)
-	_G[name .. "High"]:SetText(high)
+	_G[name .. "Low"]:SetText("")
+	_G[name .. "High"]:SetText("")
 	return slider
 end
 
---[[local PrioritySlider = {}
+local function CreateSliderMain(text, parent, low, high, step, globalName)
+	local name = globalName or (parent:GetName() .. text)
+	local slider = CreateFrame("Slider", name, parent, "OptionsSliderTemplate")
+	slider:SetHeight(8)
+	slider:SetWidth(255)
+	slider:SetScale(.8)
+	slider:SetMinMaxValues(low, high)
+	slider:SetValueStep(step)
+	slider:SetObeyStepOnDrag(obeyStep)
+	--_G[name .. "Text"]:SetText(text)
+	_G[name .. "Low"]:SetText("")
+	_G[name .. "High"]:SetText("")
+	return slider
+end
+
+local PrioritySlider = {}
 for k in pairs(DBdefaults.priority) do
-	PrioritySlider[k] = CreateSlider(L[k], OptionsPanel, 0, 100, 5, "Priority"..k.."Slider")
+	PrioritySlider[k] = CreateSliderMain(L[k], OptionsPanel, 0, 100, 1, "Priority"..k.."Slider")
 	PrioritySlider[k]:SetScript("OnValueChanged", function(self, value)
-		_G[self:GetName() .. "Text"]:SetText(L[k] .. " (" .. value .. ")")
+		_G[self:GetName() .. "Text"]:SetText(L[k] .. " (" .. ("%.0f"):format(value) .. ")")
 		LoseControlDB.priority[k] = value
 		if k == "Interrupt" then
 			local enable = LCframes["target"].frame.enabled
 			LCframes["target"]:RegisterUnitEvents(enable)
 		end
 	end)
-end]]
+end
 
 -------------------------------------------------------------------------------
 -- Arrange all the options neatly
-title:SetPoint("TOPLEFT", 16, -16)
-subText:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -8)
+title:SetPoint("TOPLEFT", 16, -10)
 
-Unlock:SetPoint("TOPLEFT", subText, "BOTTOMLEFT", 0, -16)
-DisableCooldownCount:SetPoint("TOPLEFT", Unlock, "BOTTOMLEFT", 0, -2)
-DisableBlizzardCooldownCount:SetPoint("TOPLEFT", DisableCooldownCount, "BOTTOMLEFT", 0, -2)
-DisableLossOfControlCooldown:SetPoint("TOPLEFT", DisableBlizzardCooldownCount, "BOTTOMLEFT", 0, -2)
-DisableLossOfControlCooldownAuxButton:SetPoint("TOPLEFT", DisableLossOfControlCooldown, "BOTTOMLEFT", 30, 4)
+Unlock:SetPoint("TOPLEFT",  title, "BOTTOMLEFT", 110, 22)
+DisableCooldownCount:SetPoint("TOPLEFT", Unlock, "BOTTOMLEFT", 0, 6)
+
+DisableBlizzardCooldownCount:SetPoint("TOPLEFT", Unlock, "TOPRIGHT", 150, 0)
+DisableLossOfControlCooldown:SetPoint("TOPLEFT", DisableBlizzardCooldownCount, "BOTTOMLEFT", 0, 6)
+DisableLossOfControlCooldownAuxButton:SetPoint("TOPLEFT", DisableLossOfControlCooldown, "BOTTOMLEFT", 30, 6)
 DisableLossOfControlCooldownAuxText:SetPoint("TOPLEFT", DisableLossOfControlCooldownAuxButton, "TOPRIGHT", 4, 0)
 
-Priority:SetPoint("TOPLEFT", DisableLossOfControlCooldownAuxButton, "BOTTOMLEFT", -30, -8)
-PriorityDescription:SetPoint("TOPLEFT", Priority, "BOTTOMLEFT", 0, -8)
---[[PrioritySlider.PvE:SetPoint("TOPLEFT", PriorityDescription, "BOTTOMLEFT", 0, -24)
-PrioritySlider.Immune:SetPoint("TOPLEFT", PrioritySlider.PvE, "BOTTOMLEFT", 0, -24)
-PrioritySlider.ImmuneSpell:SetPoint("TOPLEFT", PrioritySlider.Immune, "BOTTOMLEFT", 0, -24)
-PrioritySlider.ImmunePhysical:SetPoint("TOPLEFT", PrioritySlider.ImmuneSpell, "BOTTOMLEFT", 0, -24)
-PrioritySlider.CC:SetPoint("TOPLEFT", PrioritySlider.ImmunePhysical, "BOTTOMLEFT", 0, -24)
-PrioritySlider.Silence:SetPoint("TOPLEFT", PrioritySlider.CC, "BOTTOMLEFT", 0, -24)
-PrioritySlider.Interrupt:SetPoint("TOPLEFT", PrioritySlider.Silence, "BOTTOMLEFT", 0, -24)
-PrioritySlider.Disarm:SetPoint("TOPLEFT", PrioritySlider.Interrupt, "BOTTOMLEFT", 0, -24)
-PrioritySlider.Root:SetPoint("TOPLEFT", PrioritySlider.PvE, "TOPRIGHT", 40, 0)
-PrioritySlider.Snare:SetPoint("TOPLEFT", PrioritySlider.Root, "BOTTOMLEFT", 0, -24)
-PrioritySlider.Other:SetPoint("TOPLEFT", PrioritySlider.Snare, "BOTTOMLEFT", 0, -24)]]
+Priority:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -12)
+subText:SetPoint("TOPLEFT", Priority, "BOTTOMLEFT", 0, -3)
+PriorityDescription:SetPoint("TOPLEFT", subText, "BOTTOMLEFT", 0, -3)
+PrioritySlider.CC:SetPoint("TOPLEFT", PriorityDescription, "BOTTOMLEFT", 0, -30)
+PrioritySlider.Silence:SetPoint("TOPLEFT", PrioritySlider.CC, "BOTTOMLEFT", 0, -11)
+PrioritySlider.ImmuneSpell:SetPoint("TOPLEFT", PrioritySlider.Silence, "BOTTOMLEFT", 0, -11)
+PrioritySlider.ImmunePhysical:SetPoint("TOPLEFT", PrioritySlider.ImmuneSpell, "BOTTOMLEFT", 0, -11)
+PrioritySlider.RootPhyiscal_Special:SetPoint("TOPLEFT", PrioritySlider.ImmunePhysical, "BOTTOMLEFT", 0, -11)
 
 -------------------------------------------------------------------------------
 OptionsPanel.default = function() -- This method will run when the player clicks "defaults".SnareMagic
@@ -6843,9 +6936,9 @@ OptionsPanel.refresh = function() -- This method will run when the Interface Opt
 		_G[O.."DisableBlizzardCooldownCountText"]:SetTextColor(_G[O.."DisableCooldownCountText"]:GetTextColor())
 	end
 	local priority = LoseControlDB.priority
-	--[[for k in pairs(priority) do
+	for k in pairs(priority) do
 		PrioritySlider[k]:SetValue(priority[k])
-	end]]
+	end
 end
 
 InterfaceOptions_AddCategory(OptionsPanel)
@@ -6940,9 +7033,17 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 						local H = GladiusClassIconFramearena1:GetWidth()
 						print(unitId.." GladiusClassIconFrame Size "..H)
 						portrSizeValue = W
+						if InCombatLockdown() then
+						else
+							LCframes[unitId]:CheckGladiusUnitsAnchors(true)
+						end
 					else
 						if (strfind(unitId, "arena")) then
 							portrSizeValue = 42
+						end
+						if InCombatLockdown() then
+						else
+							LCframes[unitId]:CheckGladiusUnitsAnchors(true)
 						end
 					end
 					frame.size = portrSizeValue
