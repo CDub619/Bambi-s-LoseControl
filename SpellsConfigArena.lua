@@ -100,7 +100,7 @@ local function SetTabs(frame, numTabs, ...)
 	local frameName = frame:GetName();
 	local width = {}
 	local rows = 1
-	local widthTabrow = {121,}
+	local widthTabrow = {130,}
 
 
 	for i = 1, numTabs do

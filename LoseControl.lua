@@ -3024,11 +3024,11 @@ local anchors = {
 local DBdefaults = {
 	ArenaGladiusGloss = true, --Add option Check Box for This
 
-
 	Spells = { }, --needed for added spells
 	SpellsInfo = { },
 	InterruptSpells = { },
 	InterruptSpellsInfo = { },
+
 	version = 6.21, -- This is the settings version, not necessarily the same as the LoseControl version
 	noCooldownCount = false,
 	noBlizzardCooldownCount = true,
