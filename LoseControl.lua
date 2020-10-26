@@ -6981,6 +6981,16 @@ OptionsPanel.default = function() -- This method will run when the player clicks
 	end
 	LCframeplayer2:PLAYER_ENTERING_WORLD()
 
+	for k, v in pairs(spellIds) do --WIPES TABLE STARTS CLEAN
+	spellIds[k] = nil
+	end
+	for k, v in pairs(spellIdsArena) do --WIPES TABLE STARTS CLEAN
+	spellIds[k] = nil
+	end
+	for k, v in pairs(interruptsIds) do --WIPES TABLE STARTS CLEAN
+	interruptsIds[k] = nil
+	end
+
 	for k, v in ipairs(spells) do
 	spellIds[v[1]] = v[2]
 	end
@@ -6991,12 +7001,12 @@ OptionsPanel.default = function() -- This method will run when the player clicks
 	spellIdsArena[v[1]] = v[2]
 	end
 
-	if _G.LoseControlDB.Spells ~=nil then
-	for k,v in pairs(_G.LoseControlDB.Spells) do spellIds[k] = v end --CHRIS ADDS ALL FOUND SPELLS
-	end
-	if _G.LoseControlDB.InterruptSpells ~=nil then
-	for k,v in pairs(_G.LoseControlDB.InterruptSpells) do interruptsIds[k] = v end --CHRIS ADDS ALL FOUND SPELLS
-	end
+	for k,v in pairs(_G.LoseControlDB.Spells) do
+		_G.LoseControlDB.Spells[k] = nil
+	end --DELETE ALL FOUND SPELLS FROM DB
+	for k,v in pairs(_G.LoseControlDB.InterruptSpells) do
+		_G.LoseControlDB.InterruptSpells[k] = nil
+	end --DELETE ALL FOUND SPELLS FROM DB
 
 	L.SpellsArenaConfig:Reset()
 	L.SpellsPVEConfig:Reset()

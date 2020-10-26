@@ -125,18 +125,53 @@ local function SetTabs(frame, numTabs, ...)
 	local frameName = frame:GetName();
 	local width = {}
 	local rows = 1
-	local widthTabrow = {121,}
+	local rowCount = 1
+	local str = {
+	"     ",
+	"      ",
+	"       ",
+	"        ",
+	"         ",
+	"          ",
+	"           ",
+	"            ",
+	"             ",
+	"              ",
+  "               ",
+	"                ",
+	"                 ",
+	"                  ",
+	"                   ",
+	"                    ",
+	"                     ",
+	"                      ",
+	"                       ",
+	"                        ",
+	"                         ",
+}
 
 
 	for i = 1, numTabs do
 		local tab = CreateFrame("Button", frameName.."Tab"..i, frame, "CharacterFrameTabButtonTemplate");
 		tab:SetID(i);
 		if core[select(i, ...)] then
-		tab:SetText(core[select(i, ...)]);
-		width[i] = string.len(core[select(i, ...)])
+			width[i] = string.len(core[select(i, ...)])
+			local z = (20- width[i])
+			z = math.floor(z)
+			if z and z <= 20 and z >= 1 then
+			tab:SetText(core[select(i, ...)]..str[20]); --String Needs to be 15
+			else
+			tab:SetText(core[select(i, ...)]);
+			end
 		else
-		tab:SetText(tabs[i]);
 		width[i] = string.len(tabs[i])
+		local z = (20 - width[i])
+			z = math.floor(z)
+			if z and z <= 20 and z >= 1 then
+			tab:SetText(tabs[i]..str[20]); --String Needs to be 15
+			else
+			tab:SetText(tabs[i]);
+			end
 		end
 		tab:SetScript("OnClick", Tab_OnClick);
 
@@ -153,17 +188,16 @@ local function SetTabs(frame, numTabs, ...)
 
 		if (i == 1) then
 		tab:SetPoint("TOPLEFT", UISpellsConfig, "BOTTOMLEFT", 5, 7);
-		widthTab = width[i]
+		rowCount = 1
 		else
-					widthTab = widthTab + width[i]
-		   if widthTab < widthTabrow[rows] -2 then
+				if rowCount <= 9 then
 			 		tab:SetPoint("TOPLEFT", _G[frameName.."Tab"..(i - 1)], "TOPRIGHT", -27, 0);
-					widthTabrow[rows + 1] = widthTab
+					rowCount = rowCount + 1
 	    	else
-					widthTab = 0
 					y = 7 - (25 * rows)
 					tab:SetPoint("TOPLEFT", UISpellsConfig, "BOTTOMLEFT", 5, y);
 					rows = rows + 1
+					rowCount = 1
 	    end
 		end
 	end
@@ -196,7 +230,7 @@ function SpellsConfig:CreateMenu()
 	UISpellsConfig:SetScript("OnDragStart", UISpellsConfig.StartMoving)
 	UISpellsConfig:SetScript("OnDragStop", UISpellsConfig.StopMovingOrSizing)
 
-	UISpellsConfig:SetSize(800, 400);
+	UISpellsConfig:SetSize(1050, 400);
 	UISpellsConfig:SetPoint("CENTER"); -- Doesn't need to be ("CENTER", UIParent, "CENTER")
 
 
@@ -218,7 +252,7 @@ function SpellsConfig:CreateMenu()
 		local previousSpellID = nil
 		local Y = -10
 		local X = 230
-		local spellCount = 0
+		local spellCount = -1
 
 		for k in ipairs(core.spells) do
 			local spellID = core.spells[k][1]
@@ -228,11 +262,11 @@ function SpellsConfig:CreateMenu()
 				local spellCheck = CreateFrame("CheckButton", c:GetName().."spellCheck"..spellID, c, "UICheckButtonTemplate");
 				if (previousSpellID) then
 					if (spellCount % numberOfSpellChecksPerRow == 0) then
-						Y = Y-40
+						Y = Y - 40
 						X = 30
 					end
 					spellCheck:SetPoint("TOPLEFT", c, "TOPLEFT", X, Y);
-					X = X+200
+					X = X + 200
 				else
 					spellCheck:SetPoint("TOPLEFT", c, "TOPLEFT", 30, -10);
 				end

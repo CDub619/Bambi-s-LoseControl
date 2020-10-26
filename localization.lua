@@ -2,7 +2,7 @@ local _, L = ...
 local locale = GetLocale()
 
 if locale == "deDE" then -- translated by Morbis
-	L["CC"]          = "CC"
+	L["CC"]          = "CC"                    
 	L["Silence"]     = "Stille"
 	L["Interrupt"]   = "Interrupt"
 	L["Disarm"]      = "Entwaffnen"
