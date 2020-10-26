@@ -21,4 +21,6 @@
 
 localization.lua
 LoseControl.lua
-config.lua
+SpellsConfig.lua
+SpellsConfigArena.lua
+SpellsConfigPVE.lua

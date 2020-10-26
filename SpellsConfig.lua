@@ -3,10 +3,10 @@
 --------------------------------------
 local _, core = ...;
 
-core.Config = {}; -- adds Config table to addon namespace
+core.SpellsConfig = {}; -- adds SpellsConfig table to addon namespace
 
-local Config = core.Config;
-local UIConfig;
+local SpellsConfig = core.SpellsConfig;
+local UISpellsConfig;
 local tooltip = CreateFrame("GameTooltip", "fPBMouseoverTooltip", UIParent, "GameTooltipTemplate")
 --------------------------------------
 -- Defaults (usually a database!)
@@ -21,59 +21,70 @@ local defaults = {
 }
 
 local tabs = {
-  "CC",
-  "Silence",
-  "SpecialRoot",
-  "Root",
-  "Immune",
-  "Stealth",
-  "WarningDisarm",
-  "WarningCC",
-  "EnemySmoke",
-  "MajorOffense",
-  "MajorDefense",
-  "AuraMastery",
-  "SpecialSnare",
-  "Disarm",
-  "SemiCCCast",
-  "SemiCCDmg",
-  "MajorDmgBuff",
-  "FriendlySmoke",
-  "Interrupts",
-  "ImmuneSpell",
-  "CCReduction",
-  "MajorSpeed",
-  "Freedoms",
-  "MinorOffense",
-  "MinorDefense",
-  "CastingBuff",
-  "SnareWarning",
-  "Snare70",
-  "Snare70Magic",
-  "Snare50",
-  "Snare50Magic",
-  "Snare30",
-  "Snare30Magic",
-  "RandomAuras",
-  "PvE",
+	"CC",
+	"Silence",
+	"RootPhyiscal_Special",
+	"RootMagic_Special",
+	"Root",
+	"ImmunePlayer",
+	"Disarm_Warning",
+	"CC_Warning",
+	"Enemy_Smoke_Bomb",
+	"Stealth",
+	"Immune",
+	"ImmuneSpell",
+	"ImmunePhysical",
+	"AuraMastery_Cast_Auras",
+	"ROP_Vortex",
+	"Disarm",
+	"Haste_Reduction",
+	"Dmg_Hit_Reduction",
+	"Interrupt",
+	"AOE_DMG_Modifiers",
+	"Friendly_Smoke_Bomb",
+	"AOE_Spell_Refections",
+	"Trees",
+	"Speed_Freedoms",
+	"Freedoms",
+	"Friendly_Defensives",
+	"Mana_Regen",
+	"CC_Reduction",
+	"Personal_Offensives",
+	"Peronsal_Defensives",
+	"Movable_Cast_Auras",
+
+	"Other", --PVE only
+	"PvE", --PVE only
+
+	"SnareSpecial",
+	"SnarePhysical70",
+	"SnareMagical70",
+	"SnarePhysical50",
+	"SnarePosion50",
+	"SnareMagic50",
+	"SnarePhysical30",
+	"SnareMagic30",
+	"Snare",
 }
-core.commands = {
-	["config"] = core.Config.Toggle, -- this is a function (no knowledge of Config object)
-};
 --------------------------------------
--- Config functions
+-- SpellsConfig functions
 --------------------------------------
-function Config:Toggle()
-	local menu = UIConfig or Config:CreateMenu();
+function SpellsConfig:Toggle()
+	local menu = UISpellsConfig or SpellsConfig:CreateMenu();
 	menu:SetShown(not menu:IsShown());
 end
 
-function Config:GetThemeColor()
+function SpellsConfig:Reset()
+	local menu = UISpellsConfig or SpellsConfig:CreateMenu();
+	menu:Hide()
+end
+
+function SpellsConfig:GetThemeColor()
 	local c = defaults.theme;
 	return c.r, c.g, c.b, c.hex;
 end
 
-function Config:CreateButton(point, relativeFrame, relativePoint, yOffset, text)
+function SpellsConfig:CreateButton(point, relativeFrame, relativePoint, yOffset, text)
 	local btn = CreateFrame("Button", nil, relativeFrame, "GameMenuButtonTemplate");
 	btn:SetPoint(point, relativeFrame, relativePoint, 0, yOffset);
 	btn:SetSize(140, 40);
@@ -98,12 +109,12 @@ end
 local function Tab_OnClick(self)
 	PanelTemplates_SetTab(self:GetParent(), self:GetID());
 
-	local scrollChild = UIConfig.ScrollFrame:GetScrollChild();
+	local scrollChild = UISpellsConfig.ScrollFrame:GetScrollChild();
 	if (scrollChild) then
 		scrollChild:Hide();
 	end
 
-	UIConfig.ScrollFrame:SetScrollChild(self.content);
+	UISpellsConfig.ScrollFrame:SetScrollChild(self.content);
 	self.content:Show();
 end
 
@@ -112,15 +123,24 @@ local function SetTabs(frame, numTabs, ...)
 
 	local contents = {};
 	local frameName = frame:GetName();
+	local width = {}
+	local rows = 1
+	local widthTabrow = {121,}
 
 
 	for i = 1, numTabs do
 		local tab = CreateFrame("Button", frameName.."Tab"..i, frame, "CharacterFrameTabButtonTemplate");
 		tab:SetID(i);
-		tab:SetText(core["i"..select(i, ...)]);
+		if core[select(i, ...)] then
+		tab:SetText(core[select(i, ...)]);
+		width[i] = string.len(core[select(i, ...)])
+		else
+		tab:SetText(tabs[i]);
+		width[i] = string.len(tabs[i])
+		end
 		tab:SetScript("OnClick", Tab_OnClick);
 
-		tab.content = CreateFrame("Frame", tab:GetName()..'Content', UIConfig.ScrollFrame);
+		tab.content = CreateFrame("Frame", tab:GetName()..'Content', UISpellsConfig.ScrollFrame);
 		tab.content:SetSize(760, 360);
 		tab.content:Hide();
 
@@ -132,35 +152,19 @@ local function SetTabs(frame, numTabs, ...)
 		table.insert(contents, tab.content);
 
 		if (i == 1) then
-			tab:SetPoint("TOPLEFT", UIConfig, "BOTTOMLEFT", 5, 7);
+		tab:SetPoint("TOPLEFT", UISpellsConfig, "BOTTOMLEFT", 5, 7);
+		widthTab = width[i]
 		else
-    if (i<11) then
-			tab:SetPoint("TOPLEFT", _G[frameName.."Tab"..(i - 1)], "TOPRIGHT", -27, 0);
-      else
-        if i==12 then
-          tab:SetPoint("TOPLEFT", UIConfig, "BOTTOMLEFT", 5, -19);
-          else
-          if (i<20) then
-          tab:SetPoint("TOPLEFT", _G[frameName.."Tab"..(i - 1)], "TOPRIGHT", -27, 0);
-          else
-          if i==21 then
-            tab:SetPoint("TOPLEFT", UIConfig, "BOTTOMLEFT", 5, -45);
-            else
-            if (i<28) then
-            tab:SetPoint("TOPLEFT", _G[frameName.."Tab"..(i - 1)], "TOPRIGHT", -27, 0);
-            else
-            if i==29 then
-              tab:SetPoint("TOPLEFT", UIConfig, "BOTTOMLEFT", 5, -70);
-              else
-              if (i<40) then
-              tab:SetPoint("TOPLEFT", _G[frameName.."Tab"..(i - 1)], "TOPRIGHT", -27, 0);
-              end
-              end
-            end
-        end
-        end
-        end
-    end
+					widthTab = widthTab + width[i]
+		   if widthTab < widthTabrow[rows] -2 then
+			 		tab:SetPoint("TOPLEFT", _G[frameName.."Tab"..(i - 1)], "TOPRIGHT", -27, 0);
+					widthTabrow[rows + 1] = widthTab
+	    	else
+					widthTab = 0
+					y = 7 - (25 * rows)
+					tab:SetPoint("TOPLEFT", UISpellsConfig, "BOTTOMLEFT", 5, y);
+					rows = rows + 1
+	    end
 		end
 	end
 
@@ -169,7 +173,7 @@ local function SetTabs(frame, numTabs, ...)
 	return contents;
 end
 
-function makeAndShowSpellTT(self)
+local function makeAndShowSpellTT(self)
 	GameTooltip:SetOwner (self, "ANCHOR_RIGHT")
 	GameTooltip:SetSpellByID(self.spellID)
 	if (self:GetChecked()) then
@@ -179,35 +183,35 @@ function makeAndShowSpellTT(self)
 	end
 	GameTooltip:Show()
 end
-function Config:CreateMenu()
-	UIConfig = CreateFrame("Frame", "LoseControlConfig", UIParent, "UIPanelDialogTemplate");
+function SpellsConfig:CreateMenu()
+	UISpellsConfig = CreateFrame("Frame", "LoseControlSpellsConfig", UIParent, "UIPanelDialogTemplate");
 	local hex = select(4, self:GetThemeColor());
-	local jaxTag = string.format("|cff%s%s|r", hex:upper(), "By Jax");
-	UIConfig.Title:SetText('Lose Control Spell Config '..jaxTag)
-	UIConfig:SetFrameStrata("DIALOG");
-	UIConfig:SetFrameLevel(0);
-	UIConfig:EnableMouse(true);
-	UIConfig:SetMovable(true)
-	UIConfig:RegisterForDrag("LeftButton")
-	UIConfig:SetScript("OnDragStart", UIConfig.StartMoving)
-	UIConfig:SetScript("OnDragStop", UIConfig.StopMovingOrSizing)
+	local BambiTag = string.format("|cff%s%s|r", hex:upper(), "By Bambi");
+	UISpellsConfig.Title:SetText('LoseControl Player & Party Spells Config '..BambiTag)
+	UISpellsConfig:SetFrameStrata("DIALOG");
+	UISpellsConfig:SetFrameLevel(0);
+	UISpellsConfig:EnableMouse(true);
+	UISpellsConfig:SetMovable(true)
+	UISpellsConfig:RegisterForDrag("LeftButton")
+	UISpellsConfig:SetScript("OnDragStart", UISpellsConfig.StartMoving)
+	UISpellsConfig:SetScript("OnDragStop", UISpellsConfig.StopMovingOrSizing)
 
-	UIConfig:SetSize(800, 400);
-	UIConfig:SetPoint("CENTER"); -- Doesn't need to be ("CENTER", UIParent, "CENTER")
-
-
-	UIConfig.ScrollFrame = CreateFrame("ScrollFrame", nil, UIConfig, "UIPanelScrollFrameTemplate");
-	UIConfig.ScrollFrame:SetPoint("TOPLEFT", LoseControlConfigDialogBG, "TOPLEFT", 4, -8);
-	UIConfig.ScrollFrame:SetPoint("BOTTOMRIGHT", LoseControlConfigDialogBG, "BOTTOMRIGHT", -3, 4);
-	UIConfig.ScrollFrame:SetClipsChildren(true);
-	UIConfig.ScrollFrame:SetScript("OnMouseWheel", ScrollFrame_OnMouseWheel);
-
-	UIConfig.ScrollFrame.ScrollBar:ClearAllPoints();
-    UIConfig.ScrollFrame.ScrollBar:SetPoint("TOPLEFT", UIConfig.ScrollFrame, "TOPRIGHT", -12, -18);
-    UIConfig.ScrollFrame.ScrollBar:SetPoint("BOTTOMRIGHT", UIConfig.ScrollFrame, "BOTTOMRIGHT", -7, 18);
+	UISpellsConfig:SetSize(800, 400);
+	UISpellsConfig:SetPoint("CENTER"); -- Doesn't need to be ("CENTER", UIParent, "CENTER")
 
 
-	local allContents = SetTabs(UIConfig, #tabs, unpack(tabs));
+	UISpellsConfig.ScrollFrame = CreateFrame("ScrollFrame", nil, UISpellsConfig, "UIPanelScrollFrameTemplate");
+	UISpellsConfig.ScrollFrame:SetPoint("TOPLEFT", LoseControlSpellsConfigDialogBG, "TOPLEFT", 4, -8);
+	UISpellsConfig.ScrollFrame:SetPoint("BOTTOMRIGHT", LoseControlSpellsConfigDialogBG, "BOTTOMRIGHT", -3, 4);
+	UISpellsConfig.ScrollFrame:SetClipsChildren(true);
+	UISpellsConfig.ScrollFrame:SetScript("OnMouseWheel", ScrollFrame_OnMouseWheel);
+
+	UISpellsConfig.ScrollFrame.ScrollBar:ClearAllPoints();
+    UISpellsConfig.ScrollFrame.ScrollBar:SetPoint("TOPLEFT", UISpellsConfig.ScrollFrame, "TOPRIGHT", -12, -18);
+    UISpellsConfig.ScrollFrame.ScrollBar:SetPoint("BOTTOMRIGHT", UISpellsConfig.ScrollFrame, "BOTTOMRIGHT", -7, 18);
+
+
+	local allContents = SetTabs(UISpellsConfig, #tabs, unpack(tabs));
 	local numberOfSpellChecksPerRow = 5
 	for i,tab in pairs(tabs) do
 		local c = allContents[i]
@@ -215,7 +219,10 @@ function Config:CreateMenu()
 		local Y = -10
 		local X = 230
 		local spellCount = 0
-		for spellID,type in pairs(core.spellIds) do
+
+		for k in ipairs(core.spells) do
+			local spellID = core.spells[k][1]
+			local type =  core.spells[k][2]
 		  if (spellID and type and (string.lower(type) == string.lower(tab))) then
 				spellCount = spellCount + 1
 				local spellCheck = CreateFrame("CheckButton", c:GetName().."spellCheck"..spellID, c, "UICheckButtonTemplate");
@@ -257,6 +264,6 @@ function Config:CreateMenu()
 	end
 
 
-	UIConfig:Hide();
-	return UIConfig;
+	UISpellsConfig:Hide();
+	return UISpellsConfig;
 end
