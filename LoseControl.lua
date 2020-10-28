@@ -2921,15 +2921,6 @@ for k, v in ipairs(spells) do
 spellIds[v[1]] = v[2]
 end
 
-for k, v in ipairs(interrupts) do
-interruptsIds[v[1]] = v[2]
-end
-
-for k, v in ipairs(interrupts) do
-tblinsert(spells, {v[1] , "Interrupt"})
-end
-
-
 for i = 1, #spellsPVE do
 	for l = 1, #spellsPVE[i] do
 		if l ~=1 then
@@ -2941,6 +2932,19 @@ end
 
 for k, v in ipairs(spellsArena) do
 spellIdsArena[v[1]] = v[2]
+end
+
+for k, v in ipairs(interrupts) do
+interruptsIds[v[1]] = v[2]
+end
+
+
+
+
+
+
+for k, v in ipairs(interrupts) do
+tblinsert(spells, {v[1] , "Interrupt"})
 end
 
 for k, v in ipairs(interrupts) do
