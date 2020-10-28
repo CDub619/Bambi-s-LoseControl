@@ -5201,37 +5201,60 @@ function LoseControl:ADDON_LOADED(arg1)
 				end
 			end
 		end
+	--SPELLPVE------------------------------------------------------------------------------------
 							  if _G.LoseControlDB.Spells ~=nil then
 								for k,v in pairs(_G.LoseControlDB.Spells) do
 								spellIds[k] = v
 								tblinsert(spellsPVE[#spellsPVE], {k, v})
+								if _G.LoseControlDB.spellEnabled[k] == nil then
+								_G.LoseControlDB.spellEnabled[k]= true
+								end
 								end --CHRIS ADDS ALL FOUND SPELLS
 								end
-
-								if _G.LoseControlDB.customSpellIds ~=nil then
-							 	for k,v in pairs(_G.LoseControlDB.customSpellIds) do
-								spellIds[k] = v
-							 	tblinsert(spellsPVE[#spellsPVE-1], {k, v})
-									if _G.LoseControlDB.spellEnabled[k] == nil then
-									_G.LoseControlDB.spellEnabled[k]= true
-									end
-						 		end --CHRIS ADDS CUSTOM SPELLS TO TABLE ALL FOUND SPELLS
-						  	end
 
 								if _G.LoseControlDB.InterruptSpells ~=nil then
 								for k,v in pairs(_G.LoseControlDB.InterruptSpells) do
 								interruptsIds[k] = v
 								tblinsert(spellsPVE[#spellsPVE], {k, "Interrupt: "..math.floor(v)})
+								if _G.LoseControlDB.spellEnabled[k] == nil then
+								_G.LoseControlDB.spellEnabled[k]= true
+								end
 								end --CHRIS ADDS ALL FOUND SPELLS
 							 	end
 
+								if _G.LoseControlDB.customSpellIds ~=nil then
+							 	for k,v in pairs(_G.LoseControlDB.customSpellIds) do
+								spellIds[k] = v
+							 	tblinsert(spellsPVE[#spellsPVE-1], {k, v})
+								if _G.LoseControlDB.spellEnabled[k] == nil then
+								_G.LoseControlDB.spellEnabled[k]= true
+								end
+						 		end --CHRIS ADDS CUSTOM SPELLS TO TABLE ALL FOUND SPELLS
+						  	end
+--SPELLS--------------------------------------------------------------------------------------------
 								if not _G.LoseControlDB.spellEnabled then
 								_G.LoseControlDB.spellEnabled = {}
-								for k in pairs(spellIds) do
+								for k in pairs(spellIds) do --spellIds is the combined PVE list and Spell List and the 3 Custom Loops above
 			  				_G.LoseControlDB.spellEnabled[k]= true
 								end
 								end
 
+								if _G.LoseControlDB.spellEnabled then
+								for k in pairs(spellIds) do --spellIds is the combined PVE list and Spell List and the 3 Custom Loops above
+								if _G.LoseControlDB.spellEnabled[k] == nil then
+								_G.LoseControlDB.spellEnabled[k]= true
+								end
+								end
+								end
+
+								if _G.LoseControlDB.spellEnabled then
+								for k in pairs(interruptsIds) do --interruptsIds is the list and the custom found list from loop above
+									if _G.LoseControlDB.spellEnabled[k] == nil then
+									_G.LoseControlDB.spellEnabled[k]= true
+									end
+								end
+								end
+--ARENA-------------------------------------------------------------------------------------------
 								if not _G.LoseControlDB.spellEnabledArena then
 								_G.LoseControlDB.spellEnabledArena = {}
 								for k in pairs(spellIdsArena) do
@@ -5239,36 +5262,21 @@ function LoseControl:ADDON_LOADED(arg1)
 								end
 								end
 
+								if _G.LoseControlDB.spellEnabledArena then
+								for k in pairs(spellIdsArena) do
+								if _G.LoseControlDB.spellEnabledArena[k] == nil then
+								_G.LoseControlDB.spellEnabledArena[k]= true
+								end
+								end
+								end
+
 								if not _G.LoseControlDB.spellEnabledArena then
 								_G.LoseControlDB.spellEnabledArena = {}
-								for k in pairs(interruptsIds) do
+								for k in pairs(interruptsIds) do --interruptsIds is the list and the custom found list from loop above
 								_G.LoseControlDB.spellEnabledArena[k]= true
 								end
 								end
 
-								if _G.LoseControlDB.spellEnabledArena then
-								for k in pairs(spellIds) do
-									if _G.LoseControlDB.spellEnabledArena[k] == nil then
-									_G.LoseControlDB.spellEnabledArena[k]= true
-									end
-								end
-								end
-
-								if _G.LoseControlDB.spellEnabled then
-								for k in pairs(spellIds) do
-									if _G.LoseControlDB.spellEnabled[k] == nil then
-									_G.LoseControlDB.spellEnabled[k]= true
-									end
-								end
-								end
-
-								if _G.LoseControlDB.spellEnabled then
-								for k in pairs(interruptsIds) do
-									if _G.LoseControlDB.spellEnabled[k] == nil then
-									_G.LoseControlDB.spellEnabled[k]= true
-									end
-								end
-								end
 	end
 end
 
