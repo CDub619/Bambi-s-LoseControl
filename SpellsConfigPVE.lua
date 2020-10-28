@@ -30,14 +30,13 @@ end
 --------------------------------------
 -- SpellsPVEConfig functions
 --------------------------------------
-function SpellsPVEConfig:Toggle()
+function SpellsPVEConfig:Toggle() --Builds the Table
 	local menu = UISpellsPVEConfig or SpellsPVEConfig:CreateMenu();
 	menu:SetShown(not menu:IsShown());
 end
 
-function SpellsPVEConfig:Reset()
-	local menu = UISpellsPVEConfig or SpellsPVEConfig:CreateMenu();
-	menu:Hide()
+function SpellsPVEConfig:Reset() -- Would like to Re-Build and Wipe Orginal Table
+	local menu = SpellsPVEConfig:CreateMenu();
 end
 
 function SpellsPVEConfig:GetThemeColor()

@@ -203,6 +203,10 @@ function SpellsArenaConfig:CreateMenu()
 		for k in ipairs(core.spellsArena) do
 			local spellID = core.spellsArena[k][1]
 			local prio =  core.spellsArena[k][2]
+			local duration
+			if core.spellsArena[k][3] then
+				duration = core.spellsArena[k][3]
+			end
 		  if (spellID and prio and (string.lower(prio) == string.lower(tab))) then
 				spellCount = spellCount + 1
 				local spellCheck = CreateFrame("CheckButton", c:GetName().."spellCheck"..spellID, c, "UICheckButtonTemplate");
@@ -222,8 +226,13 @@ function SpellsArenaConfig:CreateMenu()
 				spellCheck.icon:SetScale(0.3)
 				spellCheck.icon.check = spellCheck
 				if type(spellID) == "number" then
-				spellCheck.text:SetText(GetSpellInfo(spellID) or "SPELL REMOVED: "..spellID);
-				spellCheck.icon:SetNormalTexture(GetSpellTexture(spellID) or 1)
+					if duration then
+					spellCheck.text:SetText(GetSpellInfo(spellID)..": "..duration or "SPELL REMOVED: "..spellID);
+					spellCheck.icon:SetNormalTexture(GetSpellTexture(spellID) or 1)
+					else
+					spellCheck.text:SetText(GetSpellInfo(spellID) or "SPELL REMOVED: "..spellID);
+					spellCheck.icon:SetNormalTexture(GetSpellTexture(spellID) or 1)
+					end
 				else
 				spellCheck.text:SetText(spellID);
 				spellCheck.icon:SetNormalTexture(1008124)

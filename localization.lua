@@ -2,7 +2,7 @@ local _, L = ...
 local locale = GetLocale()
 
 if locale == "deDE" then -- translated by Morbis
-	L["CC"]          = "CC"                    
+	L["CC"]          = "CC"
 	L["Silence"]     = "Stille"
 	L["Interrupt"]   = "Interrupt"
 	L["Disarm"]      = "Entwaffnen"
@@ -524,6 +524,10 @@ elseif locale == "zhTW" then -- translated by 狂飙
 else -- default English
 	L["CC"]          = "CC"
 	L["Silence"]     = "Silence"
+	L["RootPhyiscal_Special"] = "Roots Physical & Special"
+
+
+
 	L["Interrupt"]   = "Interrupt"
 	L["Disarm"]      = "Disarm"
 	L["Root"]        = "Root"
@@ -532,11 +536,11 @@ else -- default English
 	L["Immune"]      = "Immune"
 	L["ImmuneSpell"] = "Immune to Spells"
 	L["ImmunePhysical"] = "Immune to Physical"
-	L["RootPhyiscal_Special"] = "Roots Physical & Special"
-
-
 	L["Other"]       = "Other"
 	L["PvE"]         = "PvE"
+
+
+	
 	L["player"] = "Player"
 	L["pet"]    = "Pet"
 	L["target"] = "Target"

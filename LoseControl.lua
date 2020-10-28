@@ -102,12 +102,14 @@ local Masque = LibStub("Masque", true)
 local spellIds = {}
 local spellIdsArena = {}
 local interruptsIds = {}
+local cleuPrioCastedSpells = {}
 -------------------------------------------------------------------------------
 -- Thanks to all the people on the Curse.com and WoWInterface forums who help keep this list up to date :)
-local cleuPrioCastedSpells = { -- nil = Do Not Show
-	[17]   = {["duration"] = 60, ["priority"] = "CC", ["priorityArena"] = nil},
-	[8921]   = {["duration"] = 6, ["priority"] = "Trees", ["priorityArena"] = nil},
-	[93402]   = {["duration"] = 5, ["priority"] = "Trees", ["priorityArena"] = nil},
+local cleuSpells = { -- nil = Do Not Show
+
+{17, 60,  "CC",  "Silence"},
+{8921 , 15, "Trees",  nil},
+{93402 , 5,  "Trees",  nil},
 
 }
 
@@ -2938,17 +2940,25 @@ for k, v in ipairs(interrupts) do
 interruptsIds[v[1]] = v[2]
 end
 
-
-
-
+for k, v in ipairs(cleuSpells) do
+cleuPrioCastedSpells[v[1]] = {["duration"] = v[2], ["priority"] = v[3], ["priorityArena"] = v[4]}
+end
 
 
 for k, v in ipairs(interrupts) do
-tblinsert(spells, {v[1] , "Interrupt"})
+tblinsert(spells, {v[1] , "Interrupt", v[2]})
 end
 
 for k, v in ipairs(interrupts) do
-tblinsert(spellsArena, {v[1] , "Interrupt"})
+tblinsert(spellsArena, {v[1] , "Interrupt", v[2]})
+end
+
+for k, v in ipairs(cleuSpells) do
+tblinsert(spells, {v[1] , v[3], v[2]})
+end
+
+for k, v in ipairs(cleuSpells) do
+tblinsert(spellsArena, {v[1] , v[4], v[2]})
 end
 
 L.spells = spells
@@ -3100,138 +3110,137 @@ local DBdefaults = {
 	customSpellIds = { },
 	priority = {		-- higher numbers have more priority; 0 = disabled
 			CC = 100,
-			Silence = 99,
-			RootPhyiscal_Special = 98,
-			RootMagic_Special = 97,
-			Root = 96,
-			ImmunePlayer = 95,
-			Disarm_Warning = 94,
-			CC_Warning = 93,
-			Enemy_Smoke_Bomb = 92,
-			Stealth = 91,
-			Immune = 90,
-			ImmuneSpell = 89,
-			ImmunePhysical = 89,
-			AuraMastery_Cast_Auras = 88,
-			ROP_Vortex = 87,
-			Disarm = 86,
-			Haste_Reduction = 85,
-			Dmg_Hit_Reduction = 84,
-			Interrupt = 83,
-			AOE_DMG_Modifiers = 82,
-			Friendly_Smoke_Bomb = 81,
-			AOE_Spell_Refections = 80,
-			Trees = 79,
-			Speed_Freedoms = 78,
-			Freedoms = 77,
-			Friendly_Defensives = 76,
-			Mana_Regen = 75,
-			CC_Reduction = 74,
-			Personal_Offensives = 73,
-			Peronsal_Defensives = 72,
-			Movable_Cast_Auras = 71,
+			Silence = 95,
+			RootPhyiscal_Special = 90,
+			RootMagic_Special = 85,
+			Root = 80,
+			ImmunePlayer = 75,
+			Disarm_Warning = 70,
+			CC_Warning = 65,
+			Enemy_Smoke_Bomb = 60,
+			Stealth = 55,
+			Immune = 50,
+			ImmuneSpell = 45,
+			ImmunePhysical = 45,
+			AuraMastery_Cast_Auras = 44,
+			ROP_Vortex = 42,
+			Disarm = 40,
+			Haste_Reduction = 38,
+			Dmg_Hit_Reduction = 38,
+			Interrupt = 36,
+			AOE_DMG_Modifiers = 34,
+			Friendly_Smoke_Bomb = 32,
+			AOE_Spell_Refections = 30,
+			Trees = 28,
+			Speed_Freedoms = 26,
+			Freedoms = 24,
+			Friendly_Defensives = 22,
+			Mana_Regen = 20,
+			CC_Reduction = 18,
+			Personal_Offensives = 16,
+			Peronsal_Defensives = 14,
+			Movable_Cast_Auras = 12,
 
-			Other = 70, --PVE only
-			PvE = 70, --PVE only
+			Other = 10, --PVE only
+			PvE = 10, --PVE only
 
-			SnareSpecial = 70,
-			SnarePhysical70 = 69,
-			SnareMagic70 = 68,
-			SnarePhysical50 = 67,
-			SnarePosion50 = 66,
-			SnareMagic50 = 65,
-			SnarePhysical30 = 64,
-			SnareMagic30 = 63,
-			Snare = 62,
+			SnareSpecial = 9,
+			SnarePhysical70 = 8,
+			SnareMagic70 = 7,
+			SnarePhysical50 = 6,
+			SnarePosion50 = 5,
+			SnareMagic50 = 4,
+			SnarePhysical30 = 3,
+			SnareMagic30 = 2,
+			Snare = 1,
 	},
 	durationType = {		-- higher numbers have more priority; 0 = disabled
-			CC = "New",
-			Silence = "New",
-			RootPhyiscal_Special = "New",
-			RootMagic_Special = "New",
-			Root = "New",
-			ImmunePlayer = "New",
-			Disarm_Warning = "New",
-			CC_Warning = "New",
-			Enemy_Smoke_Bomb = "New",
-			Stealth = "New",
-			Immune = "New",
-			ImmuneSpell = "New",
-			ImmunePhysical = "New",
-			AuraMastery_Cast_Auras = "New",
-			ROP_Vortex = "New",
-			Disarm = "New",
-			Haste_Reduction = "New",
-			Dmg_Hit_Reduction = "New",
-			Interrupt = "New",
-			AOE_DMG_Modifiers = "New",
-			Friendly_Smoke_Bomb = "New",
-			AOE_Spell_Refections = "New",
-			Trees = "New",
-			Speed_Freedoms = "New",
-			Freedoms = "New",
-			Friendly_Defensives = "New",
-			Mana_Regen = "New",
-			CC_Reduction = "New",
-			Personal_Offensives = "New",
-			Peronsal_Defensives = "New",
-			Movable_Cast_Auras = "New",
+			CC = false,
+			Silence = false,
+			RootPhyiscal_Special = false,
+			RootMagic_Special = false,
+			Root = false,
+			ImmunePlayer = false,
+			Disarm_Warning = false,
+			CC_Warning = false,
+			Enemy_Smoke_Bomb = false,
+			Stealth = false,
+			Immune = false,
+			ImmuneSpell = false,
+			ImmunePhysical = false,
+			AuraMastery_Cast_Auras = false,
+			ROP_Vortex = false,
+			Disarm = false,
+			Haste_Reduction = false,
+			Dmg_Hit_Reduction = false,
+			Interrupt = false,
+			AOE_DMG_Modifiers = false,
+			Friendly_Smoke_Bomb = false,
+			AOE_Spell_Refections = false,
+			Trees = false,
+			Speed_Freedoms = false,
+			Freedoms = false,
+			Friendly_Defensives = false,
+			Mana_Regen = false,
+			CC_Reduction = false,
+			Personal_Offensives = false,
+			Peronsal_Defensives = false,
+			Movable_Cast_Auras = false,
 
-			Other = "New",
-			PvE = "New",
+			Other = false,
+			PvE = false,
 
-			SnareSpecial = "New",
-			SnarePhysical70 = "New",
-			SnareMagic70 = "New",
-			SnarePhysical50 = "High",
-			SnarePosion50 = "High",
-			SnareMagic50 = "High",
-			SnarePhysical30 = "High",
-			SnareMagic30 = "High",
-			Snare = "High",
-
+			SnareSpecial = false,
+			SnarePhysical70 = false,
+			SnareMagic70 = false,
+			SnarePhysical50 = true,
+			SnarePosion50 = true,
+			SnareMagic50 = true,
+			SnarePhysical30 = true,
+			SnareMagic30 = true,
+			Snare = true,
 	},
 	priorityArena = {		-- higher numbers have more priority; 0 = disabled
-			Drink_Purge = 19,
-			Immune = 18,
-			CC = 17,
-			Silence = 16,
-			Interrupt = 15, -- Needs to be same
-			Special_High = 14,
-			Ranged_Major_OffenisiveCDs = 13,
-			Roots_90_Snares = 12,
-			Disarms = 11,
-			Melee_Major_OffenisiveCDs = 10,
-			Big_Defensive_CDs = 9,
-			Player_Party_OffensiveCDs = 9,
-			Small_Offenisive_CDs = 8,
-			Small_Defensive_CDs = 8,
-			Freedoms_Speed = 8,
-			Snares_WithCDs = 4,
-			Special_Low = 3,
-			Snares_Ranged_Spamable = 2,
-			Snares_Casted_Melee = 1,
+			Drink_Purge = 100,
+			Immune = 95,
+			CC = 85,
+			Silence = 80,
+			Interrupt = 75, -- Needs to be same
+			Special_High = 65,
+			Ranged_Major_OffenisiveCDs = 60,
+			Roots_90_Snares = 55,
+			Disarms = 50,
+			Melee_Major_OffenisiveCDs = 45,
+			Big_Defensive_CDs = 35,
+			Player_Party_OffensiveCDs = 35,
+			Small_Offenisive_CDs = 25,
+			Small_Defensive_CDs = 25,
+			Freedoms_Speed = 25,
+			Snares_WithCDs = 20,
+			Special_Low = 15,
+			Snares_Ranged_Spamable = 10,
+			Snares_Casted_Melee = 5,
 	},
 	durationTypeArena ={
-			Drink_Purge = "New",
-			Immune = "New",
-			CC = "New",
-			Silence = "New",
-			Interrupt = "New", -- Needs to be same
-			Special_High = "New",
-			Ranged_Major_OffenisiveCDs = "New",
-			Roots_90_Snares = "New",
-			Disarms = "New",
-			Melee_Major_OffenisiveCDs = "New",
-			Big_Defensive_CDs = "New",
-			Player_Party_OffensiveCDs = "New",
-			Small_Offenisive_CDs = "New",
-			Small_Defensive_CDs = "New",
-			Freedoms_Speed = "New",
-			Snares_WithCDs = "New",
-			Special_Low = "New",
-			Snares_Ranged_Spamable = "New",
-			Snares_Casted_Melee = "New",
+			Drink_Purge = false,
+			Immune = false,
+			CC = false,
+			Silence = false,
+			Interrupt = false, -- Needs to be same
+			Special_High = false,
+			Ranged_Major_OffenisiveCDs = false,
+			Roots_90_Snares = false,
+			Disarms = false,
+			Melee_Major_OffenisiveCDs = false,
+			Big_Defensive_CDs = false,
+			Player_Party_OffensiveCDs = false,
+			Small_Offenisive_CDs = false,
+			Small_Defensive_CDs = false,
+			Freedoms_Speed = false,
+			Snares_WithCDs = false,
+			Special_Low = false,
+			Snares_Ranged_Spamable = false,
+			Snares_Casted_Melee = false,
 	},
 	frames = {
 		player = {
@@ -5253,6 +5262,14 @@ function LoseControl:ADDON_LOADED(arg1)
 								end
 								end
 								end
+
+								if _G.LoseControlDB.spellEnabled then
+								for k in pairs(cleuPrioCastedSpells) do --interruptsIds is the list and the custom found list from loop above
+								if _G.LoseControlDB.spellEnabled[k] == nil then
+								_G.LoseControlDB.spellEnabled[k]= true
+								end
+								end
+								end
 --ARENA-------------------------------------------------------------------------------------------
 								if not _G.LoseControlDB.spellEnabledArena then
 								_G.LoseControlDB.spellEnabledArena = {}
@@ -5269,10 +5286,19 @@ function LoseControl:ADDON_LOADED(arg1)
 								end
 								end
 
-								if not _G.LoseControlDB.spellEnabledArena then
-								_G.LoseControlDB.spellEnabledArena = {}
-								for k in pairs(interruptsIds) do --interruptsIds is the list and the custom found list from loop above
+								if _G.LoseControlDB.spellEnabledArena then
+								for k in pairs(interruptsIds) do
+								if _G.LoseControlDB.spellEnabledArena[k] == nil then
 								_G.LoseControlDB.spellEnabledArena[k]= true
+								end
+								end
+								end
+
+								if _G.LoseControlDB.spellEnabledArena then
+								for k in pairs(cleuPrioCastedSpells) do
+								if _G.LoseControlDB.spellEnabledArena[k] == nil then
+								_G.LoseControlDB.spellEnabledArena[k]= true
+								end
 								end
 								end
 
@@ -6059,7 +6085,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 					---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 					tblinsert(buffs,  {["col1"] = priority[spellCategory] ,["col2"]  = expirationTime , ["col3"] =  {["name"]=  name, ["duration"] = duration, ["expirationTime"] = expirationTime,  ["icon"] = icon, ["localForceEventUnitAuraAtEnd"] = localForceEventUnitAuraAtEnd, ["hue"] = hue,  }}) -- this will create a table to show the highest duration debuffs
 					---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-					if durationType[spellCategory] == "New" then     ----Something along these lines for highest duration vs newest table
+					if not durationType[spellCategory] then     ----Something along these lines for highest duration vs newest table
 						if Priority == maxPriority and expirationTime-duration > newExpirationTime then
 							maxExpirationTime = expirationTime
 							newExpirationTime = expirationTime - duration
@@ -6077,7 +6103,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 							Hue = hue
 							Name = name
 						end
-					elseif durationType[spellCategory] == "High" then
+					elseif durationType[spellCategory] then
 						if Priority == maxPriority and expirationTime > maxExpirationTime then
 							maxExpirationTime = expirationTime
 							newExpirationTime = expirationTime - duration
@@ -6148,7 +6174,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 					---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 						tblinsert(buffs,  {["col1"] = priority[spellCategory] ,["col2"]  = expirationTime , ["col3"] =  {["name"]=  name, ["duration"] = duration, ["expirationTime"] = expirationTime,  ["icon"] = icon, ["localForceEventUnitAuraAtEnd"] = localForceEventUnitAuraAtEnd, ["hue"] = hue,  }}) -- this will create a table to show the highest duration buffs
 						---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-					if durationType[spellCategory] == "New" then     ----Something along these lines for highest duration vs newest table
+					if not durationType[spellCategory] then     ----Something along these lines for highest duration vs newest table
 						if Priority == maxPriority and expirationTime-duration > newExpirationTime then
 							maxExpirationTime = expirationTime
 							newExpirationTime = expirationTime - duration
@@ -6166,7 +6192,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 							Hue = hue
 							Name = name
 						end
-					elseif durationType[spellCategory] == "High" then
+					elseif durationType[spellCategory] then
 						if Priority == maxPriority and expirationTime > maxExpirationTime then
 							maxExpirationTime = expirationTime
 							newExpirationTime = expirationTime - duration
@@ -6255,7 +6281,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 									end
 								end
 							end
-							if durationType[spellCategory] == "New" then
+							if not durationType[spellCategory] then
 								if Priority == maxPriority and expirationTime-duration > newExpirationTime then
 									maxExpirationTime = expirationTime
 									newExpirationTime = expirationTime - duration
@@ -6314,7 +6340,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 										end
 									end)
 								end
-							elseif durationType[spellCategory] == "High" then
+							elseif durationType[spellCategory] then
 								if Priority == maxPriority and expirationTime > maxExpirationTime then
 									maxExpirationTime = expirationTime
 									newExpirationTime = expirationTime - duration
@@ -7007,25 +7033,25 @@ end)
 
 local LossOfControlSpells = CreateFrame("Button", O.."LossOfControlSpells", OptionsPanel, "OptionsButtonTemplate")
 _G[O.."LossOfControlSpells"]:SetText("Spells")
-LossOfControlSpells:SetHeight(20)
+LossOfControlSpells:SetHeight(18)
 LossOfControlSpells:SetWidth(185)
-LossOfControlSpells:SetScale(.85)
+LossOfControlSpells:SetScale(1)
 LossOfControlSpells:SetScript("OnClick", function(self)
 L.SpellsConfig:Toggle()
 end)
 local LossOfControlSpellsArena = CreateFrame("Button", O.."LossOfControlSpellsArena", OptionsPanel, "OptionsButtonTemplate")
 _G[O.."LossOfControlSpellsArena"]:SetText("Arena123")
-LossOfControlSpellsArena:SetHeight(20)
+LossOfControlSpellsArena:SetHeight(18)
 LossOfControlSpellsArena:SetWidth(185)
-LossOfControlSpellsArena:SetScale(.85)
+LossOfControlSpellsArena:SetScale(1)
 LossOfControlSpellsArena:SetScript("OnClick", function(self)
 L.SpellsArenaConfig:Toggle()
 end)
 local LossOfControlSpellsPVE = CreateFrame("Button", O.."LossOfControlSpellsPVE", OptionsPanel, "OptionsButtonTemplate")
 _G[O.."LossOfControlSpellsPVE"]:SetText("PVE Spells")
-LossOfControlSpellsPVE:SetHeight(20)
+LossOfControlSpellsPVE:SetHeight(18)
 LossOfControlSpellsPVE:SetWidth(185)
-LossOfControlSpellsPVE:SetScale(.85)
+LossOfControlSpellsPVE:SetScale(1)
 LossOfControlSpellsPVE:SetScript("OnClick", function(self)
 L.SpellsPVEConfig:Toggle()
 end)
@@ -7056,7 +7082,7 @@ local function CreateSliderMain(text, parent, low, high, step, globalName)
 	local slider = CreateFrame("Slider", name, parent, "OptionsSliderTemplate")
 	slider:SetHeight(8)
 	slider:SetWidth(185)
-	slider:SetScale(.8)
+	slider:SetScale(.9)
 	slider:SetMinMaxValues(low, high)
 	slider:SetValueStep(step)
 	slider:SetObeyStepOnDrag(obeyStep)
@@ -7084,6 +7110,24 @@ for k in pairs(DBdefaults.priority) do
 	end)
 end
 
+local PrioritySliderArena = {}
+for k in pairs(DBdefaults.priorityArena) do
+	PrioritySliderArena[k] = CreateSliderMain(L[k], OptionsPanel, 0, 100, 1, "priorityArena"..k.."Slider")
+	PrioritySliderArena[k]:SetScript("OnValueChanged", function(self, value)
+		if L[k] then
+		_G[self:GetName() .. "Text"]:SetText(L[k] .. " (" .. ("%.0f"):format(value) .. ")")
+		LoseControlDB.priorityArena[k] = value
+		else
+		_G[self:GetName() .. "Text"]:SetText(tostring(k) .. " (" .. ("%.0f"):format(value) .. ")")
+		LoseControlDB.priorityArena[k] = value
+		end
+		if k == "Interrupt" then
+			local enable = LCframes["target"].frame.enabled
+			LCframes["target"]:RegisterUnitEvents(enable)
+		end
+	end)
+end
+
 -------------------------------------------------------------------------------
 -- Arrange all the options neatly
 title:SetPoint("TOPLEFT", 12, -10)
@@ -7103,8 +7147,8 @@ subText:SetPoint("TOPLEFT", Priority, "BOTTOMLEFT", 0, -3)
 PriorityDescription:SetPoint("TOPLEFT", subText, "BOTTOMLEFT", 0, -3)
 
 
-local prioritySpacing = -11
-PrioritySlider.CC:SetPoint("TOPLEFT", PriorityDescription, "BOTTOMLEFT", 0, -30)
+local prioritySpacing = -14
+PrioritySlider.CC:SetPoint("TOPLEFT", PriorityDescription, "BOTTOMLEFT", 0, -35)
 PrioritySlider.Silence:SetPoint("TOPLEFT", PrioritySlider.CC, "BOTTOMLEFT", 0, prioritySpacing)
 PrioritySlider.RootPhyiscal_Special:SetPoint("TOPLEFT", PrioritySlider.Silence, "BOTTOMLEFT", 0, prioritySpacing)
 PrioritySlider.RootMagic_Special:SetPoint("TOPLEFT", PrioritySlider.RootPhyiscal_Special, "BOTTOMLEFT", 0, prioritySpacing)
@@ -7127,16 +7171,10 @@ PrioritySlider.AOE_DMG_Modifiers:SetPoint("TOPLEFT", PrioritySlider.Interrupt, "
 PrioritySlider.Friendly_Smoke_Bomb:SetPoint("TOPLEFT", PrioritySlider.AOE_DMG_Modifiers, "BOTTOMLEFT", 0, prioritySpacing)
 PrioritySlider.AOE_Spell_Refections:SetPoint("TOPLEFT", PrioritySlider.Friendly_Smoke_Bomb, "BOTTOMLEFT", 0, prioritySpacing)
 PrioritySlider.Trees:SetPoint("TOPLEFT", PrioritySlider.AOE_Spell_Refections, "BOTTOMLEFT", 0, prioritySpacing)
-PrioritySlider.Speed_Freedoms:SetPoint("TOPLEFT", PrioritySlider.Trees, "BOTTOMLEFT", 0, prioritySpacing)
-PrioritySlider.Freedoms:SetPoint("TOPLEFT", PrioritySlider.Speed_Freedoms, "BOTTOMLEFT", 0, prioritySpacing)
-PrioritySlider.Friendly_Defensives:SetPoint("TOPLEFT", PrioritySlider.Freedoms, "BOTTOMLEFT", 0, prioritySpacing)
-PrioritySlider.Mana_Regen:SetPoint("TOPLEFT", PrioritySlider.Friendly_Defensives, "BOTTOMLEFT", 0, prioritySpacing)
-PrioritySlider.CC_Reduction:SetPoint("TOPLEFT", PrioritySlider.Mana_Regen, "BOTTOMLEFT", 0, prioritySpacing)
-PrioritySlider.Personal_Offensives:SetPoint("TOPLEFT", PrioritySlider.CC_Reduction, "BOTTOMLEFT", 0, prioritySpacing)
-PrioritySlider.Peronsal_Defensives:SetPoint("TOPLEFT", PrioritySlider.Personal_Offensives, "BOTTOMLEFT", 0, prioritySpacing)
-PrioritySlider.Movable_Cast_Auras:SetPoint("TOPLEFT", PrioritySlider.Peronsal_Defensives, "BOTTOMLEFT", 0, prioritySpacing)
 
-PrioritySlider.Snare:SetPoint("TOPLEFT", PrioritySlider.Movable_Cast_Auras, "TOPRIGHT", 70, 0)
+
+
+PrioritySlider.Snare:SetPoint("TOPLEFT", PrioritySlider.Trees, "TOPRIGHT", 45, 0)
 PrioritySlider.SnareMagic30:SetPoint("BOTTOMLEFT", PrioritySlider.Snare, "TOPLEFT", 0, prioritySpacing*-1)
 PrioritySlider.SnarePhysical30:SetPoint("BOTTOMLEFT", PrioritySlider.SnareMagic30, "TOPLEFT", 0, prioritySpacing*-1)
 PrioritySlider.SnareMagic50:SetPoint("BOTTOMLEFT", PrioritySlider.SnarePhysical30, "TOPLEFT", 0, prioritySpacing*-1)
@@ -7147,10 +7185,67 @@ PrioritySlider.SnarePhysical70:SetPoint("BOTTOMLEFT", PrioritySlider.SnareMagic7
 PrioritySlider.SnareSpecial:SetPoint("BOTTOMLEFT", PrioritySlider.SnarePhysical70, "TOPLEFT", 0, prioritySpacing*-1)
 PrioritySlider.PvE:SetPoint("BOTTOMLEFT", PrioritySlider.SnareSpecial, "TOPLEFT", 0, prioritySpacing*-1*2)
 PrioritySlider.Other:SetPoint("BOTTOMLEFT", PrioritySlider.PvE, "TOPLEFT", 0, prioritySpacing*-1)
+PrioritySlider.Movable_Cast_Auras:SetPoint("BOTTOMLEFT", PrioritySlider.Other, "TOPLEFT", 0, prioritySpacing*-1*2)
+PrioritySlider.Peronsal_Defensives:SetPoint("BOTTOMLEFT", PrioritySlider.Movable_Cast_Auras, "TOPLEFT", 0, prioritySpacing*-1)
+PrioritySlider.Personal_Offensives:SetPoint("BOTTOMLEFT", PrioritySlider.Peronsal_Defensives, "TOPLEFT", 0, prioritySpacing*-1)
+PrioritySlider.CC_Reduction:SetPoint("BOTTOMLEFT", PrioritySlider.Personal_Offensives, "TOPLEFT", 0, prioritySpacing*-1)
+PrioritySlider.Mana_Regen:SetPoint("BOTTOMLEFT", PrioritySlider.CC_Reduction, "TOPLEFT", 0, prioritySpacing*-1)
+PrioritySlider.Friendly_Defensives:SetPoint("BOTTOMLEFT", PrioritySlider.Mana_Regen, "TOPLEFT", 0, prioritySpacing*-1)
+PrioritySlider.Freedoms:SetPoint("BOTTOMLEFT", PrioritySlider.Friendly_Defensives, "TOPLEFT", 0, prioritySpacing*-1)
+PrioritySlider.Speed_Freedoms:SetPoint("BOTTOMLEFT", PrioritySlider.Freedoms, "TOPLEFT", 0, prioritySpacing*-1)
 
-LossOfControlSpells:SetPoint("TOPLEFT", PrioritySlider.CC, "TOPRIGHT", 70, 0)
-LossOfControlSpellsPVE:SetPoint("TOPLEFT", LossOfControlSpells, "BOTTOMLEFT", 0, -5)
-LossOfControlSpellsArena:SetPoint("TOPLEFT", LossOfControlSpellsPVE, "BOTTOMLEFT", 0, -5)
+
+
+
+PrioritySliderArena.Snares_Casted_Melee:SetPoint("TOPLEFT", PrioritySlider.Snare, "TOPRIGHT", 45, 0)
+PrioritySliderArena.Snares_Ranged_Spamable:SetPoint("BOTTOMLEFT", PrioritySliderArena.Snares_Casted_Melee, "TOPLEFT", 0, prioritySpacing*-1)
+PrioritySliderArena.Special_Low:SetPoint("BOTTOMLEFT", PrioritySliderArena.Snares_Ranged_Spamable, "TOPLEFT", 0, prioritySpacing*-1)
+PrioritySliderArena.Snares_WithCDs:SetPoint("BOTTOMLEFT", PrioritySliderArena.Special_Low, "TOPLEFT", 0, prioritySpacing*-1)
+PrioritySliderArena.Freedoms_Speed:SetPoint("BOTTOMLEFT", PrioritySliderArena.Snares_WithCDs, "TOPLEFT", 0, prioritySpacing*-1)
+PrioritySliderArena.Small_Defensive_CDs:SetPoint("BOTTOMLEFT", PrioritySliderArena.Freedoms_Speed, "TOPLEFT", 0, prioritySpacing*-1)
+PrioritySliderArena.Small_Offenisive_CDs:SetPoint("BOTTOMLEFT", PrioritySliderArena.Small_Defensive_CDs, "TOPLEFT", 0, prioritySpacing*-1)
+PrioritySliderArena.Player_Party_OffensiveCDs:SetPoint("BOTTOMLEFT", PrioritySliderArena.Small_Offenisive_CDs, "TOPLEFT", 0, prioritySpacing*-1)
+PrioritySliderArena.Big_Defensive_CDs:SetPoint("BOTTOMLEFT", PrioritySliderArena.Player_Party_OffensiveCDs, "TOPLEFT", 0, prioritySpacing*-1)
+PrioritySliderArena.Melee_Major_OffenisiveCDs:SetPoint("BOTTOMLEFT", PrioritySliderArena.Big_Defensive_CDs, "TOPLEFT", 0, prioritySpacing*-1)
+PrioritySliderArena.Disarms:SetPoint("BOTTOMLEFT", PrioritySliderArena.Melee_Major_OffenisiveCDs, "TOPLEFT", 0, prioritySpacing*-1)
+PrioritySliderArena.Roots_90_Snares:SetPoint("BOTTOMLEFT", PrioritySliderArena.Disarms, "TOPLEFT", 0, prioritySpacing*-1)
+PrioritySliderArena.Ranged_Major_OffenisiveCDs:SetPoint("BOTTOMLEFT", PrioritySliderArena.Roots_90_Snares, "TOPLEFT", 0, prioritySpacing*-1)
+PrioritySliderArena.Special_High:SetPoint("BOTTOMLEFT", PrioritySliderArena.Ranged_Major_OffenisiveCDs, "TOPLEFT", 0, prioritySpacing*-1)
+PrioritySliderArena.Interrupt:SetPoint("BOTTOMLEFT", PrioritySliderArena.Special_High, "TOPLEFT", 0, prioritySpacing*-1)
+PrioritySliderArena.Silence:SetPoint("BOTTOMLEFT", PrioritySliderArena.Interrupt, "TOPLEFT", 0, prioritySpacing*-1)
+PrioritySliderArena.CC:SetPoint("BOTTOMLEFT", PrioritySliderArena.Silence, "TOPLEFT", 0, prioritySpacing*-1)
+PrioritySliderArena.Immune:SetPoint("BOTTOMLEFT", PrioritySliderArena.CC, "TOPLEFT", 0, prioritySpacing*-1)
+PrioritySliderArena.Drink_Purge:SetPoint("BOTTOMLEFT", PrioritySliderArena.Immune, "TOPLEFT", 0, prioritySpacing*-1)
+
+local durationTypeCheckBox = {}
+for k in pairs(DBdefaults.priority) do
+durationTypeCheckBox[k] = CreateFrame("CheckButton", O.."durationType"..k, OptionsPanel, "OptionsCheckButtonTemplate")
+durationTypeCheckBox[k]:SetScript("OnClick", function(self)
+	LoseControlDB.durationType[k] = self:GetChecked()
+end)
+end
+
+for k in pairs(DBdefaults.priority) do
+durationTypeCheckBox[k]:SetPoint("TOPLEFT", "Priority"..k.."Slider", "TOPRIGHT", 0, 9)
+durationTypeCheckBox[k]:SetScale(.8)
+end
+
+local durationTypeCheckBoxArena = {}
+for k in pairs(DBdefaults.priorityArena) do
+durationTypeCheckBoxArena[k] = CreateFrame("CheckButton", O.."durationTypeArena"..k, OptionsPanel, "OptionsCheckButtonTemplate")
+durationTypeCheckBoxArena[k]:SetScript("OnClick", function(self)
+	LoseControlDB.durationType[k] = self:GetChecked()
+end)
+end
+
+for k in pairs(DBdefaults.priorityArena) do
+durationTypeCheckBoxArena[k]:SetPoint("TOPLEFT", "priorityArena"..k.."Slider", "TOPRIGHT", 0, 9)
+durationTypeCheckBoxArena[k]:SetScale(.8)
+end
+
+LossOfControlSpells:SetPoint("CENTER",PrioritySlider.Speed_Freedoms, "CENTER", 8, 55)
+LossOfControlSpellsPVE:SetPoint("CENTER", LossOfControlSpells, "CENTER", 0, -20)
+LossOfControlSpellsArena:SetPoint("CENTER", PrioritySliderArena.Drink_Purge, "CENTER", 8, 36)
 -------------------------------------------------------------------------------
 OptionsPanel.default = function() -- This method will run when the player clicks "defaults".SnareMagic
 	_G.LoseControlDB = nil
@@ -7167,6 +7262,9 @@ OptionsPanel.default = function() -- This method will run when the player clicks
 	spellIdsArena[k] = nil
 	end
 	for k, v in pairs(interruptsIds) do --WIPES interruptsIds TABLE STARTS CLEAN
+	interruptsIds[k] = nil
+	end
+	for k, v in pairs(cleuPrioCastedSpells) do --WIPES interruptsIds TABLE STARTS CLEAN
 	interruptsIds[k] = nil
 	end
 
@@ -7194,6 +7292,9 @@ OptionsPanel.default = function() -- This method will run when the player clicks
 	for k, v in ipairs(interrupts) do
 	interruptsIds[v[1]] = v[2]
 	end
+	for k, v in ipairs(cleuSpells) do
+	cleuPrioCastedSpells[v[1]] = {["duration"] = v[2], ["priority"] = v[3], ["priorityArena"] = v[4]}
+	end
 
 
 	for k,v in pairs(_G.LoseControlDB.Spells) do
@@ -7212,11 +7313,17 @@ OptionsPanel.default = function() -- This method will run when the player clicks
 		for k, v in pairs(interruptsIds) do
 		_G.LoseControlDB.spellEnabled[k]= true
 		end
+		for k, v in pairs(cleuPrioCastedSpells) do
+		_G.LoseControlDB.spellEnabled[k]= true
+		end
 	else
 		for k, v in pairs(spellIds) do
 		_G.LoseControlDB.spellEnabled[k]= true
 		end
 		for k, v in pairs(interruptsIds) do
+		_G.LoseControlDB.spellEnabled[k]= true
+		end
+		for k, v in pairs(cleuPrioCastedSpells) do
 		_G.LoseControlDB.spellEnabled[k]= true
 		end
 	end
@@ -7230,11 +7337,17 @@ OptionsPanel.default = function() -- This method will run when the player clicks
 		for k in pairs(interruptsIds) do
 		_G.LoseControlDB.spellEnabledArena[k]= true
 		end
+		for k in pairs(cleuPrioCastedSpells) do
+		_G.LoseControlDB.spellEnabledArena[k]= true
+		end
 	else
 		for k in pairs(spellIdsArena) do
 		_G.LoseControlDB.spellEnabledArena[k]= true
 		end
 		for k in pairs(interruptsIds) do
+		_G.LoseControlDB.spellEnabledArena[k]= true
+		end
+		for k in pairs(cleuPrioCastedSpells) do
 		_G.LoseControlDB.spellEnabledArena[k]= true
 		end
 	end
@@ -7251,6 +7364,15 @@ OptionsPanel.refresh = function() -- This method will run when the Interface Opt
 	DisableCooldownCount:SetChecked(LoseControlDB.noCooldownCount)
 	DisableBlizzardCooldownCount:SetChecked(LoseControlDB.noBlizzardCooldownCount)
 	DisableLossOfControlCooldown:SetChecked(LoseControlDB.noLossOfControlCooldown)
+
+	for k in pairs(DBdefaults.priority) do
+	durationTypeCheckBox[k]:SetChecked(LoseControlDB.durationType[k])
+	end
+
+	for k in pairs(DBdefaults.priorityArena) do
+	durationTypeCheckBoxArena[k]:SetChecked(LoseControlDB.durationTypeArena[k])
+	end
+
 	if not LoseControlDB.noCooldownCount then
 		DisableBlizzardCooldownCount:Disable()
 		_G[O.."DisableBlizzardCooldownCountText"]:SetTextColor(0.5,0.5,0.5)
@@ -7263,6 +7385,10 @@ OptionsPanel.refresh = function() -- This method will run when the Interface Opt
 	local priority = LoseControlDB.priority
 	for k in pairs(priority) do
 		PrioritySlider[k]:SetValue(priority[k])
+	end
+	local priorityArena = LoseControlDB.priorityArena
+	for k in pairs(priorityArena) do
+		PrioritySliderArena[k]:SetValue(priorityArena[k])
 	end
 end
 
@@ -7299,6 +7425,13 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 	CategoriesEnabledLabel:SetJustifyH("LEFT")
 	local CategoryEnabledInterruptLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledInterruptLabel", "ARTWORK", "GameFontNormal")
 	CategoryEnabledInterruptLabel:SetText(L["Interrupt"]..":")
+	local CategoryEnabledCCLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledCCLabel", "ARTWORK", "GameFontNormal")
+	CategoryEnabledCCLabel:SetText(L["CC"]..":")
+	local CategoryEnabledSilenceLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledSilenceLabel", "ARTWORK", "GameFontNormal")
+	CategoryEnabledSilenceLabel:SetText(L["Silence"]..":")
+	local CategoryEnabledRootPhyiscal_SpecialLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledRootPhyiscal_SpecialLabel", "ARTWORK", "GameFontNormal")
+	CategoryEnabledRootPhyiscal_SpecialLabel:SetText(L["RootPhyiscal_Special"]..":")
+
 	local CategoryEnabledPvELabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledPvELabel", "ARTWORK", "GameFontNormal")
 	CategoryEnabledPvELabel:SetText(L["PvE"]..":")
 	local CategoryEnabledImmuneLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledImmuneLabel", "ARTWORK", "GameFontNormal")
@@ -7307,10 +7440,6 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 	CategoryEnabledImmuneSpellLabel:SetText(L["ImmuneSpell"]..":")
 	local CategoryEnabledImmunePhysicalLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledImmunePhysicalLabel", "ARTWORK", "GameFontNormal")
 	CategoryEnabledImmunePhysicalLabel:SetText(L["ImmunePhysical"]..":")
-	local CategoryEnabledCCLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledCCLabel", "ARTWORK", "GameFontNormal")
-	CategoryEnabledCCLabel:SetText(L["CC"]..":")
-	local CategoryEnabledSilenceLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledSilenceLabel", "ARTWORK", "GameFontNormal")
-	CategoryEnabledSilenceLabel:SetText(L["Silence"]..":")
 	local CategoryEnabledDisarmLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledDisarmLabel", "ARTWORK", "GameFontNormal")
 	CategoryEnabledDisarmLabel:SetText(L["Disarm"]..":")
 	local CategoryEnabledRootLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledRootLabel", "ARTWORK", "GameFontNormal")
@@ -7321,12 +7450,14 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 	CategoryEnabledOtherLabel:SetText(L["Other"]..":")
 	local CategoriesLabels = {
 		["Interrupt"] = CategoryEnabledInterruptLabel,
+		["CC"] = CategoryEnabledCCLabel,
+		["Silence"] = CategoryEnabledSilenceLabel,
+		["RootPhyiscal_Special"] = CategoryEnabledRootPhyiscal_SpecialLabel,
+
 		["PvE"] = CategoryEnabledPvELabel,
 		["Immune"] = CategoryEnabledImmuneLabel,
 		["ImmuneSpell"] = CategoryEnabledImmuneSpellLabel,
 		["ImmunePhysical"] = CategoryEnabledImmunePhysicalLabel,
-		["CC"] = CategoryEnabledCCLabel,
-		["Silence"] = CategoryEnabledSilenceLabel,
 		["Disarm"] = CategoryEnabledDisarmLabel,
 		["Root"] = CategoryEnabledRootLabel,
 		["Snare"] = CategoryEnabledSnareLabel,
@@ -7724,7 +7855,7 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 		end)
 	end
 
-	local catListEnChecksButtons = { "PvE", "Immune", "ImmuneSpell", "ImmunePhysical", "CC", "Silence", "Disarm", "Root", "Snare", "Other" }
+	local catListEnChecksButtons = { "CC", "Silence", "RootPhyiscal_Special", "PvE", "Immune", "ImmuneSpell", "ImmunePhysical", "Disarm", "Root", "Snare", "Other" }
 	local CategoriesCheckButtons = { }
 	local FriendlyInterrupt = CreateFrame("CheckButton", O..v.."FriendlyInterrupt", OptionsPanelFrame, "OptionsCheckButtonTemplate")
 	FriendlyInterrupt:SetHitRectInsets(0, -36, 0, 0)
@@ -7986,12 +8117,14 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 			end
 			CategoriesEnabledLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
 			CategoryEnabledInterruptLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
+			CategoryEnabledCCLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
+			CategoryEnabledSilenceLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
+			CategoryEnabledRootPhyiscal_SpecialLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
+
 			CategoryEnabledPvELabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
 			CategoryEnabledImmuneLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
 			CategoryEnabledImmuneSpellLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
 			CategoryEnabledImmunePhysicalLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
-			CategoryEnabledCCLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
-			CategoryEnabledSilenceLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
 			CategoryEnabledDisarmLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
 			CategoryEnabledRootLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
 			CategoryEnabledSnareLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
@@ -8028,12 +8161,14 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 			end
 			CategoriesEnabledLabel:SetVertexColor(GRAY_FONT_COLOR:GetRGB())
 			CategoryEnabledInterruptLabel:SetVertexColor(GRAY_FONT_COLOR:GetRGB())
+			CategoryEnabledCCLabel:SetVertexColor(GRAY_FONT_COLOR:GetRGB())
+			CategoryEnabledSilenceLabel:SetVertexColor(GRAY_FONT_COLOR:GetRGB())
+			CategoryEnabledRootPhyiscal_SpecialLabel:SetVertexColor(GRAY_FONT_COLOR:GetRGB())
+
 			CategoryEnabledPvELabel:SetVertexColor(GRAY_FONT_COLOR:GetRGB())
 			CategoryEnabledImmuneLabel:SetVertexColor(GRAY_FONT_COLOR:GetRGB())
 			CategoryEnabledImmuneSpellLabel:SetVertexColor(GRAY_FONT_COLOR:GetRGB())
 			CategoryEnabledImmunePhysicalLabel:SetVertexColor(GRAY_FONT_COLOR:GetRGB())
-			CategoryEnabledCCLabel:SetVertexColor(GRAY_FONT_COLOR:GetRGB())
-			CategoryEnabledSilenceLabel:SetVertexColor(GRAY_FONT_COLOR:GetRGB())
 			CategoryEnabledDisarmLabel:SetVertexColor(GRAY_FONT_COLOR:GetRGB())
 			CategoryEnabledRootLabel:SetVertexColor(GRAY_FONT_COLOR:GetRGB())
 			CategoryEnabledSnareLabel:SetVertexColor(GRAY_FONT_COLOR:GetRGB())
@@ -8095,13 +8230,15 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 	AnchorDropDown:SetPoint("TOPLEFT", AnchorDropDownLabel, "BOTTOMLEFT", 0, -8)
 	CategoriesEnabledLabel:SetPoint("TOPLEFT", AnchorDropDown, "BOTTOMLEFT", 0, -14)
 	CategoryEnabledInterruptLabel:SetPoint("TOPLEFT", CategoriesEnabledLabel, "BOTTOMLEFT", 0, -12)
-	CategoryEnabledPvELabel:SetPoint("TOPLEFT", CategoryEnabledInterruptLabel, "BOTTOMLEFT", 0, -8)
+	CategoryEnabledCCLabel:SetPoint("TOPLEFT", CategoryEnabledInterruptLabel, "BOTTOMLEFT", 0, -8)
+	CategoryEnabledSilenceLabel:SetPoint("TOPLEFT", 	CategoryEnabledCCLabel, "BOTTOMLEFT", 0, -8)
+	CategoryEnabledRootPhyiscal_SpecialLabel:SetPoint("TOPLEFT", 	CategoryEnabledSilenceLabel, "BOTTOMLEFT", 0, -8)
+
+	CategoryEnabledPvELabel:SetPoint("TOPLEFT", CategoryEnabledRootPhyiscal_SpecialLabel, "BOTTOMLEFT", 0, -8)
 	CategoryEnabledImmuneLabel:SetPoint("TOPLEFT", CategoryEnabledPvELabel, "BOTTOMLEFT", 0, -8)
 	CategoryEnabledImmuneSpellLabel:SetPoint("TOPLEFT", CategoryEnabledImmuneLabel, "BOTTOMLEFT", 0, -8)
 	CategoryEnabledImmunePhysicalLabel:SetPoint("TOPLEFT", CategoryEnabledImmuneSpellLabel, "BOTTOMLEFT", 0, -8)
-	CategoryEnabledCCLabel:SetPoint("TOPLEFT", CategoryEnabledImmunePhysicalLabel, "BOTTOMLEFT", 0, -8)
-	CategoryEnabledSilenceLabel:SetPoint("TOPLEFT", CategoryEnabledCCLabel, "BOTTOMLEFT", 0, -8)
-	CategoryEnabledDisarmLabel:SetPoint("TOPLEFT", CategoryEnabledSilenceLabel, "BOTTOMLEFT", 0, -8)
+	CategoryEnabledDisarmLabel:SetPoint("TOPLEFT", CategoryEnabledImmunePhysicalLabel, "BOTTOMLEFT", 0, -8)
 	CategoryEnabledRootLabel:SetPoint("TOPLEFT", CategoryEnabledDisarmLabel, "BOTTOMLEFT", 0, -8)
 	CategoryEnabledSnareLabel:SetPoint("TOPLEFT", CategoryEnabledRootLabel, "BOTTOMLEFT", 0, -8)
 	CategoryEnabledOtherLabel:SetPoint("TOPLEFT", CategoryEnabledSnareLabel, "BOTTOMLEFT", 0, -8)
@@ -8195,12 +8332,13 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 			end
 			CategoriesEnabledLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
 			CategoryEnabledInterruptLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
+			CategoryEnabledCCLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
+			CategoryEnabledSilenceLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
+			CategoryEnabledRootPhyiscal_SpecialLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
 			CategoryEnabledPvELabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
 			CategoryEnabledImmuneLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
 			CategoryEnabledImmuneSpellLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
 			CategoryEnabledImmunePhysicalLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
-			CategoryEnabledCCLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
-			CategoryEnabledSilenceLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
 			CategoryEnabledDisarmLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
 			CategoryEnabledRootLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
 			CategoryEnabledSnareLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
@@ -8235,18 +8373,19 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 					BlizzardOptionsPanel_CheckButton_Disable(checkbuttonframeplayer2.frame)
 				end
 			end
-			CategoriesEnabledLabel:SetVertexColor(GRAY_FONT_COLOR:GetRGB())
-			CategoryEnabledInterruptLabel:SetVertexColor(GRAY_FONT_COLOR:GetRGB())
-			CategoryEnabledPvELabel:SetVertexColor(GRAY_FONT_COLOR:GetRGB())
-			CategoryEnabledImmuneLabel:SetVertexColor(GRAY_FONT_COLOR:GetRGB())
-			CategoryEnabledImmuneSpellLabel:SetVertexColor(GRAY_FONT_COLOR:GetRGB())
-			CategoryEnabledImmunePhysicalLabel:SetVertexColor(GRAY_FONT_COLOR:GetRGB())
-			CategoryEnabledCCLabel:SetVertexColor(GRAY_FONT_COLOR:GetRGB())
-			CategoryEnabledSilenceLabel:SetVertexColor(GRAY_FONT_COLOR:GetRGB())
-			CategoryEnabledDisarmLabel:SetVertexColor(GRAY_FONT_COLOR:GetRGB())
-			CategoryEnabledRootLabel:SetVertexColor(GRAY_FONT_COLOR:GetRGB())
-			CategoryEnabledSnareLabel:SetVertexColor(GRAY_FONT_COLOR:GetRGB())
-			CategoryEnabledOtherLabel:SetVertexColor(GRAY_FONT_COLOR:GetRGB())
+			CategoriesEnabledLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
+			CategoryEnabledInterruptLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
+			CategoryEnabledCCLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
+			CategoryEnabledSilenceLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
+			CategoryEnabledRootPhyiscal_SpecialLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
+			CategoryEnabledPvELabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
+			CategoryEnabledImmuneLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
+			CategoryEnabledImmuneSpellLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
+			CategoryEnabledImmunePhysicalLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
+			CategoryEnabledDisarmLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
+			CategoryEnabledRootLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
+			CategoryEnabledSnareLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
+			CategoryEnabledOtherLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
 			BlizzardOptionsPanel_Slider_Disable(SizeSlider)
 			BlizzardOptionsPanel_Slider_Disable(AlphaSlider)
 			UIDropDownMenu_DisableDropDown(AnchorDropDown)
