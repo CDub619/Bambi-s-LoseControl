@@ -5224,7 +5224,6 @@ function LoseControl:ADDON_LOADED(arg1)
 
 								if _G.LoseControlDB.customSpellIds ~=nil then
 							 	for k,v in pairs(_G.LoseControlDB.customSpellIds) do
-								spellIds[k] = v
 							 	tblinsert(spellsPVE[#spellsPVE-1], {k, v})
 								if _G.LoseControlDB.spellEnabled[k] == nil then
 								_G.LoseControlDB.spellEnabled[k]= true
@@ -8484,8 +8483,6 @@ function SlashCmd:customspells(operation, spellId, category)
 						colortag = "|cff00ff00"
 					end
 					print(addonName, "The spell "..colortag.."["..spellId.."]->(None)|r has been added to the custom list")
-					_G.LoseControlDB.spellEnabled[spellId] = false
-					tblinsert(spellsPVE[#spellsPVE-1], {spellId, v})
 				end
 			else
 				print(addonName, "Error adding new custom spell: Invalid spellId")
