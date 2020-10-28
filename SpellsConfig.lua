@@ -74,9 +74,9 @@ function SpellsConfig:Toggle()
 	menu:SetShown(not menu:IsShown());
 end
 
-function SpellsConfig:Reset()
+function SpellsConfig:Update()
 	local menu = UISpellsConfig or SpellsConfig:CreateMenu();
-	menu:Hide()
+	SpellsConfig:UpdateSpellList();
 end
 
 function SpellsConfig:GetThemeColor()
@@ -182,10 +182,11 @@ local function Tab_OnClick(self)
 	self.content:Show();
 end
 
+local contents = {};
+
 local function SetTabs(frame, numTabs, ...)
 	frame.numTabs = numTabs;
 
-	local contents = {};
 	local frameName = frame:GetName();
 	local width = {}
 	local rows = 1
@@ -350,4 +351,76 @@ function SpellsConfig:CreateMenu()
 
 	UISpellsConfig:Hide();
 	return UISpellsConfig;
+end
+
+function SpellsConfig:UpdateSpellList()
+	local numberOfSpellChecksPerRow = 5
+	for i,tab in pairs(tabs) do
+		local c = contents[i]
+		local previousSpellID = nil
+		local Y = -10
+		local X = 230
+		local spellCount = -1
+
+		for k in ipairs(core.spells) do
+			local spellID = core.spells[k][1]
+			local prio =  core.spells[k][2]
+			local duration
+			if core.spells[k][3] then
+				duration = core.spells[k][3]
+			end
+		  if (spellID and prio and (string.lower(prio) == string.lower(tab))) then
+				spellCount = spellCount + 1
+				local spellCheck
+				if  _G[c:GetName().."spellCheck"..spellID] then
+				spellCheck = _G[c:GetName().."spellCheck"..spellID];
+				else
+				spellCheck = CreateFrame("CheckButton", c:GetName().."spellCheck"..spellID, c, "UICheckButtonTemplate");
+		  	end
+				if (previousSpellID) then
+					if (spellCount % numberOfSpellChecksPerRow == 0) then
+						Y = Y - 40
+						X = 30
+					end
+					spellCheck:SetPoint("TOPLEFT", c, "TOPLEFT", X, Y);
+					X = X + 200
+				else
+					spellCheck:SetPoint("TOPLEFT", c, "TOPLEFT", 30, -10);
+				end
+				spellCheck.icon = CreateFrame("Button", spellCheck:GetName().."Icon", spellCheck, "ActionButtonTemplate")
+				spellCheck.icon:Disable()
+				spellCheck.icon:SetPoint("CENTER", spellCheck, "CENTER", -90, 0)
+				spellCheck.icon:SetScale(0.3)
+				spellCheck.icon.check = spellCheck
+				if type(spellID) == "number" then
+					if duration then
+					spellCheck.text:SetText(GetSpellInfo(spellID)..": "..duration or "SPELL REMOVED: "..spellID);
+					spellCheck.icon:SetNormalTexture(GetSpellTexture(spellID) or 1)
+					else
+					spellCheck.text:SetText(GetSpellInfo(spellID) or "SPELL REMOVED: "..spellID);
+					spellCheck.icon:SetNormalTexture(GetSpellTexture(spellID) or 1)
+					end
+				else
+				spellCheck.text:SetText(spellID);
+				spellCheck.icon:SetNormalTexture(1008124)
+				end
+				spellCheck:SetChecked(_G.LoseControlDB.spellEnabled[spellID] or false);   --Error on 1st ADDON_LOADED
+				spellCheck.spellID = spellID
+				spellCheck:SetScript("OnClick",
+				  function()
+					 GameTooltip:Hide()
+					 _G.LoseControlDB.spellEnabled[spellCheck.spellID] = spellCheck:GetChecked()
+					 makeAndShowSpellTT(spellCheck)
+          end
+				);
+				spellCheck:SetScript("OnEnter", function(self)
+						makeAndShowSpellTT(self)
+				end)
+				spellCheck:SetScript("OnLeave", function(self)
+					GameTooltip:Hide()
+				end)
+				previousSpellID = spellID
+			end
+		end
+	end
 end

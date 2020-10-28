@@ -4693,6 +4693,7 @@ locBliz:SetScript("OnEvent", function(self, event, ...)
 								 LoseControlDB.SpellsInfo[ZoneName.." "..name.." instanceID: "..instanceID.." spellId: "..spellID.." "..locType] = Type
 								 LoseControlDB.spellEnabled[spellID]= true
 								 tblinsert(spellsPVE[#spellsPVE], {spellID, Type})
+								 L.SpellsPVEConfig:Update()
 								elseif locType == "DISARM" then
 								 print("Found New Disarm",locType,"", spellID)
 							   local Type = "Disarm"
@@ -4703,6 +4704,7 @@ locBliz:SetScript("OnEvent", function(self, event, ...)
 								 LoseControlDB.SpellsInfo[ZoneName.." "..name.." instanceID: "..instanceID.." spellId: "..spellID.." "..locType] = Type
 								 LoseControlDB.spellEnabled[spellID]= true
 								 tblinsert(spellsPVE[#spellsPVE], {spellID, Type})
+								 L.SpellsPVEConfig:Update()
 						  elseif (locType == "PACIFYSILENCE") or (locType =="SILENCE") then
 						    print("Found New Silence",locType,"", spellID)
 						 	  local Type = "Silence"
@@ -4713,6 +4715,7 @@ locBliz:SetScript("OnEvent", function(self, event, ...)
 								LoseControlDB.SpellsInfo[ZoneName.." "..name.." instanceID: "..instanceID.." spellId: "..spellID.." "..locType] = Type
 								LoseControlDB.spellEnabled[spellID]= true
 								tblinsert(spellsPVE[#spellsPVE], {spellID, Type})
+								L.SpellsPVEConfig:Update()
 							elseif locType == "ROOT" then
 						  	print("Found New Root",locType,"", spellID)
 								local Type = "Root"
@@ -4723,6 +4726,7 @@ locBliz:SetScript("OnEvent", function(self, event, ...)
 								LoseControlDB.SpellsInfo[ZoneName.." "..name.." instanceID: "..instanceID.." spellId: "..spellID.." "..locType] = Type
 								LoseControlDB.spellEnabled[spellID]= true
 								tblinsert(spellsPVE[#spellsPVE], {spellID, Type})
+								L.SpellsPVEConfig:Update()
 							else
 								print("Found New Other",locType,"", spellID)
 								local Type = "Other"
@@ -4733,6 +4737,7 @@ locBliz:SetScript("OnEvent", function(self, event, ...)
 								LoseControlDB.SpellsInfo[ZoneName.." "..name.." instanceID: "..instanceID.." spellId: "..spellID.." "..locType] = Type
 								LoseControlDB.spellEnabled[spellID]= true
 								tblinsert(spellsPVE[#spellsPVE], {spellID, Type})
+								L.SpellsPVEConfig:Update()
 							end
 			  elseif (not interruptsIds[spellID]) and lockoutSchool > 0 then
 					print("Found New Interrupt",locType,"", spellID)
@@ -4743,6 +4748,7 @@ locBliz:SetScript("OnEvent", function(self, event, ...)
 					LoseControlDB.InterruptSpellsInfo[ZoneName.." "..name.." instanceID: "..instanceID.." spellId: "..spellID] = duration
 					LoseControlDB.spellEnabled[spellID]= true
 					tblinsert(spellsPVE[#spellsPVE], {spellID, "Interrupt: "..math.floor(duration)})
+					L.SpellsPVEConfig:Update()
 				else
 				end
 	end
@@ -5921,7 +5927,8 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 					local Priority = priority[spellCategory]
 					LoseControlDB.Spells[spellId] = spellIds[spellId]
 					LoseControlDB.spellEnabled[spellId]= true
-					tblinsert(spellsPVE[#spellsPVE], {spellID, Type})
+					tblinsert(spellsPVE[#spellsPVE], {spellId,  spellCategory})
+					L.SpellsPVEConfig:Update()
 					local Name, instanceType, _, _, _, _, _, instanceID, _, _ = GetInstanceInfo()
 					local ZoneName = GetZoneText()
 					local locClass = "Creature"
@@ -6089,6 +6096,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 						if Priority == maxPriority and expirationTime-duration > newExpirationTime then
 							maxExpirationTime = expirationTime
 							newExpirationTime = expirationTime - duration
+							Duration = duration
 							Icon = icon
 							forceEventUnitAuraAtEnd = localForceEventUnitAuraAtEnd
 							Hue = hue
@@ -6107,6 +6115,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 						if Priority == maxPriority and expirationTime > maxExpirationTime then
 							maxExpirationTime = expirationTime
 							newExpirationTime = expirationTime - duration
+							Duration = duration
 							Icon = icon
 							forceEventUnitAuraAtEnd = localForceEventUnitAuraAtEnd
 							Hue = hue
@@ -6178,6 +6187,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 						if Priority == maxPriority and expirationTime-duration > newExpirationTime then
 							maxExpirationTime = expirationTime
 							newExpirationTime = expirationTime - duration
+							Duration = duration
 							Icon = icon
 							forceEventUnitAuraAtEnd = localForceEventUnitAuraAtEnd
 							Hue = hue
@@ -6196,6 +6206,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 						if Priority == maxPriority and expirationTime > maxExpirationTime then
 							maxExpirationTime = expirationTime
 							newExpirationTime = expirationTime - duration
+							Duration = duration
 							Icon = icon
 							forceEventUnitAuraAtEnd = localForceEventUnitAuraAtEnd
 							Hue = hue
@@ -7265,7 +7276,7 @@ OptionsPanel.default = function() -- This method will run when the player clicks
 	interruptsIds[k] = nil
 	end
 	for k, v in pairs(cleuPrioCastedSpells) do --WIPES interruptsIds TABLE STARTS CLEAN
-	interruptsIds[k] = nil
+	cleuPrioCastedSpells[k] = nil
 	end
 
 	for k, v in pairs(_G.LoseControlDB.spellEnabled) do ----Unchecks all use false over nil
@@ -7275,12 +7286,19 @@ OptionsPanel.default = function() -- This method will run when the player clicks
 	_G.LoseControlDB.spellEnabledArena[k] = nil
 	end
 
+	spellIds = {}
+	spellIdsArena = {}
+	interruptsIds = {}
+	cleuPrioCastedSpells ={}
+
+	--Need to rebuild spells spellsPVE spellsArena tables to delete tableinserted spells
+
 	for k, v in ipairs(spells) do
 	spellIds[v[1]] = v[2]
 	end
 	for i = 1, #spellsPVE do
 		for l = 1, #spellsPVE[i] do
-			if l ~=1 then
+			if l ~= 1 then
 			spellIds[spellsPVE[i][l][1]] = spellsPVE[i][l][2]
 			--print(spellsPVE[i][l][1]..":"..spellIds[spellsPVE[i][l][1]])
 			end
@@ -7352,9 +7370,9 @@ OptionsPanel.default = function() -- This method will run when the player clicks
 		end
 	end
 
-	L.SpellsArenaConfig:Reset()
-	L.SpellsPVEConfig:Reset()
-	L.SpellsConfig:Reset()
+	L.SpellsArenaConfig:Update()
+	L.SpellsPVEConfig:Update()
+	L.SpellsConfig:Update()
 
 	print("LoseControl Spell Conifgurations Menus Require a Reload to Display Correctly")
 
@@ -8592,8 +8610,11 @@ function SlashCmd:customspells(operation, spellId, category)
 							colortag = "|cffff0000"
 						end
 						print(addonName, "The spell "..colortag.."["..spellId.."]->("..category..")|r has been added to the custom list")
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
 						_G.LoseControlDB.spellEnabled[spellId]= true
 						tblinsert(spellsPVE[#spellsPVE-1], {spellId, category})
+						L.SpellsPVEConfig:Update()
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
 					end
 				else
 					print(addonName, "Error adding new custom spell |cffff0000["..spellId.."]|r: Invalid category")
@@ -8621,6 +8642,11 @@ function SlashCmd:customspells(operation, spellId, category)
 						colortag = "|cff00ff00"
 					end
 					print(addonName, "The spell "..colortag.."["..spellId.."]->(None)|r has been added to the custom list")
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+					_G.LoseControlDB.spellEnabled[spellId]= false
+					--tblinsert(spellsPVE[#spellsPVE-1], {spellId, v}) --Needs to be table removed
+					L.SpellsPVEConfig:Update()
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
 				end
 			else
 				print(addonName, "Error adding new custom spell: Invalid spellId")
@@ -8637,6 +8663,11 @@ function SlashCmd:customspells(operation, spellId, category)
 					print(addonName, "The spell |cff00ff00["..spellId.."]->("..LoseControlDB.customSpellIds[spellId]..")|r has been removed from the custom list")
 					LoseControlDB.customSpellIds[spellId] = nil
 					LoseControl:UpdateSpellIdsTableWithCustomSpellIds()
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+					_G.LoseControlDB.spellEnabled[spellId]= nil
+					--tblinsert(spellsPVE[#spellsPVE-1], {spellId, v}) --Needs to be table removed
+					L.SpellsPVEConfig:Update()
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
 				else
 					print(addonName, "Error removing custom spell |cffff0000["..spellId.."]|r: the spell is not in the custom list")
 				end
@@ -8675,6 +8706,15 @@ function SlashCmd:customspells(operation, spellId, category)
 		LoseControlDB.customSpellIds = { }
 		LoseControl:UpdateSpellIdsTableWithCustomSpellIds()
 		print(addonName, "Removed |cff00ff00all spells|r from custom list")
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+		if LoseControlDB.customSpellIds then
+			for k, v in pairs(LoseControlDB.customSpellIds) do
+				_G.LoseControlDB.spellEnabled[k]= nil
+				--tblinsert(spellsPVE[#spellsPVE-1], {k, v}) --Needs to be table removed
+			end
+			L.SpellsPVEConfig:Update()
+		end
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
 	elseif operation == "checkandclean" then
 		LoseControl:CheckAndCleanCustomSpellIdsTable()
 	else

@@ -35,8 +35,9 @@ function SpellsPVEConfig:Toggle() --Builds the Table
 	menu:SetShown(not menu:IsShown());
 end
 
-function SpellsPVEConfig:Reset() -- Would like to Re-Build and Wipe Orginal Table
-	local menu = SpellsPVEConfig:CreateMenu();
+function SpellsPVEConfig:Update()
+	local menu = UISpellsPVEConfig or SpellsPVEConfig:CreateMenu();
+	SpellsPVEConfig:UpdateSpellList();
 end
 
 function SpellsPVEConfig:GetThemeColor()
@@ -66,6 +67,70 @@ local function ScrollFrame_OnMouseWheel(self, delta)
 	self:SetVerticalScroll(newValue);
 end
 
+local function PanelTemplates_DeselectTab(tab)
+	local name = tab:GetName();
+	getglobal(name.."Left"):Show();
+	getglobal(name.."Middle"):Show();
+	getglobal(name.."Right"):Show();
+	--tab:UnlockHighlight();
+	tab:Enable();
+	getglobal(name.."LeftDisabled"):Hide();
+	getglobal(name.."MiddleDisabled"):Hide();
+	getglobal(name.."RightDisabled"):Hide();
+end
+
+local function PanelTemplates_SelectTab(tab)
+	local name = tab:GetName();
+	getglobal(name.."Left"):Hide();
+	getglobal(name.."Middle"):Hide();
+	getglobal(name.."Right"):Hide();
+	--tab:LockHighlight();
+	tab:Disable();
+	getglobal(name.."LeftDisabled"):Show();
+	getglobal(name.."MiddleDisabled"):Show();
+	getglobal(name.."RightDisabled"):Show();
+
+	if ( GameTooltip:IsOwned(tab) ) then
+		GameTooltip:Hide();
+	end
+end
+
+local function PanelTemplates_SetDisabledTabState(tab)
+	local name = tab:GetName();
+	getglobal(name.."Left"):Show();
+	getglobal(name.."Middle"):Show();
+	getglobal(name.."Right"):Show();
+	--tab:UnlockHighlight();
+	tab:Disable();
+	tab.text = tab:GetText();
+	-- Gray out text
+	tab:SetDisabledTextColor(GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b);
+	getglobal(name.."LeftDisabled"):Hide();
+	getglobal(name.."MiddleDisabled"):Hide();
+	getglobal(name.."RightDisabled"):Hide();
+end
+
+local function PanelTemplates_UpdateTabs(frame)
+	if ( frame.selectedTab ) then
+		local tab;
+		for i=1, frame.numTabs, 1 do
+			tab = getglobal(frame:GetName().."Tab"..i);
+			if ( tab.isDisabled ) then
+				PanelTemplates_SetDisabledTabState(tab);
+			elseif ( i == frame.selectedTab ) then
+				PanelTemplates_SelectTab(tab);
+			else
+				PanelTemplates_DeselectTab(tab);
+			end
+		end
+	end
+end
+
+local function PanelTemplates_SetTab(frame, id)
+	frame.selectedTab = id;
+	PanelTemplates_UpdateTabs(frame);
+end
+
 local function Tab_OnClick(self)
 	PanelTemplates_SetTab(self:GetParent(), self:GetID());
 
@@ -78,10 +143,11 @@ local function Tab_OnClick(self)
 	self.content:Show();
 end
 
+local contents = {};
+
 local function SetTabs(frame, numTabs, ...)
 	frame.numTabs = numTabs;
 
-	local contents = {};
 	local frameName = frame:GetName();
 	local width = {}
 	local rows = 1
@@ -239,4 +305,69 @@ function SpellsPVEConfig:CreateMenu()
 
 	UISpellsPVEConfig:Hide();
 	return UISpellsPVEConfig;
+end
+
+function SpellsPVEConfig:UpdateSpellList()
+local numberOfSpellChecksPerRow = 5
+for i,tab in pairs(tabs) do
+	local c = contents[i]
+	local previousSpellID = nil
+	local Y = -10
+	local X = 230
+	local spellCount = -1
+
+	for l = 1, #core.spellsPVE[i] do
+		if l ~=1 then
+			local spellID = core.spellsPVE[i][l][1]
+			local prio =  core.spellsPVE[i][l][2]
+			if (spellID) then
+				spellCount = spellCount + 1
+				local spellCheck
+				if  _G[c:GetName().."spellCheck"..spellID] then
+				spellCheck = _G[c:GetName().."spellCheck"..spellID];
+				else
+				spellCheck = CreateFrame("CheckButton", c:GetName().."spellCheck"..spellID, c, "UICheckButtonTemplate");
+				end
+				if (previousSpellID) then
+					if (spellCount % numberOfSpellChecksPerRow == 0) then
+						Y = Y-40
+						X = 30
+					end
+					spellCheck:SetPoint("TOPLEFT", c, "TOPLEFT", X, Y);
+					X = X+200
+				else
+					spellCheck:SetPoint("TOPLEFT", c, "TOPLEFT", 30, -10);
+				end
+				spellCheck.icon = CreateFrame("Button", spellCheck:GetName().."Icon", spellCheck, "ActionButtonTemplate")
+				spellCheck.icon:Disable()
+				spellCheck.icon:SetPoint("CENTER", spellCheck, "CENTER", -90, 0)
+				spellCheck.icon:SetScale(0.3)
+				spellCheck.icon.check = spellCheck
+				if type(spellID) == "number" then
+				spellCheck.text:SetText(GetSpellInfo(spellID)..": "..prio or "SPELL REMOVED: "..spellID);
+				spellCheck.icon:SetNormalTexture(GetSpellTexture(spellID) or 1)
+				else
+				spellCheck.text:SetText(spellID..": "..prio);
+				spellCheck.icon:SetNormalTexture(1008124)
+				end
+				spellCheck:SetChecked(_G.LoseControlDB.spellEnabled[spellID] or false);   --Error on 1st ADDON_LOADED
+				spellCheck.spellID = spellID
+				spellCheck:SetScript("OnClick",
+					function()
+					 GameTooltip:Hide()
+					 _G.LoseControlDB.spellEnabled[spellCheck.spellID] = spellCheck:GetChecked()
+					 makeAndShowSpellTTPVE(spellCheck)
+					end
+				);
+				spellCheck:SetScript("OnEnter", function(self)
+						makeAndShowSpellTTPVE(self)
+				end)
+				spellCheck:SetScript("OnLeave", function(self)
+					GameTooltip:Hide()
+				end)
+				previousSpellID = spellID
+			end
+		end
+	end
+end
 end
