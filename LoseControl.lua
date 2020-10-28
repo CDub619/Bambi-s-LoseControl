@@ -5249,9 +5249,9 @@ function LoseControl:ADDON_LOADED(arg1)
 
 								if _G.LoseControlDB.spellEnabled then
 								for k in pairs(interruptsIds) do --interruptsIds is the list and the custom found list from loop above
-									if _G.LoseControlDB.spellEnabled[k] == nil then
-									_G.LoseControlDB.spellEnabled[k]= true
-									end
+								if _G.LoseControlDB.spellEnabled[k] == nil then
+								_G.LoseControlDB.spellEnabled[k]= true
+								end
 								end
 								end
 --ARENA-------------------------------------------------------------------------------------------
@@ -7162,52 +7162,65 @@ OptionsPanel.default = function() -- This method will run when the player clicks
 	end
 	LCframeplayer2:PLAYER_ENTERING_WORLD()
 
-	for k, v in pairs(spellIds) do --WIPES TABLE STARTS CLEAN
+	for k, v in pairs(spellIds) do --WIPES spellIds TABLE STARTS CLEAN
 	spellIds[k] = nil
 	end
-	for k, v in pairs(spellIdsArena) do --WIPES TABLE STARTS CLEAN
-	spellIds[k] = nil
+	for k, v in pairs(spellIdsArena) do --WIPES spellIdsArena TABLE STARTS CLEAN
+	spellIdsArena[k] = nil
 	end
-	for k, v in pairs(interruptsIds) do --WIPES TABLE STARTS CLEAN
+	for k, v in pairs(interruptsIds) do --WIPES interruptsIds TABLE STARTS CLEAN
 	interruptsIds[k] = nil
+	end
+	for k, v in pairs(interruptsIds) do --WIPES interruptsIds TABLE STARTS CLEAN
+	interruptsIds[k] = nil
+	end
+	for k, v in pairs(_G.LoseControlDB.spellEnabled) do ----Unchecks all use false over nil
+	_G.LoseControlDB.spellEnabled[k] = nil
+	end
+	for k, v in pairs(_G.LoseControlDB.spellEnabledArena) do --Unchecks all , use false over nil
+	_G.LoseControlDB.spellEnabledArena[k] = nil
 	end
 
 	for k, v in ipairs(spells) do
 	spellIds[v[1]] = v[2]
 	end
-	for k, v in ipairs(spellsPVE) do
-	spellIds[v[1]] = v[2]
+	for i = 1, #spellsPVE do
+		for l = 1, #spellsPVE[i] do
+			if l ~=1 then
+			spellIds[spellsPVE[i][l][1]] = spellsPVE[i][l][2]
+			--print(spellsPVE[i][l][1]..":"..spellIds[spellsPVE[i][l][1]])
+			end
+		end
 	end
 	for k, v in ipairs(spellsArena) do
 	spellIdsArena[v[1]] = v[2]
 	end
+	for k, v in ipairs(interrupts) do
+	interruptsIds[v[1]] = v[2]
+	end
+
 
 	for k,v in pairs(_G.LoseControlDB.Spells) do
 		_G.LoseControlDB.Spells[k] = nil
 	end --DELETE ALL FOUND SPELLS FROM DB
 	for k,v in pairs(_G.LoseControlDB.InterruptSpells) do
 		_G.LoseControlDB.InterruptSpells[k] = nil
-	end --DELETE ALL FOUND SPELLS FROM DB
+	end --DELETE ALL FOUND INTERRUPT SPELLS FROM DB
 
-	L.SpellsArenaConfig:Reset()
-	L.SpellsPVEConfig:Reset()
-	L.SpellsConfig:Reset()
-
-	print("LoseControl Spell Conifgurations Menus Require a Reload to Display Correctly")
 --------------Spells------------- Need to sum the spellId , interruptsIds and cleuPrioCastedSpells tables for enabled on reset to true
 	if not _G.LoseControlDB.spellEnabled then
 	_G.LoseControlDB.spellEnabled = {}
-		for k in pairs(spellIds) do
+		for k, v in pairs(spellIds) do
 		_G.LoseControlDB.spellEnabled[k]= true
 		end
-		for k in pairs(interruptsIds) do
+		for k, v in pairs(interruptsIds) do
 		_G.LoseControlDB.spellEnabled[k]= true
 		end
 	else
-		for k in pairs(spellIds) do
+		for k, v in pairs(spellIds) do
 		_G.LoseControlDB.spellEnabled[k]= true
 		end
-		for k in pairs(interruptsIds) do
+		for k, v in pairs(interruptsIds) do
 		_G.LoseControlDB.spellEnabled[k]= true
 		end
 	end
@@ -7230,6 +7243,11 @@ OptionsPanel.default = function() -- This method will run when the player clicks
 		end
 	end
 
+	L.SpellsArenaConfig:Reset()
+	L.SpellsPVEConfig:Reset()
+	L.SpellsConfig:Reset()
+
+	print("LoseControl Spell Conifgurations Menus Require a Reload to Display Correctly")
 
 end
 
