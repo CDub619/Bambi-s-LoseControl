@@ -101,38 +101,39 @@ local origSpellIdsChanged = { }
 local Masque = LibStub("Masque", true)
 local spellIds = {}
 local spellIdsArena = {}
+local interruptsIds = {}
 -------------------------------------------------------------------------------
 -- Thanks to all the people on the Curse.com and WoWInterface forums who help keep this list up to date :)
 local cleuPrioCastedSpells = { -- nil = Do Not Show
-	--[17]   = {["duration"] = 60, ["priority"] = "Trees", ["priorityArena"] = nil},
+	[17]   = {["duration"] = 60, ["priority"] = "CC", ["priorityArena"] = nil},
 	--[8921]   = {["duration"] = 6, ["priority"] = "Trees", ["priorityArena"] = nil},
 	--[93402]   = {["duration"] = 5, ["priority"] = "Trees", ["priorityArena"] = nil},
 
 }
 
-local interruptsIds = {
-	[1766]   = 5,		-- Kick (Rogue)
-	[2139]   = 6,		-- Counterspell (Mage)
-	[6552]   = 4,		-- Pummel (Warrior)1766
-	[13491]  = 5,		-- Pummel (Iron Knuckles Item)
-	[19647]  = 6,		-- Spell Lock (felhunter) (Warlock)
-	[29443]  = 10,		-- Counterspell (Clutch of Foresight)
-	[47528]  = 3,		-- Mind Freeze (Death Knight)
-	[57994]  = 3,		-- Wind Shear (Shaman)
-	[91802]  = 2,		-- Shambling Rush (Death Knight)
-	[96231]  = 4,		-- Rebuke (Paladin)
-	[93985]  = 4,		-- Skull Bash (Druid Feral)
-	[97547]  = 5,		-- Solar Beam (Druid Balance)
-	[115781] = 6,		-- Optical Blast (Warlock)
-	[116705] = 4,		-- Spear Hand Strike (Monk)
-	[132409] = 6,		-- Spell Lock (command demon) (Warlock)
-	[147362] = 3,		-- Countershot (Hunter)
-	[183752] = 3,		-- Consume Magic (Demon Hunter)
-	[187707] = 3,		-- Muzzle (Hunter)
-	[212619] = 6,		-- Call Felhunter (Warlock)
-	[217824] = 4,		-- Shield of Virtue (Protec Paladin)
-	[231665] = 3,		-- Avengers Shield (Paladin)
-	[91807] = 2,     --Shambling Rush
+local interrupts = {
+	{1766   , 5},		-- Kick (Rogue)
+	{2139   , 6},		-- Counterspell (Mage)
+	{6552   , 4},		-- Pummel (Warrior)1766
+	{13491  , 5},		-- Pummel (Iron Knuckles Item)
+	{19647  , 6},		-- Spell Lock (felhunter) (Warlock)
+	{29443  , 10},	-- Counterspell (Clutch of Foresight)
+	{47528  , 3},		-- Mind Freeze (Death Knight)
+	{57994  , 3},		-- Wind Shear (Shaman)
+	{91802  , 2},		-- Shambling Rush (Death Knight)
+	{96231  , 4},		-- Rebuke (Paladin)
+	{93985  , 4},		-- Skull Bash (Druid Feral)
+	{97547  , 5},		-- Solar Beam (Druid Balance)
+	{115781 , 6},		-- Optical Blast (Warlock)
+	{116705 , 4},		-- Spear Hand Strike (Monk)
+	{132409 , 6},		-- Spell Lock (command demon) (Warlock)
+	{147362 , 3},		-- Countershot (Hunter)
+	{183752 , 3},		-- Consume Magic (Demon Hunter)
+	{187707 , 3},		-- Muzzle (Hunter)
+	{212619 , 6},		-- Call Felhunter (Warlock)
+	{217824 , 4},		-- Shield of Virtue (Protec Paladin)
+	{231665 , 3},		-- Avengers Shield (Paladin)
+	{91807 , 2},   --Shambling Rush
 }
 
 --[[
@@ -696,7 +697,7 @@ local spells = {
 	-- Priest
 	----------------
 	{605    , "CC"},				-- Dominate Mind
-	  {81782    , "CC"},				-- Barrier
+	 {81782    , "CC"},				-- Barrier
 	{64044  , "CC"},				-- Psychic Horror
 	{8122   , "CC"},				-- Psychic Scream
 	{9484   , "CC"},				-- Shackle Undead
@@ -728,6 +729,7 @@ local spells = {
 	----------------
 	-- Rogue
 	----------------
+
 	{2094   , "CC"},				-- Blind
 	{1833   , "CC"},				-- Cheap Shot
 	{1776   , "CC"},				-- Gouge
@@ -894,7 +896,6 @@ local spells = {
 	{199042 , "Root"},				-- Thunderstruck
 	{236236 , "Disarm"},			-- Disarm (pvp honor talent - protection)
 	{236077 , "Disarm"},			-- Disarm (pvp honor talent)
-
 }
 
 local spellsPVE = {
@@ -902,6 +903,7 @@ local spellsPVE = {
 	----------------
 	-- Other
 	----------------
+{"Other", --TAB
 	{56     , "CC"},				-- Stun (low lvl weapons proc)
 	{835    , "CC"},				-- Tidal Charm (trinket)
 	{15534  , "CC"},				-- Polymorph (trinket)
@@ -1250,6 +1252,8 @@ local spellsPVE = {
 	{13907  , "CC"},				-- Smite Demon (Enchant Weapon - Demonslaying)
 	{18798  , "CC"},				-- Freeze (Freezing Band)
 
+},
+
 	-- PvE
 	--{123456 , "PvE"},				-- This is just an example}, not a real spell
 	------------------------
@@ -1257,6 +1261,7 @@ local spellsPVE = {
 	------------------------
 	-- Ny'alotha}, The Waking City Raid
 	-- -- Trash
+{"Ny'alotha, The Waking City Raid",
 	{313949 , "Immune"},			-- Ny'alotha Gateway
 	{315071 , "Immune"},			-- Ny'alotha Gateway
 	{315080 , "Immune"},			-- Ny'alotha Gateway
@@ -1332,9 +1337,11 @@ local spellsPVE = {
 	{315672 , "CC"},				-- Shattered Ego
 	{318976 , "CC"},				-- Stupefying Glare
 	{310134 , "Immune"},			-- Manifest Madness (99% damage reduction)
+},
 	-- --
 	-- The Eternal Palace Raid
 	-- -- Trash
+{"The Eternal Palace Raid",
 	{303747 , "CC"},				-- Ice Tomb
 	{303396 , "Root"},				-- Barbed Net
 	{304189 , "Snare"},				-- Frostbolt
@@ -1396,9 +1403,11 @@ local spellsPVE = {
 	{303825 , "CC"},				-- Crushing Depths
 	{300620 , "Immune"},			-- Crystalline Shield
 	{303706 , "CC"},				-- Song of Azshara
+},
 	------------------------
 	-- Crucible of Storms Raid
 	-- -- Trash
+{"Crucible of Storms Raid",
 	{293957 , "CC"},				-- Maddening Gaze
 	{295312 , "Immune"},			-- Shadow Siphon
 	{286754 , "CC"},				-- Storm of Annihilation (damage done decreased by 50%)
@@ -1413,9 +1422,11 @@ local spellsPVE = {
 	{287693 , "Immune"},			-- Sightless Bond (damage taken reduced by 99%)
 	{286310 , "Immune"},			-- Void Shield (damage taken reduced by 99%)
 	{284601 , "CC"},				-- Storm of Annihilation (damage done decreased by 50%)
+},
 	------------------------
 	-- Battle of Dazar'alor Raid
 	-- -- Trash
+{"Battle of Dazar'alor Raid",
 	{289471 , "CC"},				-- Terrifying Roar
 	{286740 , "CC"},				-- Light's Fury
 	{289645 , "CC"},				-- Polymorph
@@ -1484,9 +1495,11 @@ local spellsPVE = {
 	{287282 , "Immune"},			-- Arctic Armor (damage taken reduced 90%)
 	{287418 , "Immune"},			-- Arctic Armor (damage taken reduced 90%)
 	{288219 , "Immune"},			-- Refractive Ice (damage taken reduced 99%)
+},
 	------------------------
 	-- Uldir Raid
 	-- -- Trash
+{"Uldir Raid",
 	{277498 , "CC"},				-- Mind Slave
 	{277358 , "CC"},				-- Mind Flay
 	{278890 , "CC"},				-- Violent Hemorrhage
@@ -1525,8 +1538,12 @@ local spellsPVE = {
 	{263235 , "Root"},				-- Blood Feast
 	{263321 , "Snare"},				-- Undulating Mass
 	{270287 , "Snare"},				-- Blighted Ground
+					-- Blighted Ground
+},
+
 	------------------------
 	-- BfA World Bosses
+{"BfA World Bosses",
 	-- -- T'zane
 	{261552 , "CC"},				-- Terror Wail
 	-- -- Hailstone Construct
@@ -1540,6 +1557,8 @@ local spellsPVE = {
 	{282615 , "Immune"},			-- Petrify
 	-- -- Grand Empress Shek'zara
 	{314306 , "CC"},				-- Song of the Empress
+},
+--[[
 	------------------------
 	-- Horrific Visions of N'zoth
 	{317865 , "CC"},				-- Emergency Cranial Defibrillation
@@ -2418,7 +2437,7 @@ local spellsPVE = {
 	-- -- Garr
 	{19496  , "Snare"},				-- Magma Shackles
 	-- -- Shazzrah
-	{19714  , "ImmuneSpell"},		-- Deaden Magic (not immune}, 50% magical damage reduction)
+	{19714  , "ImmuneSpell"},		-- Deaden Magic (not immune}, 50% Magic damage reduction)
 	-- -- Golemagg the Incinerator
 	{19820  , "Snare"},				-- Mangle
 	{22689  , "Snare"},				-- Mangle
@@ -2889,6 +2908,11 @@ local spellsPVE = {
 	{17165  , "Snare"},				-- Mind Flay
 	{22643  , "Snare"},				-- Frostbolt Volley
 	{18101  , "Snare"},				-- Chilled (Frost Armor)
+]]
+{"Custom Spells",
+},
+{"Discovered LC Spells",
+}
 
 }
 
@@ -2896,11 +2920,31 @@ local spellsPVE = {
 for k, v in ipairs(spells) do
 spellIds[v[1]] = v[2]
 end
-for k, v in ipairs(spellsPVE) do
-spellIds[v[1]] = v[2]
+
+for k, v in ipairs(interrupts) do
+interruptsIds[v[1]] = v[2]
 end
+
+for k, v in ipairs(interrupts) do
+tblinsert(spells, {v[1] , "Interrupt"})
+end
+
+
+for i = 1, #spellsPVE do
+	for l = 1, #spellsPVE[i] do
+		if l ~=1 then
+		spellIds[spellsPVE[i][l][1]] = spellsPVE[i][l][2]
+		--print(spellsPVE[i][l][1]..":"..spellIds[spellsPVE[i][l][1]])
+		end
+	end
+end
+
 for k, v in ipairs(spellsArena) do
 spellIdsArena[v[1]] = v[2]
+end
+
+for k, v in ipairs(interrupts) do
+tblinsert(spellsArena, {v[1] , "Interrupt"})
 end
 
 L.spells = spells
@@ -3088,7 +3132,7 @@ local DBdefaults = {
 
 			SnareSpecial = 70,
 			SnarePhysical70 = 69,
-			SnareMagical70 = 68,
+			SnareMagic70 = 68,
 			SnarePhysical50 = 67,
 			SnarePosion50 = 66,
 			SnareMagic50 = 65,
@@ -3134,7 +3178,7 @@ local DBdefaults = {
 
 			SnareSpecial = "New",
 			SnarePhysical70 = "New",
-			SnareMagical70 = "New",
+			SnareMagic70 = "New",
 			SnarePhysical50 = "High",
 			SnarePosion50 = "High",
 			SnareMagic50 = "High",
@@ -3223,7 +3267,7 @@ local DBdefaults = {
 						Personal_Offensives = true,
 						Peronsal_Defensives = true,
 						Movable_Cast_Auras = true,
-					  SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+					  SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 						PvE = true,
 						Other = true,
 					 }
@@ -3259,7 +3303,7 @@ local DBdefaults = {
 						Personal_Offensives = true,
 						Peronsal_Defensives = true,
 						Movable_Cast_Auras = true,
-					  SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+					  SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 						PvE = true,
 						Other = true,
 					 }
@@ -3306,7 +3350,7 @@ local DBdefaults = {
 						Personal_Offensives = true,
 						Peronsal_Defensives = true,
 						Movable_Cast_Auras = true,
-						SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+						SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 						PvE = true,
 						Other = true
 					 }
@@ -3342,7 +3386,7 @@ local DBdefaults = {
 						Personal_Offensives = true,
 						Peronsal_Defensives = true,
 						Movable_Cast_Auras = true,
-						SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+						SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 						PvE = true,
 						Other = true
 					 }
@@ -3388,7 +3432,7 @@ local DBdefaults = {
 					Personal_Offensives = true,
 					Peronsal_Defensives = true,
 					Movable_Cast_Auras = true,
-					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 					PvE = true,
 					Other = true,
 				 }
@@ -3423,7 +3467,7 @@ local DBdefaults = {
 					Personal_Offensives = true,
 					Peronsal_Defensives = true,
 					Movable_Cast_Auras = true,
-					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 					PvE = true,
 					Other = true,
 				}
@@ -3469,7 +3513,7 @@ local DBdefaults = {
 					Personal_Offensives = true,
 					Peronsal_Defensives = true,
 					Movable_Cast_Auras = true,
-					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 					PvE = true,
 					Other = true,
 
@@ -3505,7 +3549,7 @@ local DBdefaults = {
 					Personal_Offensives = true,
 					Peronsal_Defensives = true,
 					Movable_Cast_Auras = true,
-					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 					PvE = true,
 					Other = true,
 
@@ -3543,7 +3587,7 @@ local DBdefaults = {
 					Personal_Offensives = true,
 					Peronsal_Defensives = true,
 					Movable_Cast_Auras = true,
-					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 					PvE = true,
 					Other = true,
 
@@ -3579,7 +3623,7 @@ local DBdefaults = {
 					Personal_Offensives = true,
 					Peronsal_Defensives = true,
 					Movable_Cast_Auras = true,
-					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 					PvE = true,
 					Other = true,
 
@@ -3629,7 +3673,7 @@ local DBdefaults = {
 					Personal_Offensives = true,
 					Peronsal_Defensives = true,
 					Movable_Cast_Auras = true,
-					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 					PvE = true,
 					Other = true,
 
@@ -3665,7 +3709,7 @@ local DBdefaults = {
 					Personal_Offensives = true,
 					Peronsal_Defensives = true,
 					Movable_Cast_Auras = true,
-					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 					PvE = true,
 					Other = true,
 
@@ -3703,7 +3747,7 @@ local DBdefaults = {
 					Personal_Offensives = true,
 					Peronsal_Defensives = true,
 					Movable_Cast_Auras = true,
-					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 					PvE = true,
 					Other = true,
 
@@ -3739,7 +3783,7 @@ local DBdefaults = {
 					Personal_Offensives = true,
 					Peronsal_Defensives = true,
 					Movable_Cast_Auras = true,
-					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 					PvE = true,
 					Other = true,
 
@@ -3789,7 +3833,7 @@ local DBdefaults = {
 					Personal_Offensives = true,
 					Peronsal_Defensives = true,
 					Movable_Cast_Auras = true,
-					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 					PvE = true,
 					Other = true,
 
@@ -3825,7 +3869,7 @@ local DBdefaults = {
 					Personal_Offensives = true,
 					Peronsal_Defensives = true,
 					Movable_Cast_Auras = true,
-					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 					PvE = true,
 					Other = true,
 
@@ -3863,7 +3907,7 @@ local DBdefaults = {
 					Personal_Offensives = true,
 					Peronsal_Defensives = true,
 					Movable_Cast_Auras = true,
-					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 					PvE = true,
 					Other = true,
 
@@ -3899,7 +3943,7 @@ local DBdefaults = {
 					Personal_Offensives = true,
 					Peronsal_Defensives = true,
 					Movable_Cast_Auras = true,
-					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 					PvE = true,
 					Other = true,
 
@@ -3949,7 +3993,7 @@ local DBdefaults = {
 					Personal_Offensives = true,
 					Peronsal_Defensives = true,
 					Movable_Cast_Auras = true,
-					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 					PvE = true,
 					Other = true,
 
@@ -3985,7 +4029,7 @@ local DBdefaults = {
 					Personal_Offensives = true,
 					Peronsal_Defensives = true,
 					Movable_Cast_Auras = true,
-					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 					PvE = true,
 					Other = true,
 
@@ -4023,7 +4067,7 @@ local DBdefaults = {
 					Personal_Offensives = true,
 					Peronsal_Defensives = true,
 					Movable_Cast_Auras = true,
-					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 					PvE = true,
 					Other = true,
 
@@ -4059,7 +4103,7 @@ local DBdefaults = {
 					Personal_Offensives = true,
 					Peronsal_Defensives = true,
 					Movable_Cast_Auras = true,
-					SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+					SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 					PvE = true,
 					Other = true,
 
@@ -4111,7 +4155,7 @@ local DBdefaults = {
 						 Personal_Offensives = false,
 						 Peronsal_Defensives = false,
 						 Movable_Cast_Auras = false,
-					   SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+					   SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 						 PvE = true,
 						 Other = true,
 					 }
@@ -4148,7 +4192,7 @@ local DBdefaults = {
 							Personal_Offensives = false,
 							Peronsal_Defensives = false,
 							Movable_Cast_Auras = false,
-							SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+							SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 							PvE = true,
 							Other = true,
 						}
@@ -4196,7 +4240,7 @@ local DBdefaults = {
 						 Personal_Offensives = false,
 						 Peronsal_Defensives = false,
 						 Movable_Cast_Auras = false,
-					   SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+					   SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 						 PvE = true,
 						 Other = true,
 					 }
@@ -4233,7 +4277,7 @@ local DBdefaults = {
 							Personal_Offensives = false,
 							Peronsal_Defensives = false,
 							Movable_Cast_Auras = false,
-							SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+							SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 							PvE = true,
 							Other = true,
 						}
@@ -4281,7 +4325,7 @@ local DBdefaults = {
 						 Personal_Offensives = false,
 						 Peronsal_Defensives = false,
 						 Movable_Cast_Auras = false,
-					   SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+					   SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 						 PvE = true,
 						 Other = true,
 					 }
@@ -4318,7 +4362,7 @@ local DBdefaults = {
 							Personal_Offensives = false,
 							Peronsal_Defensives = false,
 							Movable_Cast_Auras = false,
-							SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+							SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 							PvE = true,
 							Other = true,
 						}
@@ -4366,7 +4410,7 @@ local DBdefaults = {
 						 Personal_Offensives = false,
 						 Peronsal_Defensives = false,
 						 Movable_Cast_Auras = false,
-					   SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+					   SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 						 PvE = true,
 						 Other = true,
 					 }
@@ -4403,7 +4447,7 @@ local DBdefaults = {
 							Personal_Offensives = false,
 							Peronsal_Defensives = false,
 							Movable_Cast_Auras = false,
-							SnareSpecial = true, SnarePhysical70 = true, SnareMagical70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
+							SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 							PvE = true,
 							Other = true,
 						}
@@ -4604,13 +4648,6 @@ local function dump(o)
    end
 end
 
-local function get_key_for_value( t, value )
-  for k,v in pairs(t) do
-    if v==value then return k end
-  end
-  return nil
-end
-
 
 --You will need to use a C_timer to Reset all values to nil after expiration
 --You will need to hide lossOfControlDisarm/Full/Root/Silence
@@ -4641,7 +4678,9 @@ locBliz:SetScript("OnEvent", function(self, event, ...)
 								 local ZoneName = GetZoneText()
 								 LoseControlDB.Spells[spellID] = Type
 								 LoseControlDB.SpellsInfo[ZoneName.." "..name.." instanceID: "..instanceID.." spellId: "..spellID.." "..locType] = Type
-							elseif locType == "DISARM" then
+								 LoseControlDB.spellEnabled[spellID]= true
+								 tblinsert(spellsPVE[#spellsPVE], {spellID, Type})
+								elseif locType == "DISARM" then
 								 print("Found New Disarm",locType,"", spellID)
 							   local Type = "Disarm"
 								 spellIds[spellID] = Type
@@ -4649,6 +4688,8 @@ locBliz:SetScript("OnEvent", function(self, event, ...)
 								 local ZoneName = GetZoneText()
 								 LoseControlDB.Spells[spellID] = Type
 								 LoseControlDB.SpellsInfo[ZoneName.." "..name.." instanceID: "..instanceID.." spellId: "..spellID.." "..locType] = Type
+								 LoseControlDB.spellEnabled[spellID]= true
+								 tblinsert(spellsPVE[#spellsPVE], {spellID, Type})
 						  elseif (locType == "PACIFYSILENCE") or (locType =="SILENCE") then
 						    print("Found New Silence",locType,"", spellID)
 						 	  local Type = "Silence"
@@ -4657,6 +4698,8 @@ locBliz:SetScript("OnEvent", function(self, event, ...)
  							  local ZoneName = GetZoneText()
 								LoseControlDB.Spells[spellID] = Type
 								LoseControlDB.SpellsInfo[ZoneName.." "..name.." instanceID: "..instanceID.." spellId: "..spellID.." "..locType] = Type
+								LoseControlDB.spellEnabled[spellID]= true
+								tblinsert(spellsPVE[#spellsPVE], {spellID, Type})
 							elseif locType == "ROOT" then
 						  	print("Found New Root",locType,"", spellID)
 								local Type = "Root"
@@ -4665,6 +4708,8 @@ locBliz:SetScript("OnEvent", function(self, event, ...)
 								local ZoneName = GetZoneText()
 								LoseControlDB.Spells[spellID] = Type
 								LoseControlDB.SpellsInfo[ZoneName.." "..name.." instanceID: "..instanceID.." spellId: "..spellID.." "..locType] = Type
+								LoseControlDB.spellEnabled[spellID]= true
+								tblinsert(spellsPVE[#spellsPVE], {spellID, Type})
 							else
 								print("Found New Other",locType,"", spellID)
 								local Type = "Other"
@@ -4673,6 +4718,8 @@ locBliz:SetScript("OnEvent", function(self, event, ...)
  					  		local ZoneName = GetZoneText()
 								LoseControlDB.Spells[spellID] = Type
 								LoseControlDB.SpellsInfo[ZoneName.." "..name.." instanceID: "..instanceID.." spellId: "..spellID.." "..locType] = Type
+								LoseControlDB.spellEnabled[spellID]= true
+								tblinsert(spellsPVE[#spellsPVE], {spellID, Type})
 							end
 			  elseif (not interruptsIds[spellID]) and lockoutSchool > 0 then
 					print("Found New Interrupt",locType,"", spellID)
@@ -4681,6 +4728,8 @@ locBliz:SetScript("OnEvent", function(self, event, ...)
 					local ZoneName = GetZoneText()
 					LoseControlDB.InterruptSpells[spellID] = duration
 					LoseControlDB.InterruptSpellsInfo[ZoneName.." "..name.." instanceID: "..instanceID.." spellId: "..spellID] = duration
+					LoseControlDB.spellEnabled[spellID]= true
+					tblinsert(spellsPVE[#spellsPVE], {spellID, "Interrupt: "..math.floor(duration)})
 				else
 				end
 	end
@@ -5149,17 +5198,36 @@ function LoseControl:ADDON_LOADED(arg1)
 			end
 		end
 							  if _G.LoseControlDB.Spells ~=nil then
-								for k,v in pairs(_G.LoseControlDB.Spells) do spellIds[k] = v end --CHRIS ADDS ALL FOUND SPELLS
+								for k,v in pairs(_G.LoseControlDB.Spells) do
+								spellIds[k] = v
+								tblinsert(spellsPVE[#spellsPVE], {k, v})
+								end --CHRIS ADDS ALL FOUND SPELLS
 								end
+
+								if _G.LoseControlDB.customSpellIds ~=nil then
+							 	for k,v in pairs(_G.LoseControlDB.customSpellIds) do
+								spellIds[k] = v
+							 	tblinsert(spellsPVE[#spellsPVE-1], {k, v})
+									if _G.LoseControlDB.spellEnabled[k] == nil then
+									_G.LoseControlDB.spellEnabled[k]= true
+									end
+						 		end --CHRIS ADDS CUSTOM SPELLS TO TABLE ALL FOUND SPELLS
+						  	end
+
 								if _G.LoseControlDB.InterruptSpells ~=nil then
-								for k,v in pairs(_G.LoseControlDB.InterruptSpells) do interruptsIds[k] = v end --CHRIS ADDS ALL FOUND SPELLS
+								for k,v in pairs(_G.LoseControlDB.InterruptSpells) do
+								interruptsIds[k] = v
+								tblinsert(spellsPVE[#spellsPVE], {k, "Interrupt: "..math.floor(v)})
+								end --CHRIS ADDS ALL FOUND SPELLS
 							 	end
+
 								if not _G.LoseControlDB.spellEnabled then
 								_G.LoseControlDB.spellEnabled = {}
 								for k in pairs(spellIds) do
 			  				_G.LoseControlDB.spellEnabled[k]= true
 								end
 								end
+
 								if not _G.LoseControlDB.spellEnabledArena then
 								_G.LoseControlDB.spellEnabledArena = {}
 								for k in pairs(spellIdsArena) do
@@ -5167,6 +5235,36 @@ function LoseControl:ADDON_LOADED(arg1)
 								end
 								end
 
+								if not _G.LoseControlDB.spellEnabledArena then
+								_G.LoseControlDB.spellEnabledArena = {}
+								for k in pairs(interruptsIds) do
+								_G.LoseControlDB.spellEnabledArena[k]= true
+								end
+								end
+
+								if _G.LoseControlDB.spellEnabledArena then
+								for k in pairs(spellIds) do
+									if _G.LoseControlDB.spellEnabledArena[k] == nil then
+									_G.LoseControlDB.spellEnabledArena[k]= true
+									end
+								end
+								end
+
+								if _G.LoseControlDB.spellEnabled then
+								for k in pairs(spellIds) do
+									if _G.LoseControlDB.spellEnabled[k] == nil then
+									_G.LoseControlDB.spellEnabled[k]= true
+									end
+								end
+								end
+
+								if _G.LoseControlDB.spellEnabled then
+								for k in pairs(interruptsIds) do
+									if _G.LoseControlDB.spellEnabled[k] == nil then
+									_G.LoseControlDB.spellEnabled[k]= true
+									end
+								end
+								end
 	end
 end
 
@@ -5496,6 +5594,7 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 					local expirationTime = GetTime() + duration
 					if debug then print("interrupt", ")", destGUID, "|", GetSpellInfo(spellId), "|", duration, "|", expirationTime, "|", spellId) end
 						local priority = LoseControlDB.priority.Interrupt
+						local spellCategory = "Interrupt"
 						if (destGUID == UnitGUID("arena1")) or (destGUID == UnitGUID("arena2")) or (destGUID == UnitGUID("arena3")) then
 						priority = LoseControlDB.priorityArena.Interrupt
 					  end
@@ -5503,7 +5602,7 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 					if (InterruptAuras[destGUID] == nil) then
 						InterruptAuras[destGUID] = {}
 					end
-					tblinsert(InterruptAuras[destGUID], {  ["name"] = name, ["duration"] = duration, ["expirationTime"] = expirationTime, ["priority"] = priority, ["icon"] = icon, ["spellSchool"] = spellSchool, ["hue"] = hue })
+					tblinsert(InterruptAuras[destGUID], {  ["spellId"] = spellId, ["name"] = name, ["duration"] = duration, ["expirationTime"] = expirationTime, ["priority"] = priority, ["spellCategory"] = spellCategory, ["icon"] = icon, ["spellSchool"] = spellSchool, ["hue"] = hue })
 					UpdateUnitAuraByUnitGUID(destGUID, -20)
 				end
 			elseif (((event == "UNIT_DIED") or (event == "UNIT_DESTROYED") or (event == "UNIT_DISSIPATES")) and (select(2, GetPlayerInfoByGUID(destGUID)) ~= "HUNTER")) then --may need to use UNIT_AURA check for Fiegn Death here to make more accurate
@@ -5525,11 +5624,12 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 							  	if (duration ~= nil) then
 									local expirationTime = GetTime() + duration
 									local priority = LoseControlDB.priority.Interrupt
+									local spellCategory = "Interrupt"
 									local name, _, icon = GetSpellInfo(spellId)
 										if (InterruptAuras[destGUID] == nil) then
 											InterruptAuras[destGUID] = {}
 										end
-									tblinsert(InterruptAuras[destGUID], {  ["name"] = name, ["duration"] = duration, ["expirationTime"] = expirationTime, ["priority"] = priority, ["icon"] = icon, ["spellSchool"] = spellSchool, ["hue"] = hue })
+									tblinsert(InterruptAuras[destGUID], {  ["spellId"] = spellId, ["name"] = name, ["duration"] = duration, ["expirationTime"] = expirationTime, ["priority"] = priority, ["spellCategory"] = spellCategory, ["icon"] = icon, ["spellSchool"] = spellSchool, ["hue"] = hue })
 									UpdateUnitAuraByUnitGUID(destGUID, -20)
 						     end
 							 end
@@ -5543,14 +5643,13 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 										local duration = interruptsIds[spellId]
 										if (duration ~= nil) then
 										local expirationTime = GetTime() + duration
-											if (destGUID == UnitGUID("arena1")) or (destGUID == UnitGUID("arena2")) or (destGUID == UnitGUID("arena3")) then
-											priority = LoseControlDB.priorityArena.Interrupt
-											end
-										local name, _, icon = GetSpellInfo(spellId)
+											local priority = LoseControlDB.priorityArena.Interrupt
+											local spellCategory = "Interrupt"
+											local name, _, icon = GetSpellInfo(spellId)
 											if (InterruptAuras[destGUID] == nil) then
 												InterruptAuras[destGUID] = {}
 											end
-										tblinsert(InterruptAuras[destGUID], {  ["name"] = name, ["duration"] = duration, ["expirationTime"] = expirationTime, ["priority"] = priority, ["icon"] = icon, ["spellSchool"] = spellSchool, ["hue"] = hue })
+										tblinsert(InterruptAuras[destGUID], {  ["spellId"] = spellId, ["name"] = name, ["duration"] = duration, ["expirationTime"] = expirationTime, ["priority"] = priority, ["spellCategory"] = spellCategory, ["icon"] = icon, ["spellSchool"] = spellSchool, ["hue"] = hue })
 										UpdateUnitAuraByUnitGUID(destGUID, -20)
 								   end
 								 end
@@ -5566,11 +5665,12 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 											if (duration ~= nil) then
 											local expirationTime = GetTime() + duration
 											local priority = LoseControlDB.priority.Interrupt
+											local spellCategory = "Interrupt"
 											local name, _, icon = GetSpellInfo(spellId)
 												if (InterruptAuras[destGUID] == nil) then
 													InterruptAuras[destGUID] = {}
 												end
-											tblinsert(InterruptAuras[destGUID], { ["name"] = name, ["duration"] = duration, ["expirationTime"] = expirationTime, ["priority"] = priority, ["icon"] = icon, ["spellSchool"] = spellSchool, ["hue"] = hue })
+											tblinsert(InterruptAuras[destGUID], { ["spellId"] = spellId, ["name"] = name, ["duration"] = duration, ["expirationTime"] = expirationTime, ["priority"] = priority, ["spellCategory"] = spellCategory, ["icon"] = icon, ["spellSchool"] = spellSchool, ["hue"] = hue })
 											UpdateUnitAuraByUnitGUID(destGUID, -20)
 									  end
 								 end
@@ -5651,19 +5751,21 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 			--Trees Check (if Tress dies it will not update currently not sure how to track that)
 			-----------------------------------------------------------------------------------------------------------------
 			if ((event == "SPELL_CAST_SUCCESS") and (cleuPrioCastedSpells[spellId])) then
-
+					local priority, priorityArena, spellCategory
 					if cleuPrioCastedSpells[spellId].priority == nil then
-					priority = 0
+					priority = nil
 					else
 					priority = LoseControlDB.priority[cleuPrioCastedSpells[spellId].priority]
+					spellCategory = cleuPrioCastedSpells[spellId].priorityArena
 					end
 
 					------------------------------------------ARENA-------------------------------------------------------------------------------
 					if (sourceGUID == UnitGUID("arena1")) or (sourceGUID == UnitGUID("arena2")) or (sourceGUID == UnitGUID("arena3")) then
 					if cleuPrioCastedSpells[spellId].priorityArena == nil then
-					priority = 0
+					priority = nil
 					else
 					priority = LoseControlDB.priorityArena[cleuPrioCastedSpells[spellId].priorityArena]
+					spellCategory = cleuPrioCastedSpells[spellId].priorityArena
 					end
 			  	end
 					--------------------------------------------------------------------------------------------------------------------------------
@@ -5671,10 +5773,11 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 						local duration = cleuPrioCastedSpells[spellId].duration
 						local expirationTime = GetTime() + duration
 						local name, _, icon = GetSpellInfo(spellId)
+						local spellCategory = cleuPrioCastedSpells[spellId].duration
 						if not InterruptAuras[sourceGUID]  then
 								InterruptAuras[sourceGUID] = {}
 						end
-						tblinsert(InterruptAuras[sourceGUID], { ["name"] = name, ["duration"] = duration, ["expirationTime"] = expirationTime, ["priority"] = priority, ["icon"] = icon, ["spellSchool"] = spellSchool, ["hue"] = hue })
+						tblinsert(InterruptAuras[sourceGUID], { ["spellId"] = spellId, ["name"] = name, ["duration"] = duration, ["expirationTime"] = expirationTime, ["priority"] = priority, ["spellCategory"] = spellCategory, ["icon"] = icon, ["spellSchool"] = spellSchool, ["hue"] = hue })
 						UpdateUnitAuraByUnitGUID(sourceGUID, -20)
 					end
 			end
@@ -5734,11 +5837,13 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 	if ((self.unitId == "targettarget" or self.unitId == "focustarget") and (not UnitIsUnit(unitId, self.unitId))) then return end
 	local priority = LoseControlDB.priority
 	local durationType = LoseControlDB.durationType
+	local enabled = LoseControlDB.spellEnabled
 	local spellIds = spellIds
 
 	if (unitId == "arena1") or (unitId == "arena2") or (unitId == "arena3") or (UnitGUID(unitId) == UnitGUID("arena1")) or (UnitGUID(unitId) == UnitGUID("arena2")) or (UnitGUID(unitId) == UnitGUID("arena3")) then
 		priority =  LoseControlDB.priorityArena
 		durationType =  LoseControlDB.durationTypeArena
+		enabled = LoseControlDB.spellEnabledArena
 		spellIds = spellIdsArena
 	end
 
@@ -5779,6 +5884,8 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 					local spellCategory = spellIds[spellId]
 					local Priority = priority[spellCategory]
 					LoseControlDB.Spells[spellId] = spellIds[spellId]
+					LoseControlDB.spellEnabled[spellId]= true
+					tblinsert(spellsPVE[#spellsPVE], {spellID, Type})
 					local Name, instanceType, _, _, _, _, _, instanceID, _, _ = GetInstanceInfo()
 					local ZoneName = GetZoneText()
 					local locClass = "Creature"
@@ -5804,6 +5911,9 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 						end
 					end
 				end
+
+
+			if (not enabled[spellId]) and (not enabled[name]) then spellId = nil; name = nil end
 
 			-----------------------------------------------------------------------------------------------------------------
 			--Enemy Duel
@@ -5986,6 +6096,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 			local name, icon, _, _, duration, expirationTime, _, _, _, spellId = UnitAura(unitId, i)
 			local hue
 			if not spellId then break end -- no more debuffs, terminate the loop
+			if (not enabled[spellId]) and (not enabled[name]) then spellId = nil; name = nil end
 			if debug then print(unitId, "buff", i, ")", name, "|", duration, "|", expirationTime, "|", spellId) end
 
 			if duration == 0 and expirationTime == 0 then
@@ -6069,7 +6180,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 		end
 
 		-- Check interrupts or cleu
-		if ((self.unitGUID ~= nil) --[[and (priority.Interrupt > 0) and self.frame.categoriesEnabled.interrupt[reactionToPlayer]] and (UnitIsPlayer(unitId) or (((unitId ~= "target") or (LoseControlDB.showNPCInterruptsTarget)) and ((unitId ~= "focus") or (LoseControlDB.showNPCInterruptsFocus)) and ((unitId ~= "targettarget") or (LoseControlDB.showNPCInterruptsTargetTarget)) and ((unitId ~= "focustarget") or (LoseControlDB.showNPCInterruptsFocusTarget))))) then
+		if ((self.unitGUID ~= nil) and (UnitIsPlayer(unitId) or (((unitId ~= "target") or (LoseControlDB.showNPCInterruptsTarget)) and ((unitId ~= "focus") or (LoseControlDB.showNPCInterruptsFocus)) and ((unitId ~= "targettarget") or (LoseControlDB.showNPCInterruptsTargetTarget)) and ((unitId ~= "focustarget") or (LoseControlDB.showNPCInterruptsFocusTarget))))) then
 			local spellSchoolInteruptsTable = {
 				[1] = {false, 0},
 				[2] = {false, 0},
@@ -6082,19 +6193,29 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 			if (InterruptAuras[self.unitGUID] ~= nil) then
 				for k, v in pairs(InterruptAuras[self.unitGUID]) do
 					local Priority = v.priority
+					local spellCategory = v.spellCategory
 					local expirationTime = v.expirationTime
 					local duration = v.duration
 					local icon = v.icon
 					local spellSchool = v.spellSchool
 					local hue = v.hue
 					local name = v.name
-					local spellCategory = get_key_for_value( priority, Priority )
-					if ((Priority > 0) and (self.frame.categoriesEnabled.buff[reactionToPlayer][spellCategory])) or ((self.frame.categoriesEnabled.interrupt[reactionToPlayer]) and (priority.Interrupt == Priority)) then
-					if (expirationTime < GetTime()) then
-						InterruptAuras[self.unitGUID][k] = nil
-						if (next(InterruptAuras[self.unitGUID]) == nil) then
-							InterruptAuras[self.unitGUID] = nil
-						end
+					local spellId = v.spellId
+					if (not enabled[spellId]) and (not enabled[name]) then spellId = nil; name = nil; Priority = 0 end
+					if spellCategory ~= "Interrupt" and ((Priority == 0) or (not self.frame.categoriesEnabled.buff[reactionToPlayer][spellCategory])) then
+							if (expirationTime < GetTime()) then
+							InterruptAuras[self.unitGUID][k] = nil
+							if (next(InterruptAuras[self.unitGUID]) == nil) then
+								InterruptAuras[self.unitGUID] = nil
+							end
+							end
+					elseif (spellCategory == "Interrupt") and ((Priority == 0) or (not self.frame.categoriesEnabled.interrupt[reactionToPlayer])) then
+							if (expirationTime < GetTime()) then
+							InterruptAuras[self.unitGUID][k] = nil
+							if (next(InterruptAuras[self.unitGUID]) == nil) then
+								InterruptAuras[self.unitGUID] = nil
+							end
+							end
 					else
 						if Priority then
 							-----------------------------------------------------------------------------------------------------------------
@@ -6265,7 +6386,6 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 					schoolIntFrame:Hide()
 				end
 			end
-		end
 		end
 	end
 
@@ -6877,21 +6997,24 @@ end)
 
 local LossOfControlSpells = CreateFrame("Button", O.."LossOfControlSpells", OptionsPanel, "OptionsButtonTemplate")
 _G[O.."LossOfControlSpells"]:SetText("Spells")
-LossOfControlSpells:SetHeight(18)
+LossOfControlSpells:SetHeight(20)
+LossOfControlSpells:SetWidth(185)
 LossOfControlSpells:SetScale(.85)
 LossOfControlSpells:SetScript("OnClick", function(self)
 L.SpellsConfig:Toggle()
 end)
 local LossOfControlSpellsArena = CreateFrame("Button", O.."LossOfControlSpellsArena", OptionsPanel, "OptionsButtonTemplate")
 _G[O.."LossOfControlSpellsArena"]:SetText("Arena123")
-LossOfControlSpellsArena:SetHeight(18)
+LossOfControlSpellsArena:SetHeight(20)
+LossOfControlSpellsArena:SetWidth(185)
 LossOfControlSpellsArena:SetScale(.85)
 LossOfControlSpellsArena:SetScript("OnClick", function(self)
 L.SpellsArenaConfig:Toggle()
 end)
 local LossOfControlSpellsPVE = CreateFrame("Button", O.."LossOfControlSpellsPVE", OptionsPanel, "OptionsButtonTemplate")
 _G[O.."LossOfControlSpellsPVE"]:SetText("PVE Spells")
-LossOfControlSpellsPVE:SetHeight(18)
+LossOfControlSpellsPVE:SetHeight(20)
+LossOfControlSpellsPVE:SetWidth(185)
 LossOfControlSpellsPVE:SetScale(.85)
 LossOfControlSpellsPVE:SetScript("OnClick", function(self)
 L.SpellsPVEConfig:Toggle()
@@ -6922,7 +7045,7 @@ local function CreateSliderMain(text, parent, low, high, step, globalName)
 	local name = globalName or (parent:GetName() .. text)
 	local slider = CreateFrame("Slider", name, parent, "OptionsSliderTemplate")
 	slider:SetHeight(8)
-	slider:SetWidth(255)
+	slider:SetWidth(185)
 	slider:SetScale(.8)
 	slider:SetMinMaxValues(low, high)
 	slider:SetValueStep(step)
@@ -6937,8 +7060,13 @@ local PrioritySlider = {}
 for k in pairs(DBdefaults.priority) do
 	PrioritySlider[k] = CreateSliderMain(L[k], OptionsPanel, 0, 100, 1, "Priority"..k.."Slider")
 	PrioritySlider[k]:SetScript("OnValueChanged", function(self, value)
+		if L[k] then
 		_G[self:GetName() .. "Text"]:SetText(L[k] .. " (" .. ("%.0f"):format(value) .. ")")
 		LoseControlDB.priority[k] = value
+		else
+		_G[self:GetName() .. "Text"]:SetText(tostring(k) .. " (" .. ("%.0f"):format(value) .. ")")
+		LoseControlDB.priority[k] = value
+		end
 		if k == "Interrupt" then
 			local enable = LCframes["target"].frame.enabled
 			LCframes["target"]:RegisterUnitEvents(enable)
@@ -6948,7 +7076,7 @@ end
 
 -------------------------------------------------------------------------------
 -- Arrange all the options neatly
-title:SetPoint("TOPLEFT", 16, -10)
+title:SetPoint("TOPLEFT", 12, -10)
 
 
 
@@ -6963,15 +7091,56 @@ DisableLossOfControlCooldownAuxText:SetPoint("TOPLEFT", DisableLossOfControlCool
 Priority:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -12)
 subText:SetPoint("TOPLEFT", Priority, "BOTTOMLEFT", 0, -3)
 PriorityDescription:SetPoint("TOPLEFT", subText, "BOTTOMLEFT", 0, -3)
-LossOfControlSpells:SetPoint("TOPLEFT", PriorityDescription, "BOTTOMLEFT", -1, -4)
-LossOfControlSpellsPVE:SetPoint("TOPLEFT", LossOfControlSpells, "TOPRIGHT", 62, 0)
-LossOfControlSpellsArena:SetPoint("TOPLEFT", LossOfControlSpells, "TOPRIGHT", 315, 0)
-PrioritySlider.CC:SetPoint("TOPLEFT", PriorityDescription, "BOTTOMLEFT", 0, -30)
-PrioritySlider.Silence:SetPoint("TOPLEFT", PrioritySlider.CC, "BOTTOMLEFT", 0, -11)
-PrioritySlider.ImmuneSpell:SetPoint("TOPLEFT", PrioritySlider.Silence, "BOTTOMLEFT", 0, -11)
-PrioritySlider.ImmunePhysical:SetPoint("TOPLEFT", PrioritySlider.ImmuneSpell, "BOTTOMLEFT", 0, -11)
-PrioritySlider.RootPhyiscal_Special:SetPoint("TOPLEFT", PrioritySlider.ImmunePhysical, "BOTTOMLEFT", 0, -11)
 
+
+local prioritySpacing = -11
+PrioritySlider.CC:SetPoint("TOPLEFT", PriorityDescription, "BOTTOMLEFT", 0, -30)
+PrioritySlider.Silence:SetPoint("TOPLEFT", PrioritySlider.CC, "BOTTOMLEFT", 0, prioritySpacing)
+PrioritySlider.RootPhyiscal_Special:SetPoint("TOPLEFT", PrioritySlider.Silence, "BOTTOMLEFT", 0, prioritySpacing)
+PrioritySlider.RootMagic_Special:SetPoint("TOPLEFT", PrioritySlider.RootPhyiscal_Special, "BOTTOMLEFT", 0, prioritySpacing)
+PrioritySlider.Root:SetPoint("TOPLEFT", PrioritySlider.RootMagic_Special, "BOTTOMLEFT", 0, prioritySpacing)
+PrioritySlider.ImmunePlayer:SetPoint("TOPLEFT", PrioritySlider.Root, "BOTTOMLEFT", 0, prioritySpacing)
+PrioritySlider.Disarm_Warning:SetPoint("TOPLEFT", PrioritySlider.ImmunePlayer, "BOTTOMLEFT", 0, prioritySpacing)
+PrioritySlider.CC_Warning:SetPoint("TOPLEFT", PrioritySlider.Disarm_Warning, "BOTTOMLEFT", 0, prioritySpacing)
+PrioritySlider.Enemy_Smoke_Bomb:SetPoint("TOPLEFT", PrioritySlider.CC_Warning, "BOTTOMLEFT", 0, prioritySpacing)
+PrioritySlider.Stealth:SetPoint("TOPLEFT", PrioritySlider.Enemy_Smoke_Bomb, "BOTTOMLEFT", 0, prioritySpacing)
+PrioritySlider.Immune:SetPoint("TOPLEFT", PrioritySlider.Stealth, "BOTTOMLEFT", 0, prioritySpacing)
+PrioritySlider.ImmuneSpell:SetPoint("TOPLEFT", PrioritySlider.Immune, "BOTTOMLEFT", 0, prioritySpacing)
+PrioritySlider.ImmunePhysical:SetPoint("TOPLEFT", PrioritySlider.ImmuneSpell, "BOTTOMLEFT", 0, prioritySpacing)
+PrioritySlider.AuraMastery_Cast_Auras:SetPoint("TOPLEFT", PrioritySlider.ImmunePhysical, "BOTTOMLEFT", 0, prioritySpacing)
+PrioritySlider.ROP_Vortex:SetPoint("TOPLEFT", PrioritySlider.AuraMastery_Cast_Auras, "BOTTOMLEFT", 0, prioritySpacing)
+PrioritySlider.Disarm:SetPoint("TOPLEFT", PrioritySlider.ROP_Vortex, "BOTTOMLEFT", 0, prioritySpacing)
+PrioritySlider.Haste_Reduction:SetPoint("TOPLEFT", PrioritySlider.Disarm, "BOTTOMLEFT", 0, prioritySpacing)
+PrioritySlider.Dmg_Hit_Reduction:SetPoint("TOPLEFT", PrioritySlider.Haste_Reduction, "BOTTOMLEFT", 0, prioritySpacing)
+PrioritySlider.Interrupt:SetPoint("TOPLEFT", PrioritySlider.Dmg_Hit_Reduction, "BOTTOMLEFT", 0, prioritySpacing)
+PrioritySlider.AOE_DMG_Modifiers:SetPoint("TOPLEFT", PrioritySlider.Interrupt, "BOTTOMLEFT", 0, prioritySpacing)
+PrioritySlider.Friendly_Smoke_Bomb:SetPoint("TOPLEFT", PrioritySlider.AOE_DMG_Modifiers, "BOTTOMLEFT", 0, prioritySpacing)
+PrioritySlider.AOE_Spell_Refections:SetPoint("TOPLEFT", PrioritySlider.Friendly_Smoke_Bomb, "BOTTOMLEFT", 0, prioritySpacing)
+PrioritySlider.Trees:SetPoint("TOPLEFT", PrioritySlider.AOE_Spell_Refections, "BOTTOMLEFT", 0, prioritySpacing)
+PrioritySlider.Speed_Freedoms:SetPoint("TOPLEFT", PrioritySlider.Trees, "BOTTOMLEFT", 0, prioritySpacing)
+PrioritySlider.Freedoms:SetPoint("TOPLEFT", PrioritySlider.Speed_Freedoms, "BOTTOMLEFT", 0, prioritySpacing)
+PrioritySlider.Friendly_Defensives:SetPoint("TOPLEFT", PrioritySlider.Freedoms, "BOTTOMLEFT", 0, prioritySpacing)
+PrioritySlider.Mana_Regen:SetPoint("TOPLEFT", PrioritySlider.Friendly_Defensives, "BOTTOMLEFT", 0, prioritySpacing)
+PrioritySlider.CC_Reduction:SetPoint("TOPLEFT", PrioritySlider.Mana_Regen, "BOTTOMLEFT", 0, prioritySpacing)
+PrioritySlider.Personal_Offensives:SetPoint("TOPLEFT", PrioritySlider.CC_Reduction, "BOTTOMLEFT", 0, prioritySpacing)
+PrioritySlider.Peronsal_Defensives:SetPoint("TOPLEFT", PrioritySlider.Personal_Offensives, "BOTTOMLEFT", 0, prioritySpacing)
+PrioritySlider.Movable_Cast_Auras:SetPoint("TOPLEFT", PrioritySlider.Peronsal_Defensives, "BOTTOMLEFT", 0, prioritySpacing)
+
+PrioritySlider.Snare:SetPoint("TOPLEFT", PrioritySlider.Movable_Cast_Auras, "TOPRIGHT", 70, 0)
+PrioritySlider.SnareMagic30:SetPoint("BOTTOMLEFT", PrioritySlider.Snare, "TOPLEFT", 0, prioritySpacing*-1)
+PrioritySlider.SnarePhysical30:SetPoint("BOTTOMLEFT", PrioritySlider.SnareMagic30, "TOPLEFT", 0, prioritySpacing*-1)
+PrioritySlider.SnareMagic50:SetPoint("BOTTOMLEFT", PrioritySlider.SnarePhysical30, "TOPLEFT", 0, prioritySpacing*-1)
+PrioritySlider.SnarePosion50:SetPoint("BOTTOMLEFT", PrioritySlider.SnareMagic50, "TOPLEFT", 0, prioritySpacing*-1)
+PrioritySlider.SnarePhysical50:SetPoint("BOTTOMLEFT", PrioritySlider.SnarePosion50, "TOPLEFT", 0, prioritySpacing*-1)
+PrioritySlider.SnareMagic70:SetPoint("BOTTOMLEFT", PrioritySlider.SnarePhysical50, "TOPLEFT", 0, prioritySpacing*-1)
+PrioritySlider.SnarePhysical70:SetPoint("BOTTOMLEFT", PrioritySlider.SnareMagic70, "TOPLEFT", 0, prioritySpacing*-1)
+PrioritySlider.SnareSpecial:SetPoint("BOTTOMLEFT", PrioritySlider.SnarePhysical70, "TOPLEFT", 0, prioritySpacing*-1)
+PrioritySlider.PvE:SetPoint("BOTTOMLEFT", PrioritySlider.SnareSpecial, "TOPLEFT", 0, prioritySpacing*-1*2)
+PrioritySlider.Other:SetPoint("BOTTOMLEFT", PrioritySlider.PvE, "TOPLEFT", 0, prioritySpacing*-1)
+
+LossOfControlSpells:SetPoint("TOPLEFT", PrioritySlider.CC, "TOPRIGHT", 70, 0)
+LossOfControlSpellsPVE:SetPoint("TOPLEFT", LossOfControlSpells, "BOTTOMLEFT", 0, -5)
+LossOfControlSpellsArena:SetPoint("TOPLEFT", LossOfControlSpellsPVE, "BOTTOMLEFT", 0, -5)
 -------------------------------------------------------------------------------
 OptionsPanel.default = function() -- This method will run when the player clicks "defaults".SnareMagic
 	_G.LoseControlDB = nil
@@ -7013,24 +7182,38 @@ OptionsPanel.default = function() -- This method will run when the player clicks
 	L.SpellsConfig:Reset()
 
 	print("LoseControl Spell Conifgurations Menus Require a Reload to Display Correctly")
-
+--------------Spells------------- Need to sum the spellId , interruptsIds and cleuPrioCastedSpells tables for enabled on reset to true
 	if not _G.LoseControlDB.spellEnabled then
 	_G.LoseControlDB.spellEnabled = {}
 		for k in pairs(spellIds) do
 		_G.LoseControlDB.spellEnabled[k]= true
 		end
+		for k in pairs(interruptsIds) do
+		_G.LoseControlDB.spellEnabled[k]= true
+		end
 	else
 		for k in pairs(spellIds) do
 		_G.LoseControlDB.spellEnabled[k]= true
 		end
+		for k in pairs(interruptsIds) do
+		_G.LoseControlDB.spellEnabled[k]= true
+		end
 	end
+
+	---------ARENA------------------Need to sum the spellId , interruptsIds and cleuPrioCastedSpells tables for enabled on reset to true
 	if not _G.LoseControlDB.spellEnabledArena then
 	_G.LoseControlDB.spellEnabledArena = {}
 		for k in pairs(spellIdsArena) do
 		_G.LoseControlDB.spellEnabledArena[k]= true
 		end
+		for k in pairs(interruptsIds) do
+		_G.LoseControlDB.spellEnabledArena[k]= true
+		end
 	else
 		for k in pairs(spellIdsArena) do
+		_G.LoseControlDB.spellEnabledArena[k]= true
+		end
+		for k in pairs(interruptsIds) do
 		_G.LoseControlDB.spellEnabledArena[k]= true
 		end
 	end
@@ -8217,7 +8400,7 @@ function SlashCmd:customspells(operation, spellId, category)
 				category = nil
 			end
 			spellId = tonumber(spellId)
-			if (type(spellId) == "number") then
+				if (type(spellId) == "number") then
 				spellId = mathfloor(mathabs(spellId))
 				if (category) then
 					if (LoseControlDB.customSpellIds[spellId] == category) then
@@ -8244,6 +8427,8 @@ function SlashCmd:customspells(operation, spellId, category)
 							colortag = "|cffff0000"
 						end
 						print(addonName, "The spell "..colortag.."["..spellId.."]->("..category..")|r has been added to the custom list")
+						_G.LoseControlDB.spellEnabled[spellId]= true
+						tblinsert(spellsPVE[#spellsPVE-1], {spellId, category})
 					end
 				else
 					print(addonName, "Error adding new custom spell |cffff0000["..spellId.."]|r: Invalid category")
@@ -8271,6 +8456,8 @@ function SlashCmd:customspells(operation, spellId, category)
 						colortag = "|cff00ff00"
 					end
 					print(addonName, "The spell "..colortag.."["..spellId.."]->(None)|r has been added to the custom list")
+					_G.LoseControlDB.spellEnabled[spellId] = false
+					tblinsert(spellsPVE[#spellsPVE-1], {spellId, v})
 				end
 			else
 				print(addonName, "Error adding new custom spell: Invalid spellId")

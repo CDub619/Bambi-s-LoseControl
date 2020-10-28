@@ -100,19 +100,20 @@ local function SetTabs(frame, numTabs, ...)
 	local frameName = frame:GetName();
 	local width = {}
 	local rows = 1
-	local widthTabrow = {130,}
+	local rowCount = 1
 
 
 	for i = 1, numTabs do
 		local tab = CreateFrame("Button", frameName.."Tab"..i, frame, "CharacterFrameTabButtonTemplate");
 		tab:SetID(i);
+		tab:SetFrameLevel(3)
+
 		if core[select(i, ...)] then
-		tab:SetText(core[select(i, ...)]);
-		width[i] = string.len(core[select(i, ...)])
+			tab:SetText(core[select(i, ...)].."                                                                    "); --String Needs to be 20
 		else
-		tab:SetText(tabs[i]);
-		width[i] = string.len(tabs[i])
+			tab:SetText(tabs[i].."                                                                    "); --String Needs to be 20
 		end
+
 		tab:SetScript("OnClick", Tab_OnClick);
 
 		tab.content = CreateFrame("Frame", tab:GetName()..'Content', UISpellsArenaConfig.ScrollFrame);
@@ -128,17 +129,16 @@ local function SetTabs(frame, numTabs, ...)
 
 		if (i == 1) then
 		tab:SetPoint("TOPLEFT", UISpellsArenaConfig, "BOTTOMLEFT", 5, 7);
-		widthTab = width[i]
+		rowCount = 1
 		else
-					widthTab = widthTab + width[i]
-		   if widthTab < widthTabrow[rows] -2 then
+				if rowCount <= 9 then
 			 		tab:SetPoint("TOPLEFT", _G[frameName.."Tab"..(i - 1)], "TOPRIGHT", -27, 0);
-					widthTabrow[rows + 1] = widthTab
+					rowCount = rowCount + 1
 	    	else
-					widthTab = 0
 					y = 7 - (25 * rows)
 					tab:SetPoint("TOPLEFT", UISpellsArenaConfig, "BOTTOMLEFT", 5, y);
 					rows = rows + 1
+					rowCount = 1
 	    end
 		end
 	end
@@ -150,7 +150,12 @@ end
 
 local function makeAndShowSpellTTArena(self)
 	GameTooltip:SetOwner (self, "ANCHOR_RIGHT")
+	if type(self.spellID) == "number" then
 	GameTooltip:SetSpellByID(self.spellID)
+	else
+		GameTooltip:SetText(self.spellID, 1, 1, 1, true)
+		GameTooltip:AddLine("This Spell Uses the Name not SpellID.", 1.0, 0.82, 0.0, true);
+	end
 	if (self:GetChecked()) then
 		GameTooltip:AddDoubleLine("|cff66FF00Enabled")
 	else
@@ -164,14 +169,14 @@ function SpellsArenaConfig:CreateMenu()
 	local BambiTag = string.format("|cff%s%s|r", hex:upper(), "By Bambi");
 	UISpellsArenaConfig.Title:SetText('LoseControl Arena Spells Config '..BambiTag)
 	UISpellsArenaConfig:SetFrameStrata("DIALOG");
-	UISpellsArenaConfig:SetFrameLevel(0);
+	UISpellsArenaConfig:SetFrameLevel(3);
 	UISpellsArenaConfig:EnableMouse(true);
 	UISpellsArenaConfig:SetMovable(true)
 	UISpellsArenaConfig:RegisterForDrag("LeftButton")
 	UISpellsArenaConfig:SetScript("OnDragStart", UISpellsArenaConfig.StartMoving)
 	UISpellsArenaConfig:SetScript("OnDragStop", UISpellsArenaConfig.StopMovingOrSizing)
 
-	UISpellsArenaConfig:SetSize(800, 400);
+	UISpellsArenaConfig:SetSize(1050, 400);
 	UISpellsArenaConfig:SetPoint("CENTER"); -- Doesn't need to be ("CENTER", UIParent, "CENTER")
 
 
@@ -193,12 +198,12 @@ function SpellsArenaConfig:CreateMenu()
 		local previousSpellID = nil
 		local Y = -10
 		local X = 230
-		local spellCount = 0
+		local spellCount = -1
 
 		for k in ipairs(core.spellsArena) do
 			local spellID = core.spellsArena[k][1]
-			local type =  core.spellsArena[k][2]
-		  if (spellID and type and (string.lower(type) == string.lower(tab))) then
+			local prio =  core.spellsArena[k][2]
+		  if (spellID and prio and (string.lower(prio) == string.lower(tab))) then
 				spellCount = spellCount + 1
 				local spellCheck = CreateFrame("CheckButton", c:GetName().."spellCheck"..spellID, c, "UICheckButtonTemplate");
 				if (previousSpellID) then
@@ -214,10 +219,15 @@ function SpellsArenaConfig:CreateMenu()
 				spellCheck.icon = CreateFrame("Button", spellCheck:GetName().."Icon", spellCheck, "ActionButtonTemplate")
 				spellCheck.icon:Disable()
 				spellCheck.icon:SetPoint("CENTER", spellCheck, "CENTER", -90, 0)
-				spellCheck.icon:SetNormalTexture(GetSpellTexture(spellID) or 1)
 				spellCheck.icon:SetScale(0.3)
 				spellCheck.icon.check = spellCheck
+				if type(spellID) == "number" then
 				spellCheck.text:SetText(GetSpellInfo(spellID) or "SPELL REMOVED: "..spellID);
+				spellCheck.icon:SetNormalTexture(GetSpellTexture(spellID) or 1)
+				else
+				spellCheck.text:SetText(spellID);
+				spellCheck.icon:SetNormalTexture(1008124)
+				end
 				spellCheck:SetChecked(_G.LoseControlDB.spellEnabledArena[spellID] or false);   --Error on 1st ADDON_LOADED
 				spellCheck.spellID = spellID
 				spellCheck:SetScript("OnClick",

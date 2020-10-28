@@ -20,52 +20,13 @@ local defaults = {
 	}
 }
 
-local tabs = {
-	"CC",
-	"Silence",
-	"RootPhyiscal_Special",
-	"RootMagic_Special",
-	"Root",
-	"ImmunePlayer",
-	"Disarm_Warning",
-	"CC_Warning",
-	"Enemy_Smoke_Bomb",
-	"Stealth",
-	"Immune",
-	"ImmuneSpell",
-	"ImmunePhysical",
-	"AuraMastery_Cast_Auras",
-	"ROP_Vortex",
-	"Disarm",
-	"Haste_Reduction",
-	"Dmg_Hit_Reduction",
-	"Interrupt",
-	"AOE_DMG_Modifiers",
-	"Friendly_Smoke_Bomb",
-	"AOE_Spell_Refections",
-	"Trees",
-	"Speed_Freedoms",
-	"Freedoms",
-	"Friendly_Defensives",
-	"Mana_Regen",
-	"CC_Reduction",
-	"Personal_Offensives",
-	"Peronsal_Defensives",
-	"Movable_Cast_Auras",
 
-	"Other", --PVE only
-	"PvE", --PVE only
+local tabs = {}
 
-	"SnareSpecial",
-	"SnarePhysical70",
-	"SnareMagical70",
-	"SnarePhysical50",
-	"SnarePosion50",
-	"SnareMagic50",
-	"SnarePhysical30",
-	"SnareMagic30",
-	"Snare",
-}
+
+for i = 1, #core.spellsPVE do
+	tabs[i] = core.spellsPVE[i][1]
+end
 --------------------------------------
 -- SpellsPVEConfig functions
 --------------------------------------
@@ -125,19 +86,20 @@ local function SetTabs(frame, numTabs, ...)
 	local frameName = frame:GetName();
 	local width = {}
 	local rows = 1
-	local widthTabrow = {121,}
+	local rowCount = 1
 
 
 	for i = 1, numTabs do
 		local tab = CreateFrame("Button", frameName.."Tab"..i, frame, "CharacterFrameTabButtonTemplate");
 		tab:SetID(i);
+		tab:SetFrameLevel(2)
+
 		if core[select(i, ...)] then
-		tab:SetText(core[select(i, ...)]);
-		width[i] = string.len(core[select(i, ...)])
+			tab:SetText(core[select(i, ...)].."                                                                    "); --String Needs to be 20
 		else
-		tab:SetText(tabs[i]);
-		width[i] = string.len(tabs[i])
+			tab:SetText(tabs[i].."                                                                    "); --String Needs to be 20
 		end
+
 		tab:SetScript("OnClick", Tab_OnClick);
 
 		tab.content = CreateFrame("Frame", tab:GetName()..'Content', UISpellsPVEConfig.ScrollFrame);
@@ -153,17 +115,16 @@ local function SetTabs(frame, numTabs, ...)
 
 		if (i == 1) then
 		tab:SetPoint("TOPLEFT", UISpellsPVEConfig, "BOTTOMLEFT", 5, 7);
-		widthTab = width[i]
+		rowCount = 1
 		else
-					widthTab = widthTab + width[i]
-		   if widthTab < widthTabrow[rows] -2 then
+				if rowCount <= 9 then
 			 		tab:SetPoint("TOPLEFT", _G[frameName.."Tab"..(i - 1)], "TOPRIGHT", -27, 0);
-					widthTabrow[rows + 1] = widthTab
+					rowCount = rowCount + 1
 	    	else
-					widthTab = 0
 					y = 7 - (25 * rows)
 					tab:SetPoint("TOPLEFT", UISpellsPVEConfig, "BOTTOMLEFT", 5, y);
 					rows = rows + 1
+					rowCount = 1
 	    end
 		end
 	end
@@ -175,7 +136,12 @@ end
 
 local function makeAndShowSpellTTPVE(self)
 	GameTooltip:SetOwner (self, "ANCHOR_RIGHT")
+	if type(self.spellID) == "number" then
 	GameTooltip:SetSpellByID(self.spellID)
+	else
+		GameTooltip:SetText(self.spellID, 1, 1, 1, true)
+		GameTooltip:AddLine("This Spell Uses the Name not SpellID.", 1.0, 0.82, 0.0, true);
+	end
 	if (self:GetChecked()) then
 		GameTooltip:AddDoubleLine("|cff66FF00Enabled")
 	else
@@ -190,14 +156,14 @@ function SpellsPVEConfig:CreateMenu()
 	local BambiTag = string.format("|cff%s%s|r", hex:upper(), "By Bambi");
 	UISpellsPVEConfig.Title:SetText('LoseControl PVE Spells Config '..BambiTag)
 	UISpellsPVEConfig:SetFrameStrata("DIALOG");
-	UISpellsPVEConfig:SetFrameLevel(0);
+	UISpellsPVEConfig:SetFrameLevel(2);
 	UISpellsPVEConfig:EnableMouse(true);
 	UISpellsPVEConfig:SetMovable(true)
 	UISpellsPVEConfig:RegisterForDrag("LeftButton")
 	UISpellsPVEConfig:SetScript("OnDragStart", UISpellsPVEConfig.StartMoving)
 	UISpellsPVEConfig:SetScript("OnDragStop", UISpellsPVEConfig.StopMovingOrSizing)
 
-	UISpellsPVEConfig:SetSize(800, 400);
+	UISpellsPVEConfig:SetSize(1050, 400);
 	UISpellsPVEConfig:SetPoint("CENTER"); -- Doesn't need to be ("CENTER", UIParent, "CENTER")
 
 
@@ -208,8 +174,8 @@ function SpellsPVEConfig:CreateMenu()
 	UISpellsPVEConfig.ScrollFrame:SetScript("OnMouseWheel", ScrollFrame_OnMouseWheel);
 
 	UISpellsPVEConfig.ScrollFrame.ScrollBar:ClearAllPoints();
-    UISpellsPVEConfig.ScrollFrame.ScrollBar:SetPoint("TOPLEFT", UISpellsPVEConfig.ScrollFrame, "TOPRIGHT", -12, -18);
-    UISpellsPVEConfig.ScrollFrame.ScrollBar:SetPoint("BOTTOMRIGHT", UISpellsPVEConfig.ScrollFrame, "BOTTOMRIGHT", -7, 18);
+  UISpellsPVEConfig.ScrollFrame.ScrollBar:SetPoint("TOPLEFT", UISpellsPVEConfig.ScrollFrame, "TOPRIGHT", -12, -18);
+  UISpellsPVEConfig.ScrollFrame.ScrollBar:SetPoint("BOTTOMRIGHT", UISpellsPVEConfig.ScrollFrame, "BOTTOMRIGHT", -7, 18);
 
 
 	local allContents = SetTabs(UISpellsPVEConfig, #tabs, unpack(tabs));
@@ -219,47 +185,54 @@ function SpellsPVEConfig:CreateMenu()
 		local previousSpellID = nil
 		local Y = -10
 		local X = 230
-		local spellCount = 0
+		local spellCount = -1
 
-		for k in ipairs(core.spellsPVE) do
-			local spellID = core.spellsPVE[k][1]
-			local type =  core.spellsPVE[k][2]
-		  if (spellID and type and (string.lower(type) == string.lower(tab))) then
-				spellCount = spellCount + 1
-				local spellCheck = CreateFrame("CheckButton", c:GetName().."spellCheck"..spellID, c, "UICheckButtonTemplate");
-				if (previousSpellID) then
-					if (spellCount % numberOfSpellChecksPerRow == 0) then
-						Y = Y-40
-						X = 30
+		for l = 1, #core.spellsPVE[i] do
+			if l ~=1 then
+				local spellID = core.spellsPVE[i][l][1]
+				local prio =  core.spellsPVE[i][l][2]
+			  if (spellID) then
+					spellCount = spellCount + 1
+					local spellCheck = CreateFrame("CheckButton", c:GetName().."spellCheck"..spellID, c, "UICheckButtonTemplate");
+					if (previousSpellID) then
+						if (spellCount % numberOfSpellChecksPerRow == 0) then
+							Y = Y-40
+							X = 30
+						end
+						spellCheck:SetPoint("TOPLEFT", c, "TOPLEFT", X, Y);
+						X = X+200
+					else
+						spellCheck:SetPoint("TOPLEFT", c, "TOPLEFT", 30, -10);
 					end
-					spellCheck:SetPoint("TOPLEFT", c, "TOPLEFT", X, Y);
-					X = X+200
-				else
-					spellCheck:SetPoint("TOPLEFT", c, "TOPLEFT", 30, -10);
+					spellCheck.icon = CreateFrame("Button", spellCheck:GetName().."Icon", spellCheck, "ActionButtonTemplate")
+					spellCheck.icon:Disable()
+					spellCheck.icon:SetPoint("CENTER", spellCheck, "CENTER", -90, 0)
+					spellCheck.icon:SetScale(0.3)
+					spellCheck.icon.check = spellCheck
+					if type(spellID) == "number" then
+					spellCheck.text:SetText(GetSpellInfo(spellID)..": "..prio or "SPELL REMOVED: "..spellID);
+					spellCheck.icon:SetNormalTexture(GetSpellTexture(spellID) or 1)
+					else
+					spellCheck.text:SetText(spellID..": "..prio);
+					spellCheck.icon:SetNormalTexture(1008124)
+					end
+					spellCheck:SetChecked(_G.LoseControlDB.spellEnabled[spellID] or false);   --Error on 1st ADDON_LOADED
+					spellCheck.spellID = spellID
+					spellCheck:SetScript("OnClick",
+					  function()
+						 GameTooltip:Hide()
+						 _G.LoseControlDB.spellEnabled[spellCheck.spellID] = spellCheck:GetChecked()
+						 makeAndShowSpellTTPVE(spellCheck)
+	          end
+					);
+					spellCheck:SetScript("OnEnter", function(self)
+							makeAndShowSpellTTPVE(self)
+					end)
+					spellCheck:SetScript("OnLeave", function(self)
+						GameTooltip:Hide()
+					end)
+					previousSpellID = spellID
 				end
-				spellCheck.icon = CreateFrame("Button", spellCheck:GetName().."Icon", spellCheck, "ActionButtonTemplate")
-				spellCheck.icon:Disable()
-				spellCheck.icon:SetPoint("CENTER", spellCheck, "CENTER", -90, 0)
-				spellCheck.icon:SetNormalTexture(GetSpellTexture(spellID) or 1)
-				spellCheck.icon:SetScale(0.3)
-				spellCheck.icon.check = spellCheck
-				spellCheck.text:SetText(GetSpellInfo(spellID) or "SPELL REMOVED: "..spellID);
-				spellCheck:SetChecked(_G.LoseControlDB.spellEnabled[spellID] or false);   --Error on 1st ADDON_LOADED
-				spellCheck.spellID = spellID
-				spellCheck:SetScript("OnClick",
-				  function()
-					 GameTooltip:Hide()
-					 _G.LoseControlDB.spellEnabled[spellCheck.spellID] = spellCheck:GetChecked()
-					 makeAndShowSpellTTPVE(spellCheck)
-          end
-				);
-				spellCheck:SetScript("OnEnter", function(self)
-						makeAndShowSpellTTPVE(self)
-				end)
-				spellCheck:SetScript("OnLeave", function(self)
-					GameTooltip:Hide()
-				end)
-				previousSpellID = spellID
 			end
 		end
 	end
