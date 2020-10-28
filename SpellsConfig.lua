@@ -106,6 +106,70 @@ local function ScrollFrame_OnMouseWheel(self, delta)
 	self:SetVerticalScroll(newValue);
 end
 
+local function PanelTemplates_DeselectTab(tab)
+	local name = tab:GetName();
+	getglobal(name.."Left"):Show();
+	getglobal(name.."Middle"):Show();
+	getglobal(name.."Right"):Show();
+	--tab:UnlockHighlight();
+	tab:Enable();
+	getglobal(name.."LeftDisabled"):Hide();
+	getglobal(name.."MiddleDisabled"):Hide();
+	getglobal(name.."RightDisabled"):Hide();
+end
+
+local function PanelTemplates_SelectTab(tab)
+	local name = tab:GetName();
+	getglobal(name.."Left"):Hide();
+	getglobal(name.."Middle"):Hide();
+	getglobal(name.."Right"):Hide();
+	--tab:LockHighlight();
+	tab:Disable();
+	getglobal(name.."LeftDisabled"):Show();
+	getglobal(name.."MiddleDisabled"):Show();
+	getglobal(name.."RightDisabled"):Show();
+
+	if ( GameTooltip:IsOwned(tab) ) then
+		GameTooltip:Hide();
+	end
+end
+
+local function PanelTemplates_SetDisabledTabState(tab)
+	local name = tab:GetName();
+	getglobal(name.."Left"):Show();
+	getglobal(name.."Middle"):Show();
+	getglobal(name.."Right"):Show();
+	--tab:UnlockHighlight();
+	tab:Disable();
+	tab.text = tab:GetText();
+	-- Gray out text
+	tab:SetDisabledTextColor(GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b);
+	getglobal(name.."LeftDisabled"):Hide();
+	getglobal(name.."MiddleDisabled"):Hide();
+	getglobal(name.."RightDisabled"):Hide();
+end
+
+local function PanelTemplates_UpdateTabs(frame)
+	if ( frame.selectedTab ) then
+		local tab;
+		for i=1, frame.numTabs, 1 do
+			tab = getglobal(frame:GetName().."Tab"..i);
+			if ( tab.isDisabled ) then
+				PanelTemplates_SetDisabledTabState(tab);
+			elseif ( i == frame.selectedTab ) then
+				PanelTemplates_SelectTab(tab);
+			else
+				PanelTemplates_DeselectTab(tab);
+			end
+		end
+	end
+end
+
+local function PanelTemplates_SetTab(frame, id)
+	frame.selectedTab = id;
+	PanelTemplates_UpdateTabs(frame);
+end
+
 local function Tab_OnClick(self)
 	PanelTemplates_SetTab(self:GetParent(), self:GetID());
 
@@ -213,8 +277,8 @@ function SpellsConfig:CreateMenu()
 	UISpellsConfig.ScrollFrame:SetScript("OnMouseWheel", ScrollFrame_OnMouseWheel);
 
 	UISpellsConfig.ScrollFrame.ScrollBar:ClearAllPoints();
-    UISpellsConfig.ScrollFrame.ScrollBar:SetPoint("TOPLEFT", UISpellsConfig.ScrollFrame, "TOPRIGHT", -12, -18);
-    UISpellsConfig.ScrollFrame.ScrollBar:SetPoint("BOTTOMRIGHT", UISpellsConfig.ScrollFrame, "BOTTOMRIGHT", -7, 18);
+  UISpellsConfig.ScrollFrame.ScrollBar:SetPoint("TOPLEFT", UISpellsConfig.ScrollFrame, "TOPRIGHT", -12, -18);
+  UISpellsConfig.ScrollFrame.ScrollBar:SetPoint("BOTTOMRIGHT", UISpellsConfig.ScrollFrame, "BOTTOMRIGHT", -7, 18);
 
 
 	local allContents = SetTabs(UISpellsConfig, #tabs, unpack(tabs));
