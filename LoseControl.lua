@@ -106,8 +106,8 @@ local interruptsIds = {}
 -- Thanks to all the people on the Curse.com and WoWInterface forums who help keep this list up to date :)
 local cleuPrioCastedSpells = { -- nil = Do Not Show
 	[17]   = {["duration"] = 60, ["priority"] = "CC", ["priorityArena"] = nil},
-	--[8921]   = {["duration"] = 6, ["priority"] = "Trees", ["priorityArena"] = nil},
-	--[93402]   = {["duration"] = 5, ["priority"] = "Trees", ["priorityArena"] = nil},
+	[8921]   = {["duration"] = 6, ["priority"] = "Trees", ["priorityArena"] = nil},
+	[93402]   = {["duration"] = 5, ["priority"] = "Trees", ["priorityArena"] = nil},
 
 }
 
@@ -5767,7 +5767,7 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 					priority = nil
 					else
 					priority = LoseControlDB.priority[cleuPrioCastedSpells[spellId].priority]
-					spellCategory = cleuPrioCastedSpells[spellId].priorityArena
+					spellCategory = cleuPrioCastedSpells[spellId].priority
 					end
 
 					------------------------------------------ARENA-------------------------------------------------------------------------------
@@ -5784,7 +5784,6 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 						local duration = cleuPrioCastedSpells[spellId].duration
 						local expirationTime = GetTime() + duration
 						local name, _, icon = GetSpellInfo(spellId)
-						local spellCategory = cleuPrioCastedSpells[spellId].duration
 						if not InterruptAuras[sourceGUID]  then
 								InterruptAuras[sourceGUID] = {}
 						end
