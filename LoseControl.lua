@@ -7171,9 +7171,7 @@ OptionsPanel.default = function() -- This method will run when the player clicks
 	for k, v in pairs(interruptsIds) do --WIPES interruptsIds TABLE STARTS CLEAN
 	interruptsIds[k] = nil
 	end
-	for k, v in pairs(interruptsIds) do --WIPES interruptsIds TABLE STARTS CLEAN
-	interruptsIds[k] = nil
-	end
+
 	for k, v in pairs(_G.LoseControlDB.spellEnabled) do ----Unchecks all use false over nil
 	_G.LoseControlDB.spellEnabled[k] = nil
 	end
