@@ -540,7 +540,7 @@ else -- default English
 	L["PvE"]         = "PvE"
 
 
-	
+
 	L["player"] = "Player"
 	L["pet"]    = "Pet"
 	L["target"] = "Target"
@@ -586,7 +586,7 @@ else -- default English
 	L["Opacity"] = "Opacity"
 	L["Unlock"] = "Unlock"
 	L["ReloadUI"] = "ReloadUI"
-	L[" (drag an icon to move)"] = " (drag an icon to move)"
+	L[" (drag an icon to move)"] = " (drag icons)"
 	L["Disable OmniCC Support"] = "Disable OmniCC Support"
 	L["Disable Blizzard Countdown"] = "Disable Blizzard Countdown"
 	L["DisableLossOfControlCooldownText"] = "Disable Cooldown on player bars for CC effects"

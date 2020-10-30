@@ -341,6 +341,8 @@ for i,tab in pairs(tabs) do
 	else
 		iconsUpdate = #core.spellsPVE[i]
 	end
+	if  #icons[i] ==  #core.spellsPVE[i] then
+	else
 	for l = 2, iconsUpdate do
 			local spellID
 			local prio
@@ -363,84 +365,84 @@ for i,tab in pairs(tabs) do
 			if icons[i][l] ~= spellID then
 				if  _G[c:GetName().."spellCheck"..i..l] then
 				local spellCheck = _G[c:GetName().."spellCheck"..i..l];
+				spellCheck:Hide()
+				spellCheck:SetParent(nil)
 				spellCheck:ClearAllPoints()
-				spellCheck:SetAlpha(0)
 				spellCheck.icon =	_G[spellCheck:GetName().."Icon"]
+				spellCheck.icon:Hide()
+				spellCheck.icon:SetParent(nil)
 				spellCheck.icon:ClearAllPoints()
-				spellCheck.icon:SetAlpha(0)
 				spellCheck.icon.check = spellCheck
+				spellCheck.icon:SetParent(nil)
 				spellCheck.icon:ClearAllPoints()
 				spellCheck.text:ClearAllPoints()
-				spellCheck.icon:SetAlpha(0)
-				spellCheck.text:SetAlpha(0)
-				spellCheck:SetScript("OnClick", nil)
-				spellCheck:SetScript("OnEnter", nil)
-				spellCheck:SetScript("OnLeave", nil)
-				_G[spellCheck:GetName().."Icon"] = nil
-				_G[c:GetName().."spellCheck"..i..l] = nil
+			_G[spellCheck:GetName().."Icon"] = nil
+			_G[c:GetName().."spellCheck"..i..l] = nil
 				end
 			end
-			if (spellID) then
-				if icons[i][l] == nil then
-				icons[i][l] = {}
-				end
-				icons[i][l] = spellID
-				spellCount = spellCount + 1
-				local spellCheck
-				if  _G[c:GetName().."spellCheck"..i..l] then
-				spellCheck = _G[c:GetName().."spellCheck"..i..l];
-				else
-				spellCheck = CreateFrame("CheckButton", c:GetName().."spellCheck"..i..l, c, "UICheckButtonTemplate");
-				spellCheck:SetAlpha(1)
-				end
-				if (previousSpellID) then
-					if (spellCount % numberOfSpellChecksPerRow == 0) then
-						Y = Y-40
-						X = 30
+				if (spellID) then
+					if icons[i][l] == nil then
+					icons[i][l] = {}
 					end
-					spellCheck:SetPoint("TOPLEFT", c, "TOPLEFT", X, Y);
-					X = X+200
-				else
-					spellCheck:SetPoint("TOPLEFT", c, "TOPLEFT", 30, -10);
-				end
-				spellCheck.icon = CreateFrame("Button", spellCheck:GetName().."Icon", spellCheck, "ActionButtonTemplate")
-				spellCheck.icon:Disable()
-				spellCheck.icon:SetPoint("CENTER", spellCheck, "CENTER", -90, 0)
-				spellCheck.icon:SetScale(0.3)
-				spellCheck.icon.check = spellCheck
-				if type(spellID) == "number" then
-					if (instanceType ==  "arena" or instanceType == "pvp") then
-						spellCheck.text:SetText(GetSpellInfo(spellID)..": "..prio.."\n".." ("..instanceType..")" or "SPELL REMOVED: "..spellID);
-						spellCheck.icon:SetNormalTexture(GetSpellTexture(spellID) or 1)
-					elseif zone then
-						spellCheck.text:SetText(GetSpellInfo(spellID)..": "..prio.."\n".." ("..zone..")" or "SPELL REMOVED: "..spellID);
-						spellCheck.icon:SetNormalTexture(GetSpellTexture(spellID) or 1)
+					icons[i][l] = spellID
+					spellCount = spellCount + 1
+					local spellCheck
+					if  _G[c:GetName().."spellCheck"..i..l] then
+					spellCheck = _G[c:GetName().."spellCheck"..i..l];
 					else
-						spellCheck.text:SetText(GetSpellInfo(spellID)..": "..prio or "SPELL REMOVED: "..spellID);
-						spellCheck.icon:SetNormalTexture(GetSpellTexture(spellID) or 1)
+					spellCheck = CreateFrame("CheckButton", c:GetName().."spellCheck"..i..l, c, "UICheckButtonTemplate");
 					end
+					if (previousSpellID) then
+						if (spellCount % numberOfSpellChecksPerRow == 0) then
+							Y = Y-40
+							X = 30
+						end
+						spellCheck:SetPoint("TOPLEFT", c, "TOPLEFT", X, Y);
+						X = X+200
+					else
+						spellCheck:SetPoint("TOPLEFT", c, "TOPLEFT", 30, -10);
+					end
+					spellCheck:Show()
+					spellCheck.icon = CreateFrame("Button", spellCheck:GetName().."Icon", spellCheck, "ActionButtonTemplate")
+					spellCheck.icon:Disable()
+					spellCheck.icon:SetPoint("CENTER", spellCheck, "CENTER", -90, 0)
+					spellCheck.icon:SetScale(0.3)
+					spellCheck.icon:Show()
+					spellCheck.icon.check = spellCheck
+					if type(spellID) == "number" then
+						if (instanceType ==  "arena" or instanceType == "pvp") then
+							spellCheck.text:SetText(GetSpellInfo(spellID)..": "..prio.."\n".." ("..instanceType..")" or "SPELL REMOVED: "..spellID);
+							spellCheck.icon:SetNormalTexture(GetSpellTexture(spellID) or 1)
+						elseif zone then
+							spellCheck.text:SetText(GetSpellInfo(spellID)..": "..prio.."\n".." ("..zone..")" or "SPELL REMOVED: "..spellID);
+							spellCheck.icon:SetNormalTexture(GetSpellTexture(spellID) or 1)
+						else
+							spellCheck.text:SetText(GetSpellInfo(spellID)..": "..prio or "SPELL REMOVED: "..spellID);
+							spellCheck.icon:SetNormalTexture(GetSpellTexture(spellID) or 1)
+						end
+					else
+					spellCheck.text:SetText(spellID..": "..prio);
+					spellCheck.icon:SetNormalTexture(1008124)
+					end
+					spellCheck:SetChecked(_G.LoseControlDB.spellEnabled[spellID] or false);   --Error on 1st ADDON_LOADED
+					spellCheck.spellID = spellID
+					spellCheck:SetScript("OnClick",
+						function()
+						 GameTooltip:Hide()
+						 _G.LoseControlDB.spellEnabled[spellCheck.spellID] = spellCheck:GetChecked()
+						 makeAndShowSpellTTPVE(spellCheck)
+						end
+					);
+					spellCheck:SetScript("OnEnter", function(self)
+							makeAndShowSpellTTPVE(self)
+					end)
+					spellCheck:SetScript("OnLeave", function(self)
+						GameTooltip:Hide()
+					end)
+					previousSpellID = spellID
 				else
-				spellCheck.text:SetText(spellID..": "..prio);
-				spellCheck.icon:SetNormalTexture(1008124)
+					icons[i][l] = nil
 				end
-				spellCheck:SetChecked(_G.LoseControlDB.spellEnabled[spellID] or false);   --Error on 1st ADDON_LOADED
-				spellCheck.spellID = spellID
-				spellCheck:SetScript("OnClick",
-					function()
-					 GameTooltip:Hide()
-					 _G.LoseControlDB.spellEnabled[spellCheck.spellID] = spellCheck:GetChecked()
-					 makeAndShowSpellTTPVE(spellCheck)
-					end
-				);
-				spellCheck:SetScript("OnEnter", function(self)
-						makeAndShowSpellTTPVE(self)
-				end)
-				spellCheck:SetScript("OnLeave", function(self)
-					GameTooltip:Hide()
-				end)
-				previousSpellID = spellID
-			else
-				icons[i][l] = nil
 			end
 		end
 	end

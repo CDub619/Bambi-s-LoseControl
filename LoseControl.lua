@@ -3053,8 +3053,8 @@ local anchors = {
 local DBdefaults = {
 	ArenaGladiusGloss = true, --Add option Check Box for This
 
-	SpellsInfo = { },
-	InterruptSpellsInfo = { },
+	DiscoveredSpells = { },
+	InterruptDiscoveredSpells = { },
 	spellEnabled = { },
 	spellEnabledArena = { },
 
@@ -4633,92 +4633,60 @@ local function dump(o)
 end
 
 
---You will need to use a C_timer to Reset all values to nil after expiration
---You will need to hide lossOfControlDisarm/Full/Root/Silence
---figure out blizzards priority and set it = LC and inject in buffs table
 local locBliz = CreateFrame("Frame")
 locBliz:RegisterEvent("LOSS_OF_CONTROL_ADDED")
 locBliz:SetScript("OnEvent", function(self, event, ...)
 	if (event == "LOSS_OF_CONTROL_ADDED") then
-	for i = 1, 40 do
-	  local data = C_LossOfControl.GetActiveLossOfControlData(i);
-	 	if not data then break end
-		  local locType = data.locType;
-		 	local spellID = data.spellID;
-		 	local text = data.displayText;
-		 	local iconTexture = data.iconTexture;
-		 	local startTime = data.startTime;
-		 	local timeRemaining = data.timeRemaining;
-		 	local duration = data.duration;
-		 	local lockoutSchool = data.lockoutSchool;
-		 	local priority = data.priority;
-		 	local displayType = data.displayType;
+		for i = 1, 40 do
+		local data = C_LossOfControl.GetActiveLossOfControlData(i);
+		 	if not data then break end
+			  local locType = data.locType;
+			 	local spellID = data.spellID;
+			 	local text = data.displayText;
+			 	local iconTexture = data.iconTexture;
+			 	local startTime = data.startTime;
+			 	local timeRemaining = data.timeRemaining;
+			 	local duration = data.duration;
+			 	local lockoutSchool = data.lockoutSchool;
+			 	local priority = data.priority;
+			 	local displayType = data.displayType;
+				local name, instanceType, _, _, _, _, _, instanceID, _, _ = GetInstanceInfo()
+				local ZoneName = GetZoneText()
+				local Type
 		  	if not spellIds[spellID] and  (lockoutSchool == 0 or nil or false) then
-					  	if (locType == "STUN_MECHANIC") or (locType =="PACIFY") or (locType =="STUN") or (locType =="FEAR") or (locType =="CHARM") or (locType =="CONFUSE") or (locType =="POSSESS") or (locType =="FEAR_MECHANIC") or (locType =="FEAR") then
+			  	if (locType == "STUN_MECHANIC") or (locType =="PACIFY") or (locType =="STUN") or (locType =="FEAR") or (locType =="CHARM") or (locType =="CONFUSE") or (locType =="POSSESS") or (locType =="FEAR_MECHANIC") or (locType =="FEAR") then
 								 print("Found New CC",locType,"", spellID)
-								 local Type = "CC"
-								 spellIds[spellID] = Type
-								 local name, instanceType, _, _, _, _, _, instanceID, _, _ = GetInstanceInfo()
-								 local ZoneName = GetZoneText()
-								 LoseControlDB.SpellsInfo[spellID] = {spellID, Type, instanceType, name..": "..ZoneName}
-								 LoseControlDB.spellEnabled[spellID]= true
-								 tblinsert(spellsPVE[#spellsPVE], {spellID, Type, instanceType, name..": "..ZoneName})
-								 L.SpellsPVEConfig:Update()
-								elseif locType == "DISARM" then
+								 Type = "CC"
+					elseif locType == "DISARM" then
 								 print("Found New Disarm",locType,"", spellID)
-							   local Type = "Disarm"
-								 spellIds[spellID] = Type
-								 local name, instanceType, _, _, _, _, _, instanceID, _, _ = GetInstanceInfo()
-								 local ZoneName = GetZoneText()
-									 LoseControlDB.SpellsInfo[spellID] = {spellID, Type, instanceType, name..": "..ZoneName}
-								 LoseControlDB.spellEnabled[spellID]= true
-								 tblinsert(spellsPVE[#spellsPVE], {spellID, Type, instanceType, name..": "..ZoneName})
-								 L.SpellsPVEConfig:Update()
-						  elseif (locType == "PACIFYSILENCE") or (locType =="SILENCE") then
+							   Type = "Disarm"
+					elseif (locType == "PACIFYSILENCE") or (locType =="SILENCE") then
 						    print("Found New Silence",locType,"", spellID)
-						 	  local Type = "Silence"
-								spellIds[spellID] = Type
-								local name, instanceType, _, _, _, _, _, instanceID, _, _ = GetInstanceInfo()
- 							  local ZoneName = GetZoneText()
-								LoseControlDB.SpellsInfo[spellID] = {spellID, Type, instanceType, name..": "..ZoneName}
-								LoseControlDB.spellEnabled[spellID]= true
-								tblinsert(spellsPVE[#spellsPVE], {spellID, Type, instanceType, name..": "..ZoneName})
-								L.SpellsPVEConfig:Update()
-							elseif locType == "ROOT" then
+						 	  Type = "Silence"
+					elseif locType == "ROOT" then
 						  	print("Found New Root",locType,"", spellID)
-								local Type = "Root"
-								spellIds[spellID] = Type
-								local name, instanceType, _, _, _, _, _, instanceID, _, _ = GetInstanceInfo()
-								local ZoneName = GetZoneText()
-								LoseControlDB.SpellsInfo[spellID] = {spellID, Type, instanceType, name..": "..ZoneName}
-								LoseControlDB.spellEnabled[spellID]= true
-								tblinsert(spellsPVE[#spellsPVE], {spellID, Type, instanceType,name..": "..ZoneName})
-								L.SpellsPVEConfig:Update()
-							else
+								Type = "Root"
+					else
 								print("Found New Other",locType,"", spellID)
-								local Type = "Other"
-								spellIds[spellID] = Type
-								local name, instanceType, _, _, _, _, _, instanceID, _, _ = GetInstanceInfo()
- 					  		local ZoneName = GetZoneText()
-								LoseControlDB.SpellsInfo[spellID] = {spellID, Type, instanceType, name..": "..ZoneName}
-								LoseControlDB.spellEnabled[spellID]= true
-								tblinsert(spellsPVE[#spellsPVE], {spellID, Type, instanceType, name..": "..ZoneName})
-								L.SpellsPVEConfig:Update()
-							end
+								Type = "Other"
+					end
+					spellIds[spellID] = Type
+					LoseControlDB.DiscoveredSpells[spellID] = {spellID, Type, instanceType, name..": "..ZoneName}
+					LoseControlDB.spellEnabled[spellID]= true
+					tblinsert(spellsPVE[#spellsPVE], {spellID, Type, instanceType, name..": "..ZoneName})
+					L.SpellsPVEConfig:Update()
 			  elseif (not interruptsIds[spellID]) and lockoutSchool > 0 then
 					print("Found New Interrupt",locType,"", spellID)
 					interruptsIds[spellID] = duration
-					local name, instanceType, _, _, _, _, _, instanceID, _, _ = GetInstanceInfo()
-					local ZoneName = GetZoneText()
-					LoseControlDB.InterruptSpellsInfo[spellID] = {spellID, "Interrupt: "..math.floor(duration), instanceType, name..": "..ZoneName, duration}
+					LoseControlDB.InterruptDiscoveredSpells[spellID] = {spellID, "Interrupt: "..math.floor(duration), instanceType, name..": "..ZoneName, duration}
 					LoseControlDB.spellEnabled[spellID]= true
 					tblinsert(spellsPVE[#spellsPVE], {spellID, "Interrupt: "..math.floor(duration), instanceType, name..": "..ZoneName, duration})
 					L.SpellsPVEConfig:Update()
 				else
 				end
-	end
-	end
-end)
+			end
+		end
+	end)
 
 
 
@@ -4957,51 +4925,6 @@ function LoseControl:RegisterUnitEvents(enabled)
 	end
 end
 
--- Function to update spellIds table with customSpellIds from user
-function LoseControl:UpdateSpellIdsTableWithCustomSpellIds()
-	for oSpellId, oPriority  in pairs(origSpellIdsChanged) do
-		if (oPriority == "None") then
-			spellIds[oSpellId] = nil
-		else
-			spellIds[oSpellId] = oPriority
-		end
-	end
-	origSpellIdsChanged = { }
-	for cSpellId, cPriority in pairs(LoseControlDB.customSpellIds) do
-		if (cPriority == "None") then
-			local oPriority = spellIds[cSpellId]
-			origSpellIdsChanged[cSpellId] = (oPriority == nil) and "None" or oPriority
-			spellIds[cSpellId] = nil
-		elseif (LoseControlDB.priority[cPriority]) then
-			local oPriority = spellIds[cSpellId]
-			origSpellIdsChanged[cSpellId] = (oPriority == nil) and "None" or oPriority
-			spellIds[cSpellId] = cPriority
-		end
-	end
-end
-
--- Function to check and clean customSpellIds table
-function LoseControl:CheckAndCleanCustomSpellIdsTable()
-	for cSpellId, cPriority  in pairs(LoseControlDB.customSpellIds) do
-		if (cPriority == "None") then
-			if (origSpellIdsChanged[cSpellId] == "None") then
-				LoseControlDB.customSpellIds[cSpellId] = nil
-				print(addonName, "|cff00ff00["..cSpellId.."]->("..cPriority..")|r Removed from custom list. Reason: This spellId is no longer present in the addon's default spellId list")
-			end
-		elseif (LoseControlDB.priority[cPriority]) then
-			if (origSpellIdsChanged[cSpellId] == cPriority) then
-				LoseControlDB.customSpellIds[cSpellId] = nil
-				print(addonName, "|cff00ff00["..cSpellId.."]->("..cPriority..")|r Removed from custom list. Reason: This spellId is already added with the same priority category in the addon's default spellId list")
-			end
-		else
-			LoseControlDB.customSpellIds[cSpellId] = nil
-			print(addonName, "|cff00ff00["..cSpellId.."]->("..cPriority..")|r Removed from custom list. Reason: This spellId has an invalid associated category")
-		end
-	end
-	print(addonName, "Finished the check-and-clean of custom list")
-	LoseControl:UpdateSpellIdsTableWithCustomSpellIds()
-end
-
 local function SetInterruptIconsSize(iconFrame, iconSize)
 	local interruptIconSize = (iconSize * 0.88) / 3
 	local interruptIconOffset = (iconSize * 0.06)
@@ -5151,7 +5074,6 @@ function LoseControl:ADDON_LOADED(arg1)
 			end
 			LCframeplayer2:SetHideCountdownNumbers(true)
 		end
-		self:UpdateSpellIdsTableWithCustomSpellIds()
 		playerGUID = UnitGUID("player")
 		if Masque then
 			for _, v in pairs(LCframes) do
@@ -5212,15 +5134,15 @@ function LoseControl:ADDON_LOADED(arg1)
 		end
 
 	--SPELLPVE------------------------------------------------------------------------------------
-		if _G.LoseControlDB.SpellsInfo ~=nil then
-		for k,v in pairs(_G.LoseControlDB.SpellsInfo) do
+		if _G.LoseControlDB.DiscoveredSpells ~=nil then
+		for k,v in pairs(_G.LoseControlDB.DiscoveredSpells) do
 		spellIds[k] = v[2]
 		tblinsert(spellsPVE[#spellsPVE], {v[1], v[2], v[3], v[4]})
 		end --CHRIS ADDS ALL FOUND SPELLS
 		end
 
-		if _G.LoseControlDB.InterruptSpellsInfo ~=nil then
-		for k,v in pairs(_G.LoseControlDB.InterruptSpellsInfo) do
+		if _G.LoseControlDB.InterruptDiscoveredSpells ~=nil then
+		for k,v in pairs(_G.LoseControlDB.InterruptDiscoveredSpells) do
 		interruptsIds[k] = v[5]
 		tblinsert(spellsPVE[#spellsPVE], {v[1], v[2], v[3], v[4]})
 		end --CHRIS ADDS ALL FOUND SPELLS
@@ -5258,6 +5180,11 @@ function LoseControl:ADDON_LOADED(arg1)
 		_G.LoseControlDB.spellEnabledArena[k]= true
 		end
 		end
+
+		L.SpellsArenaConfig:Update()
+		L.SpellsPVEConfig:Update()
+		L.SpellsConfig:Update()
+
 	end
 end
 
@@ -5324,49 +5251,87 @@ function LoseControl:CheckSUFUnitsAnchors(updateFrame)
 end
 
 function LoseControl:CheckGladiusUnitsAnchors(updateFrame)
-	if not (GladiusClassIconFramearena1 or GladiusClassIconFramearena2 or GladiusClassIconFramearena3 or GladiusClassIconFramearena4 or GladiusClassIconFramearena5) then return false end
-	local frames = { self.unitId }
-	if strfind(self.unitId, "arena") then
-		frames = { "arena1", "arena2", "arena3", "arena4", "arena5" }
-	end
-	for _, unitId in ipairs(frames) do
-			if anchors.Gladius.arena1 == nil then anchors.Gladius.arena1 = GladiusClassIconFramearena1 or nil end
-			if anchors.Gladius.arena2 == nil then anchors.Gladius.arena2 = GladiusClassIconFramearena2 or nil end
-			if anchors.Gladius.arena3 == nil then anchors.Gladius.arena3 = GladiusClassIconFramearena3 or nil end
-			if anchors.Gladius.arena3 == nil then anchors.Gladius.arena4 = GladiusClassIconFramearena4 or nil end
-			if anchors.Gladius.arena3 == nil then anchors.Gladius.arena5 = GladiusClassIconFramearena5 or nil end
-			if updateFrame and anchors.Gladius[unitId] ~= nil then
-				local frame = LoseControlDB.frames[self.fakeUnitId or unitId]
-				local icon = LCframes[unitId]
-				local newAnchor = _G[anchors[frame.anchor][unitId]] or (type(anchors[frame.anchor][unitId])=="table" and anchors[frame.anchor][unitId] or UIParent)
-			if newAnchor ~= nil and icon.anchor ~= newAnchor then
-				icon.anchor = newAnchor
-				icon:SetPoint(
-					frame.point or "CENTER",
-					icon.anchor,
-					frame.relativePoint or "CENTER",
-					frame.x or 0,
-					frame.y or 0
-				)
-				icon:GetParent():SetPoint(
-					frame.point or "CENTER",
-					icon.anchor,
-					frame.relativePoint or "CENTER",
-					frame.x or 0,
-					frame.y or 0
-				)
-				if icon.anchor:GetParent() then
-					icon:SetFrameLevel(icon.anchor:GetParent():GetFrameLevel()+((frame.anchor ~= "None" and frame.anchor ~= "Blizzard") and 3 or 0))
+	local frames = {}
+	local gladiusFrame
+	local inInstance, instanceType = IsInInstance()
+	if (strfind(self.unitId, "arena")) then
+		if Gladius and (not anchors.Gladius[self.unitId]) then
+			local frames = {}
+			if not GladiusClassIconFramearena1 and instanceType ~= "arena" then
+				gladiusFrame = "on"
+				frames = { "arena1", "arena2", "arena3", "arena4", "arena5" }
+				if DEFAULT_CHAT_FRAME.editBox:IsVisible() then
+					DEFAULT_CHAT_FRAME.editBox:SetText("/gladius test")
+					ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox, 0)
+				else
+					DEFAULT_CHAT_FRAME.editBox:Show()
+					DEFAULT_CHAT_FRAME.editBox:SetText("/gladius test")
+					ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox, 0)
+					DEFAULT_CHAT_FRAME.editBox:Hide()
 				end
-				if InCombatLockdown() then
+	  	end
+			if GladiusClassIconFramearena1 then frames[1] = "arena1" end
+	  	if GladiusClassIconFramearena2 then frames[2] = "arena2" end
+			if GladiusClassIconFramearena3 then frames[3] = "arena3" end
+			if GladiusClassIconFramearena4 then frames[4] = "arena4" end
+			if GladiusClassIconFramearena5 then frames[5] = "arena5" end
+				for _, unitId in pairs(frames) do
+					if (unitId == "arena1") and anchors.Gladius.arena1 == nil then anchors.Gladius.arena1 = GladiusClassIconFramearena1 or nil end
+					if (unitId == "arena2") and anchors.Gladius.arena2 == nil then anchors.Gladius.arena2 = GladiusClassIconFramearena2 or nil end
+					if (unitId == "arena3") and anchors.Gladius.arena3 == nil then anchors.Gladius.arena3 = GladiusClassIconFramearena3 or nil end
+					if (unitId == "arena4") and anchors.Gladius.arena4 == nil then anchors.Gladius.arena4 = GladiusClassIconFramearena4 or nil end
+					if (unitId == "arena5") and anchors.Gladius.arena5 == nil then anchors.Gladius.arena5 = GladiusClassIconFramearena5 or nil end
+					if updateFrame and anchors.Gladius[unitId] ~= nil then
+						local frame = LoseControlDB.frames[self.fakeUnitId or unitId]
+						local icon = LCframes[unitId]
+						local newAnchor = _G[anchors[frame.anchor][unitId]] or (type(anchors[frame.anchor][unitId])=="table" and anchors[frame.anchor][unitId] or UIParent)
+						if newAnchor ~= nil and icon.anchor ~= newAnchor then
+							icon.anchor = newAnchor
+							icon.parent:SetParent(icon.anchor:GetParent()) -- or LoseControl) -- If Hide() is called on the parent frame, its children are hidden too. This also sets the frame strata to be the same as the parent's.
+							icon:ClearAllPoints() -- if we don't do this then the frame won't always move
+							icon:GetParent():ClearAllPoints()
+							icon:SetWidth(frame.size)
+							icon:SetHeight(frame.size)
+							icon:GetParent():SetWidth(frame.size)
+							icon:SetPoint(
+								frame.point or "CENTER",
+								icon.anchor,
+								frame.relativePoint or "CENTER",
+								frame.x or 0,
+								frame.y or 0
+							)
+							icon:GetParent():SetPoint(
+								frame.point or "CENTER",
+								icon.anchor,
+								frame.relativePoint or "CENTER",
+								frame.x or 0,
+								frame.y or 0
+							)
+							if icon.anchor:GetParent() then
+								icon:SetFrameLevel(icon.anchor:GetParent():GetFrameLevel()+((frame.anchor ~= "None" and frame.anchor ~= "Blizzard") and 3 or 0))
+							end
+							if #frames < 5 then
+							print("|cff00ccffLoseControl:|r Successfully Anchored "..unitId.." frame to Gladius")
+						  end
+						end
+					end
+				end
+				if #frames == 5 then
+				print("|cff00ccffLoseControl:|r Successfully Anchored All Arena Framess")
+				end
+				if gladiusFrame == "on" then
+					if DEFAULT_CHAT_FRAME.editBox:IsVisible() then
+						DEFAULT_CHAT_FRAME.editBox:SetText("/gladius test")
+						ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox, 0)
 					else
-					LoseControlOptionsPanelUnlock:Click()
-					LoseControlOptionsPanelUnlock:Click()
-					print(unitId.." Losecontrol Gladius Anchor Set")
+						DEFAULT_CHAT_FRAME.editBox:Show()
+						DEFAULT_CHAT_FRAME.editBox:SetText("/gladius test")
+						ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox, 0)
+						DEFAULT_CHAT_FRAME.editBox:Hide()
+					end
 				end
 			end
 		end
-	end
 	return true
 end
 -- Initialize a frame's position and register for events
@@ -5389,11 +5354,13 @@ function LoseControl:PLAYER_ENTERING_WORLD() -- this correctly anchors enemy are
 			self:CheckSUFUnitsAnchors(true)
 		end)
 	end
-	if (Gladius ~= nil) and not(self:CheckGladiusUnitsAnchors(false)) and (self.GladiusDelayedSearch == nil) then
+	if strfind(unitId, "arena") then
+	if (Gladius ~= nil) and (self.GladiusDelayedSearch == nil) then
 		self.GladiusDelayedSearch = GetTime()
-		C_Timer.After(8, function()	-- delay checking to make sure all variables of the other addons are loaded
+		C_Timer.After(3, function()	-- delay checking to make sure all variables of the other addons are loaded
 			self:CheckGladiusUnitsAnchors(true)
 		end)
+	end
 	end
 	self.anchor = _G[anchors[frame.anchor][unitId]] or (type(anchors[frame.anchor][unitId])=="table" and anchors[frame.anchor][unitId] or UIParent)
 	self.unitGUID = UnitGUID(self.unitId)
@@ -5452,7 +5419,9 @@ function LoseControl:GROUP_ROSTER_UPDATE()
 	self:RegisterUnitEvents(enabled)
 	self.unitGUID = UnitGUID(unitId)
 	self:CheckSUFUnitsAnchors(true)
+	if (frame == nil) or (unitId == nil) and (strfind(unitId, "arena")) then
 	self:CheckGladiusUnitsAnchors(true)
+	end
 	if enabled and not self.unlockMode then
 		self:UNIT_AURA(unitId, 0)
 	end
@@ -5878,27 +5847,27 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 					local Name, instanceType, _, _, _, _, _, instanceID, _, _ = GetInstanceInfo()
 					local ZoneName = GetZoneText()
 					LoseControlDB.spellEnabled[spellId]= true
-					LoseControlDB.SpellsInfo[spellId] = {spellId,  spellCategory, instanceType, Name..": "..ZoneName}
+					LoseControlDB.DiscoveredSpells[spellId] = {spellId,  spellCategory, instanceType, Name..": "..ZoneName}
 					tblinsert(spellsPVE[#spellsPVE], {spellId,  spellCategory, instanceType, Name..": "..ZoneName})
 					L.SpellsPVEConfig:Update()
 					local locClass = "Creature"
-						if source then
-						local guid, name = UnitGUID(source), UnitName(source)
-						local type, zero, server_id, instance_id, zone_uid, npc_id, spawn_uid = strsplit("-",guid);
-							if type == "Creature" then
-							 print(name .. "'s NPC id is " .. npc_id)
-							elseif type == "Vignette" then
-							 print(name .. " is a Vignette and should have its npc_id be zero (" .. npc_id .. ").") --Vignette" refers to NPCs that appear as a rare when you first encounter them, but appear as a common after you've looted them once.
-							elseif type == "Player" then
-							 local Class, engClass, locRace, engRace, gender, name, server = GetPlayerInfoByGUID(guid)
-							 print(Class.." "..name .. " is a player.")
-						  else
-							end
-							locClass = Class
-						else
+					if source then
+					local guid, name = UnitGUID(source), UnitName(source)
+					local type, zero, server_id, instance_id, zone_uid, npc_id, spawn_uid = strsplit("-",guid);
+						if type == "Creature" then
+						 print(name .. "'s NPC id is " .. npc_id)
+						elseif type == "Vignette" then
+						 print(name .. " is a Vignette and should have its npc_id be zero (" .. npc_id .. ").") --Vignette" refers to NPCs that appear as a rare when you first encounter them, but appear as a common after you've looted them once.
+						elseif type == "Player" then
+						 local Class, engClass, locRace, engRace, gender, name, server = GetPlayerInfoByGUID(guid)
+						 print(Class.." "..name .. " is a player.")
+					  else
 						end
+						locClass = Class
+					else
 					end
 				end
+			end
 
 
 			if (not enabled[spellId]) and (not enabled[name]) then spellId = nil; name = nil end
@@ -6855,6 +6824,9 @@ OptionsPanel.name = addonName
 local title = OptionsPanel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
 title:SetText(addonName)
 
+local unlocknewline = OptionsPanel:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+unlocknewline:SetText("If a icon is Anchored, the Anchor must be showing, find a Target, TargetofTarget, FocusTarget ,FocusTargetofTarget")
+
 local subText = OptionsPanel:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
 local notes = GetAddOnMetadata(addonName, "Notes-" .. GetLocale())
 if not notes then
@@ -6868,6 +6840,8 @@ _G[O.."UnlockText"]:SetText(L["Unlock"])
 function Unlock:OnClick()
 	if self:GetChecked() then
 		_G[O.."UnlockText"]:SetText(L["Unlock"] .. L[" (drag an icon to move)"])
+		unlocknewline:SetPoint("TOPLEFT", title, "TOPLEFT", 0, 23)
+		unlocknewline:Show()
 		local keys = {} -- for random icon sillyness
 		for k in pairs(spellIds) do
 			tinsert(keys, k)
@@ -6879,7 +6853,16 @@ function Unlock:OnClick()
 			if frame.enabled and (_G[anchors[frame.anchor][k]] or (type(anchors[frame.anchor][k])=="table" and anchors[frame.anchor][k] or frame.anchor == "None")) then -- only unlock frames whose anchor exists
 				v:RegisterUnitEvents(false)
 				v.texture:SetTexture(select(3, GetSpellInfo(keys[random(#keys)])))
+				if _G[anchors[frame.anchor][k]] then
+					if not _G[anchors[frame.anchor][k]]:IsVisible() then
+						local frame = anchors[frame.anchor][k]
+					 end
+				end
+				if frame.anchor == "None" then
 				v.parent:SetParent(nil) -- detach the frame from its parent or else it won't show if the parent is hidden
+				elseif frame.anchor == "Blizzard" then
+				v.parent:SetParent(v.anchor:GetParent())
+				end
 				if v.anchor:GetParent() then
 					v:SetFrameLevel(v.anchor:GetParent():GetFrameLevel()+((frame.anchor ~= "None" and frame.anchor ~= "Blizzard") and 3 or 0))
 				end
@@ -6900,7 +6883,9 @@ function Unlock:OnClick()
 		if frame.enabled and (_G[anchors[frame.anchor][LCframeplayer2.unit]] or (type(anchors[frame.anchor][LCframeplayer2.unit])=="table" and anchors[frame.anchor][LCframeplayer2.unit] or frame.anchor == "None")) then -- only unlock frames whose anchor exists
 			LCframeplayer2:RegisterUnitEvents(false)
 			LCframeplayer2.texture:SetTexture(select(3, GetSpellInfo(keys[random(#keys)])))
+			if frame.anchor == "None" then
 			LCframeplayer2.parent:SetParent(nil) -- detach the frame from its parent or else it won't show if the parent is hidden
+			end
 			if LCframeplayer2.anchor:GetParent() then
 				LCframeplayer2:SetFrameLevel(LCframeplayer2.anchor:GetParent():GetFrameLevel()+((frame.anchor ~= "None" and frame.anchor ~= "Blizzard") and 3 or 0))
 			end
@@ -6914,6 +6899,7 @@ function Unlock:OnClick()
 	else
 		_G[O.."UnlockText"]:SetText(L["Unlock"])
 		for _, v in pairs(LCframes) do
+			unlocknewline:Hide()
 			v.unlockMode = falseI
 			v:EnableMouse(false)
 			v:RegisterForDrag()
@@ -7210,9 +7196,6 @@ OptionsPanel.default = function() -- This method will run when the player clicks
 		v:PLAYER_ENTERING_WORLD()
 	end
 	LCframeplayer2:PLAYER_ENTERING_WORLD()
-	L.SpellsArenaConfig:Update()
-	L.SpellsPVEConfig:Update()
-	L.SpellsConfig:Update()
 end
 
 OptionsPanel.refresh = function() -- This method will run when the Interface Options frame calls its OnShow function and after defaults have been applied via the panel.default method described above.
@@ -7342,11 +7325,13 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 					if GladiusClassIconFramearena1 then
 						local W = GladiusClassIconFramearena1:GetWidth()
 						local H = GladiusClassIconFramearena1:GetWidth()
-						print(unitId.." GladiusClassIconFrame Size "..H)
+						print(unitId.." GladiusClassIconFrame Size "..mathfloor(H))
 						portrSizeValue = W
 						if InCombatLockdown() then
 						else
+							if strfind(unitId, "arena") then
 							LCframes[unitId]:CheckGladiusUnitsAnchors(true)
+							end
 						end
 					else
 						if (strfind(unitId, "arena")) then
@@ -7354,7 +7339,9 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 						end
 						if InCombatLockdown() then
 						else
+							if strfind(unitId, "arena") then
 							LCframes[unitId]:CheckGladiusUnitsAnchors(true)
+							end
 						end
 					end
 					frame.size = portrSizeValue
@@ -7432,7 +7419,7 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 				end
 			end
 			SetInterruptIconsSize(icon, frame.size)
-
+			icon.parent:SetParent(icon.anchor:GetParent()) -- or LoseControl) -- If Hide() is called on the parent frame, its children are hidden too. This also sets the frame strata to be the same as the parent's.
 			icon:ClearAllPoints() -- if we don't do this then the frame won't always move
 			icon:GetParent():ClearAllPoints()
 			icon:SetPoint(
@@ -8139,8 +8126,8 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 			DisablePlayerFocusPlayerFocusTarget:SetChecked(LoseControlDB.disablePlayerFocusPlayerFocusTarget)
 			DisableFocusDeadFocusTarget:SetChecked(LoseControlDB.disableFocusDeadFocusTarget)
 		end
-		LCframes[unitId]:CheckSUFUnitsAnchors(true)
 		LCframes[unitId]:CheckGladiusUnitsAnchors(true)
+		LCframes[unitId]:CheckSUFUnitsAnchors(true)
 		for _, checkbuttonframe in pairs(CategoriesCheckButtons) do
 			if checkbuttonframe.auraType ~= "interrupt" then
 				checkbuttonframe.frame:SetChecked(LoseControlDB.frames[unitId].categoriesEnabled[checkbuttonframe.auraType][checkbuttonframe.reaction][checkbuttonframe.categoryType])
@@ -8289,14 +8276,6 @@ function SlashCmd:help()
 	print("    unlock")
 	print("    enable <unit>")
 	print("    disable <unit>")
-	print("    customspells add <spellId> <category>")
-	print("    customspells ban <spellId>")
-	print("    customspells remove <spellId>")
-	print("    customspells list")
-	print("    customspells wipe")
-	print("    customspells checkandclean")
-	print("<unit> can be: player, pet, target, focus, targettarget, focustarget, party1 ... party4, arena1 ... arena5")
-	print("<category> can be: none, pve, immune, immunespell, immunephysical, cc, silence, interrupt, disarm, other, root, snare")
 end
 function SlashCmd:debug(value)
 	if value == "on" then
@@ -8386,185 +8365,7 @@ function SlashCmd:disable(unitId)
 		print(addonName, unitId, "frame disabled.")
 	end
 end
-function SlashCmd:cs(operation, spellId, category)
-	SlashCmd:customspells(operation, spellId, category)
-end
-function SlashCmd:customspells(operation, spellId, category)
-	if operation == "add" then
-		if spellId ~= nil and category ~= nil then
-			if category == "pve" then
-				category = "PvE"
-			elseif category == "immune" then
-				category = "Immune"
-			elseif category == "immunespell" then
-				category = "ImmuneSpell"
-			elseif category == "immunephysical" then
-				category = "ImmunePhysical"
-			elseif category == "cc" then
-				category = "CC"
-			elseif category == "silence" then
-				category = "Silence"
-			elseif category == "interrupt" then
-				category = "Interrupt"
-			elseif category == "disarm" then
-				category = "Disarm"
-			elseif category == "other" then
-				category = "Other"
-			elseif category == "root" then
-				category = "Root"
-			elseif category == "snare" then
-				category = "Snare"
-			elseif category == "none" then
-				category = "None"
-			else
-				category = nil
-			end
-			spellId = tonumber(spellId)
-				if (type(spellId) == "number") then
-				spellId = mathfloor(mathabs(spellId))
-				if (category) then
-					if (LoseControlDB.customSpellIds[spellId] == category) then
-						print(addonName, "Error adding new custom spell |cffff0000["..spellId.."]|r: The spell is already in the custom list")
-					else
-						LoseControlDB.customSpellIds[spellId] = category
-						LoseControl:UpdateSpellIdsTableWithCustomSpellIds()
-						local colortag
-						if (category == "None") then
-							if (origSpellIdsChanged[spellId] == "None") then
-								colortag = "|cffffc419"
-							else
-								colortag = "|cff00ff00"
-							end
-						elseif (LoseControlDB.priority[category]) then
-							if (origSpellIdsChanged[spellId] == category) then
-								colortag = "|cffffc419"
-							elseif (origSpellIdsChanged[spellId] ~= "None") then
-								colortag = "|cff74cf14"
-							else
-								colortag = "|cff00ff00"
-							end
-						else
-							colortag = "|cffff0000"
-						end
-						print(addonName, "The spell "..colortag.."["..spellId.."]->("..category..")|r has been added to the custom list")
---------------------------------------------------------------------------------------------------------------------------------------------------------------
-						_G.LoseControlDB.spellEnabled[spellId]= true
-						tblinsert(spellsPVE[#spellsPVE-1], {spellId, category})
-						L.SpellsPVEConfig:Update()
---------------------------------------------------------------------------------------------------------------------------------------------------------------
-					end
-				else
-					print(addonName, "Error adding new custom spell |cffff0000["..spellId.."]|r: Invalid category")
-				end
-			else
-				print(addonName, "Error adding new custom spell: Invalid spellId")
-			end
-		else
-			print(addonName, "Error adding new custom spell: Wrong parameters")
-		end
-	elseif operation == "ban" then
-		if spellId ~= nil then
-			spellId = tonumber(spellId)
-			if (type(spellId) == "number") then
-				spellId = mathfloor(mathabs(spellId))
-				if (LoseControlDB.customSpellIds[spellId] == "None") then
-					print(addonName, "Error adding new custom spell |cffff0000["..spellId.."]|r: The spell is already in the custom list")
-				else
-					LoseControlDB.customSpellIds[spellId] = "None"
-					LoseControl:UpdateSpellIdsTableWithCustomSpellIds()
-					local colortag
-					if (origSpellIdsChanged[spellId] == "None") then
-						colortag = "|cffffc419"
-					else
-						colortag = "|cff00ff00"
-					end
-					print(addonName, "The spell "..colortag.."["..spellId.."]->(None)|r has been added to the custom list")
---------------------------------------------------------------------------------------------------------------------------------------------------------------
-					_G.LoseControlDB.spellEnabled[spellId]= false
-					--tblinsert(spellsPVE[#spellsPVE-1], {spellId, v}) --Needs to be table removed
-					L.SpellsPVEConfig:Update()
---------------------------------------------------------------------------------------------------------------------------------------------------------------
-				end
-			else
-				print(addonName, "Error adding new custom spell: Invalid spellId")
-			end
-		else
-			print(addonName, "Error adding new custom spell: Wrong parameters")
-		end
-	elseif operation == "remove" then
-		if spellId ~= nil then
-			spellId = tonumber(spellId)
-			if (type(spellId) == "number") then
-				spellId = mathfloor(mathabs(spellId))
-				if (LoseControlDB.customSpellIds[spellId]) then
-					print(addonName, "The spell |cff00ff00["..spellId.."]->("..LoseControlDB.customSpellIds[spellId]..")|r has been removed from the custom list")
-					LoseControlDB.customSpellIds[spellId] = nil
-					LoseControl:UpdateSpellIdsTableWithCustomSpellIds()
---------------------------------------------------------------------------------------------------------------------------------------------------------------
-					_G.LoseControlDB.spellEnabled[spellId]= nil
-					--tblinsert(spellsPVE[#spellsPVE-1], {spellId, v}) --Needs to be table removed
-					L.SpellsPVEConfig:Update()
---------------------------------------------------------------------------------------------------------------------------------------------------------------
-				else
-					print(addonName, "Error removing custom spell |cffff0000["..spellId.."]|r: the spell is not in the custom list")
-				end
-			else
-				print(addonName, "Error removing custom spell: Invalid spellId")
-			end
-		else
-			print(addonName, "Error removing custom spell|r: Wrong parameters")
-		end
-	elseif operation == "list" then
-		print(addonName, "Custom spell list:")
-		if (next(LoseControlDB.customSpellIds) == nil) then
-			print(addonName, "Custom spell list is |cffffc419empty|r")
-		else
-			for cSpellId, cPriority  in pairs(LoseControlDB.customSpellIds) do
-				if (cPriority == "None") then
-					if (origSpellIdsChanged[cSpellId] == "None") then
-						print(addonName, "|cffffc419["..cSpellId.."]->("..cPriority..")|r")
-					else
-						print(addonName, "|cff00ff00["..cSpellId.."]->("..cPriority..")|r")
-					end
-				elseif (LoseControlDB.priority[cPriority]) then
-					if (origSpellIdsChanged[cSpellId] == cPriority) then
-						print(addonName, "|cffffc419["..cSpellId.."]->("..cPriority..")|r")
-					elseif (origSpellIdsChanged[cSpellId] ~= "None") then
-						print(addonName, "|cff74cf14["..cSpellId.."]->("..cPriority..")|r")
-					else
-						print(addonName, "|cff00ff00["..cSpellId.."]->("..cPriority..")|r")
-					end
-				else
-					print(addonName, "|cffff0000["..cSpellId.."]->("..cPriority..")|r")
-				end
-			end
-		end
-	elseif operation == "wipe" then
-		LoseControlDB.customSpellIds = { }
-		LoseControl:UpdateSpellIdsTableWithCustomSpellIds()
-		print(addonName, "Removed |cff00ff00all spells|r from custom list")
---------------------------------------------------------------------------------------------------------------------------------------------------------------
-		if LoseControlDB.customSpellIds then
-			for k, v in pairs(LoseControlDB.customSpellIds) do
-				_G.LoseControlDB.spellEnabled[k]= nil
-				--tblinsert(spellsPVE[#spellsPVE-1], {k, v}) --Needs to be table removed
-			end
-			L.SpellsPVEConfig:Update()
-		end
---------------------------------------------------------------------------------------------------------------------------------------------------------------
-	elseif operation == "checkandclean" then
-		LoseControl:CheckAndCleanCustomSpellIdsTable()
-	else
-		print(addonName, "customspells slash commands:")
-		print("    add <spellId> <category>")
-		print("    ban <spellId>")
-		print("    remove <spellId>")
-		print("    list")
-		print("    wipe")
-		print("    checkandclean")
-		print("<category> can be: none, pve, immune, immunespell, immunephysical, cc, silence, interrupt, disarm, other, root, snare")
-	end
-end
+
 
 SlashCmdList[addonName] = function(cmd)
 	local args = {}
