@@ -103,7 +103,7 @@ local spellIds = {}
 local spellIdsArena = {}
 local interruptsIds = {}
 local cleuPrioCastedSpells = {}
-local AddonLoad = 1
+local Compiled = 1
 -------------------------------------------------------------------------------
 -- Thanks to all the people on the Curse.com and WoWInterface forums who help keep this list up to date :)
 local cleuSpells = { -- nil = Do Not Show
@@ -4987,6 +4987,110 @@ function LoseControl:DisableLossOfControlUI()
 		DISABLELOSSOFCONTROLUI_HOOKED = true
 	end
 end
+function LoseControl:CompileSpells()
+
+		spellIds = {}
+		spellIdsArena = {}
+		interruptsIds = {}
+		cleuPrioCastedSpells = {}
+		spellsPVE[#spellsPVE] = {}
+		tblinsert(spellsPVE[#spellsPVE] , "Discovered LC Spells")
+
+		for k, v in ipairs(spells) do
+		spellIds[v[1]] = v[2]
+		end
+
+		for i = 1, #spellsPVE do
+			for l = 2, #spellsPVE[i] do
+				spellIds[spellsPVE[i][l][1]] = spellsPVE[i][l][2]
+			end
+		end
+
+		for k, v in ipairs(spellsArena) do
+		spellIdsArena[v[1]] = v[2]
+		end
+
+		for k, v in ipairs(interrupts) do
+		interruptsIds[v[1]] = v[2]
+		end
+
+		for k, v in ipairs(cleuSpells) do
+		cleuPrioCastedSpells[v[1]] = {["duration"] = v[2], ["priority"] = v[3], ["priorityArena"] = v[4]}
+		end
+--cleu spells and CUSTOM spells/spellsArena **need to be removed when an lC Reset or when a custom user spell, spellsArenais performed**---------------------------
+		if Compiled > 1 then --recomplile check only on ADDON_LOAD second time
+		for i = 1, (#interrupts + #cleuSpells) do
+		table.remove (spells, #spells)
+		table.remove (spellsArena, #spells)
+		end
+		print("|cff00ccffLoseControl|r", ": Recompiled Spells")
+		end
+
+		for k, v in ipairs(interrupts) do
+		tblinsert(spells, {v[1] , "Interrupt", v[2]})
+		end
+
+		for k, v in ipairs(interrupts) do
+		tblinsert(spellsArena, {v[1] , "Interrupt", v[2]})
+		end
+
+		for k, v in ipairs(cleuSpells) do
+		tblinsert(spells, {v[1] , v[3], v[2]})
+		end
+
+		for k, v in ipairs(cleuSpells) do
+		tblinsert(spellsArena, {v[1] , v[4], v[2]})
+		end
+
+		Compiled = Compiled + 1
+	--SPELLPVE------------------------------------------------------------------------------------
+		if _G.LoseControlDB.DiscoveredSpells ~=nil then
+		for k,v in ipairs(_G.LoseControlDB.DiscoveredSpells) do
+		spellIds[v[1]] = v[2]
+		if v[5] then
+		interruptsIds[v[1]] = v[5]
+		end
+		tblinsert(spellsPVE[#spellsPVE], {v[1], v[2], v[3], v[4]})
+		end --CHRIS ADDS ALL FOUND SPELLS
+		end
+
+--SPELLS--------------------------------------------------------------------------------------------
+		for k in pairs(spellIds) do --spellIds is the combined PVE list and Spell List and the 3 Custom Loops above
+		if _G.LoseControlDB.spellEnabled[k] == nil then
+		_G.LoseControlDB.spellEnabled[k]= true
+		end
+		end
+		for k in pairs(interruptsIds) do --interruptsIds is the list and the custom found list from loop above
+		if _G.LoseControlDB.spellEnabled[k] == nil then
+		_G.LoseControlDB.spellEnabled[k]= true
+		end
+		end
+		for k in pairs(cleuPrioCastedSpells) do --interruptsIds is the list and the custom found list from loop above
+		if _G.LoseControlDB.spellEnabled[k] == nil then
+		_G.LoseControlDB.spellEnabled[k]= true
+		end
+		end
+		--ARENA-------------------------------------------------------------------------------------------
+		for k in pairs(spellIdsArena) do
+		if _G.LoseControlDB.spellEnabledArena[k] == nil then
+		_G.LoseControlDB.spellEnabledArena[k]= true
+		end
+		end
+		for k in pairs(interruptsIds) do
+		if _G.LoseControlDB.spellEnabledArena[k] == nil then
+		_G.LoseControlDB.spellEnabledArena[k]= true
+		end
+		end
+		for k in pairs(cleuPrioCastedSpells) do
+		if _G.LoseControlDB.spellEnabledArena[k] == nil then
+		_G.LoseControlDB.spellEnabledArena[k]= true
+		end
+		end
+
+		L.SpellsArenaConfig:Update()
+		L.SpellsPVEConfig:Update()
+		L.SpellsConfig:Update()
+	end
 
 -- Handle default settings
 function LoseControl:ADDON_LOADED(arg1)
@@ -5087,109 +5191,7 @@ function LoseControl:ADDON_LOADED(arg1)
 				end
 			end
 		end
-
-		spellIds = {}
-		spellIdsArena = {}
-		interruptsIds = {}
-		cleuPrioCastedSpells = {}
-		spellsPVE[#spellsPVE] = {}
-		tblinsert(spellsPVE[#spellsPVE] , "Discovered LC Spells")
-
-		for k, v in ipairs(spells) do
-		spellIds[v[1]] = v[2]
-		end
-
-		for i = 1, #spellsPVE do
-			for l = 2, #spellsPVE[i] do
-				spellIds[spellsPVE[i][l][1]] = spellsPVE[i][l][2]
-			end
-		end
-
-		for k, v in ipairs(spellsArena) do
-		spellIdsArena[v[1]] = v[2]
-		end
-
-		for k, v in ipairs(interrupts) do
-		interruptsIds[v[1]] = v[2]
-		end
-
-		for k, v in ipairs(cleuSpells) do
-		cleuPrioCastedSpells[v[1]] = {["duration"] = v[2], ["priority"] = v[3], ["priorityArena"] = v[4]}
-		end
---cleu spells **need to be removed when an lC Reset is performed**---------------------------
-		if AddonLoad > 1 then --recomplile check only on ADDON_LOAD second time
-		for i = 1, (#interrupts + #cleuSpells) do
-		table.remove (spells, #spells)
-		table.remove (spellsArena, #spells)
-		end
-		print("|cff00ccffLoseControl|r", ": Recompiled Spells")
-		end
-
-		for k, v in ipairs(interrupts) do
-		tblinsert(spells, {v[1] , "Interrupt", v[2]})
-		end
-
-		for k, v in ipairs(interrupts) do
-		tblinsert(spellsArena, {v[1] , "Interrupt", v[2]})
-		end
-
-		for k, v in ipairs(cleuSpells) do
-		tblinsert(spells, {v[1] , v[3], v[2]})
-		end
-
-		for k, v in ipairs(cleuSpells) do
-		tblinsert(spellsArena, {v[1] , v[4], v[2]})
-		end
-
-		AddonLoad = AddonLoad + 1
-	--SPELLPVE------------------------------------------------------------------------------------
-		if _G.LoseControlDB.DiscoveredSpells ~=nil then
-		for k,v in ipairs(_G.LoseControlDB.DiscoveredSpells) do
-		spellIds[v[1]] = v[2]
-		if v[5] then
-		interruptsIds[v[1]] = v[5]
-		end
-		tblinsert(spellsPVE[#spellsPVE], {v[1], v[2], v[3], v[4]})
-		end --CHRIS ADDS ALL FOUND SPELLS
-		end
-
---SPELLS--------------------------------------------------------------------------------------------
-		for k in pairs(spellIds) do --spellIds is the combined PVE list and Spell List and the 3 Custom Loops above
-		if _G.LoseControlDB.spellEnabled[k] == nil then
-		_G.LoseControlDB.spellEnabled[k]= true
-		end
-		end
-		for k in pairs(interruptsIds) do --interruptsIds is the list and the custom found list from loop above
-		if _G.LoseControlDB.spellEnabled[k] == nil then
-		_G.LoseControlDB.spellEnabled[k]= true
-		end
-		end
-		for k in pairs(cleuPrioCastedSpells) do --interruptsIds is the list and the custom found list from loop above
-		if _G.LoseControlDB.spellEnabled[k] == nil then
-		_G.LoseControlDB.spellEnabled[k]= true
-		end
-		end
-		--ARENA-------------------------------------------------------------------------------------------
-		for k in pairs(spellIdsArena) do
-		if _G.LoseControlDB.spellEnabledArena[k] == nil then
-		_G.LoseControlDB.spellEnabledArena[k]= true
-		end
-		end
-		for k in pairs(interruptsIds) do
-		if _G.LoseControlDB.spellEnabledArena[k] == nil then
-		_G.LoseControlDB.spellEnabledArena[k]= true
-		end
-		end
-		for k in pairs(cleuPrioCastedSpells) do
-		if _G.LoseControlDB.spellEnabledArena[k] == nil then
-		_G.LoseControlDB.spellEnabledArena[k]= true
-		end
-		end
-
-		L.SpellsArenaConfig:Update()
-		L.SpellsPVEConfig:Update()
-		L.SpellsConfig:Update()
-
+		self:CompileSpells()
 	end
 end
 
