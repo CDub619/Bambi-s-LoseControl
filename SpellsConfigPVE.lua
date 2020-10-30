@@ -368,10 +368,15 @@ for i,tab in pairs(tabs) do
 				spellCheck.icon =	_G[spellCheck:GetName().."Icon"]
 				spellCheck.icon:ClearAllPoints()
 				spellCheck.icon:SetAlpha(0)
-				spellCheck.icon.check = spellCheckcheck
-				spellCheck.icon = nil
-				spellCheckcheck = nil
-				spellCheck = nil
+				spellCheck.icon.check = spellCheck
+				spellCheck.icon:ClearAllPoints()
+				spellCheck.text:ClearAllPoints()
+				spellCheck.icon:SetAlpha(0)
+				spellCheck.text:SetAlpha(0)
+				spellCheck:SetScript("OnClick", nil)
+				spellCheck:SetScript("OnEnter", nil)
+				spellCheck:SetScript("OnLeave", nil)
+				_G[spellCheck:GetName().."Icon"] = nil
 				_G[c:GetName().."spellCheck"..i..l] = nil
 				end
 			end
