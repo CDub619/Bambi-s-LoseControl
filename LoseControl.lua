@@ -3054,7 +3054,6 @@ local DBdefaults = {
 	ArenaGladiusGloss = true, --Add option Check Box for This
 
 	DiscoveredSpells = { },
-	InterruptDiscoveredSpells = { },
 	spellEnabled = { },
 	spellEnabledArena = { },
 
@@ -4671,15 +4670,15 @@ locBliz:SetScript("OnEvent", function(self, event, ...)
 								Type = "Other"
 					end
 					spellIds[spellID] = Type
-					LoseControlDB.DiscoveredSpells[spellID] = {spellID, Type, instanceType, name..": "..ZoneName}
 					LoseControlDB.spellEnabled[spellID]= true
+					tblinsert(LoseControlDB.DiscoveredSpells, {spellID, Type, instanceType, name..": "..ZoneName})
 					tblinsert(spellsPVE[#spellsPVE], {spellID, Type, instanceType, name..": "..ZoneName})
 					L.SpellsPVEConfig:Update()
 			  elseif (not interruptsIds[spellID]) and lockoutSchool > 0 then
 					print("Found New Interrupt",locType,"", spellID)
 					interruptsIds[spellID] = duration
-					LoseControlDB.InterruptDiscoveredSpells[spellID] = {spellID, "Interrupt: "..math.floor(duration), instanceType, name..": "..ZoneName, duration}
 					LoseControlDB.spellEnabled[spellID]= true
+					tblinsert(LoseControlDB.DiscoveredSpells, {spellID, "Interrupt: "..math.floor(duration), instanceType, name..": "..ZoneName, duration})
 					tblinsert(spellsPVE[#spellsPVE], {spellID, "Interrupt: "..math.floor(duration), instanceType, name..": "..ZoneName, duration})
 					L.SpellsPVEConfig:Update()
 				else
@@ -5135,15 +5134,11 @@ function LoseControl:ADDON_LOADED(arg1)
 
 	--SPELLPVE------------------------------------------------------------------------------------
 		if _G.LoseControlDB.DiscoveredSpells ~=nil then
-		for k,v in pairs(_G.LoseControlDB.DiscoveredSpells) do
-		spellIds[k] = v[2]
-		tblinsert(spellsPVE[#spellsPVE], {v[1], v[2], v[3], v[4]})
-		end --CHRIS ADDS ALL FOUND SPELLS
+		for k,v in ipairs(_G.LoseControlDB.DiscoveredSpells) do
+		spellIds[v[1]] = v[2]
+		if v[5] then
+		interruptsIds[v[1]] = v[5]
 		end
-
-		if _G.LoseControlDB.InterruptDiscoveredSpells ~=nil then
-		for k,v in pairs(_G.LoseControlDB.InterruptDiscoveredSpells) do
-		interruptsIds[k] = v[5]
 		tblinsert(spellsPVE[#spellsPVE], {v[1], v[2], v[3], v[4]})
 		end --CHRIS ADDS ALL FOUND SPELLS
 		end
@@ -5311,13 +5306,13 @@ function LoseControl:CheckGladiusUnitsAnchors(updateFrame)
 								icon:SetFrameLevel(icon.anchor:GetParent():GetFrameLevel()+((frame.anchor ~= "None" and frame.anchor ~= "Blizzard") and 3 or 0))
 							end
 							if #frames < 5 then
-							print("|cff00ccffLoseControl:|r Successfully Anchored "..unitId.." frame to Gladius")
+							print("|cff00ccffLoseControl|r : Successfully Anchored "..unitId.." frame to Gladius")
 						  end
 						end
 					end
 				end
 				if #frames == 5 then
-				print("|cff00ccffLoseControl:|r Successfully Anchored All Arena Framess")
+				print("|cff00ccffLoseControl|r : Successfully Anchored All Arena Frames")
 				end
 				if gladiusFrame == "on" then
 					if DEFAULT_CHAT_FRAME.editBox:IsVisible() then
@@ -5847,7 +5842,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 					local Name, instanceType, _, _, _, _, _, instanceID, _, _ = GetInstanceInfo()
 					local ZoneName = GetZoneText()
 					LoseControlDB.spellEnabled[spellId]= true
-					LoseControlDB.DiscoveredSpells[spellId] = {spellId,  spellCategory, instanceType, Name..": "..ZoneName}
+					tblinsert(LoseControlDB.DiscoveredSpells, {spellId,  spellCategory, instanceType, Name..": "..ZoneName})
 					tblinsert(spellsPVE[#spellsPVE], {spellId,  spellCategory, instanceType, Name..": "..ZoneName})
 					L.SpellsPVEConfig:Update()
 					local locClass = "Creature"
@@ -7325,7 +7320,7 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 					if GladiusClassIconFramearena1 then
 						local W = GladiusClassIconFramearena1:GetWidth()
 						local H = GladiusClassIconFramearena1:GetWidth()
-						print(unitId.." GladiusClassIconFrame Size "..mathfloor(H))
+						print("|cff00ccffLoseControl|r".." : "..unitId.." GladiusClassIconFrame Size "..mathfloor(H))
 						portrSizeValue = W
 						if InCombatLockdown() then
 						else
@@ -8270,7 +8265,7 @@ SLASH_LoseControl2 = "/losecontrol"
 
 local SlashCmd = {}
 function SlashCmd:help()
-	print(addonName, "slash commands:")
+	print("|cff00ccffLoseControl|r", "slash commands:")
 	print("    reset [<unit>]")
 	print("    lock")
 	print("    unlock")
@@ -8375,7 +8370,7 @@ SlashCmdList[addonName] = function(cmd)
 	if SlashCmd[args[1]] then
 		SlashCmd[args[1]](unpack(args))
 	else
-		print(addonName, ": Type \"/lc help\" for more options.")
+		print("|cff00ccffLoseControl|r", ": Type \"/lc help\" for more options.")
 		InterfaceOptionsFrame_OpenToCategory(OptionsPanel)
 		InterfaceOptionsFrame_OpenToCategory(OptionsPanel)
 	end
