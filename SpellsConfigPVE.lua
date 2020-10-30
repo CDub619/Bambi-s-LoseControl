@@ -8,6 +8,8 @@ core.SpellsPVEConfig = {}; -- adds SpellsPVEConfig table to addon namespace
 local SpellsPVEConfig = core.SpellsPVEConfig;
 local UISpellsPVEConfig;
 local tooltip = CreateFrame("GameTooltip", "fPBMouseoverTooltip", UIParent, "GameTooltipTemplate")
+local icons = {}
+local tblinsert = table.insert
 --------------------------------------
 -- Defaults (usually a database!)
 --------------------------------------
@@ -242,23 +244,33 @@ function SpellsPVEConfig:CreateMenu()
   UISpellsPVEConfig.ScrollFrame.ScrollBar:SetPoint("TOPLEFT", UISpellsPVEConfig.ScrollFrame, "TOPRIGHT", -12, -18);
   UISpellsPVEConfig.ScrollFrame.ScrollBar:SetPoint("BOTTOMRIGHT", UISpellsPVEConfig.ScrollFrame, "BOTTOMRIGHT", -7, 18);
 
-
 	local allContents = SetTabs(UISpellsPVEConfig, #tabs, unpack(tabs));
 	local numberOfSpellChecksPerRow = 5
 	for i,tab in pairs(tabs) do
+		if icons[i] == nil then
+		icons[i] = {}
+		end
+		tblinsert(icons[i], 1, tab)
 		local c = allContents[i]
 		local previousSpellID = nil
 		local Y = -10
 		local X = 230
 		local spellCount = -1
-
-		for l = 1, #core.spellsPVE[i] do
-			if l ~=1 then
-				local spellID = core.spellsPVE[i][l][1]
+		for l = 2, #core.spellsPVE[i] do
+					local spellID = core.spellsPVE[i][l][1]
 				local prio =  core.spellsPVE[i][l][2]
+				local zone
+				local instanceType
+				if core.spellsPVE[i][l][3] then
+					instanceType = core.spellsPVE[i][l][3]
+				end
+				if core.spellsPVE[i][l][4] then
+					zone = core.spellsPVE[i][l][4]
+				end
 			  if (spellID) then
+					tblinsert(icons[i], spellID)
 					spellCount = spellCount + 1
-					local spellCheck = CreateFrame("CheckButton", c:GetName().."spellCheck"..spellID, c, "UICheckButtonTemplate");
+					local spellCheck = CreateFrame("CheckButton", c:GetName().."spellCheck"..i..l, c, "UICheckButtonTemplate");
 					if (previousSpellID) then
 						if (spellCount % numberOfSpellChecksPerRow == 0) then
 							Y = Y-40
@@ -275,8 +287,16 @@ function SpellsPVEConfig:CreateMenu()
 					spellCheck.icon:SetScale(0.3)
 					spellCheck.icon.check = spellCheck
 					if type(spellID) == "number" then
-					spellCheck.text:SetText(GetSpellInfo(spellID)..": "..prio or "SPELL REMOVED: "..spellID);
-					spellCheck.icon:SetNormalTexture(GetSpellTexture(spellID) or 1)
+							if (instanceType ==  "arena" or instanceType == "pvp") then
+								spellCheck.text:SetText(GetSpellInfo(spellID)..": "..prio.."\n".." ("..instanceType..")" or "SPELL REMOVED: "..spellID);
+								spellCheck.icon:SetNormalTexture(GetSpellTexture(spellID) or 1)
+							elseif zone then
+								spellCheck.text:SetText(GetSpellInfo(spellID)..": "..prio.."\n".." ("..zone..")" or "SPELL REMOVED: "..spellID);
+								spellCheck.icon:SetNormalTexture(GetSpellTexture(spellID) or 1)
+							else
+								spellCheck.text:SetText(GetSpellInfo(spellID)..": "..prio or "SPELL REMOVED: "..spellID);
+								spellCheck.icon:SetNormalTexture(GetSpellTexture(spellID) or 1)
+							end
 					else
 					spellCheck.text:SetText(spellID..": "..prio);
 					spellCheck.icon:SetNormalTexture(1008124)
@@ -300,7 +320,7 @@ function SpellsPVEConfig:CreateMenu()
 				end
 			end
 		end
-	end
+
 
 
 	UISpellsPVEConfig:Hide();
@@ -315,18 +335,58 @@ for i,tab in pairs(tabs) do
 	local Y = -10
 	local X = 230
 	local spellCount = -1
-
-	for l = 1, #core.spellsPVE[i] do
-		if l ~=1 then
-			local spellID = core.spellsPVE[i][l][1]
-			local prio =  core.spellsPVE[i][l][2]
+	local iconsUpdate
+	if #icons[i] > #core.spellsPVE[i] then
+		iconsUpdate = #icons[i]
+	else
+		iconsUpdate = #core.spellsPVE[i]
+	end
+	for l = 2, iconsUpdate do
+			local spellID
+			local prio
+			local zone
+			local instanceType
+			if core.spellsPVE[i][l] then
+			if core.spellsPVE[i][l][1] then
+				spellID = core.spellsPVE[i][l][1]
+			end
+			if core.spellsPVE[i][l][2] then
+				prio = core.spellsPVE[i][l][2]
+			end
+			if core.spellsPVE[i][l][3] then
+				instanceType = core.spellsPVE[i][l][3]
+			end
+			if core.spellsPVE[i][l][4] then
+				zone = core.spellsPVE[i][l][4]
+			end
+			end
+			if icons[i][l] ~= spellID then
+				if  _G[c:GetName().."spellCheck"..i..l] then
+				local spellCheck = _G[c:GetName().."spellCheck"..i..l];
+				spellCheck:ClearAllPoints()
+				spellCheck:SetAlpha(0)
+				spellCheck.icon =	_G[spellCheck:GetName().."Icon"]
+				spellCheck.icon:ClearAllPoints()
+				spellCheck.icon:SetAlpha(0)
+				spellCheck.icon.check = spellCheckcheck
+				spellCheck.icon = nil
+				spellCheckcheck = nil
+				spellCheck = nil
+				_G[c:GetName().."spellCheck"..i..l] = nil
+				end
+			end
 			if (spellID) then
+				if icons[i][l] == nil then
+				icons[i][l] = {}
+				end
+				icons[i][l] = spellID
 				spellCount = spellCount + 1
 				local spellCheck
-				if  _G[c:GetName().."spellCheck"..spellID] then
-				spellCheck = _G[c:GetName().."spellCheck"..spellID];
+				if  _G[c:GetName().."spellCheck"..i..l] then
+				spellCheck = _G[c:GetName().."spellCheck"..i..l];
 				else
-				spellCheck = CreateFrame("CheckButton", c:GetName().."spellCheck"..spellID, c, "UICheckButtonTemplate");
+				spellCheck = CreateFrame("CheckButton", c:GetName().."spellCheck"..i..l, c, "UICheckButtonTemplate");
+				spellCheck:SetAlpha(1)
 				end
 				if (previousSpellID) then
 					if (spellCount % numberOfSpellChecksPerRow == 0) then
@@ -344,8 +404,16 @@ for i,tab in pairs(tabs) do
 				spellCheck.icon:SetScale(0.3)
 				spellCheck.icon.check = spellCheck
 				if type(spellID) == "number" then
-				spellCheck.text:SetText(GetSpellInfo(spellID)..": "..prio or "SPELL REMOVED: "..spellID);
-				spellCheck.icon:SetNormalTexture(GetSpellTexture(spellID) or 1)
+					if (instanceType ==  "arena" or instanceType == "pvp") then
+						spellCheck.text:SetText(GetSpellInfo(spellID)..": "..prio.."\n".." ("..instanceType..")" or "SPELL REMOVED: "..spellID);
+						spellCheck.icon:SetNormalTexture(GetSpellTexture(spellID) or 1)
+					elseif zone then
+						spellCheck.text:SetText(GetSpellInfo(spellID)..": "..prio.."\n".." ("..zone..")" or "SPELL REMOVED: "..spellID);
+						spellCheck.icon:SetNormalTexture(GetSpellTexture(spellID) or 1)
+					else
+						spellCheck.text:SetText(GetSpellInfo(spellID)..": "..prio or "SPELL REMOVED: "..spellID);
+						spellCheck.icon:SetNormalTexture(GetSpellTexture(spellID) or 1)
+					end
 				else
 				spellCheck.text:SetText(spellID..": "..prio);
 				spellCheck.icon:SetNormalTexture(1008124)
@@ -366,8 +434,9 @@ for i,tab in pairs(tabs) do
 					GameTooltip:Hide()
 				end)
 				previousSpellID = spellID
+			else
+				icons[i][l] = nil
 			end
 		end
 	end
-end
 end

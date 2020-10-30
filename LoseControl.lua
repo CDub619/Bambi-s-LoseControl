@@ -2911,38 +2911,10 @@ local spellsPVE = {
 	{22643  , "Snare"},				-- Frostbolt Volley
 	{18101  , "Snare"},				-- Chilled (Frost Armor)
 ]]
-{"Custom Spells",
+{"Discovered LC Spells"
 },
-{"Discovered LC Spells",
-}
 
 }
-
-
-for k, v in ipairs(spells) do
-spellIds[v[1]] = v[2]
-end
-
-for i = 1, #spellsPVE do
-	for l = 1, #spellsPVE[i] do
-		if l ~=1 then
-		spellIds[spellsPVE[i][l][1]] = spellsPVE[i][l][2]
-		--print(spellsPVE[i][l][1]..":"..spellIds[spellsPVE[i][l][1]])
-		end
-	end
-end
-
-for k, v in ipairs(spellsArena) do
-spellIdsArena[v[1]] = v[2]
-end
-
-for k, v in ipairs(interrupts) do
-interruptsIds[v[1]] = v[2]
-end
-
-for k, v in ipairs(cleuSpells) do
-cleuPrioCastedSpells[v[1]] = {["duration"] = v[2], ["priority"] = v[3], ["priorityArena"] = v[4]}
-end
 
 
 for k, v in ipairs(interrupts) do
@@ -2961,10 +2933,6 @@ for k, v in ipairs(cleuSpells) do
 tblinsert(spellsArena, {v[1] , v[4], v[2]})
 end
 
-L.spells = spells
-L.spellsPVE = spellsPVE
-L.spellsArena = spellsArena
-
 if debug then
 	for k in pairs(spellIds) do
 		local name, _, icon = GetSpellInfo(k)
@@ -2973,6 +2941,9 @@ if debug then
 	end
 end
 
+L.spells = spells
+L.spellsPVE = spellsPVE
+L.spellsArena = spellsArena
 -------------------------------------------------------------------------------
 -- Global references for attaching icons to various unit frames
 local anchors = {
@@ -3082,10 +3053,10 @@ local anchors = {
 local DBdefaults = {
 	ArenaGladiusGloss = true, --Add option Check Box for This
 
-	Spells = { }, --needed for added spells
 	SpellsInfo = { },
-	InterruptSpells = { },
 	InterruptSpellsInfo = { },
+	spellEnabled = { },
+	spellEnabledArena = { },
 
 	version = 6.21, -- This is the settings version, not necessarily the same as the LoseControl version
 	noCooldownCount = false,
@@ -4689,10 +4660,9 @@ locBliz:SetScript("OnEvent", function(self, event, ...)
 								 spellIds[spellID] = Type
 								 local name, instanceType, _, _, _, _, _, instanceID, _, _ = GetInstanceInfo()
 								 local ZoneName = GetZoneText()
-								 LoseControlDB.Spells[spellID] = Type
-								 LoseControlDB.SpellsInfo[ZoneName.." "..name.." instanceID: "..instanceID.." spellId: "..spellID.." "..locType] = Type
+								 LoseControlDB.SpellsInfo[spellID] = {spellID, Type, instanceType, name..": "..ZoneName}
 								 LoseControlDB.spellEnabled[spellID]= true
-								 tblinsert(spellsPVE[#spellsPVE], {spellID, Type})
+								 tblinsert(spellsPVE[#spellsPVE], {spellID, Type, instanceType, name..": "..ZoneName})
 								 L.SpellsPVEConfig:Update()
 								elseif locType == "DISARM" then
 								 print("Found New Disarm",locType,"", spellID)
@@ -4700,10 +4670,9 @@ locBliz:SetScript("OnEvent", function(self, event, ...)
 								 spellIds[spellID] = Type
 								 local name, instanceType, _, _, _, _, _, instanceID, _, _ = GetInstanceInfo()
 								 local ZoneName = GetZoneText()
-								 LoseControlDB.Spells[spellID] = Type
-								 LoseControlDB.SpellsInfo[ZoneName.." "..name.." instanceID: "..instanceID.." spellId: "..spellID.." "..locType] = Type
+									 LoseControlDB.SpellsInfo[spellID] = {spellID, Type, instanceType, name..": "..ZoneName}
 								 LoseControlDB.spellEnabled[spellID]= true
-								 tblinsert(spellsPVE[#spellsPVE], {spellID, Type})
+								 tblinsert(spellsPVE[#spellsPVE], {spellID, Type, instanceType, name..": "..ZoneName})
 								 L.SpellsPVEConfig:Update()
 						  elseif (locType == "PACIFYSILENCE") or (locType =="SILENCE") then
 						    print("Found New Silence",locType,"", spellID)
@@ -4711,10 +4680,9 @@ locBliz:SetScript("OnEvent", function(self, event, ...)
 								spellIds[spellID] = Type
 								local name, instanceType, _, _, _, _, _, instanceID, _, _ = GetInstanceInfo()
  							  local ZoneName = GetZoneText()
-								LoseControlDB.Spells[spellID] = Type
-								LoseControlDB.SpellsInfo[ZoneName.." "..name.." instanceID: "..instanceID.." spellId: "..spellID.." "..locType] = Type
+								LoseControlDB.SpellsInfo[spellID] = {spellID, Type, instanceType, name..": "..ZoneName}
 								LoseControlDB.spellEnabled[spellID]= true
-								tblinsert(spellsPVE[#spellsPVE], {spellID, Type})
+								tblinsert(spellsPVE[#spellsPVE], {spellID, Type, instanceType, name..": "..ZoneName})
 								L.SpellsPVEConfig:Update()
 							elseif locType == "ROOT" then
 						  	print("Found New Root",locType,"", spellID)
@@ -4722,10 +4690,9 @@ locBliz:SetScript("OnEvent", function(self, event, ...)
 								spellIds[spellID] = Type
 								local name, instanceType, _, _, _, _, _, instanceID, _, _ = GetInstanceInfo()
 								local ZoneName = GetZoneText()
-								LoseControlDB.Spells[spellID] = Type
-								LoseControlDB.SpellsInfo[ZoneName.." "..name.." instanceID: "..instanceID.." spellId: "..spellID.." "..locType] = Type
+								LoseControlDB.SpellsInfo[spellID] = {spellID, Type, instanceType, name..": "..ZoneName}
 								LoseControlDB.spellEnabled[spellID]= true
-								tblinsert(spellsPVE[#spellsPVE], {spellID, Type})
+								tblinsert(spellsPVE[#spellsPVE], {spellID, Type, instanceType,name..": "..ZoneName})
 								L.SpellsPVEConfig:Update()
 							else
 								print("Found New Other",locType,"", spellID)
@@ -4733,10 +4700,9 @@ locBliz:SetScript("OnEvent", function(self, event, ...)
 								spellIds[spellID] = Type
 								local name, instanceType, _, _, _, _, _, instanceID, _, _ = GetInstanceInfo()
  					  		local ZoneName = GetZoneText()
-								LoseControlDB.Spells[spellID] = Type
-								LoseControlDB.SpellsInfo[ZoneName.." "..name.." instanceID: "..instanceID.." spellId: "..spellID.." "..locType] = Type
+								LoseControlDB.SpellsInfo[spellID] = {spellID, Type, instanceType, name..": "..ZoneName}
 								LoseControlDB.spellEnabled[spellID]= true
-								tblinsert(spellsPVE[#spellsPVE], {spellID, Type})
+								tblinsert(spellsPVE[#spellsPVE], {spellID, Type, instanceType, name..": "..ZoneName})
 								L.SpellsPVEConfig:Update()
 							end
 			  elseif (not interruptsIds[spellID]) and lockoutSchool > 0 then
@@ -4744,10 +4710,9 @@ locBliz:SetScript("OnEvent", function(self, event, ...)
 					interruptsIds[spellID] = duration
 					local name, instanceType, _, _, _, _, _, instanceID, _, _ = GetInstanceInfo()
 					local ZoneName = GetZoneText()
-					LoseControlDB.InterruptSpells[spellID] = duration
-					LoseControlDB.InterruptSpellsInfo[ZoneName.." "..name.." instanceID: "..instanceID.." spellId: "..spellID] = duration
+					LoseControlDB.InterruptSpellsInfo[spellID] = {spellID, "Interrupt: "..math.floor(duration), instanceType, name..": "..ZoneName, duration}
 					LoseControlDB.spellEnabled[spellID]= true
-					tblinsert(spellsPVE[#spellsPVE], {spellID, "Interrupt: "..math.floor(duration)})
+					tblinsert(spellsPVE[#spellsPVE], {spellID, "Interrupt: "..math.floor(duration), instanceType, name..": "..ZoneName, duration})
 					L.SpellsPVEConfig:Update()
 				else
 				end
@@ -5216,98 +5181,83 @@ function LoseControl:ADDON_LOADED(arg1)
 				end
 			end
 		end
+
+		spellIds = {}
+		spellIdsArena = {}
+		interruptsIds = {}
+		cleuPrioCastedSpells = {}
+		spellsPVE[#spellsPVE] = {}
+		tblinsert(spellsPVE[#spellsPVE] , "Discovered LC Spells")
+
+		for k, v in ipairs(spells) do
+		spellIds[v[1]] = v[2]
+		end
+
+		for i = 1, #spellsPVE do
+			for l = 2, #spellsPVE[i] do
+				spellIds[spellsPVE[i][l][1]] = spellsPVE[i][l][2]
+			end
+		end
+
+		for k, v in ipairs(spellsArena) do
+		spellIdsArena[v[1]] = v[2]
+		end
+
+		for k, v in ipairs(interrupts) do
+		interruptsIds[v[1]] = v[2]
+		end
+
+		for k, v in ipairs(cleuSpells) do
+		cleuPrioCastedSpells[v[1]] = {["duration"] = v[2], ["priority"] = v[3], ["priorityArena"] = v[4]}
+		end
+
 	--SPELLPVE------------------------------------------------------------------------------------
-							  if _G.LoseControlDB.Spells ~=nil then
-								for k,v in pairs(_G.LoseControlDB.Spells) do
-								spellIds[k] = v
-								tblinsert(spellsPVE[#spellsPVE], {k, v})
-								if _G.LoseControlDB.spellEnabled[k] == nil then
-								_G.LoseControlDB.spellEnabled[k]= true
-								end
-								end --CHRIS ADDS ALL FOUND SPELLS
-								end
+		if _G.LoseControlDB.SpellsInfo ~=nil then
+		for k,v in pairs(_G.LoseControlDB.SpellsInfo) do
+		spellIds[k] = v[2]
+		tblinsert(spellsPVE[#spellsPVE], {v[1], v[2], v[3], v[4]})
+		end --CHRIS ADDS ALL FOUND SPELLS
+		end
 
-								if _G.LoseControlDB.InterruptSpells ~=nil then
-								for k,v in pairs(_G.LoseControlDB.InterruptSpells) do
-								interruptsIds[k] = v
-								tblinsert(spellsPVE[#spellsPVE], {k, "Interrupt: "..math.floor(v)})
-								if _G.LoseControlDB.spellEnabled[k] == nil then
-								_G.LoseControlDB.spellEnabled[k]= true
-								end
-								end --CHRIS ADDS ALL FOUND SPELLS
-							 	end
+		if _G.LoseControlDB.InterruptSpellsInfo ~=nil then
+		for k,v in pairs(_G.LoseControlDB.InterruptSpellsInfo) do
+		interruptsIds[k] = v[5]
+		tblinsert(spellsPVE[#spellsPVE], {v[1], v[2], v[3], v[4]})
+		end --CHRIS ADDS ALL FOUND SPELLS
+		end
 
-								if _G.LoseControlDB.customSpellIds ~=nil then
-							 	for k,v in pairs(_G.LoseControlDB.customSpellIds) do
-							 	tblinsert(spellsPVE[#spellsPVE-1], {k, v})
-								if _G.LoseControlDB.spellEnabled[k] == nil then
-								_G.LoseControlDB.spellEnabled[k]= true
-								end
-						 		end --CHRIS ADDS CUSTOM SPELLS TO TABLE ALL FOUND SPELLS
-						  	end
 --SPELLS--------------------------------------------------------------------------------------------
-								if not _G.LoseControlDB.spellEnabled then
-								_G.LoseControlDB.spellEnabled = {}
-								for k in pairs(spellIds) do --spellIds is the combined PVE list and Spell List and the 3 Custom Loops above
-			  				_G.LoseControlDB.spellEnabled[k]= true
-								end
-								end
-
-								if _G.LoseControlDB.spellEnabled then
-								for k in pairs(spellIds) do --spellIds is the combined PVE list and Spell List and the 3 Custom Loops above
-								if _G.LoseControlDB.spellEnabled[k] == nil then
-								_G.LoseControlDB.spellEnabled[k]= true
-								end
-								end
-								end
-
-								if _G.LoseControlDB.spellEnabled then
-								for k in pairs(interruptsIds) do --interruptsIds is the list and the custom found list from loop above
-								if _G.LoseControlDB.spellEnabled[k] == nil then
-								_G.LoseControlDB.spellEnabled[k]= true
-								end
-								end
-								end
-
-								if _G.LoseControlDB.spellEnabled then
-								for k in pairs(cleuPrioCastedSpells) do --interruptsIds is the list and the custom found list from loop above
-								if _G.LoseControlDB.spellEnabled[k] == nil then
-								_G.LoseControlDB.spellEnabled[k]= true
-								end
-								end
-								end
---ARENA-------------------------------------------------------------------------------------------
-								if not _G.LoseControlDB.spellEnabledArena then
-								_G.LoseControlDB.spellEnabledArena = {}
-								for k in pairs(spellIdsArena) do
-								_G.LoseControlDB.spellEnabledArena[k]= true
-								end
-								end
-
-								if _G.LoseControlDB.spellEnabledArena then
-								for k in pairs(spellIdsArena) do
-								if _G.LoseControlDB.spellEnabledArena[k] == nil then
-								_G.LoseControlDB.spellEnabledArena[k]= true
-								end
-								end
-								end
-
-								if _G.LoseControlDB.spellEnabledArena then
-								for k in pairs(interruptsIds) do
-								if _G.LoseControlDB.spellEnabledArena[k] == nil then
-								_G.LoseControlDB.spellEnabledArena[k]= true
-								end
-								end
-								end
-
-								if _G.LoseControlDB.spellEnabledArena then
-								for k in pairs(cleuPrioCastedSpells) do
-								if _G.LoseControlDB.spellEnabledArena[k] == nil then
-								_G.LoseControlDB.spellEnabledArena[k]= true
-								end
-								end
-								end
-
+		for k in pairs(spellIds) do --spellIds is the combined PVE list and Spell List and the 3 Custom Loops above
+		if _G.LoseControlDB.spellEnabled[k] == nil then
+		_G.LoseControlDB.spellEnabled[k]= true
+		end
+		end
+		for k in pairs(interruptsIds) do --interruptsIds is the list and the custom found list from loop above
+		if _G.LoseControlDB.spellEnabled[k] == nil then
+		_G.LoseControlDB.spellEnabled[k]= true
+		end
+		end
+		for k in pairs(cleuPrioCastedSpells) do --interruptsIds is the list and the custom found list from loop above
+		if _G.LoseControlDB.spellEnabled[k] == nil then
+		_G.LoseControlDB.spellEnabled[k]= true
+		end
+		end
+		--ARENA-------------------------------------------------------------------------------------------
+		for k in pairs(spellIdsArena) do
+		if _G.LoseControlDB.spellEnabledArena[k] == nil then
+		_G.LoseControlDB.spellEnabledArena[k]= true
+		end
+		end
+		for k in pairs(interruptsIds) do
+		if _G.LoseControlDB.spellEnabledArena[k] == nil then
+		_G.LoseControlDB.spellEnabledArena[k]= true
+		end
+		end
+		for k in pairs(cleuPrioCastedSpells) do
+		if _G.LoseControlDB.spellEnabledArena[k] == nil then
+		_G.LoseControlDB.spellEnabledArena[k]= true
+		end
+		end
 	end
 end
 
@@ -5925,32 +5875,27 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 					spellIds[spellId] = "Snare"
 					local spellCategory = spellIds[spellId]
 					local Priority = priority[spellCategory]
-					LoseControlDB.Spells[spellId] = spellIds[spellId]
-					LoseControlDB.spellEnabled[spellId]= true
-					tblinsert(spellsPVE[#spellsPVE], {spellId,  spellCategory})
-					L.SpellsPVEConfig:Update()
 					local Name, instanceType, _, _, _, _, _, instanceID, _, _ = GetInstanceInfo()
 					local ZoneName = GetZoneText()
+					LoseControlDB.spellEnabled[spellId]= true
+					LoseControlDB.SpellsInfo[spellId] = {spellId,  spellCategory, instanceType, Name..": "..ZoneName}
+					tblinsert(spellsPVE[#spellsPVE], {spellId,  spellCategory, instanceType, Name..": "..ZoneName})
+					L.SpellsPVEConfig:Update()
 					local locClass = "Creature"
 						if source then
 						local guid, name = UnitGUID(source), UnitName(source)
 						local type, zero, server_id, instance_id, zone_uid, npc_id, spawn_uid = strsplit("-",guid);
 							if type == "Creature" then
 							 print(name .. "'s NPC id is " .. npc_id)
-		 					 LoseControlDB.SpellsInfo[ZoneName.." "..Name.." instanceID: "..instanceID.." NPC: "..name .. "'s NPC id is " .. npc_id.." spellId: "..spellId] = spellIds[spellId]
 							elseif type == "Vignette" then
 							 print(name .. " is a Vignette and should have its npc_id be zero (" .. npc_id .. ").") --Vignette" refers to NPCs that appear as a rare when you first encounter them, but appear as a common after you've looted them once.
-		 					 LoseControlDB.SpellsInfo[ZoneName.." "..Name.." instanceID: "..instanceID.." NPC: "..name .. " is a Vignette and should have its npc_id be zero (" .. npc_id .. ").".." spellId: "..spellId] = spellIds[spellId]
 							elseif type == "Player" then
 							 local Class, engClass, locRace, engRace, gender, name, server = GetPlayerInfoByGUID(guid)
 							 print(Class.." "..name .. " is a player.")
-		 					 LoseControlDB.SpellsInfo[ZoneName.." "..Name.." instanceID: "..instanceID.." NPC: "..Class.." "..name .. " is a player.".." spellId: "..spellId] = spellIds[spellId]
 						  else
-							 LoseControlDB.SpellsInfo[ZoneName.." "..Name.." instanceID: ".. "spellId: "..spellId]  = spellIds[spellId]
 							end
 							locClass = Class
 						else
-							LoseControlDB.SpellsInfo[ZoneName.." "..Name.." instanceID: ".. "spellId: "..spellId]  = spellIds[spellId]
 						end
 					end
 				end
@@ -7265,117 +7210,9 @@ OptionsPanel.default = function() -- This method will run when the player clicks
 		v:PLAYER_ENTERING_WORLD()
 	end
 	LCframeplayer2:PLAYER_ENTERING_WORLD()
-
-	for k, v in pairs(spellIds) do --WIPES spellIds TABLE STARTS CLEAN
-	spellIds[k] = nil
-	end
-	for k, v in pairs(spellIdsArena) do --WIPES spellIdsArena TABLE STARTS CLEAN
-	spellIdsArena[k] = nil
-	end
-	for k, v in pairs(interruptsIds) do --WIPES interruptsIds TABLE STARTS CLEAN
-	interruptsIds[k] = nil
-	end
-	for k, v in pairs(cleuPrioCastedSpells) do --WIPES interruptsIds TABLE STARTS CLEAN
-	cleuPrioCastedSpells[k] = nil
-	end
-
-	for k, v in pairs(_G.LoseControlDB.spellEnabled) do ----Unchecks all use false over nil
-	_G.LoseControlDB.spellEnabled[k] = nil
-	end
-	for k, v in pairs(_G.LoseControlDB.spellEnabledArena) do --Unchecks all , use false over nil
-	_G.LoseControlDB.spellEnabledArena[k] = nil
-	end
-
-	spellIds = {}
-	spellIdsArena = {}
-	interruptsIds = {}
-	cleuPrioCastedSpells ={}
-
-	--Need to rebuild spells spellsPVE spellsArena tables to delete tableinserted spells
-
-	for k, v in ipairs(spells) do
-	spellIds[v[1]] = v[2]
-	end
-	for i = 1, #spellsPVE do
-		for l = 1, #spellsPVE[i] do
-			if l ~= 1 then
-			spellIds[spellsPVE[i][l][1]] = spellsPVE[i][l][2]
-			--print(spellsPVE[i][l][1]..":"..spellIds[spellsPVE[i][l][1]])
-			end
-		end
-	end
-	for k, v in ipairs(spellsArena) do
-	spellIdsArena[v[1]] = v[2]
-	end
-	for k, v in ipairs(interrupts) do
-	interruptsIds[v[1]] = v[2]
-	end
-	for k, v in ipairs(cleuSpells) do
-	cleuPrioCastedSpells[v[1]] = {["duration"] = v[2], ["priority"] = v[3], ["priorityArena"] = v[4]}
-	end
-
-
-	for k,v in pairs(_G.LoseControlDB.Spells) do
-		_G.LoseControlDB.Spells[k] = nil
-	end --DELETE ALL FOUND SPELLS FROM DB
-	for k,v in pairs(_G.LoseControlDB.InterruptSpells) do
-		_G.LoseControlDB.InterruptSpells[k] = nil
-	end --DELETE ALL FOUND INTERRUPT SPELLS FROM DB
-
---------------Spells------------- Need to sum the spellId , interruptsIds and cleuPrioCastedSpells tables for enabled on reset to true
-	if not _G.LoseControlDB.spellEnabled then
-	_G.LoseControlDB.spellEnabled = {}
-		for k, v in pairs(spellIds) do
-		_G.LoseControlDB.spellEnabled[k]= true
-		end
-		for k, v in pairs(interruptsIds) do
-		_G.LoseControlDB.spellEnabled[k]= true
-		end
-		for k, v in pairs(cleuPrioCastedSpells) do
-		_G.LoseControlDB.spellEnabled[k]= true
-		end
-	else
-		for k, v in pairs(spellIds) do
-		_G.LoseControlDB.spellEnabled[k]= true
-		end
-		for k, v in pairs(interruptsIds) do
-		_G.LoseControlDB.spellEnabled[k]= true
-		end
-		for k, v in pairs(cleuPrioCastedSpells) do
-		_G.LoseControlDB.spellEnabled[k]= true
-		end
-	end
-
-	---------ARENA------------------Need to sum the spellId , interruptsIds and cleuPrioCastedSpells tables for enabled on reset to true
-	if not _G.LoseControlDB.spellEnabledArena then
-	_G.LoseControlDB.spellEnabledArena = {}
-		for k in pairs(spellIdsArena) do
-		_G.LoseControlDB.spellEnabledArena[k]= true
-		end
-		for k in pairs(interruptsIds) do
-		_G.LoseControlDB.spellEnabledArena[k]= true
-		end
-		for k in pairs(cleuPrioCastedSpells) do
-		_G.LoseControlDB.spellEnabledArena[k]= true
-		end
-	else
-		for k in pairs(spellIdsArena) do
-		_G.LoseControlDB.spellEnabledArena[k]= true
-		end
-		for k in pairs(interruptsIds) do
-		_G.LoseControlDB.spellEnabledArena[k]= true
-		end
-		for k in pairs(cleuPrioCastedSpells) do
-		_G.LoseControlDB.spellEnabledArena[k]= true
-		end
-	end
-
 	L.SpellsArenaConfig:Update()
 	L.SpellsPVEConfig:Update()
 	L.SpellsConfig:Update()
-
-	print("LoseControl Spell Conifgurations Menus Require a Reload to Display Correctly")
-
 end
 
 OptionsPanel.refresh = function() -- This method will run when the Interface Options frame calls its OnShow function and after defaults have been applied via the panel.default method described above.
