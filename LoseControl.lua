@@ -103,6 +103,7 @@ local spellIds = {}
 local spellIdsArena = {}
 local interruptsIds = {}
 local cleuPrioCastedSpells = {}
+local AddonLoad = 1
 -------------------------------------------------------------------------------
 -- Thanks to all the people on the Curse.com and WoWInterface forums who help keep this list up to date :)
 local cleuSpells = { -- nil = Do Not Show
@@ -2917,22 +2918,6 @@ local spellsPVE = {
 }
 
 
-for k, v in ipairs(interrupts) do
-tblinsert(spells, {v[1] , "Interrupt", v[2]})
-end
-
-for k, v in ipairs(interrupts) do
-tblinsert(spellsArena, {v[1] , "Interrupt", v[2]})
-end
-
-for k, v in ipairs(cleuSpells) do
-tblinsert(spells, {v[1] , v[3], v[2]})
-end
-
-for k, v in ipairs(cleuSpells) do
-tblinsert(spellsArena, {v[1] , v[4], v[2]})
-end
-
 if debug then
 	for k in pairs(spellIds) do
 		local name, _, icon = GetSpellInfo(k)
@@ -5131,7 +5116,32 @@ function LoseControl:ADDON_LOADED(arg1)
 		for k, v in ipairs(cleuSpells) do
 		cleuPrioCastedSpells[v[1]] = {["duration"] = v[2], ["priority"] = v[3], ["priorityArena"] = v[4]}
 		end
+--cleu spells **need to be removed when an lC Reset is performed**---------------------------
+		if AddonLoad > 1 then --recomplile check only on ADDON_LOAD second time
+		for i = 1, (#interrupts + #cleuSpells) do
+		table.remove (spells, #spells)
+		table.remove (spellsArena, #spells)
+		end
+		print("|cff00ccffLoseControl|r", ": Recompiled Spells")
+		end
 
+		for k, v in ipairs(interrupts) do
+		tblinsert(spells, {v[1] , "Interrupt", v[2]})
+		end
+
+		for k, v in ipairs(interrupts) do
+		tblinsert(spellsArena, {v[1] , "Interrupt", v[2]})
+		end
+
+		for k, v in ipairs(cleuSpells) do
+		tblinsert(spells, {v[1] , v[3], v[2]})
+		end
+
+		for k, v in ipairs(cleuSpells) do
+		tblinsert(spellsArena, {v[1] , v[4], v[2]})
+		end
+
+		AddonLoad = AddonLoad + 1
 	--SPELLPVE------------------------------------------------------------------------------------
 		if _G.LoseControlDB.DiscoveredSpells ~=nil then
 		for k,v in ipairs(_G.LoseControlDB.DiscoveredSpells) do
@@ -8265,7 +8275,7 @@ SLASH_LoseControl2 = "/losecontrol"
 
 local SlashCmd = {}
 function SlashCmd:help()
-	print("|cff00ccffLoseControl|r", "slash commands:")
+	print("|cff00ccffLoseControl|r", ": slash commands")
 	print("    reset [<unit>]")
 	print("    lock")
 	print("    unlock")

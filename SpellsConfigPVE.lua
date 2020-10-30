@@ -376,8 +376,8 @@ for i,tab in pairs(tabs) do
 				spellCheck.icon:SetParent(nil)
 				spellCheck.icon:ClearAllPoints()
 				spellCheck.text:ClearAllPoints()
-			_G[spellCheck:GetName().."Icon"] = nil
-			_G[c:GetName().."spellCheck"..i..l] = nil
+				_G[spellCheck:GetName().."Icon"] = nil
+				_G[c:GetName().."spellCheck"..i..l] = nil
 				end
 			end
 				if (spellID) then
