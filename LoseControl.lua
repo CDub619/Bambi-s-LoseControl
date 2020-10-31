@@ -5261,7 +5261,7 @@ function LoseControl:CheckGladiusUnitsAnchors(updateFrame)
 	local frames = {}
 	local gladiusFrame
 	local inInstance, instanceType = IsInInstance()
-	if (strfind(self.unitId, "arena")) then
+	if (strfind(self.unitId, "arena")) and LoseControlDB.frames[self.unitId].anchor == "Gladius" then
 		if Gladius and (not anchors.Gladius[self.unitId]) then
 			local frames = {}
 			if not GladiusClassIconFramearena1 and instanceType ~= "arena" then
@@ -7329,26 +7329,17 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 				frame.x = nil
 				frame.y = nil
 				if self.value == "Gladius" then
+					if strfind(unitId, "arena") then
+					LCframes[unitId]:CheckGladiusUnitsAnchors(true)
+					end
 					if GladiusClassIconFramearena1 then
 						local W = GladiusClassIconFramearena1:GetWidth()
 						local H = GladiusClassIconFramearena1:GetWidth()
 						print("|cff00ccffLoseControl|r".." : "..unitId.." GladiusClassIconFrame Size "..mathfloor(H))
 						portrSizeValue = W
-						if InCombatLockdown() then
-						else
-							if strfind(unitId, "arena") then
-							LCframes[unitId]:CheckGladiusUnitsAnchors(true)
-							end
-						end
 					else
 						if (strfind(unitId, "arena")) then
 							portrSizeValue = 42
-						end
-						if InCombatLockdown() then
-						else
-							if strfind(unitId, "arena") then
-							LCframes[unitId]:CheckGladiusUnitsAnchors(true)
-							end
 						end
 					end
 					frame.size = portrSizeValue

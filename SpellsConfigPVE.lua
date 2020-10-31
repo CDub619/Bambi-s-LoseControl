@@ -257,7 +257,7 @@ function SpellsPVEConfig:CreateMenu()
 		local X = 230
 		local spellCount = -1
 		for l = 2, #core.spellsPVE[i] do
-					local spellID = core.spellsPVE[i][l][1]
+				local spellID = core.spellsPVE[i][l][1]
 				local prio =  core.spellsPVE[i][l][2]
 				local zone
 				local instanceType
@@ -342,6 +342,18 @@ for i,tab in pairs(tabs) do
 		iconsUpdate = #core.spellsPVE[i]
 	end
 	if  #icons[i] ==  #core.spellsPVE[i] then
+		for l = 2, #core.spellsPVE[i] do
+			local spellID = core.spellsPVE[i][l][1]
+			if (spellID) then
+				if  _G[c:GetName().."spellCheck"..i..l] then
+				spellCheck = _G[c:GetName().."spellCheck"..i..l]
+				spellcheck = _G[spellCheck:GetName().."Icon"]
+				spellCheck.icon.check = spellCheck
+				spellCheck:SetChecked(_G.LoseControlDB.spellEnabled[spellID] or false);   --Error on 1st ADDON_LOADED
+				spellCheck.spellID = spellID
+				end
+			end
+		end
 	else
 	for l = 2, iconsUpdate do
 			local spellID
