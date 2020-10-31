@@ -415,7 +415,11 @@ for i,tab in pairs(tabs) do
 						spellCheck:SetPoint("TOPLEFT", c, "TOPLEFT", 30, -10);
 					end
 					spellCheck:Show()
+					if _G[spellCheck:GetName().."Icon"] then
+					spellCheck.icon = _G[spellCheck:GetName().."Icon"]
+					else
 					spellCheck.icon = CreateFrame("Button", spellCheck:GetName().."Icon", spellCheck, "ActionButtonTemplate")
+			  	end
 					spellCheck.icon:Disable()
 					spellCheck.icon:SetPoint("CENTER", spellCheck, "CENTER", -90, 0)
 					spellCheck.icon:SetScale(0.3)

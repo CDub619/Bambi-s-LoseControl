@@ -4658,14 +4658,14 @@ locBliz:SetScript("OnEvent", function(self, event, ...)
 					LoseControlDB.spellEnabled[spellID]= true
 					tblinsert(LoseControlDB.DiscoveredSpells, {spellID, Type, instanceType, name..": "..ZoneName})
 					tblinsert(spellsPVE[#spellsPVE], {spellID, Type, instanceType, name..": "..ZoneName})
-					L.SpellsPVEConfig:Update()
+					--L.SpellsPVEConfig:Update()
 			  elseif (not interruptsIds[spellID]) and lockoutSchool > 0 then
 					print("Found New Interrupt",locType,"", spellID)
 					interruptsIds[spellID] = duration
 					LoseControlDB.spellEnabled[spellID]= true
 					tblinsert(LoseControlDB.DiscoveredSpells, {spellID, "Interrupt: "..math.floor(duration), instanceType, name..": "..ZoneName, duration})
 					tblinsert(spellsPVE[#spellsPVE], {spellID, "Interrupt: "..math.floor(duration), instanceType, name..": "..ZoneName, duration})
-					L.SpellsPVEConfig:Update()
+					--L.SpellsPVEConfig:Update()
 				else
 				end
 			end
@@ -5087,9 +5087,10 @@ function LoseControl:CompileSpells()
 		end
 		end
 
-		L.SpellsArenaConfig:Update()
+		L.SpellsArenaConfig:Update() --need to clean up code
 		L.SpellsPVEConfig:Update()
-		L.SpellsConfig:Update()
+		L.SpellsConfig:Update() --need to clean up code
+
 	end
 
 -- Handle default settings
@@ -5856,7 +5857,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 					LoseControlDB.spellEnabled[spellId]= true
 					tblinsert(LoseControlDB.DiscoveredSpells, {spellId,  spellCategory, instanceType, Name..": "..ZoneName})
 					tblinsert(spellsPVE[#spellsPVE], {spellId,  spellCategory, instanceType, Name..": "..ZoneName})
-					L.SpellsPVEConfig:Update()
+					--L.SpellsPVEConfig:Update()
 					local locClass = "Creature"
 					if source then
 					local guid, name = UnitGUID(source), UnitName(source)
@@ -7003,6 +7004,7 @@ LossOfControlSpellsPVE:SetWidth(185)
 LossOfControlSpellsPVE:SetScale(1)
 LossOfControlSpellsPVE:SetScript("OnClick", function(self)
 L.SpellsPVEConfig:Toggle()
+L.SpellsPVEConfig:Update()
 end)
 
 local Priority = OptionsPanel:CreateFontString(nil, "ARTWORK", "GameFontNormal")
