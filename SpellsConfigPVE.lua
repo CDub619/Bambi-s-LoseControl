@@ -42,7 +42,7 @@ function SpellsPVEConfig:Toggle() --Builds the Table
 	menu:SetShown(not menu:IsShown());
 end
 
-function SpellsPVEConfig:Update(i)
+function SpellsPVEConfig:UpdateTab(i)
 	SpellsPVEConfig:WipeSpellList(i)
 	SpellsPVEConfig:UpdateSpellList(i);
 end
@@ -160,7 +160,6 @@ local function SetTabs(frame, numTabs, ...)
 	local rows = 1
 	local rowCount = 1
 
-
 	for i = 1, numTabs do
 		local tab = CreateFrame("Button", frameName.."Tab"..i, frame, "CharacterFrameTabButtonTemplate");
 		tab:SetID(i);
@@ -173,15 +172,12 @@ local function SetTabs(frame, numTabs, ...)
 		end
 
 		tab:SetScript("OnClick", Tab_OnClick);
-
 		tab.content = CreateFrame("Frame", tab:GetName()..'Content', UISpellsPVEConfig.ScrollFrame);
 		tab.content:SetSize(760, 360);
 		tab.content:Hide();
-
-		-- just for tutorial only:
 		tab.content.bg = tab.content:CreateTexture(nil, "BACKGROUND");
 		tab.content.bg:SetAllPoints(true);
-	--	tab.content.bg:SetColorTexture(math.random(), math.random(), math.random(), 0.6);
+	--tab.content.bg:SetColorTexture(math.random(), math.random(), math.random(), 0.6);
 
 		table.insert(contents, tab.content);
 
@@ -206,7 +202,6 @@ local function SetTabs(frame, numTabs, ...)
 		--Rebuild Spell lists here
 		SpellsPVEConfig:UpdateSpellList(i)
     end)
-
 
 		if (i == 1) then
 		tab:SetPoint("TOPLEFT", UISpellsPVEConfig, "BOTTOMLEFT", 5, 7);
@@ -253,6 +248,11 @@ end
 function SpellsPVEConfig:UpdateAllSpellList()
 	for i = 1, #tabs do
 	SpellsPVEConfig:UpdateSpellList(i)
+	end
+end
+function SpellsPVEConfig:ResetAllSpellList()
+	for i = 1, #tabs do
+	SpellsPVEConfig:ResetSpellList(i)
 	end
 end
 
