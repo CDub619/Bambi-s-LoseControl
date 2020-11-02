@@ -240,21 +240,6 @@ local function makeAndShowSpellTTPVE(self)
 	GameTooltip:Show()
 end
 
-function SpellsPVEConfig:WipeAllSpellList()
-	for i = 1, #tabs do
-	SpellsPVEConfig:WipeSpellList(i)
-	end
-end
-function SpellsPVEConfig:UpdateAllSpellList()
-	for i = 1, #tabs do
-	SpellsPVEConfig:UpdateSpellList(i)
-	end
-end
-function SpellsPVEConfig:ResetAllSpellList()
-	for i = 1, #tabs do
-	SpellsPVEConfig:ResetSpellList(i)
-	end
-end
 
 function SpellsPVEConfig:ResetSpellList(i)
 	local c = contents[i]
@@ -381,6 +366,22 @@ if i == nil then return end
 				previousSpellID = spellID
 				spellCount = spellCount + 1
 			end
+		end
+	end
+
+	function SpellsPVEConfig:WipeAllSpellList()
+		for i = 1, #tabs do
+		SpellsPVEConfig:WipeSpellList(i)
+		end
+	end
+	function SpellsPVEConfig:UpdateAllSpellList()
+		for i = 1, #tabs do
+		SpellsPVEConfig:UpdateSpellList(i)
+		end
+	end
+	function SpellsPVEConfig:ResetAllSpellList()
+		for i = 1, #tabs do
+		SpellsPVEConfig:ResetSpellList(i)
 		end
 	end
 
