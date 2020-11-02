@@ -239,7 +239,6 @@ local spellsArena = {
 	{202244 , "CC"}, --Overrun
 	{33786 , "CC"}, --Cyclone
 	{209753 , "CC"}, --Cyclone
-	{209753 , "CC"}, --Incapacitating Roar
 	{2637 , "CC"}, --Hibernate
 	{81261 , "Silence"}, --Solar Beam
 	{5215 , "Special_High"}, --Prowl
@@ -364,6 +363,8 @@ local spellsArena = {
 	}
 
 local spells = {
+
+{"PVP", --TAB
 
 	{66 , "Stealth"}, --Invis
 	{32612 , "Stealth"}, --Invis
@@ -899,9 +900,7 @@ local spells = {
 	{199042 , "Root"},				-- Thunderstruck
 	{236236 , "Disarm"},			-- Disarm (pvp honor talent - protection)
 	{236077 , "Disarm"},			-- Disarm (pvp honor talent)
-}
-
-local spellsPVE = {
+},
 
 	----------------
 	-- Other
@@ -4657,14 +4656,14 @@ locBliz:SetScript("OnEvent", function(self, event, ...)
 					spellIds[spellID] = Type
 					LoseControlDB.spellEnabled[spellID]= true
 					tblinsert(LoseControlDB.DiscoveredSpells, {spellID, Type, instanceType, name..": "..ZoneName})
-					tblinsert(spellsPVE[#spellsPVE], {spellID, Type, instanceType, name..": "..ZoneName})
+					tblinsert(spells[#spells], {spellID, Type, instanceType, name..": "..ZoneName})
 					L.SpellsPVEConfig:UpdateTab(#spellsPVE)
 			  elseif (not interruptsIds[spellID]) and lockoutSchool > 0 then
 					print("Found New Interrupt",locType,"", spellID)
 					interruptsIds[spellID] = duration
 					LoseControlDB.spellEnabled[spellID]= true
 					tblinsert(LoseControlDB.DiscoveredSpells, {spellID, "Interrupt: "..math.floor(duration), instanceType, name..": "..ZoneName, duration})
-					tblinsert(spellsPVE[#spellsPVE], {spellID, "Interrupt: "..math.floor(duration), instanceType, name..": "..ZoneName, duration})
+					tblinsert(spells[#spells], {spellID, "Interrupt: "..math.floor(duration), instanceType, name..": "..ZoneName, duration})
 					L.SpellsPVEConfig:UpdateTab(#spellsPVE)
 				else
 				end
@@ -4993,16 +4992,12 @@ function LoseControl:CompileSpells()
 		spellIdsArena = {}
 		interruptsIds = {}
 		cleuPrioCastedSpells = {}
-		spellsPVE[#spellsPVE] = {}
-		tblinsert(spellsPVE[#spellsPVE] , "Discovered LC Spells")
+		spells[#spells] = {}
+		tblinsert(spells[#spells] , "Discovered LC Spells")
 
-		for k, v in ipairs(spells) do
-		spellIds[v[1]] = v[2]
-		end
-
-		for i = 1, #spellsPVE do
-			for l = 2, #spellsPVE[i] do
-				spellIds[spellsPVE[i][l][1]] = spellsPVE[i][l][2]
+		for i = 1, #spells do
+			for l = 2, #spells[i] do
+				spellIds[spells[i][l][1]] = spells[i][l][2]
 			end
 		end
 
@@ -5050,7 +5045,7 @@ function LoseControl:CompileSpells()
 		if v[5] then
 		interruptsIds[v[1]] = v[5]
 		end
-		tblinsert(spellsPVE[#spellsPVE], {v[1], v[2], v[3], v[4]})
+		tblinsert(spells[#spells], {v[1], v[2], v[3], v[4]})
 		end --CHRIS ADDS ALL FOUND SPELLS
 		end
 
@@ -5088,7 +5083,7 @@ function LoseControl:CompileSpells()
 		end
 		L.SpellsArenaConfig:Update() --need to clean up code
 		L.SpellsPVEConfig:Addon_Load()
-		L.SpellsConfig:Update() --need to clean up code
+		L.SpellsConfig:Addon_Load() --need to clean up code
 	end
 
 -- Handle default settings
@@ -5854,7 +5849,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 					local ZoneName = GetZoneText()
 					LoseControlDB.spellEnabled[spellId]= true
 					tblinsert(LoseControlDB.DiscoveredSpells, {spellId,  spellCategory, instanceType, Name..": "..ZoneName})
-					tblinsert(spellsPVE[#spellsPVE], {spellId,  spellCategory, instanceType, Name..": "..ZoneName})
+					tblinsert(spells[#spells], {spellId,  spellCategory, instanceType, Name..": "..ZoneName})
 					L.SpellsPVEConfig:UpdateTab(#spellsPVE)
 					local locClass = "Creature"
 					if source then
@@ -6980,7 +6975,7 @@ DisableLossOfControlCooldown:SetScript("OnClick", function(self)
 end)
 
 local LossOfControlSpells = CreateFrame("Button", O.."LossOfControlSpells", OptionsPanel, "OptionsButtonTemplate")
-_G[O.."LossOfControlSpells"]:SetText("Spells")
+_G[O.."LossOfControlSpells"]:SetText("PVP Spells")
 LossOfControlSpells:SetHeight(18)
 LossOfControlSpells:SetWidth(185)
 LossOfControlSpells:SetScale(1)
@@ -7198,6 +7193,7 @@ LossOfControlSpellsArena:SetPoint("CENTER", PrioritySliderArena.Drink_Purge, "CE
 OptionsPanel.default = function() -- This method will run when the player clicks "defaults".SnareMagic
 	_G.LoseControlDB = nil
 	L.SpellsPVEConfig:WipeAllSpellList()
+	L.SpellsConfig:WipeAllSpellList()
 	LoseControl:ADDON_LOADED(addonName)
 	for _, v in pairs(LCframes) do
 		v:PLAYER_ENTERING_WORLD()

@@ -26,8 +26,8 @@ local defaults = {
 local tabs = {}
 
 
-for i = 1, #core.spellsPVE do
-	tabs[i] = core.spellsPVE[i][1]
+for i = 1, #core.spells - 1 do
+	tabs[i] = core.spells[i + 1][1]
 end
 --------------------------------------
 -- SpellsPVEConfig functions
@@ -243,7 +243,7 @@ end
 
 function SpellsPVEConfig:ResetSpellList(i)
 	local c = contents[i]
-	for spellCount = 1, #core.spellsPVE[i] do
+	for spellCount = 1, #core.spells[i+1] do
 		if  _G[c:GetName().."spellCheck"..i..spellCount] then
 			local spellCheck = _G[c:GetName().."spellCheck"..i..spellCount];
 			spellCheck.icon = _G[spellCheck:GetName().."Icon"]
@@ -257,7 +257,7 @@ end
 
 function SpellsPVEConfig:WipeSpellList(i)
 local c = contents[i]
- 	for spellCount = 1, #core.spellsPVE[i] do
+ 	for spellCount = 1, #core.spells[i+1] do
 		if  _G[c:GetName().."spellCheck"..i..spellCount] then
 			local spellCheck = _G[c:GetName().."spellCheck"..i..spellCount];
 			spellCheck:Hide()
@@ -289,20 +289,20 @@ if i == nil then return end
 	iconcheck[i] = {}
 	end
 	local spellCount = 1
-	for l = 2, #core.spellsPVE[i] do
+	for l = 2, #core.spells[i+1] do
 		local spellID, prio, zone, instanceType
-		if core.spellsPVE[i][l] then
-			if core.spellsPVE[i][l][1] then
-				spellID = core.spellsPVE[i][l][1]
+		if core.spells[i+1][l] then
+			if core.spells[i+1][l][1] then
+				spellID = core.spells[i+1][l][1]
 			end
-			if core.spellsPVE[i][l][2] then
-				prio = core.spellsPVE[i][l][2]
+			if core.spells[i+1][l][2] then
+				prio = core.spells[i+1][l][2]
 			end
-			if core.spellsPVE[i][l][3] then
-				instanceType = core.spellsPVE[i][l][3]
+			if core.spells[i+1][l][3] then
+				instanceType = core.spells[i+1][l][3]
 			end
-			if core.spellsPVE[i][l][4] then
-				zone = core.spellsPVE[i][l][4]
+			if core.spells[i+1][l][4] then
+				zone = core.spells[i+1][l][4]
 			end
 		end
 			if (spellID) then
