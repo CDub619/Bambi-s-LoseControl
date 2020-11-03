@@ -526,7 +526,7 @@ else -- default English
 	L["Silence"]     = "Silence"
 	L["RootPhyiscal_Special"] = "Roots Physical & Special"
 
-
+	L["Friendly_Smoke_Bomb"] = "Smoke Bomb"
 
 	L["Interrupt"]   = "Interrupt"
 	L["Disarm"]      = "Disarm"

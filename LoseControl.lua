@@ -103,7 +103,9 @@ local spellIds = {}
 local spellIdsArena = {}
 local interruptsIds = {}
 local cleuPrioCastedSpells = {}
-local Compiled = 1
+local spells = {}
+
+
 -------------------------------------------------------------------------------
 -- Thanks to all the people on the Curse.com and WoWInterface forums who help keep this list up to date :)
 local cleuSpells = { -- nil = Do Not Show
@@ -362,7 +364,7 @@ local spellsArena = {
 
 	}
 
-local spells = {
+local spellsO = {
 
 {"PVP", --TAB
 
@@ -2925,9 +2927,6 @@ if debug then
 	end
 end
 
-L.spells = spells
-L.spellsPVE = spellsPVE
-L.spellsArena = spellsArena
 -------------------------------------------------------------------------------
 -- Global references for attaching icons to various unit frames
 local anchors = {
@@ -4655,16 +4654,16 @@ locBliz:SetScript("OnEvent", function(self, event, ...)
 					end
 					spellIds[spellID] = Type
 					LoseControlDB.spellEnabled[spellID]= true
-					tblinsert(LoseControlDB.DiscoveredSpells, {spellID, Type, instanceType, name..": "..ZoneName})
-					tblinsert(spells[#spells], {spellID, Type, instanceType, name..": "..ZoneName})
-					L.SpellsPVEConfig:UpdateTab(#spellsPVE)
+					tblinsert(LoseControlDB.DiscoveredSpells, {spellID, Type, instanceType, name..": "..ZoneName, nil, "Discovered"})
+					tblinsert(spells[#spells], {spellID, Type, instanceType, name..": "..ZoneName, nil, "Discovered"})
+					L.SpellsPVEConfig:UpdateTab(#spells-1)
 			  elseif (not interruptsIds[spellID]) and lockoutSchool > 0 then
 					print("Found New Interrupt",locType,"", spellID)
 					interruptsIds[spellID] = duration
 					LoseControlDB.spellEnabled[spellID]= true
-					tblinsert(LoseControlDB.DiscoveredSpells, {spellID, "Interrupt: "..math.floor(duration), instanceType, name..": "..ZoneName, duration})
-					tblinsert(spells[#spells], {spellID, "Interrupt: "..math.floor(duration), instanceType, name..": "..ZoneName, duration})
-					L.SpellsPVEConfig:UpdateTab(#spellsPVE)
+					tblinsert(LoseControlDB.DiscoveredSpells, {spellID, "Interrupt: "..math.floor(duration), instanceType, name..": "..ZoneName, duration, "Discovered"})
+					tblinsert(spells[#spells], {spellID, "Interrupt: "..math.floor(duration), instanceType, name..": "..ZoneName, duration, "Discovered"})
+					L.SpellsPVEConfig:UpdateTab(#spells-1)
 				else
 				end
 			end
@@ -4986,23 +4985,175 @@ function LoseControl:DisableLossOfControlUI()
 		DISABLELOSSOFCONTROLUI_HOOKED = true
 	end
 end
-function LoseControl:CompileSpells()
 
+
+L.LoseControlCompile = {}
+local LoseControlCompile = L.LoseControlCompile;
+
+function LoseControlCompile:CompileArenaSpells()
+
+	spellIdsArena = {}
+
+	for k, v in ipairs(spellsArena) do
+	spellIdsArena[v[1]] = v[2]
+	end
+
+	for k, v in ipairs(interrupts) do
+	tblinsert(spellsArena,  {v[1] , "Interrupt", nil, nil, v[2]})
+	end
+
+	for k, v in ipairs(cleuSpells) do
+	tblinsert(spellsArena, {v[1] , v[3], nil, nil, v[2]})
+	end
+
+
+--ARENAENABLED-------------------------------------------------------------------------------------------
+	for k in pairs(spellIdsArena) do
+		if _G.LoseControlDB.spellEnabledArena[k] == nil then
+		_G.LoseControlDB.spellEnabledArena[k]= true
+		end
+	end
+	for k in pairs(interruptsIds) do
+		if _G.LoseControlDB.spellEnabledArena[k] == nil then
+		_G.LoseControlDB.spellEnabledArena[k]= true
+		end
+	end
+	for k in pairs(cleuPrioCastedSpells) do
+		if _G.LoseControlDB.spellEnabledArena[k] == nil then
+		_G.LoseControlDB.spellEnabledArena[k]= true
+		end
+	end
+
+	L.spellsArena = spellsArena
+	L.SpellsArenaConfig:Update() --need to clean up code
+end
+
+
+function  LoseControlCompile:CustomCompileSpells()
+		local hash = {}
+		local r
+
+		for k, v in ipairs(_G.LoseControlDB.customSpellIds) do
+					if (not hash[v[1]]) then
+						hash[v[1]] = {v[1], v[2], k, v[8], v[9]}
+					else
+							print("|cff00ccffLoseControl : |r".."|cff009900Removed |r"  ..  	v[1].." |cff009900from list: |r"..v[2].." ("..v[9]..")")
+							table.remove(_G.LoseControlDB.customSpellIds, k)
+							r = {}
+							r = {hash[v[1]][4] , v[8], hash[v[1]][5], v[9]}
+					end
+				end
+						if r then
+							return r
+						else
+							return false
+						end
+end
+
+function LoseControlCompile:SpellsOnLoad()
+
+	spells = {}
+	spells = CopyTable(spellsO)
+
+	for k, v in ipairs(interrupts) do
+	tblinsert(spells[1], 2, {v[1] , "Interrupt", nil, nil, v[2]})
+	end
+
+	for k, v in ipairs(cleuSpells) do
+	tblinsert(spells[1], 2, {v[1] , v[3], nil, nil, v[2]})
+	end
+
+	local hash = {}
+	for i = 1, (#spells) do
+		for k, v in ipairs(spells[i]) do
+			if v[1] then
+				if (not hash[v[1]]) then
+					hash[v[1]] = {v[1], v[2], i, k}
+				else
+					if type(v[1]) == "number" then
+						local name = GetSpellInfo(v[1])
+							print("|cff00ccffLoseControl : |r"..hash[v[1]][1]..":"..hash[v[1]][2].." & "..v[1]..":"..v[2].." ("..name..", Duplicate Spells) ".."|cff009900Removed |r"  ..v[1].." |cff009900: |r"..v[2])
+							table.remove(spells[i], k)
+						--spells[hash[v[1]][3]][hash[v[1]][4]] = nil
+					else
+							print("|cff00ccffLoseControl : |r"..hash[v[1]][1]..":"..hash[v[1]][2].." & "..v[1]..":"..v[2].." (".."not spellId"..", Duplicate Spells) ".."|cff009900Removed |r"  ..v[1].." |cff009900: |r"..v[2])
+							table.remove(spells[i], k)
+							--spells[hash[v[1]][3]][hash[v[1]][4]] = nil
+					end
+				end
+			end
+		end
+	end
+	L.spells = spells
+	L.SpellsPVEConfig:Addon_Load()
+	L.SpellsConfig:Addon_Load()
+end
+
+
+
+function LoseControlCompile:CompileSpells()
+
+		spells = CopyTable(spells)
 		spellIds = {}
-		spellIdsArena = {}
 		interruptsIds = {}
 		cleuPrioCastedSpells = {}
-		spells[#spells] = {}
-		tblinsert(spells[#spells] , "Discovered LC Spells")
 
-		for i = 1, #spells do
-			for l = 2, #spells[i] do
-				spellIds[spells[i][l][1]] = spells[i][l][2]
+		--check custom and _G.LoseControlDB.DiscoveredSpells arent duplicates, if they do remove it from Disovered and Update Discovered Tab
+		if _G.LoseControlDB.DiscoveredSpells then
+			for k,v in ipairs(_G.LoseControlDB.DiscoveredSpells) do
+				if v[5] then
+					interruptsIds[v[1]] = v[5]
+				else
+				end
+			tblinsert(spells[#spells], {v[1], v[2], v[3], v[4], v[5], v[6], nil, #spells-1, "PVE" })
+			end
+			L.SpellsPVEConfig:UpdateTab(#spells-1)
+		end
+
+		if _G.LoseControlDB.customSpellIds then
+			for k,v in ipairs(_G.LoseControlDB.customSpellIds) do
+				print(v[9])
+				tblinsert(spells[v[7]], 2, {v[1], v[2], v[3], v[4], v[5], v[6], v[7], v[8], v[9]})
 			end
 		end
 
-		for k, v in ipairs(spellsArena) do
-		spellIdsArena[v[1]] = v[2]
+		--duplicate spell check w/ customs now,
+		local hash = {}
+		for i = 1, (#spells) do
+			for k, v in ipairs(spells[i]) do
+				if v[1] then
+					if (not hash[v[1]]) then
+						hash[v[1]] = {v[1], v[2], i, k}
+					else
+						print(v[9])
+						if type(v[1]) == "number" then
+							local name = GetSpellInfo(v[1])
+								print("|cff00ccffLoseControl : |r"..v[1]..":"..v[2].." ("..name..") ".."|cff009900Changed to |r"  ..hash[v[1]][1].." |cff009900: |r"..hash[v[1]][2])
+								spells[i][k] = nil
+						else
+								print("|cff00ccffLoseControl : |r"..v[1]..":"..v[2].." (".."not spellId"..") ".."|cff009900Changed to |r"  ..hash[v[1]][1].." |cff009900: |r"..hash[v[1]][2])
+								spells[i][k] = nil
+						end
+						if v[9] then
+							if v[9] =="PVE" then
+							L.SpellsPVEConfig:UpdateTab(v[8])
+							else
+							L.SpellsConfig:UpdateTab(v[8])
+							end
+						end
+					end
+				end
+			end
+		end
+
+		L.spells = spells
+
+		for i = 1, #spells do
+			for l = 2, #spells[i] do
+				if spells[i][l] then
+					spellIds[spells[i][l][1]] = spells[i][l][2]
+				end
+			end
 		end
 
 		for k, v in ipairs(interrupts) do
@@ -5012,79 +5163,25 @@ function LoseControl:CompileSpells()
 		for k, v in ipairs(cleuSpells) do
 		cleuPrioCastedSpells[v[1]] = {["duration"] = v[2], ["priority"] = v[3], ["priorityArena"] = v[4]}
 		end
---cleu spells and CUSTOM spells/spellsArena **need to be removed when an lC Reset or when a custom user spell, spellsArenais performed**---------------------------
-		if Compiled > 1 then --recomplile check only on ADDON_LOAD second time
-		for i = 1, (#interrupts + #cleuSpells) do
-		table.remove (spells, #spells)
-		table.remove (spellsArena, #spells)
-		end
-		print("|cff00ccffLoseControl|r", ": Recompiled Spells")
-		end
 
-		for k, v in ipairs(interrupts) do
-		tblinsert(spells, {v[1] , "Interrupt", v[2]})
-		end
-
-		for k, v in ipairs(interrupts) do
-		tblinsert(spellsArena, {v[1] , "Interrupt", v[2]})
-		end
-
-		for k, v in ipairs(cleuSpells) do
-		tblinsert(spells, {v[1] , v[3], v[2]})
-		end
-
-		for k, v in ipairs(cleuSpells) do
-		tblinsert(spellsArena, {v[1] , v[4], v[2]})
-		end
-
-		Compiled = Compiled + 1
-	--SPELLPVE------------------------------------------------------------------------------------
-		if _G.LoseControlDB.DiscoveredSpells ~=nil then
-		for k,v in ipairs(_G.LoseControlDB.DiscoveredSpells) do
-		spellIds[v[1]] = v[2]
-		if v[5] then
-		interruptsIds[v[1]] = v[5]
-		end
-		tblinsert(spells[#spells], {v[1], v[2], v[3], v[4]})
-		end --CHRIS ADDS ALL FOUND SPELLS
-		end
-
---SPELLS--------------------------------------------------------------------------------------------
 		for k in pairs(spellIds) do --spellIds is the combined PVE list and Spell List and the 3 Custom Loops above
-		if _G.LoseControlDB.spellEnabled[k] == nil then
-		_G.LoseControlDB.spellEnabled[k]= true
-		end
+			if _G.LoseControlDB.spellEnabled[k] == nil then
+			_G.LoseControlDB.spellEnabled[k]= true
+			end
 		end
 		for k in pairs(interruptsIds) do --interruptsIds is the list and the custom found list from loop above
-		if _G.LoseControlDB.spellEnabled[k] == nil then
-		_G.LoseControlDB.spellEnabled[k]= true
-		end
+			if _G.LoseControlDB.spellEnabled[k] == nil then
+			_G.LoseControlDB.spellEnabled[k]= true
+			end
 		end
 		for k in pairs(cleuPrioCastedSpells) do --interruptsIds is the list and the custom found list from loop above
-		if _G.LoseControlDB.spellEnabled[k] == nil then
-		_G.LoseControlDB.spellEnabled[k]= true
+			if _G.LoseControlDB.spellEnabled[k] == nil then
+			_G.LoseControlDB.spellEnabled[k]= true
+			end
 		end
-		end
-		--ARENA-------------------------------------------------------------------------------------------
-		for k in pairs(spellIdsArena) do
-		if _G.LoseControlDB.spellEnabledArena[k] == nil then
-		_G.LoseControlDB.spellEnabledArena[k]= true
-		end
-		end
-		for k in pairs(interruptsIds) do
-		if _G.LoseControlDB.spellEnabledArena[k] == nil then
-		_G.LoseControlDB.spellEnabledArena[k]= true
-		end
-		end
-		for k in pairs(cleuPrioCastedSpells) do
-		if _G.LoseControlDB.spellEnabledArena[k] == nil then
-		_G.LoseControlDB.spellEnabledArena[k]= true
-		end
-		end
-		L.SpellsArenaConfig:Update() --need to clean up code
-		L.SpellsPVEConfig:Addon_Load()
-		L.SpellsConfig:Addon_Load() --need to clean up code
-	end
+
+end
+
 
 -- Handle default settings
 function LoseControl:ADDON_LOADED(arg1)
@@ -5185,7 +5282,9 @@ function LoseControl:ADDON_LOADED(arg1)
 				end
 			end
 		end
-		self:CompileSpells()
+		LoseControlCompile:SpellsOnLoad()
+		LoseControlCompile:CompileSpells()
+		LoseControlCompile:CompileArenaSpells()
 	end
 end
 
@@ -5848,9 +5947,9 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 					local Name, instanceType, _, _, _, _, _, instanceID, _, _ = GetInstanceInfo()
 					local ZoneName = GetZoneText()
 					LoseControlDB.spellEnabled[spellId]= true
-					tblinsert(LoseControlDB.DiscoveredSpells, {spellId,  spellCategory, instanceType, Name..": "..ZoneName})
-					tblinsert(spells[#spells], {spellId,  spellCategory, instanceType, Name..": "..ZoneName})
-					L.SpellsPVEConfig:UpdateTab(#spellsPVE)
+					tblinsert(LoseControlDB.DiscoveredSpells, {spellId,  spellCategory, instanceType, Name..": "..ZoneName, nil, "Discovered"})
+					tblinsert(spells[#spells], {spellId,  spellCategory, instanceType, Name..": "..ZoneName, nil, "Discovered"})
+					L.SpellsPVEConfig:UpdateTab(#spells-1)
 					local locClass = "Creature"
 					if source then
 					local guid, name = UnitGUID(source), UnitName(source)

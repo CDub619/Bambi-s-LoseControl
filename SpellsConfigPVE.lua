@@ -1,11 +1,11 @@
 ----------------------------------------
 -- Namespaces
 --------------------------------------
-local _, core = ...;
+local _, L = ...;
 
-core.SpellsPVEConfig = {}; -- adds SpellsPVEConfig table to addon namespace
+L.SpellsPVEConfig = {}; -- adds SpellsPVEConfig table to addon namespace
 
-local SpellsPVEConfig = core.SpellsPVEConfig;
+local SpellsPVEConfig = L.SpellsPVEConfig;
 local UISpellsPVEConfig;
 local tooltip = CreateFrame("GameTooltip", "fPBMouseoverTooltip", UIParent, "GameTooltipTemplate")
 local iconcheck = {}
@@ -26,9 +26,6 @@ local defaults = {
 local tabs = {}
 
 
-for i = 1, #core.spells - 1 do
-	tabs[i] = core.spells[i + 1][1]
-end
 --------------------------------------
 -- SpellsPVEConfig functions
 --------------------------------------
@@ -163,10 +160,10 @@ local function SetTabs(frame, numTabs, ...)
 	for i = 1, numTabs do
 		local tab = CreateFrame("Button", frameName.."Tab"..i, frame, "CharacterFrameTabButtonTemplate");
 		tab:SetID(i);
-		tab:SetFrameLevel(2)
+		tab:SetFrameLevel(10)
 
-		if core[select(i, ...)] then
-			tab:SetText(core[select(i, ...)].."                                                                    "); --String Needs to be 20
+		if L[select(i, ...)] then
+			tab:SetText(L[select(i, ...)].."                                                                    "); --String Needs to be 20
 		else
 			tab:SetText(tabs[i].."                                                                    "); --String Needs to be 20
 		end
@@ -181,26 +178,48 @@ local function SetTabs(frame, numTabs, ...)
 
 		table.insert(contents, tab.content);
 
-		UISpellsPVEConfig.ScrollFrame.input = CreateFrame("EditBox", tab:GetName()..'CustomSpells', UISpellsPVEConfig.ScrollFrame, 'InputBoxTemplate')
-    UISpellsPVEConfig.ScrollFrame.input:SetSize(150,22)
-    UISpellsPVEConfig.ScrollFrame.input:SetAutoFocus(false)
-    UISpellsPVEConfig.ScrollFrame.input:SetMaxLetters(30)
-    UISpellsPVEConfig.ScrollFrame.input:SetPoint("TOPLEFT", tab.content, "TOPRIGHT", 45, -14)
-    UISpellsPVEConfig.ScrollFrame.input:SetScript('OnChar', function(self, customspelltext)
-    			  UISpellsPVEConfig.ScrollFrame.input.customspelltext = self:GetText()
+		tab.content.input = CreateFrame("EditBox", tab:GetName()..'CustomSpells', 	tab.content, 'InputBoxTemplate')
+  	tab.content.input:SetSize(150,22)
+  	tab.content.input:SetAutoFocus(false)
+  	tab.content.input:SetMaxLetters(30)
+  	tab.content.input:SetPoint("TOPLEFT", tab.content, "TOPRIGHT", 45, -14)
+  	tab.content.input:SetScript('OnChar', function(self, customspelltext)
+    			 	tab.content.input.customspelltext = self:GetText()
     end)
     --
-    UISpellsPVEConfig.ScrollFrame.add = CreateFrame("Button",  tab:GetName()..'CustomSpellsButton', UISpellsPVEConfig.ScrollFrame.input, "UIPanelButtonTemplate")
-    UISpellsPVEConfig.ScrollFrame.add:SetSize(50,22)
-    UISpellsPVEConfig.ScrollFrame.add:SetPoint("TOPLEFT",UISpellsPVEConfig.ScrollFrame.input, "TOPRIGHT", 2, 0)
-    UISpellsPVEConfig.ScrollFrame.add:SetText("Add")
-    UISpellsPVEConfig.ScrollFrame.add:SetScript("OnClick", function(self, addenemy)
-    print("|cff00ccffLoseControl : |r".."|cff009900Added |r"  ..  UISpellsPVEConfig.ScrollFrame.input.customspelltext.." |cff009900+to to list: |r"..tabs[i])
-		SpellsPVEConfig:WipeSpellList(i)
-		--Need to check if string or numbers before adding
-		tblinsert(_G.LoseControlDB.customSpellIds, {UISpellsPVEConfig.ScrollFrame.input.customspelltext, "typeplaceholder normally the tab but for pve a dropdown anchor", nil, nil, nil,"custom", tabs[i]})
-		--Rebuild Spell lists here
-		SpellsPVEConfig:UpdateSpellList(i)
+  	tab.content.add = CreateFrame("Button",  tab:GetName()..'CustomSpellsButton', 	tab.content.input, "UIPanelButtonTemplate")
+    tab.content.add:SetSize(50,22)
+  	tab.content.add:SetPoint("TOPLEFT",	tab.content.input, "TOPRIGHT", 2, 0)
+  	tab.content.add:SetText("Add")
+  	tab.content.add:SetScript("OnClick", function(self, addenemy)
+			local name = GetSpellInfo(tonumber(tab.content.input.customspelltext))
+			if name then spell = tonumber(tab.content.input.customspelltext) else spell = tab.content.input.customspelltext end
+	  	tblinsert(_G.LoseControlDB.customSpellIds, 1, {spell, "typeplaceholder", nil, nil, nil,"custom", i+1, i, "PvE"})
+			local r = L.LoseControlCompile:CustomCompileSpells()
+			if r then
+				if (r[1] == r[2]) and (r[3] == r[4]) then
+					SpellsPVEConfig:WipeSpellList(r[1])
+					L.LoseControlCompile:CompileSpells()
+					SpellsPVEConfig:UpdateSpellList(r[1])
+				elseif (r[1] ~= r[2]) and (r[3] == r[4]) then
+					SpellsPVEConfig:WipeSpellList(r[1])
+					SpellsPVEConfig:WipeSpellList(r[2])
+					L.LoseControlCompile:CompileSpells()
+					SpellsPVEConfig:UpdateSpellList(r[1])
+					SpellsPVEConfig:UpdateSpellList(r[2])
+				elseif (r[3] ~= r[4]) then
+						SpellsPVEConfig:WipeSpellList(r[1])
+					  L.SpellsConfig:WipeSpellList(r[2])
+						L.LoseControlCompile:CompileSpells()
+						SpellsPVEConfig:UpdateSpellList(r[1])
+					  L.SpellsConfig:UpdateSpellList(r[2])
+				end
+			else
+				SpellsPVEConfig:WipeSpellList(i)
+				L.LoseControlCompile:CompileSpells()
+				SpellsPVEConfig:UpdateSpellList(i)
+			end
+			print("|cff00ccffLoseControl : |r".."|cff009900Added |r"  ..  	tab.content.input.customspelltext.." |cff009900to to list: |r"..tabs[i].." (PVE)")
     end)
 
 		if (i == 1) then
@@ -243,7 +262,7 @@ end
 
 function SpellsPVEConfig:ResetSpellList(i)
 	local c = contents[i]
-	for spellCount = 1, #core.spells[i+1] do
+	for spellCount = 1, #L.spells[i+1] do
 		if  _G[c:GetName().."spellCheck"..i..spellCount] then
 			local spellCheck = _G[c:GetName().."spellCheck"..i..spellCount];
 			spellCheck.icon = _G[spellCheck:GetName().."Icon"]
@@ -257,7 +276,7 @@ end
 
 function SpellsPVEConfig:WipeSpellList(i)
 local c = contents[i]
- 	for spellCount = 1, #core.spells[i+1] do
+ 	for spellCount = 1, #L.spells[i+1] do
 		if  _G[c:GetName().."spellCheck"..i..spellCount] then
 			local spellCheck = _G[c:GetName().."spellCheck"..i..spellCount];
 			spellCheck:Hide()
@@ -285,33 +304,21 @@ if i == nil then return end
 	local previousSpellID = nil
 	local Y = -10
 	local X = 230
-	if iconcheck[i] == nil then
-	iconcheck[i] = {}
-	end
 	local spellCount = 1
-	for l = 2, #core.spells[i+1] do
+	for l = 2, #L.spells[i+1] do
 		local spellID, prio, zone, instanceType
-		if core.spells[i+1][l] then
-			if core.spells[i+1][l][1] then
-				spellID = core.spells[i+1][l][1]
-			end
-			if core.spells[i+1][l][2] then
-				prio = core.spells[i+1][l][2]
-			end
-			if core.spells[i+1][l][3] then
-				instanceType = core.spells[i+1][l][3]
-			end
-			if core.spells[i+1][l][4] then
-				zone = core.spells[i+1][l][4]
-			end
+		if L.spells[i+1][l] then
+			if L.spells[i+1][l][1] then spellID = L.spells[i+1][l][1]	end
+			if L.spells[i+1][l][2] then prio = L.spells[i+1][l][2] end
+			if L.spells[i+1][l][3] then instanceType = L.spells[i+1][l][3] end
+			if L.spells[i+1][l][4] then zone = L.spells[i+1][l][4] end
+			if L.spells[i+1][l][5] then duration = L.spells[i+1][l][5] end
+			if L.spells[i+1][l][6] then custom = L.spells[i+1][l][6] end
+			if L.spells[i+1][l][7] then pvetab = L.spells[i+1][l][7] end
 		end
 			if (spellID) then
-				if iconcheck[i][spellCount] == nil then
-				iconcheck[i][spellCount] = {}
-				end
 				local spellCheck
 				spellCheck = CreateFrame("CheckButton", c:GetName().."spellCheck"..i..spellCount, c, "UICheckButtonTemplate");
-				iconcheck[i][spellCount] = spellCheck
 				if (previousSpellID) then
 					if (spellCount % numberOfSpellChecksPerRow == 0) then
 						Y = Y-40
@@ -387,12 +394,17 @@ if i == nil then return end
 
 
 	function SpellsPVEConfig:CreateMenu()
+
+		for i = 1, #L.spells - 1 do
+			tabs[i] = L.spells[i + 1][1]
+		end
+
 		UISpellsPVEConfig = CreateFrame("Frame", "LoseControlSpellsPVEConfig", UIParent, "UIPanelDialogTemplate");
 		local hex = select(4, self:GetThemeColor());
 		local BambiTag = string.format("|cff%s%s|r", hex:upper(), "By Bambi");
 		UISpellsPVEConfig.Title:SetText('LoseControl PVE Spells Config '..BambiTag)
 		UISpellsPVEConfig:SetFrameStrata("DIALOG");
-		UISpellsPVEConfig:SetFrameLevel(2);
+		UISpellsPVEConfig:SetFrameLevel(10);
 		UISpellsPVEConfig:EnableMouse(true);
 		UISpellsPVEConfig:SetMovable(true)
 		UISpellsPVEConfig:RegisterForDrag("LeftButton")

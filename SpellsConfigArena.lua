@@ -1,11 +1,11 @@
 ----------------------------------------
 -- Namespaces
 --------------------------------------
-local _, core = ...;
+local _, L = ...;
 
-core.SpellsArenaConfig = {}; -- adds SpellsArenaConfig table to addon namespace
+L.SpellsArenaConfig = {}; -- adds SpellsArenaConfig table to addon namespace
 
-local SpellsArenaConfig = core.SpellsArenaConfig;
+local SpellsArenaConfig = L.SpellsArenaConfig;
 local UISpellsArenaConfig;
 local tooltip = CreateFrame("GameTooltip", "fPBMouseoverTooltip", UIParent, "GameTooltipTemplate")
 --------------------------------------
@@ -173,8 +173,8 @@ local function SetTabs(frame, numTabs, ...)
 		tab:SetID(i);
 		tab:SetFrameLevel(3)
 
-		if core[select(i, ...)] then
-			tab:SetText(core[select(i, ...)].."                                                                    "); --String Needs to be 20
+		if L[select(i, ...)] then
+			tab:SetText(L[select(i, ...)].."                                                                    "); --String Needs to be 20
 		else
 			tab:SetText(tabs[i].."                                                                    "); --String Needs to be 20
 		end
@@ -191,6 +191,8 @@ local function SetTabs(frame, numTabs, ...)
 	--	tab.content.bg:SetColorTexture(math.random(), math.random(), math.random(), 0.6);
 
 		table.insert(contents, tab.content);
+
+
 
 		if (i == 1) then
 		tab:SetPoint("TOPLEFT", UISpellsArenaConfig, "BOTTOMLEFT", 5, 7);
@@ -265,12 +267,12 @@ function SpellsArenaConfig:CreateMenu()
 		local X = 230
 		local spellCount = -1
 
-		for k in ipairs(core.spellsArena) do
-			local spellID = core.spellsArena[k][1]
-			local prio =  core.spellsArena[k][2]
+		for k in ipairs(L.spellsArena) do
+			local spellID = L.spellsArena[k][1]
+			local prio =  L.spellsArena[k][2]
 			local duration
-			if core.spellsArena[k][3] then
-				duration = core.spellsArena[k][3]
+			if L.spellsArena[k][3] then
+				duration = L.spellsArena[k][3]
 			end
 		  if (spellID and prio and (string.lower(prio) == string.lower(tab))) then
 				spellCount = spellCount + 1
@@ -336,12 +338,12 @@ function SpellsArenaConfig:UpdateSpellList()
 		local X = 230
 		local spellCount = -1
 
-		for k in ipairs(core.spellsArena) do
-			local spellID = core.spellsArena[k][1]
-			local prio =  core.spellsArena[k][2]
+		for k in ipairs(L.spellsArena) do
+			local spellID = L.spellsArena[k][1]
+			local prio =  L.spellsArena[k][2]
 			local duration
-			if core.spellsArena[k][3] then
-				duration = core.spellsArena[k][3]
+			if L.spellsArena[k][3] then
+				duration = L.spellsArena[k][3]
 			end
 		  if (spellID and prio and (string.lower(prio) == string.lower(tab))) then
 				spellCount = spellCount + 1
