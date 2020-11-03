@@ -66,10 +66,19 @@ local tabs = {
 	"SnareMagic30",
 	"Snare",
 }
+
+function SpellsConfig:TabNumber(type)
+		for k, v in ipairs(tabs) do
+			if type == v then
+				return k
+			end
+		end
+	end
 --------------------------------------
 -- SpellsConfig functions
 --------------------------------------
 function SpellsConfig:Addon_Load()
+if UISpellsConfig then SpellsConfig:WipeAllSpellList() end
 local menu = UISpellsConfig or SpellsConfig:CreateMenu();
 SpellsConfig:UpdateAllSpellList()
 end
@@ -234,34 +243,52 @@ local function SetTabs(frame, numTabs, ...)
 	    tab.content.add:SetPoint("TOPLEFT",	tab.content.input, "TOPRIGHT", 2, 0)
 	    tab.content.add:SetText("Add")
 	  	tab.content.add:SetScript("OnClick", function(self, addenemy)
-				local name = GetSpellInfo(tonumber(tab.content.input.customspelltext))
+				local spell, name
+				name = GetSpellInfo(tonumber(tab.content.input.customspelltext))
 				if name then spell = tonumber(tab.content.input.customspelltext) else spell = tab.content.input.customspelltext end
-				tblinsert(_G.LoseControlDB.customSpellIds, 1, {spell, tabs[i], nil, nil, nil,"custom", 1, i, "PVP"})
-				local r = L.LoseControlCompile:CustomCompileSpells()
+				tblinsert(_G.LoseControlDB.customSpellIds, 1, {spell, tabs[i], nil, nil, nil,"custom", 1, i, "PVP", tabs[i]})  --v[7]: Category Tab to enter spell / v[8]: Tab to update / v[9]: Table / v[10]: tab name
+				local r = L.LoseControlCompile:CustomCompileSpells(spell)
 				if r then
-					if (r[1] == r[2]) and (r[3] == r[4]) then
-						SpellsConfig:WipeSpellList(r[1])
-						L.LoseControlCompile:CompileSpells()
-						SpellsConfig:UpdateSpellList(r[1])
-					elseif (r[1] ~= r[2]) and (r[3] == r[4]) then
-						SpellsConfig:WipeSpellList(r[1])
-						SpellsConfig:WipeSpellList(r[2])
-						L.LoseControlCompile:CompileSpells()
-						SpellsConfig:UpdateSpellList(r[1])
-						SpellsConfig:UpdateSpellList(r[2])
-					elseif (r[3] ~= r[4]) then
+					if r[1] then --Means your moving a custom spell
+						if (r[1] == r[2]) and (r[3] == r[4]) then --Means your moving a custom spell from the same tab
+							SpellsConfig:WipeSpellList(r[1])
+							L.LoseControlCompile:CompileSpells()
+							SpellsConfig:UpdateSpellList(r[1])
+						elseif (r[1] ~= r[2]) and (r[3] == r[4]) then --Means your moving a custom spell from PVP but differnt tab
+							SpellsConfig:WipeSpellList(r[1])
+							SpellsConfig:WipeSpellList(r[2])
+							L.LoseControlCompile:CompileSpells()
+							SpellsConfig:UpdateSpellList(r[1])
+							SpellsConfig:UpdateSpellList(r[2])
+						elseif (r[3] ~= r[4]) then --Means your moving a custom spell from PVE to PVP but differnt tab
 							SpellsConfig:WipeSpellList(r[1])
 							L.SpellsPVEConfig:WipeSpellList(r[2])
 							L.LoseControlCompile:CompileSpells()
 							SpellsConfig:UpdateSpellList(r[1])
 							L.SpellsPVEConfig:UpdateSpellList(r[2])
+						end
+					elseif r[5] then --Means your moving an orignal spell
+						  if r[5] == 1 then  --Moving Spell from PVP tab
+							z = SpellsConfig:TabNumber(r[6])
+							SpellsConfig:WipeSpellList(z)
+							SpellsConfig:WipeSpellList(i)
+							L.LoseControlCompile:CompileSpells()
+							SpellsConfig:UpdateSpellList(z)
+							SpellsConfig:UpdateSpellList(i)
+						else --Moving Spell from PVE tab
+							L.SpellsPVEConfig:WipeSpellList(r[5] - 1)
+							SpellsConfig:WipeSpellList(i)
+							L.LoseControlCompile:CompileSpells()
+							L.SpellsPVEConfig:UpdateSpellList(r[5] - 1)
+							SpellsConfig:UpdateSpellList(i)
+						end
 					end
-				else
+				else  --Adding a new custom spell
 					SpellsConfig:WipeSpellList(i)
 					L.LoseControlCompile:CompileSpells()
 					SpellsConfig:UpdateSpellList(i)
 				end
-				print("|cff00ccffLoseControl : |r".."|cff009900Added |r"  ..  	tab.content.input.customspelltext.." |cff009900to to list: |r"..tabs[i].." (PVP)")
+				print("|cff00ccffLoseControl|r : ".."|cff009900Added |r"..spell.." |cff009900to to list: |r"..tabs[i].." (PVP)")
 	    end)
 		end
 
@@ -357,7 +384,6 @@ if i == nil then return end
 			if L.spells[1][l][4] then zone = L.spells[1][l][4] end
 			if L.spells[1][l][5] then duration = L.spells[1][l][5] end
 			if L.spells[1][l][6] then custom = L.spells[1][l][6] end
-			if L.spells[1][l][7] then pvetab = L.spells[1][l][7] end
 		end
 			 if (spellID and prio and (string.lower(prio) == string.lower(tabs[i]))) then
 				local spellCheck
@@ -383,18 +409,19 @@ if i == nil then return end
 				spellCheck.icon:SetScale(0.3)
 				spellCheck.icon:Show()
 				spellCheck.icon.check = spellCheck
+				local aString = spellID
 				if type(spellID) == "number" then
 					if duration then
-					spellCheck.text:SetText(GetSpellInfo(spellID)..": "..duration or "SPELL REMOVED: "..spellID);
-					spellCheck.icon:SetNormalTexture(GetSpellTexture(spellID) or 1)
+					aString = GetSpellInfo(spellID)..": "..duration or "SPELL REMOVED: "..spellID
 					else
-					spellCheck.text:SetText(GetSpellInfo(spellID) or "SPELL REMOVED: "..spellID);
-					spellCheck.icon:SetNormalTexture(GetSpellTexture(spellID) or 1)
+					aString = GetSpellInfo(spellID) or "SPELL REMOVED: "..spellID
 					end
+					spellCheck.icon:SetNormalTexture(GetSpellTexture(spellID) or 1)
 				else
-				spellCheck.text:SetText(spellID);
 				spellCheck.icon:SetNormalTexture(1008124)
 				end
+				local cutString = string.sub(aString, 0, 25);
+				spellCheck.text:SetText(cutString);
 				spellCheck:SetChecked(_G.LoseControlDB.spellEnabled[spellID] or false);   --Error on 1st ADDON_LOADED
 				spellCheck.spellID = spellID
 				spellCheck:SetScript("OnClick",

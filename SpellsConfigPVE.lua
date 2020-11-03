@@ -30,6 +30,7 @@ local tabs = {}
 -- SpellsPVEConfig functions
 --------------------------------------
 function SpellsPVEConfig:Addon_Load()
+if UISpellsPVEConfig then SpellsPVEConfig:WipeAllSpellList() end
 local menu = UISpellsPVEConfig or SpellsPVEConfig:CreateMenu();
 SpellsPVEConfig:UpdateAllSpellList()
 end
@@ -178,6 +179,8 @@ local function SetTabs(frame, numTabs, ...)
 
 		table.insert(contents, tab.content);
 
+	if tabs[i] == "Discovered LC Spells" then
+		else
 		tab.content.input = CreateFrame("EditBox", tab:GetName()..'CustomSpells', 	tab.content, 'InputBoxTemplate')
   	tab.content.input:SetSize(150,22)
   	tab.content.input:SetAutoFocus(false)
@@ -192,35 +195,54 @@ local function SetTabs(frame, numTabs, ...)
   	tab.content.add:SetPoint("TOPLEFT",	tab.content.input, "TOPRIGHT", 2, 0)
   	tab.content.add:SetText("Add")
   	tab.content.add:SetScript("OnClick", function(self, addenemy)
-			local name = GetSpellInfo(tonumber(tab.content.input.customspelltext))
+			local spell, name
+			name = GetSpellInfo(tonumber(tab.content.input.customspelltext))
 			if name then spell = tonumber(tab.content.input.customspelltext) else spell = tab.content.input.customspelltext end
-	  	tblinsert(_G.LoseControlDB.customSpellIds, 1, {spell, "typeplaceholder", nil, nil, nil,"custom", i+1, i, "PvE"})
-			local r = L.LoseControlCompile:CustomCompileSpells()
+	  	tblinsert(_G.LoseControlDB.customSpellIds, 1, {spell, "typeplaceholder", nil, nil, nil,"custom", i + 1, i, "PvE", tabs[i]}) --v[7]: Category Tab to enter spell / v[8]: Tab to update / v[9]: Table / v[10]: tab name
+			local r = L.LoseControlCompile:CustomCompileSpells(spell)
 			if r then
-				if (r[1] == r[2]) and (r[3] == r[4]) then
-					SpellsPVEConfig:WipeSpellList(r[1])
-					L.LoseControlCompile:CompileSpells()
-					SpellsPVEConfig:UpdateSpellList(r[1])
-				elseif (r[1] ~= r[2]) and (r[3] == r[4]) then
-					SpellsPVEConfig:WipeSpellList(r[1])
-					SpellsPVEConfig:WipeSpellList(r[2])
-					L.LoseControlCompile:CompileSpells()
-					SpellsPVEConfig:UpdateSpellList(r[1])
-					SpellsPVEConfig:UpdateSpellList(r[2])
-				elseif (r[3] ~= r[4]) then
+				if r[1] then --Means your moving a custom spell
+					if (r[1] == r[2]) and (r[3] == r[4]) then  --Means your moving a custom spell from the same tab
+						SpellsPVEConfig:WipeSpellList(r[1])
+						L.LoseControlCompile:CompileSpells()
+						SpellsPVEConfig:UpdateSpellList(r[1])
+					elseif (r[1] ~= r[2]) and (r[3] == r[4]) then --Means your moving a custom spell from PVE but differnt tab
+						SpellsPVEConfig:WipeSpellList(r[1])
+						SpellsPVEConfig:WipeSpellList(r[2])
+						L.LoseControlCompile:CompileSpells()
+						SpellsPVEConfig:UpdateSpellList(r[1])
+						SpellsPVEConfig:UpdateSpellList(r[2])
+					elseif (r[3] ~= r[4]) then --Means your moving a custom spell from PVP to PVE but differnt tab
 						SpellsPVEConfig:WipeSpellList(r[1])
 					  L.SpellsConfig:WipeSpellList(r[2])
 						L.LoseControlCompile:CompileSpells()
 						SpellsPVEConfig:UpdateSpellList(r[1])
 					  L.SpellsConfig:UpdateSpellList(r[2])
+					end
+				elseif r[5] then --Means your moving an orignal spell
+					if r[5] == 1 then --Moving Spell from PVP tab
+						z = L.SpellsConfig:TabNumber(r[6])
+						L.SpellsConfig:WipeSpellList(z)
+						SpellsPVEConfig:WipeSpellList(i)
+						L.LoseControlCompile:CompileSpells()
+						L.SpellsConfig:UpdateSpellList(z)
+						SpellsPVEConfig:UpdateSpellList(i)
+					else -- --Moving Spell from PVE tab
+						SpellsPVEConfig:WipeSpellList(r[5] - 1)
+						SpellsPVEConfig:WipeSpellList(i)
+						L.LoseControlCompile:CompileSpells()
+						SpellsPVEConfig:UpdateSpellList(r[5] - 1)
+						SpellsPVEConfig:UpdateSpellList(i)
+					end
 				end
-			else
+			else --Adding a new custom spell
 				SpellsPVEConfig:WipeSpellList(i)
 				L.LoseControlCompile:CompileSpells()
 				SpellsPVEConfig:UpdateSpellList(i)
 			end
-			print("|cff00ccffLoseControl : |r".."|cff009900Added |r"  ..  	tab.content.input.customspelltext.." |cff009900to to list: |r"..tabs[i].." (PVE)")
+			print("|cff00ccffLoseControl|r : ".."|cff009900Added |r"..spell.." |cff009900to to list: |r"..tabs[i].." (PVE)")
     end)
+	end
 
 		if (i == 1) then
 		tab:SetPoint("TOPLEFT", UISpellsPVEConfig, "BOTTOMLEFT", 5, 7);
@@ -314,7 +336,6 @@ if i == nil then return end
 			if L.spells[i+1][l][4] then zone = L.spells[i+1][l][4] end
 			if L.spells[i+1][l][5] then duration = L.spells[i+1][l][5] end
 			if L.spells[i+1][l][6] then custom = L.spells[i+1][l][6] end
-			if L.spells[i+1][l][7] then pvetab = L.spells[i+1][l][7] end
 		end
 			if (spellID) then
 				local spellCheck
@@ -340,19 +361,32 @@ if i == nil then return end
 				spellCheck.icon:SetScale(0.3)
 				spellCheck.icon:Show()
 				spellCheck.icon.check = spellCheck
+				local aString = spellID
 				if type(spellID) == "number" then
 					if (instanceType ==  "arena" or instanceType == "pvp") then
-						spellCheck.text:SetText(GetSpellInfo(spellID)..": "..prio.."\n".." ("..instanceType..")" or "SPELL REMOVED: "..spellID);
-						spellCheck.icon:SetNormalTexture(GetSpellTexture(spellID) or 1)
+						local aString1 = GetSpellInfo(spellID)..": "..prio or "SPELL REMOVED: "..spellID
+						local aString2 = " ("..instanceType..")"
+						local cutString1 = string.sub(aString1, 0, 25);
+						local cutString2 = string.sub(aString2, 0, 27);
+						local aString3 = cutString1.."\n"..cutString2
+						spellCheck.text:SetText(aString3);
 					elseif zone then
-						spellCheck.text:SetText(GetSpellInfo(spellID)..": "..prio.."\n".." ("..zone..")" or "SPELL REMOVED: "..spellID);
-						spellCheck.icon:SetNormalTexture(GetSpellTexture(spellID) or 1)
+						local aString1 = GetSpellInfo(spellID)..": "..prio or "SPELL REMOVED: "..spellID
+						local aString2 = " ("..zone..")"
+						local cutString1 = string.sub(aString1, 0, 25);
+						local cutString2 = string.sub(aString2, 0, 27);
+					  local	aString3 = cutString1.."\n"..cutString2
+						spellCheck.text:SetText(aString3);
 					else
-						spellCheck.text:SetText(GetSpellInfo(spellID)..": "..prio or "SPELL REMOVED: "..spellID);
-						spellCheck.icon:SetNormalTexture(GetSpellTexture(spellID) or 1)
+						aString = GetSpellInfo(spellID)..": "..prio or "SPELL REMOVED: "..spellID
+						local cutString = string.sub(aString, 0, 25);
+						spellCheck.text:SetText(cutString);
 					end
+					spellCheck.icon:SetNormalTexture(GetSpellTexture(spellID) or 1)
 				else
-				spellCheck.text:SetText(spellID..": "..prio);
+				aString = spellID..": "..prio
+				local cutString = string.sub(aString, 0, 25);
+				spellCheck.text:SetText(cutString);
 				spellCheck.icon:SetNormalTexture(1008124)
 				end
 				spellCheck:SetChecked(_G.LoseControlDB.spellEnabled[spellID] or false);   --Error on 1st ADDON_LOADED
