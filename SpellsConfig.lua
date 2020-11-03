@@ -420,7 +420,7 @@ if i == nil then return end
 				else
 				spellCheck.icon:SetNormalTexture(1008124)
 				end
-				local cutString = string.sub(aString, 0, 25);
+				local cutString = string.sub(aString, 0, 23);
 				spellCheck.text:SetText(cutString);
 				spellCheck:SetChecked(_G.LoseControlDB.spellEnabled[spellID] or false);   --Error on 1st ADDON_LOADED
 				spellCheck.spellID = spellID

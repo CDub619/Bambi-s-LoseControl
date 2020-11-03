@@ -366,26 +366,26 @@ if i == nil then return end
 					if (instanceType ==  "arena" or instanceType == "pvp") then
 						local aString1 = GetSpellInfo(spellID)..": "..prio or "SPELL REMOVED: "..spellID
 						local aString2 = " ("..instanceType..")"
-						local cutString1 = string.sub(aString1, 0, 25);
+						local cutString1 = string.sub(aString1, 0, 23);
 						local cutString2 = string.sub(aString2, 0, 27);
 						local aString3 = cutString1.."\n"..cutString2
 						spellCheck.text:SetText(aString3);
 					elseif zone then
 						local aString1 = GetSpellInfo(spellID)..": "..prio or "SPELL REMOVED: "..spellID
 						local aString2 = " ("..zone..")"
-						local cutString1 = string.sub(aString1, 0, 25);
+						local cutString1 = string.sub(aString1, 0, 23);
 						local cutString2 = string.sub(aString2, 0, 27);
 					  local	aString3 = cutString1.."\n"..cutString2
 						spellCheck.text:SetText(aString3);
 					else
 						aString = GetSpellInfo(spellID)..": "..prio or "SPELL REMOVED: "..spellID
-						local cutString = string.sub(aString, 0, 25);
+						local cutString = string.sub(aString, 0, 23);
 						spellCheck.text:SetText(cutString);
 					end
 					spellCheck.icon:SetNormalTexture(GetSpellTexture(spellID) or 1)
 				else
 				aString = spellID..": "..prio
-				local cutString = string.sub(aString, 0, 25);
+				local cutString = string.sub(aString, 0, 23);
 				spellCheck.text:SetText(cutString);
 				spellCheck.icon:SetNormalTexture(1008124)
 				end

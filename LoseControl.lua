@@ -3043,8 +3043,8 @@ local DBdefaults = {
 
 	customSpellIds = { },
 	customSpellIdsArena = { },
-
-	version = 6.21, -- This is the settings version, not necessarily the same as the LoseControl version
+	
+	version = 9.1, -- This is the settings version, not necessarily the same as the LoseControl version
 	noCooldownCount = false,
 	noBlizzardCooldownCount = true,
 	noLossOfControlCooldown = false, --Chris Need to Test what is better
@@ -5227,7 +5227,7 @@ function LoseControl:ADDON_LOADED(arg1)
 			_G.LoseControlDB.version = DBdefaults.version
 		end
 		LoseControlDB = _G.LoseControlDB
-		self.VERSION = "6.11"
+		self.VERSION = "9.0"
 		self.noCooldownCount = LoseControlDB.noCooldownCount
 		self.noBlizzardCooldownCount = LoseControlDB.noBlizzardCooldownCount
 		self.noLossOfControlCooldown = LoseControlDB.noLossOfControlCooldown
