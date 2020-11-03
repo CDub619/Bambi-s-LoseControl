@@ -3043,7 +3043,7 @@ local DBdefaults = {
 
 	customSpellIds = { },
 	customSpellIdsArena = { },
-	
+
 	version = 9.1, -- This is the settings version, not necessarily the same as the LoseControl version
 	noCooldownCount = false,
 	noBlizzardCooldownCount = true,

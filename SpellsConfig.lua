@@ -246,7 +246,7 @@ local function SetTabs(frame, numTabs, ...)
 				local spell, name
 				name = GetSpellInfo(tonumber(tab.content.input.customspelltext))
 				if name then spell = tonumber(tab.content.input.customspelltext) else spell = tab.content.input.customspelltext end
-				tblinsert(_G.LoseControlDB.customSpellIds, 1, {spell, tabs[i], nil, nil, nil,"custom", 1, i, "PVP", tabs[i]})  --v[7]: Category Tab to enter spell / v[8]: Tab to update / v[9]: Table / v[10]: tab name
+				tblinsert(_G.LoseControlDB.customSpellIds, 1, {spell, tabs[i], nil, nil, nil,"custom", 1, i,"PVP", tabs[i]})  --v[7]: Category Tab to enter spell / v[8]: Tab to update / v[9]: Table / v[10]: tab name
 				local r = L.LoseControlCompile:CustomCompileSpells(spell)
 				if r then
 					if r[1] then --Means your moving a custom spell
@@ -376,7 +376,7 @@ if i == nil then return end
 	local X = 230
 	local spellCount = 1
 	for l = 2, #L.spells[1] do
-		local spellID, prio, zone, duration
+		local spellID, prio, zone, instanceType, duration, custom
 		if L.spells[1][l] then
 			if L.spells[1][l][1] then spellID = L.spells[1][l][1]	end
 			if L.spells[1][l][2] then prio = L.spells[1][l][2] end
@@ -421,7 +421,11 @@ if i == nil then return end
 				spellCheck.icon:SetNormalTexture(1008124)
 				end
 				local cutString = string.sub(aString, 0, 23);
-				spellCheck.text:SetText(cutString);
+				if custom then
+					spellCheck.text:SetText(cutString.."\n".."("..custom..")");
+				else
+					spellCheck.text:SetText(cutString);
+				end
 				spellCheck:SetChecked(_G.LoseControlDB.spellEnabled[spellID] or false);   --Error on 1st ADDON_LOADED
 				spellCheck.spellID = spellID
 				spellCheck:SetScript("OnClick",

@@ -328,7 +328,7 @@ if i == nil then return end
 	local X = 230
 	local spellCount = 1
 	for l = 2, #L.spells[i+1] do
-		local spellID, prio, zone, instanceType
+		local spellID, prio, zone, instanceType, duration, custom
 		if L.spells[i+1][l] then
 			if L.spells[i+1][l][1] then spellID = L.spells[i+1][l][1]	end
 			if L.spells[i+1][l][2] then prio = L.spells[i+1][l][2] end
@@ -380,13 +380,21 @@ if i == nil then return end
 					else
 						aString = GetSpellInfo(spellID)..": "..prio or "SPELL REMOVED: "..spellID
 						local cutString = string.sub(aString, 0, 23);
-						spellCheck.text:SetText(cutString);
+						if custom then
+							spellCheck.text:SetText(cutString.."\n".."("..custom..")");
+						else
+							spellCheck.text:SetText(cutString);
+						end
 					end
 					spellCheck.icon:SetNormalTexture(GetSpellTexture(spellID) or 1)
 				else
 				aString = spellID..": "..prio
 				local cutString = string.sub(aString, 0, 23);
-				spellCheck.text:SetText(cutString);
+				if custom then
+					spellCheck.text:SetText(cutString.."\n".."("..custom..")");
+				else
+					spellCheck.text:SetText(cutString);
+				end
 				spellCheck.icon:SetNormalTexture(1008124)
 				end
 				spellCheck:SetChecked(_G.LoseControlDB.spellEnabled[spellID] or false);   --Error on 1st ADDON_LOADED
