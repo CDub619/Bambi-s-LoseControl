@@ -167,7 +167,7 @@ Snares_Ranged_Spamable = 2,
 Snares_Casted_Melee = 1,
 ]]
 
-local spellsArena = {
+local spellsArenaTable = {
 	----------------
 	-- Hunter
 	----------------
@@ -4999,6 +4999,7 @@ local LoseControlCompile = L.LoseControlCompile;
 
 function LoseControlCompile:CompileArenaSpells()
 
+	spellsArena = CopyTable(spellsArenaTable)
 	spellIdsArena = {}
 
 	for k, v in ipairs(spellsArena) do
@@ -5010,9 +5011,10 @@ function LoseControlCompile:CompileArenaSpells()
 	end
 
 	for k, v in ipairs(cleuSpells) do
-	tblinsert(spellsArena, {v[1] , v[3], nil, nil, v[2]})
+	tblinsert(spellsArena[1], 2, {v[1] , v[4], nil, nil, v[2],  v[6], nil, v[6]})
 	end
 
+	L.spellsArena = spellsArena
 
 --ARENAENABLED-------------------------------------------------------------------------------------------
 	for k in pairs(spellIdsArena) do
@@ -5025,14 +5027,12 @@ function LoseControlCompile:CompileArenaSpells()
 		_G.LoseControlDB.spellEnabledArena[k]= true
 		end
 	end
-	for k in pairs(cleuPrioCastedSpells) do
-		if _G.LoseControlDB.spellEnabledArena[k] == nil then
-		_G.LoseControlDB.spellEnabledArena[k]= true
+	for k in pairs(cleuPrioCastedSpells) do --cleuPrioCastedSpells is just the one list
+		if _G.LoseControlDB.spellEnabledArena[cleuPrioCastedSpells[k].nameArena] == nil then
+		_G.LoseControlDB.spellEnabledArena[cleuPrioCastedSpells[k].nameArena]= true
 		end
 	end
 
-	L.spellsArena = spellsArena
-	L.SpellsArenaConfig:Update() --need to clean up code
 end
 
 
@@ -5164,11 +5164,11 @@ function LoseControlCompile:CompileSpells(typeUpdate)
 				end
 			end
 		end
-		--Make interruptIds for cleu
+		--Make interruptIds for cleu -- only need to compile 1x for arena and players
 		for k, v in ipairs(interrupts) do
 		interruptsIds[v[1]] = v[2]
 		end
-		--Make cleuPrioCastedSpells for cleu
+		--Make cleuPrioCastedSpells for cleu -- only need to compile 1x for arena and players
 		for k, v in ipairs(cleuSpells) do
 		cleuPrioCastedSpells[v[1]] = {["duration"] = v[2], ["priority"] = v[3], ["priorityArena"] = v[4],  ["name"] = v[5],  ["nameArena"] = v[6]}
 		end

@@ -12,7 +12,7 @@
 ## Notes-ruRU: Показывает продолжительность влияний CC на вашем характере
 ## Notes-zhCN: 显示被控制的剩余时间
 ## Notes-zhTW: 顯示被控制的剩餘時間
-## X-eMail: 
+## X-eMail:
 ## X-Website:
 ## X-Website2:
 ## X-Category: Buffs
@@ -22,5 +22,5 @@
 localization.lua
 LoseControl.lua
 SpellsConfig.lua
-SpellsConfigArena.lua
-SpellsConfigPVE.lua
+SpellsPVEConfig.lua
+SpellsArenaConfig.lua
