@@ -5036,7 +5036,7 @@ function LoseControlCompile:CompileArenaSpells()
 end
 
 
-function  LoseControlCompile:CustomCompileSpells(spell, type, Update)
+function  LoseControlCompile:CustomCompileSpells(spell, type)
 	if spellIds[spell] then
 		for k, v in ipairs(_G.LoseControlDB.customSpellIds) do
 			if spell == v[1] then
