@@ -5011,7 +5011,7 @@ function LoseControlCompile:CompileArenaSpells()
 	end
 
 	for k, v in ipairs(cleuSpells) do
-	tblinsert(spellsArena[1], 2, {v[1] , v[4], nil, nil, v[2],  v[6], nil, v[6]})
+	tblinsert(spellsArena, {v[1] , v[4], nil, nil, v[2],  v[6], nil, v[6]})
 	end
 
 	L.spellsArena = spellsArena
