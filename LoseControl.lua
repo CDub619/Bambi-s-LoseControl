@@ -5002,6 +5002,8 @@ function LoseControlCompile:CompileArenaSpells()
 	spellsArena = CopyTable(spellsArenaTable)
 	spellIdsArena = {}
 
+
+
 	for k, v in ipairs(spellsArena) do
 	spellIdsArena[v[1]] = v[2]
 	end
