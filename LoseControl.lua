@@ -7288,9 +7288,11 @@ LossOfControlSpells:SetPoint("CENTER",PrioritySlider.Speed_Freedoms, "CENTER", 8
 LossOfControlSpellsPVE:SetPoint("CENTER", LossOfControlSpells, "CENTER", 0, -20)
 LossOfControlSpellsArena:SetPoint("CENTER", PrioritySliderArena.Drink_Purge, "CENTER", 8, 36)
 -------------------------------------------------------------------------------
-OptionsPanel.default = function() -- This method will run when the player clicks "defaults".SnareMagic
+OptionsPanel.default = function() -- This method will run when the player clicks "defaults"
 	_G.LoseControlDB = nil
 	LoseControl:ADDON_LOADED(addonName)
+	L.SpellsPVEConfig:Reset()
+	L.SpellsConfig:Reset()
 	for _, v in pairs(LCframes) do
 		v:PLAYER_ENTERING_WORLD()
 	end

@@ -30,17 +30,23 @@ local tabs = {}
 -- SpellsPVEConfig functions
 --------------------------------------
 function SpellsPVEConfig:Addon_Load()
-if UISpellsPVEConfig then SpellsPVEConfig:WipeAllSpellList() end
-local menu = UISpellsPVEConfig or SpellsPVEConfig:CreateMenu();
+if not UISpellsPVEConfig then SpellsPVEConfig:CreateMenu(); SpellsPVEConfig:UpdateAllSpellList() end
+end
+
+function SpellsPVEConfig:Reset()
+if not UISpellsPVEConfig then return end
+SpellsPVEConfig:WipeAllSpellList()
 SpellsPVEConfig:UpdateAllSpellList()
 end
 
 function SpellsPVEConfig:Toggle() --Builds the Table
+	if not UISpellsPVEConfig then SpellsPVEConfig:CreateMenu(); SpellsPVEConfig:UpdateAllSpellList() end
 	local menu = UISpellsPVEConfig
 	menu:SetShown(not menu:IsShown());
 end
 
 function SpellsPVEConfig:UpdateTab(i)
+	if not UISpellsPVEConfig then return end
 	SpellsPVEConfig:WipeSpellList(i)
 	SpellsPVEConfig:UpdateSpellList(i);
 end
@@ -284,7 +290,7 @@ end
 
 function SpellsPVEConfig:ResetSpellList(i)
 	local c = contents[i]
-	for spellCount = 1, #L.spells[i+1] do
+	for spellCount = 1, (#L.spells[i+1] + 1) do
 		if  _G[c:GetName().."spellCheck"..i..spellCount] then
 			local spellCheck = _G[c:GetName().."spellCheck"..i..spellCount];
 			spellCheck.icon = _G[spellCheck:GetName().."Icon"]
@@ -298,7 +304,7 @@ end
 
 function SpellsPVEConfig:WipeSpellList(i)
 local c = contents[i]
- 	for spellCount = 1, #L.spells[i+1] do
+ 	for spellCount = 1, (#L.spells[i+1] + 1) do
 		if  _G[c:GetName().."spellCheck"..i..spellCount] then
 			local spellCheck = _G[c:GetName().."spellCheck"..i..spellCount];
 			spellCheck:Hide()

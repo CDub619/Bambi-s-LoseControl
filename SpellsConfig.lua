@@ -78,17 +78,23 @@ function SpellsConfig:TabNumber(type)
 -- SpellsConfig functions
 --------------------------------------
 function SpellsConfig:Addon_Load()
-if UISpellsConfig then SpellsConfig:WipeAllSpellList() end
-local menu = UISpellsConfig or SpellsConfig:CreateMenu();
-SpellsConfig:UpdateAllSpellList()
+if not UISpellsConfig then SpellsConfig:CreateMenu(); SpellsConfig:UpdateAllSpellList() end
+end
+
+function SpellsConfig:Reset()
+if not UISpellsConfig then return end
+	SpellsConfig:WipeAllSpellList()
+	SpellsConfig:UpdateAllSpellList()
 end
 
 function SpellsConfig:Toggle() --Builds the Table
+	if not UISpellsConfig then SpellsConfig:CreateMenu(); SpellsConfig:UpdateAllSpellList() end
 	local menu = UISpellsConfig
 	menu:SetShown(not menu:IsShown());
 end
 
 function SpellsConfig:UpdateTab(i)
+	if not UISpellsConfig then return end
 	SpellsConfig:WipeSpellList(i)
 	SpellsConfig:UpdateSpellList(i);
 end
@@ -332,7 +338,7 @@ end
 
 function SpellsConfig:ResetSpellList(i)
 	local c = contents[i]
-	for spellCount = 1, #L.spells[1] do
+	for spellCount = 1, (#L.spells[1] + 1) do
 		if  _G[c:GetName().."spellCheck"..i..spellCount] then
 			local spellCheck = _G[c:GetName().."spellCheck"..i..spellCount];
 			spellCheck.icon = _G[spellCheck:GetName().."Icon"]
@@ -346,7 +352,7 @@ end
 
 function SpellsConfig:WipeSpellList(i)
 local c = contents[i]
- 	for spellCount = 1, #L.spells[1] do
+ 	for spellCount = 1, (#L.spells[1] + 1) do
 		if  _G[c:GetName().."spellCheck"..i..spellCount] then
 			local spellCheck = _G[c:GetName().."spellCheck"..i..spellCount];
 			spellCheck:Hide()
@@ -399,6 +405,39 @@ if i == nil then return end
 					spellCheck:SetPoint("TOPLEFT", c, "TOPLEFT", 30, -10);
 				end
 				spellCheck:Show()
+
+				local raid_opts = {
+				    ['name']='raid',
+				    ['parent']=spellCheck,
+				    ['title']='',
+				    ['items']= {	"CC","Silence","RootPhyiscal_Special","RootMagic_Special","Root","ImmunePlayer","Disarm_Warning","CC_Warning","Stealth","Immune","ImmuneSpell","ImmunePhysical","AuraMastery_Cast_Auras","ROP_Vortex","Disarm","Haste_Reduction","Dmg_Hit_Reduction",
+							"Interrupt","AOE_DMG_Modifiers","Friendly_Smoke_Bomb","AOE_Spell_Refections","Trees","Speed_Freedoms","Freedoms","Friendly_Defensives","Mana_Regen","CC_Reduction","Personal_Offensives","Peronsal_Defensives","Movable_Cast_Auras","Other","PvE","SnareSpecial",
+							"SnarePhysical70","SnareMagic70","SnarePhysical50","SnarePosion50","SnareMagic50","SnarePhysical30","SnareMagic30","Snare",},
+				    ['defaultVal']='',
+				    ['changeFunc']=function(dropdown_frame, dropdown_val)
+							for k, v in ipairs(tabs) do
+								if dropdown_val == L[v] then
+									dropdown_val = v
+								end
+							end
+							local i2 = SpellsConfig:TabNumber(dropdown_val)
+							 if i ~= i2 then
+								 local spell, name
+								 name = GetSpellInfo(tonumber(spellID))
+								 if name then spell = tonumber(spellID) else spell = spellID end
+								 tblinsert(_G.LoseControlDB.customSpellIds, 1, {spell, tabs[i2], nil, nil, nil,"custom", 1, i,"PVP", tabs[i]})  --v[7]: Category Tab to enter spell / v[8]: Tab to update / v[9]: Table / v[10]: tab name
+								 local r = L.LoseControlCompile:CustomCompileSpells(spellID)
+								 SpellsConfig:WipeSpellList(i)
+								 SpellsConfig:WipeSpellList(i2)
+								 L.LoseControlCompile:CompileSpells()
+								 SpellsConfig:UpdateSpellList(i)
+								 SpellsConfig:UpdateSpellList(i2)
+								 print("|cff00ccffLoseControl|r : ".."|cff009900Added |r"..spell.." |cff009900to to list: |r"..tabs[i2].." (PVP)")
+							 end
+				    end
+				}
+				raidDD = SpellsConfig:createDropdown(raid_opts)
+
 				if _G[spellCheck:GetName().."Icon"] then
 				spellCheck.icon = _G[spellCheck:GetName().."Icon"]
 				else
@@ -425,6 +464,10 @@ if i == nil then return end
 					spellCheck.text:SetText(cutString.."\n".."("..custom..")");
 				else
 					spellCheck.text:SetText(cutString);
+				end
+				if not duration then
+				raidDD:SetPoint("LEFT", spellCheck.text, "RIGHT", -10,0)
+				raidDD:SetScale(.55)
 				end
 				spellCheck:SetChecked(_G.LoseControlDB.spellEnabled[spellID] or false);   --Error on 1st ADDON_LOADED
 				spellCheck.spellID = spellID
@@ -496,3 +539,50 @@ if i == nil then return end
 		UISpellsConfig:Hide();
 		return UISpellsConfig;
 	end
+
+
+
+function SpellsConfig:createDropdown(opts)
+	    local dropdown_name = '$parent_' .. opts['name'] .. '_dropdown'
+	    local menu_items = opts['items'] or {}
+	    local title_text = opts['title'] or ''
+	    local dropdown_width = 0
+	    local default_val = opts['defaultVal'] or ''
+	    local change_func = opts['changeFunc'] or function (dropdown_val) end
+
+	    local dropdown = CreateFrame("Frame", dropdown_name, opts['parent'], 'UIDropDownMenuTemplate')
+	    local dd_title = dropdown:CreateFontString(dropdown, 'OVERLAY', 'GameFontNormal')
+	    dd_title:SetPoint("TOPLEFT", 20, 10)
+
+	    for _, item in pairs(menu_items) do -- Sets the dropdown width to the largest item string width.
+	        dd_title:SetText(item)
+	        local text_width = dd_title:GetStringWidth() + 20
+	        if text_width > dropdown_width then
+	            dropdown_width = text_width
+	        end
+	    end
+
+	    UIDropDownMenu_SetWidth(dropdown, 1)
+	    UIDropDownMenu_SetText(dropdown, 1)
+	    dd_title:SetText(title_text)
+
+	    UIDropDownMenu_Initialize(dropdown, function(self, level, _)
+	        local info = UIDropDownMenu_CreateInfo()
+	        for key, val in pairs(menu_items) do
+						if L[val] then val = L[val] end
+	            info.text = val;
+	            info.checked = false
+	            info.menuList= key
+	            info.hasArrow = false
+	            info.func = function(b)
+	                UIDropDownMenu_SetSelectedValue(dropdown, b.value, b.value)
+	                UIDropDownMenu_SetText(dropdown, b.value)
+	                b.checked = true
+	                change_func(dropdown, b.value)
+	            end
+	            UIDropDownMenu_AddButton(info)
+	        end
+	    end)
+
+	    return dropdown
+		end
