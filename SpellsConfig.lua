@@ -410,9 +410,7 @@ if i == nil then return end
 				    ['name']='raid',
 				    ['parent']=spellCheck,
 				    ['title']='',
-				    ['items']= {	"CC","Silence","RootPhyiscal_Special","RootMagic_Special","Root","ImmunePlayer","Disarm_Warning","CC_Warning","Stealth","Immune","ImmuneSpell","ImmunePhysical","AuraMastery_Cast_Auras","ROP_Vortex","Disarm","Haste_Reduction","Dmg_Hit_Reduction",
-							"Interrupt","AOE_DMG_Modifiers","Friendly_Smoke_Bomb","AOE_Spell_Refections","Trees","Speed_Freedoms","Freedoms","Friendly_Defensives","Mana_Regen","CC_Reduction","Personal_Offensives","Peronsal_Defensives","Movable_Cast_Auras","Other","PvE","SnareSpecial",
-							"SnarePhysical70","SnareMagic70","SnarePhysical50","SnarePosion50","SnareMagic50","SnarePhysical30","SnareMagic30","Snare","Delete"},
+				    ['items']= tabs,
 				    ['defaultVal']='',
 				    ['changeFunc']=function(dropdown_frame, dropdown_val)
 							if dropdown_val == "Delete" then
