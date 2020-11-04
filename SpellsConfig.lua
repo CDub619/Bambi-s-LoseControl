@@ -412,29 +412,33 @@ if i == nil then return end
 				    ['title']='',
 				    ['items']= {	"CC","Silence","RootPhyiscal_Special","RootMagic_Special","Root","ImmunePlayer","Disarm_Warning","CC_Warning","Stealth","Immune","ImmuneSpell","ImmunePhysical","AuraMastery_Cast_Auras","ROP_Vortex","Disarm","Haste_Reduction","Dmg_Hit_Reduction",
 							"Interrupt","AOE_DMG_Modifiers","Friendly_Smoke_Bomb","AOE_Spell_Refections","Trees","Speed_Freedoms","Freedoms","Friendly_Defensives","Mana_Regen","CC_Reduction","Personal_Offensives","Peronsal_Defensives","Movable_Cast_Auras","Other","PvE","SnareSpecial",
-							"SnarePhysical70","SnareMagic70","SnarePhysical50","SnarePosion50","SnareMagic50","SnarePhysical30","SnareMagic30","Snare",},
+							"SnarePhysical70","SnareMagic70","SnarePhysical50","SnarePosion50","SnareMagic50","SnarePhysical30","SnareMagic30","Snare","Delete"},
 				    ['defaultVal']='',
 				    ['changeFunc']=function(dropdown_frame, dropdown_val)
-							for k, v in ipairs(tabs) do
-								if dropdown_val == L[v] then
-									dropdown_val = v
+							if dropdown_val == "Delete" then
+								---Call Stuff To Delete
+							else
+								for k, v in ipairs(tabs) do
+									if dropdown_val == L[v] then
+										dropdown_val = v
+									end
 								end
-							end
-							local i2 = SpellsConfig:TabNumber(dropdown_val)
-							 if i ~= i2 then
-								 local spell, name
-								 name = GetSpellInfo(tonumber(spellID))
-								 if name then spell = tonumber(spellID) else spell = spellID end
-								 tblinsert(_G.LoseControlDB.customSpellIds, 1, {spell, tabs[i2], nil, nil, nil,"custom", 1, i,"PVP", tabs[i]})  --v[7]: Category Tab to enter spell / v[8]: Tab to update / v[9]: Table / v[10]: tab name
-								 local r = L.LoseControlCompile:CustomCompileSpells(spellID)
-								 SpellsConfig:WipeSpellList(i)
-								 SpellsConfig:WipeSpellList(i2)
-								 L.LoseControlCompile:CompileSpells()
-								 SpellsConfig:UpdateSpellList(i)
-								 SpellsConfig:UpdateSpellList(i2)
-								 print("|cff00ccffLoseControl|r : ".."|cff009900Added |r"..spell.." |cff009900to to list: |r"..tabs[i2].." (PVP)")
+								local i2 = SpellsConfig:TabNumber(dropdown_val)
+								 if i ~= i2 then
+									 local spell, name
+									 name = GetSpellInfo(tonumber(spellID))
+									 if name then spell = tonumber(spellID) else spell = spellID end
+									 tblinsert(_G.LoseControlDB.customSpellIds, 1, {spell, tabs[i2], nil, nil, nil,"custom", 1, i,"PVP", tabs[i]})  --v[7]: Category Tab to enter spell / v[8]: Tab to update / v[9]: Table / v[10]: tab name
+									 local r = L.LoseControlCompile:CustomCompileSpells(spellID)
+									 SpellsConfig:WipeSpellList(i)
+									 SpellsConfig:WipeSpellList(i2)
+									 L.LoseControlCompile:CompileSpells()
+									 SpellsConfig:UpdateSpellList(i)
+									 SpellsConfig:UpdateSpellList(i2)
+									 print("|cff00ccffLoseControl|r : ".."|cff009900Added |r"..spell.." |cff009900to to list: |r"..tabs[i2].." (PVP)")
+								 end
 							 end
-				    end
+					   end
 				}
 				raidDD = SpellsConfig:createDropdown(raid_opts)
 
