@@ -387,7 +387,7 @@ if i == nil then return end
 							if spell then spell = tonumber(spellID) else spell = spellID end
 							if dropdown_val == "Delete" then
 							L.LoseControlCompile:CustomCompileSpells(spell, dropdown_val)
-							tblinsert(_G.LoseControlDB.customSpellIds, {spell, dropdown_val, nil, nil, nil, "custom", 1})
+							tblinsert(_G.LoseControlDB.customSpellIds, {spell, dropdown_val, instanceType, zone, duration, "custom", 1})
 							else
 								for k, v in ipairs(tabs) do
 									if dropdown_val == L[v] then
@@ -397,7 +397,7 @@ if i == nil then return end
 								local i2 = SpellsConfig:TabNumber(dropdown_val)
 								 if i ~= i2 then
 									 L.LoseControlCompile:CustomCompileSpells(spell, tabs[i2])
-								   tblinsert(_G.LoseControlDB.customSpellIds, {spell, tabs[i2], nil, nil, nil,"custom", 1})  --v[7]: Category Tab to enter spell
+								   tblinsert(_G.LoseControlDB.customSpellIds, {spell, tabs[i2], instanceType, zone, duration, "custom", 1})  --v[7]: Category Tab to enter spell
 									 tblinsert(L.spells[1], 2, {spell, tabs[i2], nil, nil, nil,"custom", 1})
 									 SpellsConfig:UpdateTab(i2)
 									 print("|cff00ccffLoseControl|r : ".."|cff009900Added |r"..spell.." |cff009900to to list: |r"..tabs[i2].." (PVP)")
