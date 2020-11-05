@@ -259,6 +259,7 @@ local function SetTabs(frame, numTabs, ...)
 	    tab.content.add:SetPoint("TOPLEFT",	tab.content.input, "TOPRIGHT", 2, 0)
 	    tab.content.add:SetText("Add")
 	  	tab.content.add:SetScript("OnClick", function(self, addenemy)
+				if tab.content.input.customspelltext then
 				local spell = GetSpellInfo(tonumber(tab.content.input.customspelltext))
 				if spell then spell = tonumber(tab.content.input.customspelltext) else spell = tab.content.input.customspelltext end
 				L.LoseControlCompile:CustomCompileSpells(spell, tabs[i])
@@ -266,6 +267,9 @@ local function SetTabs(frame, numTabs, ...)
 				tblinsert(L.spells[1], 2, {spell, tabs[i], nil, nil, nil,"custom", 1})
 				SpellsConfig:UpdateTab(i)
 				print("|cff00ccffLoseControl|r : ".."|cff009900Added |r"..spell.." |cff009900to to list: |r"..tabs[i].." (PVP)")
+				else
+					print("|cff00ccffLoseControl|r : Please Enter a spellId or Name")
+				end
 	    end)
 		end
 

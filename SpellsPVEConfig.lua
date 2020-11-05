@@ -247,7 +247,7 @@ local function SetTabs(frame, numTabs, ...)
   	tab.content.input:SetSize(150,22)
   	tab.content.input:SetAutoFocus(false)
   	tab.content.input:SetMaxLetters(30)
-  	tab.content.input:SetPoint("TOPLEFT", tab.content, "TOPRIGHT", 45, -14)
+  	tab.content.input:SetPoint("TOPLEFT", tab.content, "TOPRIGHT", 45, -6)
   	tab.content.input:SetScript('OnChar', function(self, customspelltext)
     			 	tab.content.input.customspelltext = self:GetText()
     end)
@@ -268,8 +268,8 @@ local function SetTabs(frame, numTabs, ...)
 					end
 		}
 		local dropdown = SpellsPVEConfig:createDropdownAdd(drop_opts)
-		dropdown:SetPoint("TOP", tab.content.input, "CENTER", -4, 36)
-		dropdown:SetScale(.80)
+		dropdown:SetPoint("TOP", tab.content.input, "CENTER", -4, -10)
+		dropdown:SetScale(.85)
 
   	tab.content.add = CreateFrame("Button",  tab:GetName()..'CustomSpellsButton', 	tab.content.input, "UIPanelButtonTemplate")
     tab.content.add:SetSize(50,22)
@@ -278,14 +278,14 @@ local function SetTabs(frame, numTabs, ...)
   	tab.content.add:SetScript("OnClick", function(self, addenemy)
 			local spell = GetSpellInfo(tonumber(tab.content.input.customspelltext))
 			if spell then spell = tonumber(tab.content.input.customspelltext) else spell = tab.content.input.customspelltext end
-			if drop_val then
+			if drop_val and tab.content.input.customspelltext then
 	  	L.LoseControlCompile:CustomCompileSpells(spell, drop_val)
 			tblinsert(_G.LoseControlDB.customSpellIds, {spell, drop_val, nil, nil, nil,"custom", i + 1}) --v[7]: Category Tab to enter spell
 			tblinsert(L.spells[i + 1], 2, {spell, drop_val, nil, nil, nil,"custom", 1})
 			SpellsPVEConfig:UpdateTab(i)
 			print("|cff00ccffLoseControl|r : ".."|cff009900Added |r"..spell.." |cff009900to to list: |r"..tabs[i].." (PVE)")
 			else
-			print("|cff00ccffLoseControl|r : Please Select a Spell Type")
+			print("|cff00ccffLoseControl|r : Please Select a Spell Type or Enter a spellId or Name")
 			end
     end)
 	end
