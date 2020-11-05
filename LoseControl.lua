@@ -1566,9 +1566,10 @@ local spellsTable = {
 	-- -- Grand Empress Shek'zara
 	{314306 , "CC"},				-- Song of the Empress
 },
---[[
+
 	------------------------
 	-- Horrific Visions of N'zoth
+{"Horrific Visions of N'zoth",
 	{317865 , "CC"},				-- Emergency Cranial Defibrillation
 	{304816 , "CC"},				-- Emergency Cranial Defibrillation
 	{291782 , "CC"},				-- Controlled by the Vision
@@ -1632,8 +1633,10 @@ local spellsTable = {
 	{302493 , "CC"},				-- Evacuation Protocol
 	{311020 , "CC"},				-- Evacuation Protocol
 	{308654 , "Immune"},			-- Shield Craggle (not immune}, 90% damage reduction)
+},
 	------------------------
 	-- Visions of N'zoth Assaults (Uldum}, Vale of Eternal Blossoms and Misc)
+{"Visions of N'zoth Assaults (Uldum}, Vale of Eternal Blossoms and Misc",
 	{315818 , "CC"},				-- Burning
 	{250490 , "CC"},				-- Animated Strike
 	{317277 , "CC"},				-- Storm Bolt
@@ -1721,8 +1724,10 @@ local spellsTable = {
 	{313719 , "CC"},				-- X-52 Personnel Armor: Overload
 	{313311 , "CC"},				-- Underhanded Punch
 	{315850 , "CC"},				-- Vomit
+},
 	------------------------
 	-- Battle for Darkshore
+{"Battle for Darkshore",
 	{314516 , "CC"},				-- Savage Charge
 	{314519 , "CC"},				-- Ravage
 	{314884 , "CC"},				-- Frozen Solid
@@ -1749,8 +1754,10 @@ local spellsTable = {
 	{284737 , "Snare"},				-- Toxic Strike
 	{289073 , "Snare"},				-- Terrifying Screech
 	{286510 , "Snare"},				-- Nature's Force
+},
 	------------------------
 	-- Battle for Stromgarde
+{"Battle for Stromgarde",
 	{6524   , "CC"},				-- Ground Tremor
 	{97933  , "CC"},				-- Intimidating Shout
 	{273867 , "CC"},				-- Intimidating Shout
@@ -1781,8 +1788,10 @@ local spellsTable = {
 	{270089 , "Snare"},				-- Frostbolt Volley
 	{262538 , "Snare"},				-- Thunder Clap
 	{259850 , "Snare"},				-- Reverberating Clap
+},
 	------------------------
 	-- BfA Island Expeditions
+{" BfA Island Expeditions",
 	{8377   , "Root"},				-- Earthgrab
 	{270399 , "Root"},				-- Unleashed Roots
 	{270196 , "Root"},				-- Chains of Light
@@ -1934,6 +1943,8 @@ local spellsTable = {
 	{261095 , "Snare"},				-- Vermin Parade
 	{245386 , "Other"},				-- Darkest Darkness (healing taken reduced by 99%)
 	{274972 , "Other"},				-- Breath of Darkness (healing taken reduced by 75%)
+},
+--[[
 	------------------------
 	-- BfA Mythics
 	-- --- Common to all
@@ -5308,8 +5319,8 @@ function LoseControl:ADDON_LOADED(arg1)
 		end
 		LoseControlCompile:CompileSpells(1)
 		LoseControlCompile:CompileArenaSpells()
-		L.SpellsPVEConfig:Addon_Load()
-		L.SpellsConfig:Addon_Load()
+	--L.SpellsPVEConfig:Addon_Load()
+	--L.SpellsConfig:Addon_Load()
 	end
 end
 
