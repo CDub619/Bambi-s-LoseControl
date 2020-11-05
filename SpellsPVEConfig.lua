@@ -26,6 +26,61 @@ local defaults = {
 
 local tabs = {}
 
+local tabsType = {
+	"CC",
+	"Silence",
+	"RootPhyiscal_Special",
+	"RootMagic_Special",
+	"Root",
+	"ImmunePlayer",
+	"Disarm_Warning",
+	"CC_Warning",
+	--"Enemy_Smoke_Bomb",
+	"Stealth",
+	"Immune",
+	"ImmuneSpell",
+	"ImmunePhysical",
+	"AuraMastery_Cast_Auras",
+	"ROP_Vortex",
+	"Disarm",
+	"Haste_Reduction",
+	"Dmg_Hit_Reduction",
+	"Interrupt",
+	"AOE_DMG_Modifiers",
+	"Friendly_Smoke_Bomb",
+	"AOE_Spell_Refections",
+	"Trees",
+	"Speed_Freedoms",
+	"Freedoms",
+	"Friendly_Defensives",
+	"Mana_Regen",
+	"CC_Reduction",
+	"Personal_Offensives",
+	"Peronsal_Defensives",
+	"Movable_Cast_Auras",
+
+	"Other", --PVE only
+	"PvE", --PVE only
+
+	"SnareSpecial",
+	"SnarePhysical70",
+	"SnareMagic70",
+	"SnarePhysical50",
+	"SnarePosion50",
+	"SnareMagic50",
+	"SnarePhysical30",
+	"SnareMagic30",
+	"Snare",
+}
+
+local tabsDrop = {}
+for i = 1, #tabsType + 1 do
+	if not tabsType[i] then
+		tabsDrop[i] = "Delete"
+	else
+		tabsDrop[i] = tabsType[i]
+	end
+end
 
 --------------------------------------
 -- SpellsPVEConfig functions
@@ -196,7 +251,26 @@ local function SetTabs(frame, numTabs, ...)
   	tab.content.input:SetScript('OnChar', function(self, customspelltext)
     			 	tab.content.input.customspelltext = self:GetText()
     end)
-    --
+    local drop_val
+		local drop_opts = {
+				['name']='raid',
+				['parent']= tab.content.input,
+				['title']='',
+				['items']= tabsType,
+				['defaultVal']='',
+				['changeFunc'] = function(dropdown_frame, dropdown_val)
+					drop_val = dropdown_val
+					for k, v in ipairs(tabsType) do
+							if dropdown_val == L[v] then
+								drop_val = v
+							end
+						end
+					end
+		}
+		local dropdown = SpellsPVEConfig:createDropdownAdd(drop_opts)
+		dropdown:SetPoint("TOP", tab.content.input, "CENTER", -4, 36)
+		dropdown:SetScale(.80)
+
   	tab.content.add = CreateFrame("Button",  tab:GetName()..'CustomSpellsButton', 	tab.content.input, "UIPanelButtonTemplate")
     tab.content.add:SetSize(50,22)
   	tab.content.add:SetPoint("TOPLEFT",	tab.content.input, "TOPRIGHT", 2, 0)
@@ -204,17 +278,20 @@ local function SetTabs(frame, numTabs, ...)
   	tab.content.add:SetScript("OnClick", function(self, addenemy)
 			local spell = GetSpellInfo(tonumber(tab.content.input.customspelltext))
 			if spell then spell = tonumber(tab.content.input.customspelltext) else spell = tab.content.input.customspelltext end
-			local type = "CC"
-	  	L.LoseControlCompile:CustomCompileSpells(spell, type)
-			tblinsert(_G.LoseControlDB.customSpellIds, {spell, type, nil, nil, nil,"custom", i + 1}) --v[7]: Category Tab to enter spell
-			tblinsert(L.spells[i + 1], 2, {spell, tabs[i], nil, nil, nil,"custom", 1})
+			if drop_val then
+	  	L.LoseControlCompile:CustomCompileSpells(spell, drop_val)
+			tblinsert(_G.LoseControlDB.customSpellIds, {spell, drop_val, nil, nil, nil,"custom", i + 1}) --v[7]: Category Tab to enter spell
+			tblinsert(L.spells[i + 1], 2, {spell, drop_val, nil, nil, nil,"custom", 1})
 			SpellsPVEConfig:UpdateTab(i)
 			print("|cff00ccffLoseControl|r : ".."|cff009900Added |r"..spell.." |cff009900to to list: |r"..tabs[i].." (PVE)")
+			else
+			print("|cff00ccffLoseControl|r : Please Select a Spell Type")
+			end
     end)
 	end
 
 		if (i == 1) then
-		tab:SetPoint("TOPLEFT", UISpellsPVEConfig, "BOTTOMLEFT", 5, 7);
+			tab:SetPoint("TOPLEFT", UISpellsPVEConfig, "BOTTOMLEFT", 5, 7);
 		rowCount = 1
 		else
 				if rowCount <= 9 then
@@ -328,6 +405,7 @@ if i == nil then return end
 				spellCheck.icon.check = spellCheck
 				local aString = spellID
 				if type(spellID) == "number" then
+					prio = L[prio] or prio
 					if (instanceType ==  "arena" or instanceType == "pvp") then
 						local aString1 = GetSpellInfo(spellID)..": "..prio or "SPELL REMOVED: "..spellID
 						local aString2 = " ("..instanceType..")"
@@ -437,3 +515,50 @@ if i == nil then return end
 		UISpellsPVEConfig:Hide();
 		return UISpellsPVEConfig;
 	end
+
+
+
+	function SpellsPVEConfig:createDropdownAdd(opts)
+		    local dropdown_name = '$parent_' .. opts['name'] .. '_dropdown'
+		    local menu_items = opts['items'] or {}
+		    local title_text = opts['title'] or ''
+		    local dropdown_width = 0
+		    local default_val = opts['defaultVal'] or ''
+		    local change_func = opts['changeFunc'] or function (dropdown_val) end
+
+		    local dropdown = CreateFrame("Frame", dropdown_name, opts['parent'], 'UIDropDownMenuTemplate')
+		    local dd_title = dropdown:CreateFontString(dropdown, 'OVERLAY', 'GameFontNormal')
+		    dd_title:SetPoint("TOPLEFT", 20, 10)
+
+		    for _, item in pairs(menu_items) do -- Sets the dropdown width to the largest item string width.
+		        dd_title:SetText(item)
+		        local text_width = dd_title:GetStringWidth() + 20
+		        if text_width > dropdown_width then
+		            dropdown_width = text_width
+		        end
+		    end
+
+		    UIDropDownMenu_SetWidth(dropdown, dropdown_width)
+		    UIDropDownMenu_SetText(dropdown, dropdown_val)
+		    dd_title:SetText(title_text)
+
+		    UIDropDownMenu_Initialize(dropdown, function(self, level, _)
+		        local info = UIDropDownMenu_CreateInfo()
+		        for key, val in pairs(menu_items) do
+							if L[val] then val = L[val] end
+		            info.text = val;
+		            info.checked = false
+		            info.menuList= key
+		            info.hasArrow = false
+		            info.func = function(b)
+		                UIDropDownMenu_SetSelectedValue(dropdown, b.value, b.value)
+		                UIDropDownMenu_SetText(dropdown, b.value)
+		                b.checked = true
+		                change_func(dropdown, b.value)
+		            end
+		            UIDropDownMenu_AddButton(info)
+		        end
+		    end)
+
+		    return dropdown
+			end

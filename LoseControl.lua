@@ -5308,8 +5308,8 @@ function LoseControl:ADDON_LOADED(arg1)
 		end
 		LoseControlCompile:CompileSpells(1)
 		LoseControlCompile:CompileArenaSpells()
-		--L.SpellsPVEConfig:Addon_Load()
-		--L.SpellsConfig:Addon_Load()
+		L.SpellsPVEConfig:Addon_Load()
+		L.SpellsConfig:Addon_Load()
 	end
 end
 
