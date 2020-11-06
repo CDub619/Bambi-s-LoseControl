@@ -78,6 +78,7 @@ local type = type
 local select = select
 local strfind = string.find
 local tblinsert = table.insert
+local tblremove= table.remove
 local mathfloor = math.floor
 local mathabs = math.abs
 local bit_band = bit.band
@@ -5084,10 +5085,7 @@ function LoseControl:DisableLossOfControlUI()
 end
 
 
-L.LoseControlCompile = {}
-local LoseControlCompile = L.LoseControlCompile;
-
-function LoseControlCompile:CompileArenaSpells()
+function LoseControl:CompileArenaSpells()
 
 	spellsArena = {}
 	spellIdsArena = {}
@@ -5117,7 +5115,7 @@ function LoseControlCompile:CompileArenaSpells()
 	end
 
 	for k, v in ipairs(cleuSpells) do
-	local spellID, duration, prio, prioArena, customname, customnameArena = unpack(v)
+	local spellID, duration, _, prioArena, _, customnameArena = unpack(v)
 		if prioArena then
 		tblinsert(spellsArena[tabsIndex[prioArena]], 2, {spellID , prioArena, nil, nil, duration, customnameArena, nil, "cleuEventArena"})
 		end
@@ -5144,58 +5142,22 @@ function LoseControlCompile:CompileArenaSpells()
 
 end
 
-
-function  LoseControlCompile:CustomCompileSpells(spell , newPrio, newTable, newtabId, oldPrio, oldTable, oldtabId)
-	local row, Update
-	if spellIds[spell] then
-		for k, v in ipairs(_G.LoseControlDB.customSpellIds) do
-			if spell == v[1] then
-				table.remove(_G.LoseControlDB.customSpellIds, k)
-			end
-		end
-		if newPrio and newTable and newtabId and oldPrio and oldTable and oldtabId then ---- Dropdown Menu Function
-			if oldTable == "PVP" then row = 1; Update = L.SpellsConfig else row = oldtabId + 1; Update = L.SpellsPVEConfig end
-			for k, v in ipairs(spells[row][tabsIndex[oldPrio]]) do
-				local spellID, _, _, _, duration = unpack(v)
-				if spell == spellID and (not duration) then
-					table.remove(spells[row][tabsIndex[oldPrio]], k)
-					print("|cff00ccffLoseControl|r : ".."|cff009900Removed |r"..spellID.." |cff009900from list: |r"..oldPrio.." ("..oldTable..")")
-				end
-			end
-			tblinsert(_G.LoseControlDB.customSpellIds, {spell, newPrio, nil, nil, nil, "custom", row})  --v[7]: Category Tab to enter spell
-			if newPrio == "Delete" then
-			 	spellIds[spell] = nil
-				_G.LoseControlDB.spellEnabled[spell]= nil
-				Update:UpdateTab(oldtabId)
-			else
-				spellIds[spell] = newPrio
-				_G.LoseControlDB.spellEnabled[spell]= true
-				tblinsert(spells[row][tabsIndex[newPrio]], 1, {spell, newPrio, nil, nil, nil,"custom", row})
-				print("|cff00ccffLoseControl|r : ".."|cff009900Added |r"..spell.." |cff009900to to list: |r"..newPrio.." ("..oldTable..")")
-				if (newTable == oldTable) and (newtabId == oldtabId) then Update:UpdateTab(newtabId) else Update:UpdateTab(newtabId); Update:UpdateTab(oldtabId) end
-			end
-		elseif newPrio and newTable and newtabId then
-			--Adding New Spells w/ Existing Spells from the edit box
-		end
-	else
-			--Adding New Spells that do Not Exist
-	end
-end
-
-function LoseControlCompile:CompileSpells(typeUpdate)
+function LoseControl:CompileSpells(typeUpdate)
 
 		spells = {}
 		spellIds = {}
 		interruptsIds = {}
 		cleuPrioCastedSpells = {}
-		---Check for duplicate orginal spells remove the second found orginal spell
+
 		local hash = {}
 		local customSpells = {}
+		local toremove = {}
+		--Build Custom Table for Check
 		for k, v in ipairs(_G.LoseControlDB.customSpellIds) do
 			local spellID, prio, _, _, _, _, tabId  = unpack(v)
 			customSpells[spellID] = {spellID, prio, tabId, k}
 		end
-
+		--Build the Spells Table
 		for i = 1, (#spellsTable) do
 			if spells[i] == nil then
 		    spells[i] = {}
@@ -5206,18 +5168,19 @@ function LoseControlCompile:CompileSpells(typeUpdate)
 	    	end
 			end
 		end
-
+		--Sort the spells
 		for i = 1, (#spellsTable) do
    		for l = 2, #spellsTable[i] do
 				local spellID, prio = unpack(spellsTable[i][l])
         tblinsert(spells[i][tabsIndex[prio]], ({spellID, prio}))
 			end
 		end
-
+		--Clean up Spell List, Remove all Duplicates and Custom Spells (Will ReADD Custom Spells Later)
 		for i = 1, (#spells) do
 			for l = 1, (#spells[i]) do
-				for k, v in ipairs(spells[i][l]) do
-					local spellID, prio = unpack(v)
+				local removed = 0
+				for x = 1, (#spells[i][l]) do
+					local spellID, prio = unpack(spells[i][l][x])
 					if (not hash[spellID]) and (not customSpells[spellID]) then
 						hash[spellID] = {spellID, prio}
 					else
@@ -5225,16 +5188,19 @@ function LoseControlCompile:CompileSpells(typeUpdate)
 							if customSpells[spellID] then
 								local CspellID, Cprio, CtabId, Ck = unpack(customSpells[spellID])
 								if CspellID == spellID and Cprio == prio and CtabId == i then
-								table.remove(_G.LoseControlDB.customSpellIds, Ck)
+								tblremove(_G.LoseControlDB.customSpellIds, Ck)
 								print("|cff00ccffLoseControl|r : "..spellID.." : "..prio.." |cff009900Restored to Orginal Value|r")
 								else
 									if type(spellID) == "number" then
+										if GetSpellInfo(spellID) then
 											local name = GetSpellInfo(spellID)
 											print("|cff00ccffLoseControl|r : "..CspellID.." : "..Cprio.." ("..name..") Modified Spell ".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
+										end
 									else
 											print("|cff00ccffLoseControl|r : "..CspellID.." : "..Cprio.." (not spellId) Modified Spell ".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
 									end
-									table.remove(spells[i][l], k)
+									tblinsert(toremove, {i , l, x, removed, spellID})
+									removed = removed + 1
 								end
 							else
 								local HspellID, Hprio = unpack(hash[spellID])
@@ -5244,17 +5210,22 @@ function LoseControlCompile:CompileSpells(typeUpdate)
 								else
 										print("|cff00ccffLoseControl|r : "..HspellID.." : "..Hprio.." (not spellId) Duplicate Spell ".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
 								end
-								table.remove(spells[i][l], k)
+								tblinsert(toremove, {i , l, x, removed, spellID})
+								removed = removed + 1
 							end
 						end
 					end
 				end
 			end
 		end
-
-  	--Add dbCustom Spells to spells
+		--Now Remove all the Duplicates and Custom Spells
+		for k, v in ipairs(toremove) do
+		local i, l, x, r, s = unpack(v)
+		tblremove(spells[i][l], x - r)
+		end
+  	--ReAdd all dbCustom Spells to spells
 			for k,v in ipairs(_G.LoseControlDB.customSpellIds) do
-				local spellID, prio, instanceType, zone, duration, custom, row, cleuEvent = unpack(v)
+				local spellID, prio, instanceType, zone, duration, customname, row, cleuEvent  = unpack(v)
 				if prio ~= "Delete" then
 					if duration then
 							interruptsIds[spellID] = duration
@@ -5262,7 +5233,6 @@ function LoseControlCompile:CompileSpells(typeUpdate)
 				tblinsert(spells[row][tabsIndex[prio]], 1, v) --v[7]: Category to enter spell / v[8]: Tab to update / v[9]: Table
 				end
 			end
-
   	--Make spellIds from Spells for AuraFilter
 		for i = 1, #spells do
 			for l = 1, #spells[i] do
@@ -5288,13 +5258,14 @@ function LoseControlCompile:CompileSpells(typeUpdate)
 		end
 		--Add cleuPrioCastedSpells  to Spells for Table
 		for k, v in ipairs(cleuSpells) do
-		local spellID, duration, prio, prioArena, customname, customnameArena = unpack(v)
+		local spellID, duration, prio, _, customname = unpack(v)
 			if prio then
 			tblinsert(spells[1][tabsIndex[prio]], 1, {spellID , prio, nil, nil, duration, customname, nil, "cleuEvent"})			--body...
 			end
 		end
 
 		L.spells = spells
+		L.spellIds = spellIds
 		--check for any 1st time spells being added and set to On
 		for k in pairs(spellIds) do --spellIds is the combined PVE list, Spell List and the Discovered & Custom lists from tblinsert above
 			if _G.LoseControlDB.spellEnabled[k] == nil then
@@ -5302,9 +5273,6 @@ function LoseControlCompile:CompileSpells(typeUpdate)
 			end
 		end
 		for k in pairs(interruptsIds) do --interruptsIds is the list and the Discovered list from tblinsert above
-			if _G.LoseControlDB.spellEnabled[k] == nil then
-			_G.LoseControlDB.spellEnabled[k]= true
-			end
 			if _G.LoseControlDB.spellEnabled[k] == nil then
 			_G.LoseControlDB.spellEnabled[k]= true
 			end
@@ -5417,10 +5385,10 @@ function LoseControl:ADDON_LOADED(arg1)
 				end
 			end
 		end
-		LoseControlCompile:CompileSpells(1)
-		LoseControlCompile:CompileArenaSpells()
-	--L.SpellsPVEConfig:Addon_Load()
-	--L.SpellsConfig:Addon_Load()
+		self:CompileSpells(1)
+		self:CompileArenaSpells()
+	  L.SpellsPVEConfig:Addon_Load()
+	  L.SpellsConfig:Addon_Load()
 	end
 end
 

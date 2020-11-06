@@ -16,6 +16,7 @@ local type = type
 local select = select
 local strfind = string.find
 local tblinsert = table.insert
+local tblremove= table.remove
 local mathfloor = math.floor
 local mathabs = math.abs
 local bit_band = bit.band
@@ -297,7 +298,7 @@ local function SetTabs(frame, numTabs, ...)
 			local spell = GetSpellInfo(tonumber(tab.content.input.customspelltext))
 			if spell then spell = tonumber(tab.content.input.customspelltext) else spell = tab.content.input.customspelltext end
 			if drop_val and tab.content.input.customspelltext then
-	  	L.LoseControlCompile:CustomCompileSpells(spell, drop_val, "PVE", i, nil, nil, nil)
+	  	SpellsPVEConfig:CustomAddedCompileSpells(spell, drop_val, i+1)
 			else
 			print("|cff00ccffLoseControl|r : Please Select a Spell Type or Enter a spellId or Name")
 			end
@@ -341,6 +342,8 @@ local function makeAndShowSpellTTPVE(self)
 	GameTooltip:Show()
 end
 
+function SpellsPVEConfig:CustomAddedCompileSpells(spell, prio, row)
+end
 
 function SpellsPVEConfig:ResetSpellList(i)
 	local c = contents[i]
@@ -393,7 +396,7 @@ if i == nil then return end
 	local spellCount = 1
 	for l = 1, #L.spells[i+1] do
 		for x = 1 , #L.spells[i+1][l] do
-		local spellID, prio, instanceType, zone, duration, custom, tabId, cleuEvent = unpack(L.spells[i+1][l][x])
+		local spellID, prio, instanceType, zone, duration, customname, _, _ = unpack(L.spells[i+1][l][x])
 			 if (spellID) then
 				local spellCheck = CreateFrame("CheckButton", c:GetName().."spellCheck"..i..spellCount, c, "UICheckButtonTemplate");
 				if (previousSpellID) then
@@ -433,8 +436,8 @@ if i == nil then return end
 					else
 						aString = GetSpellInfo(spellID)..": "..prio or "SPELL REMOVED: "..spellID
 						local cutString = substring(aString, 0, 23);
-						if custom then
-							spellCheck.text:SetText(cutString.."\n".."("..custom..")");
+						if customname then
+							spellCheck.text:SetText(cutString.."\n".."("..customname..")");
 						else
 							spellCheck.text:SetText(cutString);
 						end
@@ -443,8 +446,8 @@ if i == nil then return end
 				else
 				aString = spellID..": "..prio
 				local cutString = substring(aString, 0, 23);
-				if custom then
-					spellCheck.text:SetText(cutString.."\n".."("..custom..")");
+				if customname then
+					spellCheck.text:SetText(cutString.."\n".."("..customname..")");
 				else
 					spellCheck.text:SetText(cutString);
 				end

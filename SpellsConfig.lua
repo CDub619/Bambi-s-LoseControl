@@ -13,10 +13,12 @@ local type = type
 local select = select
 local strfind = string.find
 local tblinsert = table.insert
+local tblremove= table.remove
 local mathfloor = math.floor
 local mathabs = math.abs
 local bit_band = bit.band
 local unpack = unpack
+local contents = {};
 --------------------------------------
 -- Defaults (usually a database!)
 --------------------------------------
@@ -91,55 +93,17 @@ for i = 1, #tabs + 1 do
 	end
 end
 
-function SpellsConfig:TabNumber(type)
+local function TabNumber(type)
 		for k, v in ipairs(tabs) do
 			if type == v then
 				return k
 			end
 		end
 	end
---------------------------------------
--- SpellsConfig functions
---------------------------------------
-function SpellsConfig:Addon_Load()
-if not UISpellsConfig then SpellsConfig:CreateMenu(); SpellsConfig:UpdateAllSpellList() end
-end
 
-function SpellsConfig:WipeAll()
-if not UISpellsConfig then return end
-	SpellsConfig:WipeAllSpellList()
-end
-
-function SpellsConfig:UpdateAll()
-if not UISpellsConfig then return end
-	SpellsConfig:UpdateAllSpellList()
-end
-
-function SpellsConfig:Toggle() --Builds the Table
-	if not UISpellsConfig then SpellsConfig:CreateMenu(); SpellsConfig:UpdateAllSpellList() end
-	local menu = UISpellsConfig
-	menu:SetShown(not menu:IsShown());
-end
-
-function SpellsConfig:UpdateTab(i)
-	if not UISpellsConfig then return end
-	SpellsConfig:WipeSpellList(i)
---	SpellsConfig:UpdateSpellList(i);
-end
-
-function SpellsConfig:GetThemeColor()
+local function GetThemeColor()
 	local c = defaults.theme;
 	return c.r, c.g, c.b, c.hex;
-end
-
-function SpellsConfig:CreateButton(point, relativeFrame, relativePoint, yOffset, text)
-	local btn = CreateFrame("Button", nil, relativeFrame, "GameMenuButtonTemplate");
-	btn:SetPoint(point, relativeFrame, relativePoint, 0, yOffset);
-	btn:SetSize(140, 40);
-	btn:SetText(text);
-	btn:SetNormalFontObject("GameFontNormalLarge");
-	btn:SetHighlightFontObject("GameFontHighlightLarge");
-	return btn;
 end
 
 local function ScrollFrame_OnMouseWheel(self, delta)
@@ -230,7 +194,113 @@ local function Tab_OnClick(self)
 	self.content:Show();
 end
 
-local contents = {};
+local function makeAndShowSpellTTPVE(self)
+	GameTooltip:SetOwner (self, "ANCHOR_RIGHT")
+	if type(self.spellID) == "number" then
+	GameTooltip:SetSpellByID(self.spellID)
+	else
+		GameTooltip:SetText(self.spellID, 1, 1, 1, true)
+		GameTooltip:AddLine("This Spell Uses the Name not SpellID.", 1.0, 0.82, 0.0, true);
+	end
+	if (self:GetChecked()) then
+		GameTooltip:AddDoubleLine("|cff66FF00Enabled")
+	else
+		GameTooltip:AddDoubleLine("|cffFF0000Disabled")
+	end
+	GameTooltip:Show()
+end
+
+local function GetSpellFrame(spellID, duration, c)
+	if spellID and duration then
+		if _G[c:GetName().."spellCheck"..spellID..duration] then
+		return _G[c:GetName().."spellCheck"..spellID..duration]
+		end
+	elseif _G[c:GetName().."spellCheck"..spellID] then
+		return _G[c:GetName().."spellCheck"..spellID]
+	else
+		return false
+	end
+end
+
+local function CustomAddedCompileSpells(spell, prio, row)
+end
+
+local function CustomPVPDropDownCompileSpells(spell , newPrio, oldPrio)
+	for k, v in ipairs(_G.LoseControlDB.customSpellIds) do
+		if spell == v[1] then
+			tblremove(_G.LoseControlDB.customSpellIds, k)
+			break
+		end
+	end
+	for k, v in ipairs(L.spells[1][tabsIndex[oldPrio]]) do
+		local spellID, _, _, _, duration, customname = unpack(v)
+		if spell == spellID and (not duration) then
+			SpellsConfig:WipeSpellList(tabsIndex[oldPrio])
+			tblremove(L.spells[1][tabsIndex[oldPrio]], k)
+			print("|cff00ccffLoseControl|r : ".."|cff009900Removed |r"..spellID.." |cff009900from list: |r"..oldPrio.." (PVP)")
+			if not customname then
+				tblinsert(_G.LoseControlDB.customSpellIds, {spell, newPrio, nil, nil, nil, customname, 1})  --v[7]: Category Tab to enter spell
+			end
+			break
+		end
+	end
+	if newPrio == "Delete" then
+	 	L.spellIds[spell] = nil
+		_G.LoseControlDB.spellEnabled[spell]= nil
+		L.SpellsConfig:UpdateSpellList(tabsIndex[oldPrio])
+	else
+		L.spellIds[spell] = newPrio
+		_G.LoseControlDB.spellEnabled[spell]= true
+		tblinsert(L.spells[1][tabsIndex[newPrio]], 1, {spell, newPrio, nil, nil, nil, customname, 1})
+		print("|cff00ccffLoseControl|r : ".."|cff009900Added |r"..spell.." |cff009900to to list: |r"..newPrio.." (PVP)")
+		SpellsConfig:UpdateSpellList(tabsIndex[oldPrio]);SpellsConfig:UpdateTab(tabsIndex[newPrio]);
+	end
+end
+
+local function createDropdown(opts)
+	    local dropdown_name = '$parent_' .. opts['name'] .. '_dropdown'
+	    local menu_items = opts['items'] or {}
+	    local title_text = opts['title'] or ''
+	    local dropdown_width = 0
+	    local default_val = opts['defaultVal'] or ''
+	    local change_func = opts['changeFunc'] or function (dropdown_val) end
+
+	    local dropdown = CreateFrame("Frame", dropdown_name, opts['parent'], 'UIDropDownMenuTemplate')
+	    local dd_title = dropdown:CreateFontString(dropdown, 'OVERLAY', 'GameFontNormal')
+	    dd_title:SetPoint("TOPLEFT", 20, 10)
+
+	    for _, item in pairs(menu_items) do -- Sets the dropdown width to the largest item string width.
+	        dd_title:SetText(item)
+	        local text_width = dd_title:GetStringWidth() + 20
+	        if text_width > dropdown_width then
+	            dropdown_width = text_width
+	        end
+	    end
+
+	    UIDropDownMenu_SetWidth(dropdown, 1)
+	    UIDropDownMenu_SetText(dropdown, 1)
+	    dd_title:SetText(title_text)
+
+	    UIDropDownMenu_Initialize(dropdown, function(self, level, _)
+	        local info = UIDropDownMenu_CreateInfo()
+	        for key, val in pairs(menu_items) do
+						if L[val] then val = L[val] end
+	            info.text = val;
+	            info.checked = false
+	            info.menuList= key
+	            info.hasArrow = false
+	            info.func = function(b)
+	                UIDropDownMenu_SetSelectedValue(dropdown, b.value, b.value)
+	                UIDropDownMenu_SetText(dropdown, b.value)
+	                b.checked = true
+	                change_func(dropdown, b.value)
+	            end
+	            UIDropDownMenu_AddButton(info)
+	        end
+	    end)
+
+	    return dropdown
+		end
 
 local function SetTabs(frame, numTabs, ...)
 	frame.numTabs = numTabs;
@@ -280,7 +350,7 @@ local function SetTabs(frame, numTabs, ...)
 				if tab.content.input.customspelltext then
 				local spell = GetSpellInfo(tonumber(tab.content.input.customspelltext))
 				if spell then spell = tonumber(tab.content.input.customspelltext) else spell = tab.content.input.customspelltext end
-				L.LoseControlCompile:CustomCompileSpells(spell, tabs[i], "PVP", i, nil, nil, nil)
+				CustomAddedCompileSpells(spell, tabs[i], 1)
 				else
 					print("|cff00ccffLoseControl|r : Please Enter a spellId or Name")
 				end
@@ -308,22 +378,85 @@ local function SetTabs(frame, numTabs, ...)
 	return contents;
 end
 
-local function makeAndShowSpellTTPVE(self)
-	GameTooltip:SetOwner (self, "ANCHOR_RIGHT")
-	if type(self.spellID) == "number" then
-	GameTooltip:SetSpellByID(self.spellID)
-	else
-		GameTooltip:SetText(self.spellID, 1, 1, 1, true)
-		GameTooltip:AddLine("This Spell Uses the Name not SpellID.", 1.0, 0.82, 0.0, true);
-	end
-	if (self:GetChecked()) then
-		GameTooltip:AddDoubleLine("|cff66FF00Enabled")
-	else
-		GameTooltip:AddDoubleLine("|cffFF0000Disabled")
-	end
-	GameTooltip:Show()
+local function CreateMenu()
+	UISpellsConfig = CreateFrame("Frame", "LoseControlSpellsConfig", UIParent, "UIPanelDialogTemplate");
+	local hex = select(4, GetThemeColor());
+	local BambiTag = string.format("|cff%s%s|r", hex:upper(), "By Bambi");
+	UISpellsConfig.Title:SetText('LoseControl PVP Spells Config '..BambiTag)
+	UISpellsConfig:SetFrameStrata("DIALOG");
+	UISpellsConfig:SetFrameLevel(2);
+	UISpellsConfig:EnableMouse(true);
+	UISpellsConfig:SetMovable(true)
+	UISpellsConfig:RegisterForDrag("LeftButton")
+	UISpellsConfig:SetScript("OnDragStart", UISpellsConfig.StartMoving)
+	UISpellsConfig:SetScript("OnDragStop", UISpellsConfig.StopMovingOrSizing)
+
+	UISpellsConfig:SetSize(1050, 400);
+	UISpellsConfig:SetPoint("CENTER"); -- Doesn't need to be ("CENTER", UIParent, "CENTER")
+
+
+	UISpellsConfig.ScrollFrame = CreateFrame("ScrollFrame", nil, UISpellsConfig, "UIPanelScrollFrameTemplate");
+	UISpellsConfig.ScrollFrame:SetPoint("TOPLEFT", LoseControlSpellsConfigDialogBG, "TOPLEFT", 4, -8);
+	UISpellsConfig.ScrollFrame:SetPoint("BOTTOMRIGHT", LoseControlSpellsConfigDialogBG, "BOTTOMRIGHT", -3, 4);
+	UISpellsConfig.ScrollFrame:SetClipsChildren(true);
+	UISpellsConfig.ScrollFrame:SetScript("OnMouseWheel", ScrollFrame_OnMouseWheel);
+
+	UISpellsConfig.ScrollFrame.ScrollBar:ClearAllPoints();
+  UISpellsConfig.ScrollFrame.ScrollBar:SetPoint("TOPLEFT", UISpellsConfig.ScrollFrame, "TOPRIGHT", -12, -18);
+  UISpellsConfig.ScrollFrame.ScrollBar:SetPoint("BOTTOMRIGHT", UISpellsConfig.ScrollFrame, "BOTTOMRIGHT", -7, 18);
+
+	local allContents = SetTabs(UISpellsConfig, #tabs, unpack(tabs));
+
+	UISpellsConfig:Hide();
+	return UISpellsConfig;
 end
 
+--------------------------------------
+-- SpellsConfig functions
+--------------------------------------
+function SpellsConfig:Addon_Load()
+if not UISpellsConfig then CreateMenu(); SpellsConfig:UpdateAllSpellList() end
+end
+
+function SpellsConfig:Toggle() --Builds the Table
+	if not UISpellsConfig then CreateMenu(); SpellsConfig:UpdateAllSpellList() end
+	local menu = UISpellsConfig
+	menu:SetShown(not menu:IsShown());
+end
+
+function SpellsConfig:WipeAll()
+if not UISpellsConfig then return end
+	SpellsConfig:WipeAllSpellList()
+end
+
+function SpellsConfig:UpdateAll()
+if not UISpellsConfig then return end
+	SpellsConfig:UpdateAllSpellList()
+end
+
+function SpellsConfig:UpdateTab(i)
+	if not UISpellsConfig then return end
+	SpellsConfig:WipeSpellList(i)
+	SpellsConfig:UpdateSpellList(i);
+end
+
+function SpellsConfig:WipeAllSpellList()
+	for i = 1, #tabs do
+	SpellsConfig:WipeSpellList(i)
+	end
+end
+
+function SpellsConfig:UpdateAllSpellList()
+	for i = 1, #tabs do
+	SpellsConfig:UpdateSpellList(i)
+	end
+end
+
+--[[function SpellsConfig:ResetAllSpellList()
+	for i = 1, #tabs do
+	SpellsConfig:ResetSpellList(i)
+	end
+end
 
 function SpellsConfig:ResetSpellList(i)
 	local c = contents[i]
@@ -336,43 +469,48 @@ function SpellsConfig:ResetSpellList(i)
 			_G.LoseControlDB.spellEnabled[spellID] = true
 			spellCheck:SetChecked(_G.LoseControlDB.spellEnabled[spellID] or false);   --Error on 1st ADDON_LOADED
 		end
-	end
-
+	end]]
 
 function SpellsConfig:WipeSpellList(i)
 local c = contents[i]
- 	for spellCount = 1, (#L.spells[1][i] + 1) do
-		if not  _G[c:GetName().."spellCheck"..i..spellCount] then return end
-			local spellCheck = _G[c:GetName().."spellCheck"..i..spellCount];
-			spellCheck:Hide()
-			spellCheck:SetParent(nil)
-			spellCheck:ClearAllPoints()
-		--[[	spellCheck.icon =	_G[spellCheck:GetName().."Icon"]
-			spellCheck.icon:Hide()
-			spellCheck.icon:SetParent(nil)
-			spellCheck.icon:ClearAllPoints()
-			spellCheck.icon.check = spellCheck
-			spellCheck.icon:SetParent(nil)
-			spellCheck.icon:ClearAllPoints()
-			spellCheck.text:ClearAllPoints()
-			_G[spellCheck:GetName().."Icon"] = nil
-			_G[c:GetName().."spellCheck"..i..spellCount] = nil]]
+ 	for l = 1, (#L.spells[1][i]) do
+		local spellID, _, _, _, duration = unpack(L.spells[1][i][l])
+		local spellCheck = GetSpellFrame(spellID, duration, c)
+		if not  spellCheck then return end
+		spellCheck:Hide()
 		end
 	end
 
-
 function SpellsConfig:UpdateSpellList(i)
 local numberOfSpellChecksPerRow = 5
-if i == nil then return end
-	local c = contents[i]
-	local previousSpellID = nil
-	local Y = -10
-	local X = 230
-	local spellCount = 1
-	for l = 1, #L.spells[1][i] do
-			local spellID, prio, instanceType, zone, duration, custom, tabId, cleuEvent = unpack(L.spells[1][i][l])
-			 if (spellID) then
-				local spellCheck = CreateFrame("CheckButton", c:GetName().."spellCheck"..i..spellCount, c, "UICheckButtonTemplate");
+	if i == nil then return end
+		local c = contents[i]
+		local previousSpellID = nil
+		local Y = -10
+		local X = 230
+		local spellCount = 1
+		for l = 1, #L.spells[1][i] do
+		local spellID, prio, _, _, duration, customname, _, cleuEvent = unpack(L.spells[1][i][l])
+		 if (spellID) then
+			local spellCheck = GetSpellFrame(spellID, duration, c)
+			if spellCheck then
+				if (previousSpellID) then
+					if (spellCount % numberOfSpellChecksPerRow == 0) then
+						Y = Y-40
+						X = 30
+					end
+					spellCheck:SetPoint("TOPLEFT", c, "TOPLEFT", X, Y);
+					X = X+200
+				else
+					spellCheck:SetPoint("TOPLEFT", c, "TOPLEFT", 30, -10);
+				end
+				spellCheck:Show()
+			else
+				if not duration then
+					spellCheck = CreateFrame("CheckButton", c:GetName().."spellCheck"..spellID, c, "UICheckButtonTemplate");
+				else
+					spellCheck = CreateFrame("CheckButton", c:GetName().."spellCheck"..spellID..duration, c, "UICheckButtonTemplate");
+				end
 				if (previousSpellID) then
 					if (spellCount % numberOfSpellChecksPerRow == 0) then
 						Y = Y-40
@@ -395,16 +533,16 @@ if i == nil then return end
 							local spell = GetSpellInfo(tonumber(spellID))
 							if spell then spell = tonumber(spellID) else spell = spellID end
 							if dropdown_val == "Delete" then
-							L.LoseControlCompile:CustomCompileSpells(spell, dropdown_val, "PVP", 0, tabs[i], "PVP", i)
+							CustomPVPDropDownCompileSpells(spell, dropdown_val, tabs[i])
 							else
 								for k, v in ipairs(tabs) do
 									if dropdown_val == L[v] then
 										dropdown_val = v
 									end
 								end
-								local i2 = SpellsConfig:TabNumber(dropdown_val)
+								local i2 = TabNumber(dropdown_val)
 								 if i ~= i2 then
-									 L.LoseControlCompile:CustomCompileSpells(spell, dropdown_val, "PVP", i2, tabs[i], "PVP", i)
+									 CustomPVPDropDownCompileSpells(spell, dropdown_val, tabs[i])
 								 end
 							 end
 					   end
@@ -428,19 +566,19 @@ if i == nil then return end
 				spellCheck.icon:SetNormalTexture(1008124)
 				end
 				local cutString = substring(aString, 0, 23);
-				if custom then
-					spellCheck.text:SetText(cutString.."\n".."("..custom..")");
+				if customname then
+					spellCheck.text:SetText(cutString.."\n".."("..customname..")");
 				else
 					spellCheck.text:SetText(cutString);
 				end
 				if not duration then
 
-				local dropdown = SpellsConfig:createDropdown(drop_opts)
+				local dropdown = createDropdown(drop_opts)
 				dropdown:SetPoint("LEFT", spellCheck.text, "RIGHT", -10,0)
 				dropdown:SetScale(.55)
 				end
 
-				if cleuEvent then spellID = cleuEvent end
+				if cleuEvent then spellID = customname end
 				spellCheck:SetChecked(_G.LoseControlDB.spellEnabled[spellID] or false);   --Error on 1st ADDON_LOADED
 				spellCheck.spellID = spellID
 				spellCheck:SetScript("OnClick",
@@ -456,105 +594,9 @@ if i == nil then return end
 				spellCheck:SetScript("OnLeave", function(self)
 					GameTooltip:Hide()
 				end)
-				previousSpellID = spellID
-				spellCount = spellCount + 1
 			end
+			previousSpellID = spellID
+			spellCount = spellCount + 1
 		end
 	end
-
-	function SpellsConfig:WipeAllSpellList()
-		for i = 1, #tabs do
-		SpellsConfig:WipeSpellList(i)
-		end
-	end
-	function SpellsConfig:UpdateAllSpellList()
-		for i = 1, #tabs do
-		SpellsConfig:UpdateSpellList(i)
-		end
-	end
-	function SpellsConfig:ResetAllSpellList()
-		for i = 1, #tabs do
-		SpellsConfig:ResetSpellList(i)
-		end
-	end
-
-
-	function SpellsConfig:CreateMenu()
-		UISpellsConfig = CreateFrame("Frame", "LoseControlSpellsConfig", UIParent, "UIPanelDialogTemplate");
-		local hex = select(4, self:GetThemeColor());
-		local BambiTag = string.format("|cff%s%s|r", hex:upper(), "By Bambi");
-		UISpellsConfig.Title:SetText('LoseControl PVP Spells Config '..BambiTag)
-		UISpellsConfig:SetFrameStrata("DIALOG");
-		UISpellsConfig:SetFrameLevel(2);
-		UISpellsConfig:EnableMouse(true);
-		UISpellsConfig:SetMovable(true)
-		UISpellsConfig:RegisterForDrag("LeftButton")
-		UISpellsConfig:SetScript("OnDragStart", UISpellsConfig.StartMoving)
-		UISpellsConfig:SetScript("OnDragStop", UISpellsConfig.StopMovingOrSizing)
-
-		UISpellsConfig:SetSize(1050, 400);
-		UISpellsConfig:SetPoint("CENTER"); -- Doesn't need to be ("CENTER", UIParent, "CENTER")
-
-
-		UISpellsConfig.ScrollFrame = CreateFrame("ScrollFrame", nil, UISpellsConfig, "UIPanelScrollFrameTemplate");
-		UISpellsConfig.ScrollFrame:SetPoint("TOPLEFT", LoseControlSpellsConfigDialogBG, "TOPLEFT", 4, -8);
-		UISpellsConfig.ScrollFrame:SetPoint("BOTTOMRIGHT", LoseControlSpellsConfigDialogBG, "BOTTOMRIGHT", -3, 4);
-		UISpellsConfig.ScrollFrame:SetClipsChildren(true);
-		UISpellsConfig.ScrollFrame:SetScript("OnMouseWheel", ScrollFrame_OnMouseWheel);
-
-		UISpellsConfig.ScrollFrame.ScrollBar:ClearAllPoints();
-	  UISpellsConfig.ScrollFrame.ScrollBar:SetPoint("TOPLEFT", UISpellsConfig.ScrollFrame, "TOPRIGHT", -12, -18);
-	  UISpellsConfig.ScrollFrame.ScrollBar:SetPoint("BOTTOMRIGHT", UISpellsConfig.ScrollFrame, "BOTTOMRIGHT", -7, 18);
-
-		local allContents = SetTabs(UISpellsConfig, #tabs, unpack(tabs));
-
-		UISpellsConfig:Hide();
-		return UISpellsConfig;
-	end
-
-
-
-function SpellsConfig:createDropdown(opts)
-	    local dropdown_name = '$parent_' .. opts['name'] .. '_dropdown'
-	    local menu_items = opts['items'] or {}
-	    local title_text = opts['title'] or ''
-	    local dropdown_width = 0
-	    local default_val = opts['defaultVal'] or ''
-	    local change_func = opts['changeFunc'] or function (dropdown_val) end
-
-	    local dropdown = CreateFrame("Frame", dropdown_name, opts['parent'], 'UIDropDownMenuTemplate')
-	    local dd_title = dropdown:CreateFontString(dropdown, 'OVERLAY', 'GameFontNormal')
-	    dd_title:SetPoint("TOPLEFT", 20, 10)
-
-	    for _, item in pairs(menu_items) do -- Sets the dropdown width to the largest item string width.
-	        dd_title:SetText(item)
-	        local text_width = dd_title:GetStringWidth() + 20
-	        if text_width > dropdown_width then
-	            dropdown_width = text_width
-	        end
-	    end
-
-	    UIDropDownMenu_SetWidth(dropdown, 1)
-	    UIDropDownMenu_SetText(dropdown, 1)
-	    dd_title:SetText(title_text)
-
-	    UIDropDownMenu_Initialize(dropdown, function(self, level, _)
-	        local info = UIDropDownMenu_CreateInfo()
-	        for key, val in pairs(menu_items) do
-						if L[val] then val = L[val] end
-	            info.text = val;
-	            info.checked = false
-	            info.menuList= key
-	            info.hasArrow = false
-	            info.func = function(b)
-	                UIDropDownMenu_SetSelectedValue(dropdown, b.value, b.value)
-	                UIDropDownMenu_SetText(dropdown, b.value)
-	                b.checked = true
-	                change_func(dropdown, b.value)
-	            end
-	            UIDropDownMenu_AddButton(info)
-	        end
-	    end)
-
-	    return dropdown
-		end
+end
