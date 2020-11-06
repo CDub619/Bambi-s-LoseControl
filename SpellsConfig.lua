@@ -124,7 +124,7 @@ end
 function SpellsConfig:UpdateTab(i)
 	if not UISpellsConfig then return end
 	SpellsConfig:WipeSpellList(i)
-	SpellsConfig:UpdateSpellList(i);
+--	SpellsConfig:UpdateSpellList(i);
 end
 
 function SpellsConfig:GetThemeColor()
@@ -347,7 +347,7 @@ local c = contents[i]
 			spellCheck:Hide()
 			spellCheck:SetParent(nil)
 			spellCheck:ClearAllPoints()
-			spellCheck.icon =	_G[spellCheck:GetName().."Icon"]
+		--[[	spellCheck.icon =	_G[spellCheck:GetName().."Icon"]
 			spellCheck.icon:Hide()
 			spellCheck.icon:SetParent(nil)
 			spellCheck.icon:ClearAllPoints()
@@ -356,7 +356,7 @@ local c = contents[i]
 			spellCheck.icon:ClearAllPoints()
 			spellCheck.text:ClearAllPoints()
 			_G[spellCheck:GetName().."Icon"] = nil
-			_G[c:GetName().."spellCheck"..i..spellCount] = nil
+			_G[c:GetName().."spellCheck"..i..spellCount] = nil]]
 		end
 	end
 
@@ -409,7 +409,6 @@ if i == nil then return end
 							 end
 					   end
 				}
-				local dropdown = SpellsConfig:createDropdown(drop_opts)
 
 				spellCheck.icon = CreateFrame("Button", spellCheck:GetName().."Icon", spellCheck, "ActionButtonTemplate")
 				spellCheck.icon:Disable()
@@ -435,9 +434,12 @@ if i == nil then return end
 					spellCheck.text:SetText(cutString);
 				end
 				if not duration then
+
+				local dropdown = SpellsConfig:createDropdown(drop_opts)
 				dropdown:SetPoint("LEFT", spellCheck.text, "RIGHT", -10,0)
 				dropdown:SetScale(.55)
 				end
+
 				if cleuEvent then spellID = cleuEvent end
 				spellCheck:SetChecked(_G.LoseControlDB.spellEnabled[spellID] or false);   --Error on 1st ADDON_LOADED
 				spellCheck.spellID = spellID

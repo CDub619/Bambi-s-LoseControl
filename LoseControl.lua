@@ -5117,9 +5117,9 @@ function LoseControlCompile:CompileArenaSpells()
 	end
 
 	for k, v in ipairs(cleuSpells) do
-	local spellID, duration, prio, prioArena, cleuEvent, cleuEventArena = unpack(v)
+	local spellID, duration, prio, prioArena, customname, customnameArena = unpack(v)
 		if prioArena then
-		tblinsert(spellsArena[tabsIndex[prioArena]], 2, {spellID , prioArena, nil, nil, duration, cleuEventArena, nil, cleuEventArena})
+		tblinsert(spellsArena[tabsIndex[prioArena]], 2, {spellID , prioArena, nil, nil, duration, customnameArena, nil, "cleuEventArena"})
 		end
 	end
 
@@ -5288,9 +5288,9 @@ function LoseControlCompile:CompileSpells(typeUpdate)
 		end
 		--Add cleuPrioCastedSpells  to Spells for Table
 		for k, v in ipairs(cleuSpells) do
-		local spellID, duration, prio, prioArena, cleuEvent, cleuEventArena = unpack(v)
+		local spellID, duration, prio, prioArena, customname, customnameArena = unpack(v)
 			if prio then
-			tblinsert(spells[1][tabsIndex[prio]], 1, {spellID , prio, nil, nil, duration, cleuEvent, nil, cleuEvent})			--body...
+			tblinsert(spells[1][tabsIndex[prio]], 1, {spellID , prio, nil, nil, duration, customname, nil, "cleuEvent"})			--body...
 			end
 		end
 
