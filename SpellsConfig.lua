@@ -93,14 +93,6 @@ for i = 1, #tabs + 1 do
 	end
 end
 
-local function TabNumber(type)
-		for k, v in ipairs(tabs) do
-			if type == v then
-				return k
-			end
-		end
-	end
-
 local function GetThemeColor()
 	local c = defaults.theme;
 	return c.r, c.g, c.b, c.hex;
@@ -424,6 +416,12 @@ function SpellsConfig:Toggle() --Builds the Table
 	menu:SetShown(not menu:IsShown());
 end
 
+function SpellsConfig:UpdateTab(i)
+	if not UISpellsConfig then return end
+	SpellsConfig:WipeSpellList(i)
+	SpellsConfig:UpdateSpellList(i);
+end
+
 function SpellsConfig:WipeAll()
 if not UISpellsConfig then return end
 	SpellsConfig:WipeAllSpellList()
@@ -432,12 +430,6 @@ end
 function SpellsConfig:UpdateAll()
 if not UISpellsConfig then return end
 	SpellsConfig:UpdateAllSpellList()
-end
-
-function SpellsConfig:UpdateTab(i)
-	if not UISpellsConfig then return end
-	SpellsConfig:WipeSpellList(i)
-	SpellsConfig:UpdateSpellList(i);
 end
 
 function SpellsConfig:WipeAllSpellList()
@@ -532,20 +524,13 @@ local numberOfSpellChecksPerRow = 5
 				    ['changeFunc']=function(dropdown_frame, dropdown_val)
 							local spell = GetSpellInfo(tonumber(spellID))
 							if spell then spell = tonumber(spellID) else spell = spellID end
-							if dropdown_val == "Delete" then
-							CustomPVPDropDownCompileSpells(spell, dropdown_val, tabs[i])
-							else
 								for k, v in ipairs(tabs) do
 									if dropdown_val == L[v] then
 										dropdown_val = v
 									end
 								end
-								local i2 = TabNumber(dropdown_val)
-								 if i ~= i2 then
-									 CustomPVPDropDownCompileSpells(spell, dropdown_val, tabs[i])
-								 end
-							 end
-					   end
+							 CustomPVPDropDownCompileSpells(spell, dropdown_val, tabs[i])
+							end
 				}
 
 				spellCheck.icon = CreateFrame("Button", spellCheck:GetName().."Icon", spellCheck, "ActionButtonTemplate")
@@ -571,8 +556,8 @@ local numberOfSpellChecksPerRow = 5
 				else
 					spellCheck.text:SetText(cutString);
 				end
-				if not duration then
 
+				if not duration then
 				local dropdown = createDropdown(drop_opts)
 				dropdown:SetPoint("LEFT", spellCheck.text, "RIGHT", -10,0)
 				dropdown:SetScale(.55)

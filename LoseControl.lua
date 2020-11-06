@@ -5206,9 +5206,9 @@ function LoseControl:CompileSpells(typeUpdate)
 								local HspellID, Hprio = unpack(hash[spellID])
 								if type(spellID) == "number" then
 										local name = GetSpellInfo(spellID)
-										print("|cff00ccffLoseControl|r : "..HspellID.." : "..Hprio.." ("..name..") Duplicate Spell ".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
+										print("|cff00ccffLoseControl|r : "..HspellID.." : "..Hprio.." ("..name..") ".."|cffff0000Duplicate Spell in Lua |r".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
 								else
-										print("|cff00ccffLoseControl|r : "..HspellID.." : "..Hprio.." (not spellId) Duplicate Spell ".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
+										print("|cff00ccffLoseControl|r : "..HspellID.." : "..Hprio.." (not spellId) ".."|cff009900Duplicate Spell in Lua |r".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
 								end
 								tblinsert(toremove, {i , l, x, removed, spellID})
 								removed = removed + 1
