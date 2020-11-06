@@ -5164,20 +5164,21 @@ function  LoseControlCompile:CustomCompileSpells(spell , newPrio, newTable, newt
 			end
 			tblinsert(_G.LoseControlDB.customSpellIds, {spell, newPrio, nil, nil, nil, "custom", row})  --v[7]: Category Tab to enter spell
 			if newPrio == "Delete" then
-				Update:UpdateTab(oldtabId)
-				spellIds[spell] = nil
+			 	spellIds[spell] = nil
 				_G.LoseControlDB.spellEnabled[spell]= nil
+				Update:UpdateTab(oldtabId)
 			else
-				tblinsert(spells[row][tabsIndex[newPrio]], 1, {spell, newPrio, nil, nil, nil,"custom", row})
 				spellIds[spell] = newPrio
 				_G.LoseControlDB.spellEnabled[spell]= true
-				print("|cff00ccffLoseControl|r : ".."|cff009900Added |r"..spell.." |cff009900to to list: |r"..newPrio.." (PVP)")
+				tblinsert(spells[row][tabsIndex[newPrio]], 1, {spell, newPrio, nil, nil, nil,"custom", row})
+				print("|cff00ccffLoseControl|r : ".."|cff009900Added |r"..spell.." |cff009900to to list: |r"..newPrio.." ("..oldTable..")")
 				if (newTable == oldTable) and (newtabId == oldtabId) then Update:UpdateTab(newtabId) else Update:UpdateTab(newtabId); Update:UpdateTab(oldtabId) end
 			end
-		else
+		elseif newPrio and newTable and newtabId then
 			--Adding New Spells w/ Existing Spells from the edit box
 		end
-			--Adding New Spells
+	else
+			--Adding New Spells that do Not Exist
 	end
 end
 

@@ -370,7 +370,7 @@ if i == nil then return end
 	local X = 230
 	local spellCount = 1
 	for l = 1, #L.spells[1][i] do
-		local spellID, prio, instanceType, zone, duration, custom, tabId, cleuEvent = unpack(L.spells[1][i][l])
+			local spellID, prio, instanceType, zone, duration, custom, tabId, cleuEvent = unpack(L.spells[1][i][l])
 			 if (spellID) then
 				local spellCheck = CreateFrame("CheckButton", c:GetName().."spellCheck"..i..spellCount, c, "UICheckButtonTemplate");
 				if (previousSpellID) then
