@@ -5,9 +5,18 @@ L.SpellsConfig = {}; -- adds SpellsConfig table to addon namespace
 local SpellsConfig = L.SpellsConfig;
 local UISpellsConfig;
 local tooltip = CreateFrame("GameTooltip", "fPBMouseoverTooltip", UIParent, "GameTooltipTemplate")
-local iconcheck = {}
-local tblinsert = table.insert
 local substring = string.sub
+local ipairs = ipairs
+local pairs = pairs
+local next = next
+local type = type
+local select = select
+local strfind = string.find
+local tblinsert = table.insert
+local mathfloor = math.floor
+local mathabs = math.abs
+local bit_band = bit.band
+local unpack = unpack
 --------------------------------------
 -- Defaults (usually a database!)
 --------------------------------------
@@ -68,6 +77,11 @@ local tabs = {
 	"Snare",
 }
 
+local tabsIndex = {}
+for i = 1, #tabs do
+	tabsIndex[tabs[i]] = i
+end
+
 local tabsDrop = {}
 for i = 1, #tabs + 1 do
 	if not tabs[i] then
@@ -91,9 +105,13 @@ function SpellsConfig:Addon_Load()
 if not UISpellsConfig then SpellsConfig:CreateMenu(); SpellsConfig:UpdateAllSpellList() end
 end
 
-function SpellsConfig:Reset()
+function SpellsConfig:WipeAll()
 if not UISpellsConfig then return end
 	SpellsConfig:WipeAllSpellList()
+end
+
+function SpellsConfig:UpdateAll()
+if not UISpellsConfig then return end
 	SpellsConfig:UpdateAllSpellList()
 end
 
@@ -262,11 +280,7 @@ local function SetTabs(frame, numTabs, ...)
 				if tab.content.input.customspelltext then
 				local spell = GetSpellInfo(tonumber(tab.content.input.customspelltext))
 				if spell then spell = tonumber(tab.content.input.customspelltext) else spell = tab.content.input.customspelltext end
-				L.LoseControlCompile:CustomCompileSpells(spell, tabs[i])
-				tblinsert(_G.LoseControlDB.customSpellIds, {spell, tabs[i], nil, nil, nil,"custom", 1})  --v[7]: Category Tab to enter spell
-				tblinsert(L.spells[1], 2, {spell, tabs[i], nil, nil, nil,"custom", 1})
-				SpellsConfig:UpdateTab(i)
-				print("|cff00ccffLoseControl|r : ".."|cff009900Added |r"..spell.." |cff009900to to list: |r"..tabs[i].." (PVP)")
+				L.LoseControlCompile:CustomCompileSpells(spell, tabs[i], "PVP", i, nil, nil, nil)
 				else
 					print("|cff00ccffLoseControl|r : Please Enter a spellId or Name")
 				end
@@ -313,7 +327,7 @@ end
 
 function SpellsConfig:ResetSpellList(i)
 	local c = contents[i]
-	for spellCount = 1, (#L.spells[1] + 1) do
+	for spellCount = 1, (#L.spells[1][i] + 1) do
 		if not  _G[c:GetName().."spellCheck"..i..spellCount] then return end
 			local spellCheck = _G[c:GetName().."spellCheck"..i..spellCount];
 			spellCheck.icon = _G[spellCheck:GetName().."Icon"]
@@ -327,7 +341,7 @@ function SpellsConfig:ResetSpellList(i)
 
 function SpellsConfig:WipeSpellList(i)
 local c = contents[i]
- 	for spellCount = 1, (#L.spells[1] + 1) do
+ 	for spellCount = 1, (#L.spells[1][i] + 1) do
 		if not  _G[c:GetName().."spellCheck"..i..spellCount] then return end
 			local spellCheck = _G[c:GetName().."spellCheck"..i..spellCount];
 			spellCheck:Hide()
@@ -355,18 +369,9 @@ if i == nil then return end
 	local Y = -10
 	local X = 230
 	local spellCount = 1
-	for l = 2, #L.spells[1] do
-		local spellID, prio, zone, instanceType, duration, custom, cleuEvent
-		if L.spells[1][l] then
-			if L.spells[1][l][1] then spellID = L.spells[1][l][1]	end
-			if L.spells[1][l][2] then prio = L.spells[1][l][2] end
-			if L.spells[1][l][3] then instanceType = L.spells[1][l][3] end
-			if L.spells[1][l][4] then zone = L.spells[1][l][4] end
-			if L.spells[1][l][5] then duration = L.spells[1][l][5] end
-			if L.spells[1][l][6] then custom = L.spells[1][l][6] end
-			if L.spells[1][l][8] then cleuEvent = L.spells[1][l][8] end
-		end
-			 if (spellID and prio and (string.lower(prio) == string.lower(tabs[i]))) then
+	for l = 1, #L.spells[1][i] do
+		local spellID, prio, instanceType, zone, duration, custom, tabId, cleuEvent = unpack(L.spells[1][i][l])
+			 if (spellID) then
 				local spellCheck = CreateFrame("CheckButton", c:GetName().."spellCheck"..i..spellCount, c, "UICheckButtonTemplate");
 				if (previousSpellID) then
 					if (spellCount % numberOfSpellChecksPerRow == 0) then
@@ -390,8 +395,7 @@ if i == nil then return end
 							local spell = GetSpellInfo(tonumber(spellID))
 							if spell then spell = tonumber(spellID) else spell = spellID end
 							if dropdown_val == "Delete" then
-							L.LoseControlCompile:CustomCompileSpells(spell, dropdown_val)
-							tblinsert(_G.LoseControlDB.customSpellIds, {spell, dropdown_val, instanceType, zone, duration, "custom", 1})
+							L.LoseControlCompile:CustomCompileSpells(spell, dropdown_val, "PVP", 0, tabs[i], "PVP", i)
 							else
 								for k, v in ipairs(tabs) do
 									if dropdown_val == L[v] then
@@ -400,11 +404,7 @@ if i == nil then return end
 								end
 								local i2 = SpellsConfig:TabNumber(dropdown_val)
 								 if i ~= i2 then
-									 L.LoseControlCompile:CustomCompileSpells(spell, tabs[i2])
-								   tblinsert(_G.LoseControlDB.customSpellIds, {spell, tabs[i2], instanceType, zone, duration, "custom", 1})  --v[7]: Category Tab to enter spell
-									 tblinsert(L.spells[1], 2, {spell, tabs[i2], nil, nil, nil,"custom", 1})
-									 SpellsConfig:UpdateTab(i2)
-									 print("|cff00ccffLoseControl|r : ".."|cff009900Added |r"..spell.." |cff009900to to list: |r"..tabs[i2].." (PVP)")
+									 L.LoseControlCompile:CustomCompileSpells(spell, dropdown_val, "PVP", i2, tabs[i], "PVP", i)
 								 end
 							 end
 					   end

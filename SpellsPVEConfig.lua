@@ -8,9 +8,18 @@ L.SpellsPVEConfig = {}; -- adds SpellsPVEConfig table to addon namespace
 local SpellsPVEConfig = L.SpellsPVEConfig;
 local UISpellsPVEConfig;
 local tooltip = CreateFrame("GameTooltip", "fPBMouseoverTooltip", UIParent, "GameTooltipTemplate")
-local iconcheck = {}
-local tblinsert = table.insert
 local substring = string.sub
+local ipairs = ipairs
+local pairs = pairs
+local next = next
+local type = type
+local select = select
+local strfind = string.find
+local tblinsert = table.insert
+local mathfloor = math.floor
+local mathabs = math.abs
+local bit_band = bit.band
+local unpack = unpack
 --------------------------------------
 -- Defaults (usually a database!)
 --------------------------------------
@@ -73,6 +82,11 @@ local tabsType = {
 	"Snare",
 }
 
+local tabsIndex = {}
+for i = 1, #tabsType do
+	tabsIndex[tabsType[i]] = i
+end
+
 local tabsDrop = {}
 for i = 1, #tabsType + 1 do
 	if not tabsType[i] then
@@ -89,10 +103,14 @@ function SpellsPVEConfig:Addon_Load()
 if not UISpellsPVEConfig then SpellsPVEConfig:CreateMenu(); SpellsPVEConfig:UpdateAllSpellList() end
 end
 
-function SpellsPVEConfig:Reset()
+function SpellsPVEConfig:WipeAll()
 if not UISpellsPVEConfig then return end
 SpellsPVEConfig:WipeAllSpellList()
-SpellsPVEConfig:UpdateAllSpellList()
+end
+
+function SpellsPVEConfig:UpdateAll()
+if not UISpellsPVEConfig then return end
+	SpellsPVEConfig:UpdateAllSpellList()
 end
 
 function SpellsPVEConfig:Toggle() --Builds the Table
@@ -279,11 +297,7 @@ local function SetTabs(frame, numTabs, ...)
 			local spell = GetSpellInfo(tonumber(tab.content.input.customspelltext))
 			if spell then spell = tonumber(tab.content.input.customspelltext) else spell = tab.content.input.customspelltext end
 			if drop_val and tab.content.input.customspelltext then
-	  	L.LoseControlCompile:CustomCompileSpells(spell, drop_val)
-			tblinsert(_G.LoseControlDB.customSpellIds, {spell, drop_val, nil, nil, nil,"custom", i + 1}) --v[7]: Category Tab to enter spell
-			tblinsert(L.spells[i + 1], 2, {spell, drop_val, nil, nil, nil,"custom", 1})
-			SpellsPVEConfig:UpdateTab(i)
-			print("|cff00ccffLoseControl|r : ".."|cff009900Added |r"..spell.." |cff009900to to list: |r"..tabs[i].." (PVE)")
+	  	L.LoseControlCompile:CustomCompileSpells(spell, drop_val, "PVE", i, nil, nil, nil)
 			else
 			print("|cff00ccffLoseControl|r : Please Select a Spell Type or Enter a spellId or Name")
 			end
@@ -330,7 +344,8 @@ end
 
 function SpellsPVEConfig:ResetSpellList(i)
 	local c = contents[i]
-	for spellCount = 1, (#L.spells[i+1] + 1) do
+	for l = 1, #L.spells[i+1] do
+	 	for spellCount = 1, (#L.spells[i+1][l] + 1) do
 		if not  _G[c:GetName().."spellCheck"..i..spellCount] then return end
 			local spellCheck = _G[c:GetName().."spellCheck"..i..spellCount];
 			spellCheck.icon = _G[spellCheck:GetName().."Icon"]
@@ -340,11 +355,13 @@ function SpellsPVEConfig:ResetSpellList(i)
 			spellCheck:SetChecked(_G.LoseControlDB.spellEnabled[spellID] or false);   --Error on 1st ADDON_LOADED
 		end
 	end
+end
 
 
 function SpellsPVEConfig:WipeSpellList(i)
 local c = contents[i]
- 	for spellCount = 1, (#L.spells[i+1] + 1) do
+for l = 1, #L.spells[i+1] do
+ 	for spellCount = 1, (#L.spells[i+1][l] + 1) do
 		if not  _G[c:GetName().."spellCheck"..i..spellCount] then return end
 			local spellCheck = _G[c:GetName().."spellCheck"..i..spellCount];
 			spellCheck:Hide()
@@ -362,6 +379,7 @@ local c = contents[i]
 			_G[c:GetName().."spellCheck"..i..spellCount] = nil
 		end
 	end
+end
 
 
 
@@ -373,19 +391,11 @@ if i == nil then return end
 	local Y = -10
 	local X = 230
 	local spellCount = 1
-	for l = 2, #L.spells[i+1] do
-		local spellID, prio, zone, instanceType, duration, custom
-		if L.spells[i+1][l] then
-			if L.spells[i+1][l][1] then spellID = L.spells[i+1][l][1]	end
-			if L.spells[i+1][l][2] then prio = L.spells[i+1][l][2] end
-			if L.spells[i+1][l][3] then instanceType = L.spells[i+1][l][3] end
-			if L.spells[i+1][l][4] then zone = L.spells[i+1][l][4] end
-			if L.spells[i+1][l][5] then duration = L.spells[i+1][l][5] end
-			if L.spells[i+1][l][6] then custom = L.spells[i+1][l][6] end
-		end
-			if (spellID) then
-				local spellCheck
-				spellCheck = CreateFrame("CheckButton", c:GetName().."spellCheck"..i..spellCount, c, "UICheckButtonTemplate");
+	for l = 1, #L.spells[i+1] do
+		for x = 1 , #L.spells[i+1][l] do
+		local spellID, prio, instanceType, zone, duration, custom, tabId, cleuEvent = unpack(L.spells[i+1][l][x])
+			 if (spellID) then
+				local spellCheck = CreateFrame("CheckButton", c:GetName().."spellCheck"..i..spellCount, c, "UICheckButtonTemplate");
 				if (previousSpellID) then
 					if (spellCount % numberOfSpellChecksPerRow == 0) then
 						Y = Y-40
@@ -460,6 +470,7 @@ if i == nil then return end
 			end
 		end
 	end
+end
 
 	function SpellsPVEConfig:WipeAllSpellList()
 		for i = 1, #tabs do
@@ -480,8 +491,8 @@ if i == nil then return end
 
 	function SpellsPVEConfig:CreateMenu()
 
-		for i = 1, #L.spells - 1 do
-			tabs[i] = L.spells[i + 1][1]
+		for i = 1, #L.spellsTable - 1 do
+			tabs[i] = L.spellsTable[i + 1][1]
 		end
 
 		UISpellsPVEConfig = CreateFrame("Frame", "LoseControlSpellsPVEConfig", UIParent, "UIPanelDialogTemplate");
