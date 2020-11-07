@@ -593,5 +593,5 @@ else -- default English
 	L["NeedsReload"] = "Needs ReloadUI to take effect"
 	L["Priority"] = "Priority"
 	L["PriorityDescription"] = "Set the priority for each spell category below. Higher numbers have more priority. 0 disables the category."
-	L["LoseControl reset."] = "LoseControl reset."
+	L["LoseControl reset."] = "|cff00ccffLoseControl |r"..": Reset. Some changes require a UI reload"
 end

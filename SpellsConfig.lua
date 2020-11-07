@@ -202,13 +202,21 @@ local function makeAndShowSpellTTPVE(self)
 	GameTooltip:Show()
 end
 
-local function GetSpellFrame(spellID, duration, c)
+local function GetSpellFrame(spellID, duration, c, type)
 	if spellID and duration then
 		if _G[c:GetName().."spellCheck"..spellID..duration] then
-		return _G[c:GetName().."spellCheck"..spellID..duration]
+				if type then
+					_G[c:GetName().."spellCheck"..spellID..duration] = nil
+				else
+					return _G[c:GetName().."spellCheck"..spellID..duration]
+				end
 		end
 	elseif _G[c:GetName().."spellCheck"..spellID] then
-		return _G[c:GetName().."spellCheck"..spellID]
+		if type then
+			_G[c:GetName().."spellCheck"..spellID] = nil
+		else
+			return _G[c:GetName().."spellCheck"..spellID]
+		end
 	else
 		return false
 	end
@@ -217,7 +225,7 @@ end
 local function CustomAddedCompileSpells(spell, prio, row)
 end
 
-local function CustomPVPDropDownCompileSpells(spell , newPrio, oldPrio)
+local function CustomPVPDropDownCompileSpells(spell , newPrio, oldPrio, c, duration)
 	for k, v in ipairs(_G.LoseControlDB.customSpellIds) do
 		if spell == v[1] then
 			tblremove(_G.LoseControlDB.customSpellIds, k)
@@ -239,10 +247,11 @@ local function CustomPVPDropDownCompileSpells(spell , newPrio, oldPrio)
 	if newPrio == "Delete" then
 	 	L.spellIds[spell] = nil
 		_G.LoseControlDB.spellEnabled[spell]= nil
-		L.SpellsConfig:UpdateSpellList(tabsIndex[oldPrio])
+		GetSpellFrame(spell, duration, c, true)
+		SpellsConfig:UpdateSpellList(tabsIndex[oldPrio])
 	else
 		L.spellIds[spell] = newPrio
-		_G.LoseControlDB.spellEnabled[spell]= true
+		--_G.LoseControlDB.spellEnabled[spell]= true
 		tblinsert(L.spells[1][tabsIndex[newPrio]], 1, {spell, newPrio, nil, nil, nil, customname, 1})
 		print("|cff00ccffLoseControl|r : ".."|cff009900Added |r"..spell.." |cff009900to to list: |r"..newPrio.." (PVP)")
 		SpellsConfig:UpdateSpellList(tabsIndex[oldPrio]);SpellsConfig:UpdateTab(tabsIndex[newPrio]);
@@ -515,24 +524,6 @@ local numberOfSpellChecksPerRow = 5
 				end
 				spellCheck:Show()
 
-				local drop_opts = {
-				    ['name']='raid',
-				    ['parent']=spellCheck,
-				    ['title']='',
-				    ['items']= tabsDrop,
-				    ['defaultVal']='',
-				    ['changeFunc']=function(dropdown_frame, dropdown_val)
-							local spell = GetSpellInfo(tonumber(spellID))
-							if spell then spell = tonumber(spellID) else spell = spellID end
-								for k, v in ipairs(tabs) do
-									if dropdown_val == L[v] then
-										dropdown_val = v
-									end
-								end
-							 CustomPVPDropDownCompileSpells(spell, dropdown_val, tabs[i])
-							end
-				}
-
 				spellCheck.icon = CreateFrame("Button", spellCheck:GetName().."Icon", spellCheck, "ActionButtonTemplate")
 				spellCheck.icon:Disable()
 				spellCheck.icon:SetPoint("CENTER", spellCheck, "CENTER", -90, 0)
@@ -557,15 +548,35 @@ local numberOfSpellChecksPerRow = 5
 					spellCheck.text:SetText(cutString);
 				end
 
+				if cleuEvent then spellID = customname end
+				spellCheck:SetChecked(_G.LoseControlDB.spellEnabled[spellID] or false);   --Error on 1st ADDON_LOADED
+				spellCheck.spellID = spellID
+
+				local drop_opts = {
+				    ['name']='raid',
+				    ['parent']=spellCheck,
+				    ['title']='',
+				    ['items']= tabsDrop,
+				    ['defaultVal']='',
+				    ['changeFunc']=function(dropdown_frame, dropdown_val)
+							local spell = GetSpellInfo(tonumber(spellID))
+							if spell then spell = tonumber(spellID) else spell = spellID end
+								for k, v in ipairs(tabs) do
+									if dropdown_val == L[v] then
+										dropdown_val = v
+									end
+								end
+							 CustomPVPDropDownCompileSpells(spell, dropdown_val, tabs[i], c, duration)
+							 spellCheck:SetChecked(_G.LoseControlDB.spellEnabled[spellID] or false)
+							end
+				}
+
 				if not duration then
 				local dropdown = createDropdown(drop_opts)
 				dropdown:SetPoint("LEFT", spellCheck.text, "RIGHT", -10,0)
 				dropdown:SetScale(.55)
 				end
 
-				if cleuEvent then spellID = customname end
-				spellCheck:SetChecked(_G.LoseControlDB.spellEnabled[spellID] or false);   --Error on 1st ADDON_LOADED
-				spellCheck.spellID = spellID
 				spellCheck:SetScript("OnClick",
 					function()
 					 GameTooltip:Hide()

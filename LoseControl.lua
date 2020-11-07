@@ -5291,7 +5291,7 @@ function LoseControl:ADDON_LOADED(arg1)
 	if arg1 == addonName then
 			if (_G.LoseControlDB == nil) or (_G.LoseControlDB.version == nil) then
 			_G.LoseControlDB = CopyTable(DBdefaults)
-			print("|cff00ccffLoseControl |r"..": Reset.")
+			print(L["LoseControl reset."])
 		end
 		if _G.LoseControlDB.version < DBdefaults.version then
 			for j, u in pairs(DBdefaults) do
