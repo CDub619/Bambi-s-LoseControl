@@ -208,27 +208,57 @@ local function makeAndShowSpellTTPVE(self)
 	GameTooltip:Show()
 end
 
-local function GetSpellFrame(spellID, duration, c, type)
+local function DeleteSpellFrame(spellID, duration, c)
 	if spellID and duration then
 		if _G[c:GetName().."spellCheck"..spellID..duration] then
-				if type then
-					_G[c:GetName().."spellCheck"..spellID..duration] = nil
-				else
-					return _G[c:GetName().."spellCheck"..spellID..duration]
-				end
+			_G[c:GetName().."spellCheck"..spellID..duration] = nil
 		end
 	elseif _G[c:GetName().."spellCheck"..spellID] then
-		if type then
 			_G[c:GetName().."spellCheck"..spellID] = nil
-		else
-				return _G[c:GetName().."spellCheck"..spellID]
+	end
+end
+
+local function GetSpellFrame(spellID, duration, c)
+	if spellID and duration then
+		if _G[c:GetName().."spellCheck"..spellID..duration] then
+			return _G[c:GetName().."spellCheck"..spellID..duration]
 		end
+	elseif _G[c:GetName().."spellCheck"..spellID] then
+		return _G[c:GetName().."spellCheck"..spellID]
 	else
 		return false
 	end
 end
 
-local function CustomAddedCompileSpells(spell, prio, row)
+local function CustomAddedCompileSpells(spell, prio, tab)
+	for k, v in ipairs(_G.LoseControlDB.customSpellIds) do
+		if spell == v[1] then
+			tblremove(_G.LoseControlDB.customSpellIds, k)
+			break
+		end
+	end
+	for i = 1, #L.spells do
+		for l = 1, #L.spells[i] do
+			for k, v in ipairs(L.spells[i][l]) do
+				local spellID, oldPrio, _, _, duration, customname = unpack(v)
+				if spell == spellID and (not duration) then
+					if i == 1 then L.SpellsConfig:WipeSpellList(l); print("|cff00ccffLoseControl|r : ".."|cff009900Removed |r"..spellID.." |cff009900from : |r"..oldPrio.." (PVP)") end
+					if i ~= 1 then L.SpellsPVEConfig:WipeSpellList(i+1); print("|cff00ccffLoseControl|r : ".."|cff009900Removed |r"..spellID.." |cff009900from : |r"..L.spellsTable[i][1].." (PVE)") end
+					tblremove(L.spells[i][l], k)
+					if i == 1 then L.SpellsConfig:UpdateSpellList(l) end
+					if i ~= 1 then L.SpellsPVEConfig:UpdateSpellList(i+1) end
+					break
+				end
+			end
+		end
+	end
+	L.spellIds[spell] = prio
+	_G.LoseControlDB.spellEnabled[spell]= true
+	L.SpellsPVEConfig:WipeSpellList(tab)
+	tblinsert(_G.LoseControlDB.customSpellIds, {spell, prio, nil, nil, nil, "Custom Spell", tab+1, nil, 1})
+	tblinsert(L.spells[tab+1][1], 1, {spell, prio, nil, nil, nil, "Custom Spell", tab+1})
+	L.SpellsPVEConfig:UpdateSpellList(tab)
+	print("|cff00ccffLoseControl|r : ".."|cff009900Added |r"..spell.." |cff009900to to list: |r"..tabs[tab].." (PVE)")
 end
 
 local function CustomPVEDropDownCompileSpells(spell, prio, tab, c, duration)
@@ -240,26 +270,23 @@ local function CustomPVEDropDownCompileSpells(spell, prio, tab, c, duration)
 	end
 	for l = 1, (#tabsType) do
 		for k, v in ipairs(L.spells[tab+1][l]) do
-			local spellID, _, _, _, duration, customname = unpack(v)
+			local spellID, oldPrio, _, _, duration, customname = unpack(v)
 			if spell == spellID and (not duration) then
-					if prio == "Delete" then
-						L.spellIds[spell] = nil
-						_G.LoseControlDB.spellEnabled[spell]= nil
-						SpellsPVEConfig:WipeSpellList(tab)
-
-						GetSpellFrame(spell, duration, c, true)
-						tblremove(L.spells[tab+1][l], k)
-						SpellsPVEConfig:UpdateSpellList(tab)
-						print("|cff00ccffLoseControl|r : ".."|cff009900Removed |r"..spellID.." |cff009900from : |r"..tabs[tab].." (PVE)")
-					else
-						L.spellIds[spell] = prio
-						tblinsert(L.spells[tab+1][l], 1, {spell, prio, nil, nil, nil, customname, tab+1})
-						print("|cff00ccffLoseControl|r : ".."|cff009900Changed |r"..spell.." |cff009900to : |r"..prio.." (PVE)")
-					end
-				if not customname then
+				if prio == "Delete" then
+					L.spellIds[spell] = nil
+					_G.LoseControlDB.spellEnabled[spell]= nil
+					SpellsPVEConfig:WipeSpellList(tab)
+					DeleteSpellFrame(spell, duration, c)
+					tblremove(L.spells[tab+1][l], k)
+					SpellsPVEConfig:UpdateSpellList(tab)
+				--if anOrginalSpell then do not insert custom spell db
 					tblinsert(_G.LoseControlDB.customSpellIds, {spell, prio, nil, nil, nil, customname, tab+1})  --v[7]: Category Tab to enter spell
+					print("|cff00ccffLoseControl|r : ".."|cff009900Removed |r"..spellID.." |cff009900from : |r"..tabs[tab].." (PVE)")
+				else
+					L.spellIds[spell] = prio
+					tblinsert(_G.LoseControlDB.customSpellIds, {spell, prio, nil, nil, nil, "Custom Priority", tab+1, nil, tabsIndex[oldPrio]})  --v[7]: Category Tab to enter spell
+					print("|cff00ccffLoseControl|r : ".."|cff009900Changed |r"..spell.." |cff009900to : |r"..prio.." (PVE)")
 				end
-				return prio
 			end
 		end
 	end
@@ -423,7 +450,7 @@ local function SetTabs(frame, numTabs, ...)
 			local spell = GetSpellInfo(tonumber(tab.content.input.customspelltext))
 			if spell then spell = tonumber(tab.content.input.customspelltext) else spell = tab.content.input.customspelltext end
 			if drop_val and tab.content.input.customspelltext then
-	  	CustomAddedCompileSpells(spell, drop_val, i+1)
+	  	CustomAddedCompileSpells(spell, drop_val, i)
 			else
 			print("|cff00ccffLoseControl|r : Please Select a Spell Type or Enter a spellId or Name")
 			end
@@ -607,24 +634,6 @@ local numberOfSpellChecksPerRow = 5
 					end
 					spellCheck:Show()
 
-					local drop_opts = {
-							['name']='raid',
-							['parent']=spellCheck,
-							['title']='',
-							['items']= tabsDrop,
-							['defaultVal']='',
-							['changeFunc']=function(dropdown_frame, dropdown_val)
-								local spell = GetSpellInfo(tonumber(spellID))
-								if spell then spell = tonumber(spellID) else spell = spellID end
-								for k, v in ipairs(tabsType) do
-									if dropdown_val == L[v] then
-										dropdown_val = v
-									end
-								end
-								prio = CustomPVEDropDownCompileSpells(spell, dropdown_val, i)
-							 end
-					}
-
 					spellCheck.icon = CreateFrame("Button", spellCheck:GetName().."Icon", spellCheck, "ActionButtonTemplate")
 					spellCheck.icon:Disable()
 					spellCheck.icon:SetPoint("CENTER", spellCheck, "CENTER", -90, 0)
@@ -635,21 +644,21 @@ local numberOfSpellChecksPerRow = 5
 					if type(spellID) == "number" then
 						prio = L[prio] or prio
 						if (instanceType ==  "arena" or instanceType == "pvp") then
-							local aString1 = GetSpellInfo(spellID)..": "..prio or "SPELL REMOVED: "..spellID
+							local aString1 = substring(GetSpellInfo(spellID), 0, 17)..": "..substring(prio, 0, 6) or "SPELL REMOVED: "..spellID
 							local aString2 = " ("..instanceType..")"
 							local cutString1 = substring(aString1, 0, 23);
 							local cutString2 = substring(aString2, 0, 23);
 							local aString3 = cutString1.."\n"..cutString2
 							spellCheck.text:SetText(aString3);
 						elseif zone then
-							local aString1 = GetSpellInfo(spellID)..": "..prio or "SPELL REMOVED: "..spellID
+							local aString1 = substring(GetSpellInfo(spellID), 0, 17)..": "..substring(prio, 0, 6) or "SPELL REMOVED: "..spellID
 							local aString2 = " ("..zone..")"
 							local cutString1 = substring(aString1, 0, 23);
 							local cutString2 = substring(aString2, 0, 23);
 						  local	aString3 = cutString1.."\n"..cutString2
 							spellCheck.text:SetText(aString3);
 						else
-							aString = GetSpellInfo(spellID)..": "..prio or "SPELL REMOVED: "..spellID
+							aString = substring(GetSpellInfo(spellID), 0, 17)..": "..substring(prio, 0, 6) or "SPELL REMOVED: "..spellID
 							local cutString = substring(aString, 0, 23);
 							if customname then
 								spellCheck.text:SetText(cutString.."\n".."("..customname..")");
@@ -683,43 +692,38 @@ local numberOfSpellChecksPerRow = 5
 										dropdown_val = v
 									end
 								end
-								prio = CustomPVEDropDownCompileSpells(spell, dropdown_val, i, c, duration)
-								if type(spell) == "number" then
-									prio = L[prio] or prio
-									if (instanceType ==  "arena" or instanceType == "pvp") then
-										local aString1 = GetSpellInfo(spellID)..": "..prio or "SPELL REMOVED: "..spellID
-										local aString2 = " ("..instanceType..")"
-										local cutString1 = substring(aString1, 0, 23);
-										local cutString2 = substring(aString2, 0, 23);
-										local aString3 = cutString1.."\n"..cutString2
-										spellCheck.text:SetText(aString3);
-									elseif zone then
-										local aString1 = GetSpellInfo(spellID)..": "..prio or "SPELL REMOVED: "..spellID
-										local aString2 = " ("..zone..")"
-										local cutString1 = substring(aString1, 0, 23);
-										local cutString2 = substring(aString2, 0, 23);
-									  local	aString3 = cutString1.."\n"..cutString2
-										spellCheck.text:SetText(aString3);
-									else
-										aString = GetSpellInfo(spellID)..": "..prio or "SPELL REMOVED: "..spellID
-										local cutString = substring(aString, 0, 23);
-										if customname then
-											spellCheck.text:SetText(cutString.."\n".."("..customname..")");
+								if dropdown_val ~= prio then
+									CustomPVEDropDownCompileSpells(spell, dropdown_val, i, c, duration)
+									prio = dropdown_val
+									if type(spell) == "number" then
+										prio = L[prio] or prio
+										if (instanceType ==  "arena" or instanceType == "pvp") then
+											local aString1 = substring(GetSpellInfo(spellID), 0, 17)..": "..substring(prio, 0, 6) or "SPELL REMOVED: "..spellID
+											local aString2 = " ("..instanceType..")"
+											local cutString1 = substring(aString1, 0, 23);
+											local cutString2 = substring(aString2, 0, 23);
+											local aString3 = cutString1.."\n".."Custom Priority"
+											spellCheck.text:SetText(aString3);
+										elseif zone then
+											local aString1 = substring(GetSpellInfo(spellID), 0, 17)..": "..substring(prio, 0, 6) or "SPELL REMOVED: "..spellID
+											local aString2 = " ("..zone..")"
+											local cutString1 = substring(aString1, 0, 23);
+											local cutString2 = substring(aString2, 0, 23);
+										  local	aString3 = cutString1.."\n".."Custom Priority"
+											spellCheck.text:SetText(aString3);
 										else
-											spellCheck.text:SetText(cutString);
+											aString = substring(GetSpellInfo(spellID), 0, 17)..": "..substring(prio, 0, 6) or "SPELL REMOVED: "..spellID
+											local cutString = substring(aString, 0, 23);
+											spellCheck.text:SetText(cutString.."\n".."Custom Priority");
+											spellCheck.icon:SetNormalTexture(GetSpellTexture(spellID) or 1)
 										end
+									else
+									aString = spellID..": "..prio
+									local cutString = substring(aString, 0, 23);
+										spellCheck.text:SetText(cutString.."\n".."Custom Priority");
+										spellCheck.icon:SetNormalTexture(1008124)
 									end
-									spellCheck.icon:SetNormalTexture(GetSpellTexture(spellID) or 1)
-								else
-								aString = spellID..": "..prio
-								local cutString = substring(aString, 0, 23);
-								if customname then
-									spellCheck.text:SetText(cutString.."\n".."("..customname..")");
-								else
-									spellCheck.text:SetText(cutString);
-								end
-								spellCheck.icon:SetNormalTexture(1008124)
-								end
+								 end
 							 end
 					}
 

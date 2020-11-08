@@ -5225,12 +5225,16 @@ function LoseControl:CompileSpells(typeUpdate)
 		end
   	--ReAdd all dbCustom Spells to spells
 			for k,v in ipairs(_G.LoseControlDB.customSpellIds) do
-				local spellID, prio, instanceType, zone, duration, customname, row, cleuEvent  = unpack(v)
+				local spellID, prio, instanceType, zone, duration, customname, row, cleuEvent, position  = unpack(v)
 				if prio ~= "Delete" then
 					if duration then
 							interruptsIds[spellID] = duration
 					end
-				tblinsert(spells[row][tabsIndex[prio]], 1, v) --v[7]: Category to enter spell / v[8]: Tab to update / v[9]: Table
+					if position then
+						tblinsert(spells[row][position], 1, v)
+					else
+						tblinsert(spells[row][tabsIndex[prio]], 1, v) --v[7]: Category to enter spell / v[8]: Tab to update / v[9]: Table
+					end
 				end
 			end
   	--Make spellIds from Spells for AuraFilter
