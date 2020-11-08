@@ -641,8 +641,8 @@ local numberOfSpellChecksPerRow = 5
 					spellCheck.icon:Show()
 					spellCheck.icon.check = spellCheck
 					local aString = spellID
+					prio = L[prio] or prio
 					if type(spellID) == "number" then
-						prio = L[prio] or prio
 						if (instanceType ==  "arena" or instanceType == "pvp") then
 							local aString1 = substring(GetSpellInfo(spellID), 0, 17)..": "..substring(prio, 0, 6) or "SPELL REMOVED: "..spellID
 							local aString2 = " ("..instanceType..")"
@@ -695,31 +695,15 @@ local numberOfSpellChecksPerRow = 5
 								if dropdown_val ~= prio then
 									CustomPVEDropDownCompileSpells(spell, dropdown_val, i, c, duration)
 									prio = dropdown_val
+									prio = L[prio] or prio
 									if type(spell) == "number" then
-										prio = L[prio] or prio
-										if (instanceType ==  "arena" or instanceType == "pvp") then
-											local aString1 = substring(GetSpellInfo(spellID), 0, 17)..": "..substring(prio, 0, 6) or "SPELL REMOVED: "..spellID
-											local aString2 = " ("..instanceType..")"
-											local cutString1 = substring(aString1, 0, 23);
-											local cutString2 = substring(aString2, 0, 23);
-											local aString3 = cutString1.."\n".."Custom Priority"
-											spellCheck.text:SetText(aString3);
-										elseif zone then
-											local aString1 = substring(GetSpellInfo(spellID), 0, 17)..": "..substring(prio, 0, 6) or "SPELL REMOVED: "..spellID
-											local aString2 = " ("..zone..")"
-											local cutString1 = substring(aString1, 0, 23);
-											local cutString2 = substring(aString2, 0, 23);
-										  local	aString3 = cutString1.."\n".."Custom Priority"
-											spellCheck.text:SetText(aString3);
-										else
-											aString = substring(GetSpellInfo(spellID), 0, 17)..": "..substring(prio, 0, 6) or "SPELL REMOVED: "..spellID
-											local cutString = substring(aString, 0, 23);
-											spellCheck.text:SetText(cutString.."\n".."Custom Priority");
-											spellCheck.icon:SetNormalTexture(GetSpellTexture(spellID) or 1)
-										end
+										aString = substring(GetSpellInfo(spellID), 0, 17)..": "..substring(prio, 0, 6) or "SPELL REMOVED: "..spellID
+										local cutString = substring(aString, 0, 23);
+										spellCheck.text:SetText(cutString.."\n".."Custom Priority");
+										spellCheck.icon:SetNormalTexture(GetSpellTexture(spellID) or 1)
 									else
-									aString = spellID..": "..prio
-									local cutString = substring(aString, 0, 23);
+										aString = spellID..": "..prio
+										local cutString = substring(aString, 0, 23);
 										spellCheck.text:SetText(cutString.."\n".."Custom Priority");
 										spellCheck.icon:SetNormalTexture(1008124)
 									end
