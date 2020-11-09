@@ -236,7 +236,8 @@ local function CustomAddedCompileSpells(spell, prio)
 			for k, v in ipairs(L.spells[i][l]) do
 				local spellID, oldPrio, _, _, duration, customname = unpack(v)
 				if spell == spellID and (not duration) then
-					if i == 1 then L.SpellsConfig:WipeSpellList(l); print("|cff00ccffLoseControl|r : ".."|cff009900Removed |r"..spellID.." |cff009900from : |r"..oldPrio.." (PVP)") end
+					local priotext = L[oldPrio] or oldPrio
+					if i == 1 then L.SpellsConfig:WipeSpellList(l); print("|cff00ccffLoseControl|r : ".."|cff009900Removed |r"..spellID.." |cff009900from : |r"..priotext.." (PVP)") end
 					if i ~= 1 then L.SpellsPVEConfig:WipeSpellList(i-1); print("|cff00ccffLoseControl|r : ".."|cff009900Removed |r"..spellID.." |cff009900from : |r"..L.spellsTable[i][1].." (PVE)") end
 					tblremove(L.spells[i][l], k)
 					if i == 1 then L.SpellsConfig:UpdateSpellList(l) end
@@ -252,7 +253,8 @@ local function CustomAddedCompileSpells(spell, prio)
 	tblinsert(_G.LoseControlDB.customSpellIds, {spell, prio, nil, nil, nil, "Custom Spell", 1})
 	tblinsert(L.spells[1][tabsIndex[prio]], 1, {spell, prio, nil, nil, nil, "Custom Spell", 1})
 	L.SpellsConfig:UpdateSpellList(tabsIndex[prio])
-	print("|cff00ccffLoseControl|r : ".."|cff009900Added |r"..spell.." |cff009900to to list: |r"..prio.." (PVP)")
+	local priotext = L[prio] or prio
+	print("|cff00ccffLoseControl|r : ".."|cff009900Added |r"..spell.." |cff009900to to list: |r"..priotext.." (PVP)")
 end
 
 local function CustomPVPDropDownCompileSpells(spell , newPrio, oldPrio, c, duration)
@@ -267,7 +269,8 @@ local function CustomPVPDropDownCompileSpells(spell , newPrio, oldPrio, c, durat
 		if spell == spellID and (not duration) then
 			SpellsConfig:WipeSpellList(tabsIndex[oldPrio])
 			tblremove(L.spells[1][tabsIndex[oldPrio]], k)
-			print("|cff00ccffLoseControl|r : ".."|cff009900Removed |r"..spellID.." |cff009900from list: |r"..oldPrio.." (PVP)")
+			local priotext = L[oldPrio] or oldPrio
+			print("|cff00ccffLoseControl|r : ".."|cff009900Removed |r"..spellID.." |cff009900from list: |r"..priotext.." (PVP)")
 			if newPrio == "Delete" then
 			 	L.spellIds[spell] = nil
 				_G.LoseControlDB.spellEnabled[spell]= nil
@@ -280,7 +283,8 @@ local function CustomPVPDropDownCompileSpells(spell , newPrio, oldPrio, c, durat
 				L.spellIds[spell] = newPrio
 				tblinsert(_G.LoseControlDB.customSpellIds, {spell, newPrio, nil, nil, nil, "Custom Priority", 1})
 				tblinsert(L.spells[1][tabsIndex[newPrio]], 1, {spell, newPrio, nil, nil, nil, "Custom Priority", 1})
-				print("|cff00ccffLoseControl|r : ".."|cff009900Added |r"..spell.." |cff009900to to list: |r"..newPrio.." (PVP)")
+				local priotext = L[newPrio] or newPrio
+				print("|cff00ccffLoseControl|r : ".."|cff009900Added |r"..spell.." |cff009900to to list: |r"..priotext.." (PVP)")
 				SpellsConfig:UpdateSpellList(tabsIndex[oldPrio]);SpellsConfig:UpdateTab(tabsIndex[newPrio]);
 			end
 			break
