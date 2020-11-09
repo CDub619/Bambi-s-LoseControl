@@ -110,6 +110,7 @@ local spellIdsArena = {}
 local interruptsIds = {}
 local cleuPrioCastedSpells = {}
 local spells = {}
+local spellsLua = {}
 
 
 -------------------------------------------------------------------------------
@@ -5148,6 +5149,7 @@ function LoseControl:CompileSpells(typeUpdate)
 		spellIds = {}
 		interruptsIds = {}
 		cleuPrioCastedSpells = {}
+		spellsLua = {}
 
 		local hash = {}
 		local customSpells = {}
@@ -5173,8 +5175,11 @@ function LoseControl:CompileSpells(typeUpdate)
    		for l = 2, #spellsTable[i] do
 				local spellID, prio = unpack(spellsTable[i][l])
         tblinsert(spells[i][tabsIndex[prio]], ({spellID, prio}))
+				spellsLua[spellID] = true
 			end
 		end
+
+		L.spellsLua = spellsLua
 		--Clean up Spell List, Remove all Duplicates and Custom Spells (Will ReADD Custom Spells Later)
 		for i = 1, (#spells) do
 			for l = 1, (#spells[i]) do
@@ -7400,6 +7405,8 @@ LossOfControlSpellsPVE:SetPoint("CENTER", LossOfControlSpells, "CENTER", 0, -20)
 LossOfControlSpellsArena:SetPoint("CENTER", PrioritySliderArena.Drink_Purge, "CENTER", 8, 36)
 -------------------------------------------------------------------------------
 OptionsPanel.default = function() -- This method will run when the player clicks "defaults"
+	L.SpellsConfig:ResetAllSpellList()
+	L.SpellsPVEConfig:ResetAllSpellList()
 	_G.LoseControlDB = nil
 	L.SpellsPVEConfig:WipeAll()
 	L.SpellsConfig:WipeAll()

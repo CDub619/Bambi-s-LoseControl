@@ -237,10 +237,10 @@ local function CustomAddedCompileSpells(spell, prio)
 				local spellID, oldPrio, _, _, duration, customname = unpack(v)
 				if spell == spellID and (not duration) then
 					if i == 1 then L.SpellsConfig:WipeSpellList(l); print("|cff00ccffLoseControl|r : ".."|cff009900Removed |r"..spellID.." |cff009900from : |r"..oldPrio.." (PVP)") end
-					if i ~= 1 then L.SpellsPVEConfig:WipeSpellList(i+1); print("|cff00ccffLoseControl|r : ".."|cff009900Removed |r"..spellID.." |cff009900from : |r"..L.spellsTable[i][1].." (PVE)") end
+					if i ~= 1 then L.SpellsPVEConfig:WipeSpellList(i-1); print("|cff00ccffLoseControl|r : ".."|cff009900Removed |r"..spellID.." |cff009900from : |r"..L.spellsTable[i][1].." (PVE)") end
 					tblremove(L.spells[i][l], k)
 					if i == 1 then L.SpellsConfig:UpdateSpellList(l) end
-					if i ~= 1 then L.SpellsPVEConfig:UpdateSpellList(i+1) end
+					if i ~= 1 then L.SpellsPVEConfig:UpdateSpellList(i-1) end
 					break
 				end
 			end
@@ -271,8 +271,9 @@ local function CustomPVPDropDownCompileSpells(spell , newPrio, oldPrio, c, durat
 			if newPrio == "Delete" then
 			 	L.spellIds[spell] = nil
 				_G.LoseControlDB.spellEnabled[spell]= nil
-				--if anOrginalSpell then do not insert custom spell db
+				if L.spellsLua[spell] then
 				tblinsert(_G.LoseControlDB.customSpellIds, {spell, newPrio, nil, nil, nil, customname, 1})  --v[7]: Category Tab to enter spell
+				end
 				DeleteSpellFrame(spell, duration, c)
 				SpellsConfig:UpdateSpellList(tabsIndex[oldPrio])
 			else
@@ -357,6 +358,7 @@ local function SetTabs(frame, numTabs, ...)
 		tab.content:Hide();
 		tab.content.bg = tab.content:CreateTexture(nil, "BACKGROUND");
 		tab.content.bg:SetAllPoints(true);
+		tab.content.spellstext  =	tab.content:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
 	--tab.content.bg:SetColorTexture(math.random(), math.random(), math.random(), 0.6);
 
 		table.insert(contents, tab.content);
@@ -386,6 +388,26 @@ local function SetTabs(frame, numTabs, ...)
 				end
 	    end)
 		end
+
+		tab.content.reset = CreateFrame("Button",  tab:GetName()..'CustomSpellsButton', 	tab.content, "UIPanelButtonTemplate")
+		tab.content.reset:SetSize(70,22)
+		tab.content.reset:SetScale(.7)
+		tab.content.reset:SetPoint("CENTER", tab.content.add,  "CENTER", 0, -25 )
+		tab.content.reset:SetText("Enable All")
+		tab.content.reset:SetScript("OnClick", function(self, enable)
+		SpellsConfig:EnableAll(i)
+		end)
+
+
+		tab.content.disable = CreateFrame("Button",  tab:GetName()..'CustomSpellsButton', 	tab.content, "UIPanelButtonTemplate")
+		tab.content.disable:SetSize(70,22)
+		tab.content.disable:SetScale(.7)
+		tab.content.disable:SetPoint("CENTER",	tab.content.reset,  "CENTER", 0, -20)
+		tab.content.disable:SetText("Disable All")
+		tab.content.disable:SetScript("OnClick", function(self, disable)
+		SpellsConfig:DisableAll(i)
+		end)
+
 
 		if (i == 1) then
 		tab:SetPoint("TOPLEFT", UISpellsConfig, "BOTTOMLEFT", 5, 7);
@@ -482,24 +504,37 @@ function SpellsConfig:UpdateAllSpellList()
 	end
 end
 
---[[function SpellsConfig:ResetAllSpellList()
+function SpellsConfig:ResetAllSpellList()
 	for i = 1, #tabs do
-	SpellsConfig:ResetSpellList(i)
+	SpellsConfig:EnableAll(i)
 	end
 end
 
-function SpellsConfig:ResetSpellList(i)
+function SpellsConfig:EnableAll(i)
 	local c = contents[i]
-	for spellCount = 1, (#L.spells[1][i] + 1) do
-		if not  _G[c:GetName().."spellCheck"..i..spellCount] then return end
-			local spellCheck = _G[c:GetName().."spellCheck"..i..spellCount];
-			spellCheck.icon = _G[spellCheck:GetName().."Icon"]
-			spellCheck.icon.check = spellCheck
-			spellID = spellCheck.spellID
-			_G.LoseControlDB.spellEnabled[spellID] = true
-			spellCheck:SetChecked(_G.LoseControlDB.spellEnabled[spellID] or false);   --Error on 1st ADDON_LOADED
+	for l = 1, (#L.spells[1][i]) do
+		local spellID, _, _, _, duration = unpack(L.spells[1][i][l])
+		local spellCheck = GetSpellFrame(spellID, duration, c)
+		spellCheck.icon = _G[spellCheck:GetName().."Icon"]
+		spellCheck.icon.check = spellCheck
+		spellID = spellCheck.spellID
+		_G.LoseControlDB.spellEnabled[spellID] = true
+		spellCheck:SetChecked(_G.LoseControlDB.spellEnabled[spellID] or false);
 		end
-	end]]
+	end
+
+function SpellsConfig:DisableAll(i)
+	local c = contents[i]
+	for l = 1, (#L.spells[1][i]) do
+	local spellID, _, _, _, duration = unpack(L.spells[1][i][l])
+	local spellCheck = GetSpellFrame(spellID, duration, c)
+		spellCheck.icon = _G[spellCheck:GetName().."Icon"]
+		spellCheck.icon.check = spellCheck
+		spellID = spellCheck.spellID
+		_G.LoseControlDB.spellEnabled[spellID] = false
+		spellCheck:SetChecked(_G.LoseControlDB.spellEnabled[spellID] or false);
+	end
+end
 
 function SpellsConfig:WipeSpellList(i)
 local c = contents[i]
@@ -519,6 +554,10 @@ local numberOfSpellChecksPerRow = 5
 		local Y = -10
 		local X = 230
 		local spellCount = 1
+
+		c.spellstext:SetText("|cff00ccffSpells|r : "..#L.spells[1][i])
+		c.spellstext:SetPoint("TOPLEFT", c, "TOPLEFT", 5, 0);
+
 		for l = 1, #L.spells[1][i] do
 		local spellID, prio, _, _, duration, customname, _, cleuEvent = unpack(L.spells[1][i][l])
 		 if (spellID) then
