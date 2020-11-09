@@ -4760,8 +4760,8 @@ locBliz:SetScript("OnEvent", function(self, event, ...)
 					print("Found New Interrupt",locType,"", spellID)
 					interruptsIds[spellID] = duration
 					LoseControlDB.spellEnabled[spellID]= true
-					tblinsert(LoseControlDB.customSpellIds, {spellID, "Interrupt: "..math.floor(duration), instanceType, name..": "..ZoneName, duration, "Discovered", #spells})
-					tblinsert(spells[#spells][tabsIndex["Interrupt"]], {spellID, "Interrupt: "..math.floor(duration), instanceType, name..": "..ZoneName, duration, "Discovered", #spells})
+					tblinsert(LoseControlDB.customSpellIds, {spellID, "Interrupt", instanceType, name..": "..ZoneName, duration, "Discovered", #spells})
+					tblinsert(spells[#spells][tabsIndex["Interrupt"]], {spellID, "Interrupt", instanceType, name..": "..ZoneName, duration, "Discovered", #spells})
 					L.SpellsPVEConfig:UpdateTab(#spells-1)
 				else
 				end

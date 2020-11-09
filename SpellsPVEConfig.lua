@@ -327,6 +327,9 @@ local function createDropdown(opts)
 						if L[val] then val = L[val] end
 	            info.text = val;
 	            info.checked = false
+							if val == default_val then
+								info.checked = true
+							end
 	            info.menuList= key
 	            info.hasArrow = false
 	            info.func = function(b)
@@ -465,7 +468,11 @@ local function SetTabs(frame, numTabs, ...)
 	tab.content.reset = CreateFrame("Button",  tab:GetName()..'CustomSpellsButton', 	tab.content, "UIPanelButtonTemplate")
 	tab.content.reset:SetSize(70,22)
 	tab.content.reset:SetScale(.7)
-	tab.content.reset:SetPoint("CENTER", tab.content, "CENTER", 860, 197 )
+		if tabs[i] == "Discovered LC Spells" then
+			tab.content.reset:SetPoint("CENTER", tab.content, "CENTER", 860, 245 )
+		else
+			tab.content.reset:SetPoint("CENTER", tab.content, "CENTER", 860, 209 )
+		end
 	tab.content.reset:SetText("Enable All")
 	tab.content.reset:SetScript("OnClick", function(self, enable)
 	SpellsPVEConfig:EnableAll(i)
@@ -734,19 +741,37 @@ local numberOfSpellChecksPerRow = 5
 					prio = L[prio] or prio
 					if type(spellID) == "number" then
 						if (instanceType ==  "arena" or instanceType == "pvp") then
-							local aString1 = substring(GetSpellInfo(spellID), 0, 17)..": "..substring(prio, 0, 6) or "SPELL REMOVED: "..spellID
-							local aString2 = " ("..instanceType..")"
-							local cutString1 = substring(aString1, 0, 23);
-							local cutString2 = substring(aString2, 0, 23);
-							local aString3 = cutString1.."\n"..cutString2
-							spellCheck.text:SetText(aString3);
+							if duration then
+								local aString1 = substring(GetSpellInfo(spellID), 0, 14)..": "..substring(prio, 0, 5)..": "..math.floor(duration) or "SPELL REMOVED: "..spellID
+								local aString2 = " ("..instanceType..")"
+								local cutString1 = substring(aString1, 0, 23);
+								local cutString2 = substring(aString2, 0, 23);
+								local aString3 = cutString1.."\n"..cutString2
+								spellCheck.text:SetText(aString3);
+							else
+								local aString1 = substring(GetSpellInfo(spellID), 0, 17)..": "..substring(prio, 0, 6) or "SPELL REMOVED: "..spellID
+								local aString2 = " ("..instanceType..")"
+								local cutString1 = substring(aString1, 0, 23);
+								local cutString2 = substring(aString2, 0, 23);
+								local aString3 = cutString1.."\n"..cutString2
+								spellCheck.text:SetText(aString3);
+							end
 						elseif zone then
-							local aString1 = substring(GetSpellInfo(spellID), 0, 17)..": "..substring(prio, 0, 6) or "SPELL REMOVED: "..spellID
-							local aString2 = " ("..zone..")"
-							local cutString1 = substring(aString1, 0, 23);
-							local cutString2 = substring(aString2, 0, 23);
-						  local	aString3 = cutString1.."\n"..cutString2
-							spellCheck.text:SetText(aString3);
+							if duration then
+								local aString1 = substring(GetSpellInfo(spellID), 0, 14)..": "..substring(prio, 0, 5)..": "..math.floor(duration) or "SPELL REMOVED: "..spellID
+								local aString2 = " ("..zone..")"
+								local cutString1 = substring(aString1, 0, 23);
+								local cutString2 = substring(aString2, 0, 23);
+							  local	aString3 = cutString1.."\n"..cutString2
+								spellCheck.text:SetText(aString3);
+							else
+								local aString1 = substring(GetSpellInfo(spellID), 0, 17)..": "..substring(prio, 0, 6) or "SPELL REMOVED: "..spellID
+								local aString2 = " ("..zone..")"
+								local cutString1 = substring(aString1, 0, 23);
+								local cutString2 = substring(aString2, 0, 23);
+							  local	aString3 = cutString1.."\n"..cutString2
+								spellCheck.text:SetText(aString3);
+							end
 						else
 							aString = substring(GetSpellInfo(spellID), 0, 17)..": "..substring(prio, 0, 6) or "SPELL REMOVED: "..spellID
 							local cutString = substring(aString, 0, 23);
@@ -772,8 +797,8 @@ local numberOfSpellChecksPerRow = 5
 							['name']='raid',
 							['parent']=spellCheck,
 							['title']='',
-								['items']= tabsDrop,
-							['defaultVal']='',
+							['items']= tabsDrop,
+							['defaultVal']=prio,
 							['changeFunc']=function(dropdown_frame, dropdown_val)
 								local spell = GetSpellInfo(tonumber(spellID))
 								if spell then spell = tonumber(spellID) else spell = spellID end

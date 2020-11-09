@@ -322,6 +322,9 @@ local function createDropdown(opts)
 						if L[val] then val = L[val] end
 	            info.text = val;
 	            info.checked = false
+							if val == default_val then
+								info.checked = true
+							end
 	            info.menuList= key
 	            info.hasArrow = false
 	            info.func = function(b)
@@ -396,7 +399,11 @@ local function SetTabs(frame, numTabs, ...)
 		tab.content.reset = CreateFrame("Button",  tab:GetName()..'CustomSpellsButton', 	tab.content, "UIPanelButtonTemplate")
 		tab.content.reset:SetSize(70,22)
 		tab.content.reset:SetScale(.7)
-		tab.content.reset:SetPoint("CENTER", tab.content,  "CENTER", 860, 197 )
+			if tabs[i] == "Interrupt" then
+				tab.content.reset:SetPoint("CENTER", tab.content,  "CENTER", 860, 245 )
+			else
+				tab.content.reset:SetPoint("CENTER", tab.content,  "CENTER", 860, 197 )
+			end
 		tab.content.reset:SetText("Enable All")
 		tab.content.reset:SetScript("OnClick", function(self, enable)
 		SpellsConfig:EnableAll(i)
@@ -623,13 +630,13 @@ local numberOfSpellChecksPerRow = 5
 				if cleuEvent then spellID = customname end
 				spellCheck:SetChecked(_G.LoseControlDB.spellEnabled[spellID] or false);   --Error on 1st ADDON_LOADED
 				spellCheck.spellID = spellID
-
+				prio = L[prio] or prio
 				local drop_opts = {
 				    ['name']='raid',
 				    ['parent']=spellCheck,
 				    ['title']='',
 				    ['items']= tabsDrop,
-				    ['defaultVal']='',
+				    ['defaultVal']=prio,
 				    ['changeFunc']=function(dropdown_frame, dropdown_val)
 							local spell = GetSpellInfo(tonumber(spellID))
 							if spell then spell = tonumber(spellID) else spell = spellID end
