@@ -110,7 +110,9 @@ local spellIdsArena = {}
 local interruptsIds = {}
 local cleuPrioCastedSpells = {}
 local spells = {}
+local spellsArena = {}
 local spellsLua = {}
+local spellsArenaLua
 
 
 -------------------------------------------------------------------------------
@@ -368,6 +370,11 @@ local spellsArenaTable = {
 	{20549 , "CC"}, --War Stomp
 	{255654 , "CC"}, --Bull Rush
 	{287712 , "CC"}, --Haymaker
+
+	{186257 , "Freedoms_Speed"}, --Aspect of the Cheetah
+	{5116 , "Snares_WithCDs"}, --Concussive Shot
+	{204205 , "Special_Low"}, --Wild Protector
+	{135299 , "Snares_Ranged_Spamable"}, --Tar Trap
 
 	}
 
@@ -2936,6 +2943,7 @@ local spellsTable = {
 }
 
 L.spellsTable = spellsTable
+L.spellsArenaTable = spellsArenaTable
 
 local tabs = {
 	"CC",
@@ -5086,43 +5094,113 @@ function LoseControl:DisableLossOfControlUI()
 end
 
 
-function LoseControl:CompileArenaSpells()
+function LoseControl:CompileArenaSpells(typeUpdate)
 
 	spellsArena = {}
 	spellIdsArena = {}
+	spellsArenaLua = {}
 
-	for i = 1, (#tabs) do
+	local hash = {}
+	local customSpells = {}
+	local toremove = {}
+	--Build Custom Table for Check
+	for k, v in ipairs(_G.LoseControlDB.customSpellIdsArena) do
+		local spellID, prio, _, _, _, _, tabId  = unpack(v)
+		customSpells[spellID] = {spellID, prio, tabId, k}
+	end
+	--Build the Spells Table
+	for i = 1, (#tabsArena) do
 		if spellsArena[i] == nil then
 			spellsArena[i] = {}
 		end
 	end
-
+--Sort the spells
 	for k, v in ipairs(spellsArenaTable) do
-		local spellIDArena, prioArena = unpack(v)
-		tblinsert(spellsArena[tabsArenaIndex[prioArena]], ({spellIDArena, prioArena }))
+		local spellID, prio = unpack(v)
+		tblinsert(spellsArena[tabsArenaIndex[prio]], ({spellID, prio }))
+		spellsArenaLua[spellID] = true
 	end
 
+	L.spellsArenaLua = spellsArenaLua
+	--Clean up Spell List, Remove all Duplicates and Custom Spells (Will ReADD Custom Spells Later)
+	for i = 1, (#spellsArena) do
+		local removed = 0
+		for l = 1, (#spellsArena[i]) do
+			local spellID, prio = unpack(spellsArena[i][l])
+			if (not hash[spellID]) and (not customSpells[spellID]) then
+				hash[spellID] = {spellID, prio}
+			else
+				if typeUpdate == 1 then -- typeUpdate called in ADDON_LOAD as 1
+					if customSpells[spellID] then
+						local CspellID, Cprio, CtabId, Ck = unpack(customSpells[spellID])
+						if CspellID == spellID and Cprio == prio and CtabId == i then
+						tblremove(_G.LoseControlDB.customSpellIdsArena, Ck)
+						print("|cff00ccffLoseControl|r : "..spellID.." : "..prio.." |cff009900Restored Arena Spell to Orginal Value|r")
+						else
+							if type(spellID) == "number" then
+								if GetSpellInfo(spellID) then
+									local name = GetSpellInfo(spellID)
+									print("|cff00ccffLoseControl|r : "..CspellID.." : "..Cprio.." ("..name..") Modified Arena Spell ".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
+								end
+							else
+									print("|cff00ccffLoseControl|r : "..CspellID.." : "..Cprio.." (not spellId) Modified Arena Spell ".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
+							end
+							tblinsert(toremove, {i , l, removed, spellID})
+							removed = removed + 1
+						end
+					else
+						local HspellID, Hprio = unpack(hash[spellID])
+						if type(spellID) == "number" then
+								local name = GetSpellInfo(spellID)
+								print("|cff00ccffLoseControl|r : "..HspellID.." : "..Hprio.." ("..name..") ".."|cffff0000Duplicate Arena Spell in Lua |r".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
+						else
+								print("|cff00ccffLoseControl|r : "..HspellID.." : "..Hprio.." (not spellId) ".."|cff009900Duplicate Arena Spell in Lua |r".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
+						end
+						tblinsert(toremove, {i , l, removed, spellID})
+						removed = removed + 1
+					end
+				end
+			end
+		end
+	end
+	--Now Remove all the Duplicates and Custom Spells
+	for k, v in ipairs(toremove) do
+	local i, l, r, s = unpack(v)
+	tblremove(spellsArena[i], l - r)
+	end
+	--ReAdd all dbCustom Spells to spells
+		for k,v in ipairs(_G.LoseControlDB.customSpellIdsArena) do
+			local spellID, prio, instanceType, zone, duration, customname, _, cleuEvent, position  = unpack(v)
+			if prio ~= "Delete" then
+				if position then
+					tblinsert(spellsArena[position], 1, v)
+				else
+					tblinsert(spellsArena[tabsArenaIndex[prio]], 1, v) --v[7]: Category to enter spell / v[8]: Tab to update / v[9]: Table
+				end
+			end
+		end
 
+		--Make spellIds from Spells for AuraFilter
 	for i = 1, #spellsArena do
-		for k, v in ipairs(spellsArena[i]) do
-	  local spellIDArena, prioArena = unpack(v)
-		spellIdsArena[spellIDArena] = prioArena
+		for l = 1, #spellsArena[i] do
+			spellIdsArena[spellsArena[i][l][1]] = spellsArena[i][l][2]
 		end
 	end
 
 	for k, v in ipairs(interrupts) do
 	local spellID, duration = unpack(v)
-	tblinsert(spellsArena[tabsIndex["Interrupt"]], 2, {spellID , "Interrupt", nil, nil, duration})
+	tblinsert(spellsArena[tabsArenaIndex["Interrupt"]], 1, {spellID , "Interrupt", nil, nil, duration})
 	end
 
 	for k, v in ipairs(cleuSpells) do
 	local spellID, duration, _, prioArena, _, customnameArena = unpack(v)
 		if prioArena then
-		tblinsert(spellsArena[tabsIndex[prioArena]], 2, {spellID , prioArena, nil, nil, duration, customnameArena, nil, "cleuEventArena"})
+		tblinsert(spellsArena[tabsArenaIndex[prioArena]], 1, {spellID , prioArena, nil, nil, duration, customnameArena, nil, "cleuEventArena"})
 		end
 	end
 
 	L.spellsArena = spellsArena
+	L.spellIdsArena = spellIdsArena
 
 --ARENAENABLED-------------------------------------------------------------------------------------------
 	for k in pairs(spellIdsArena) do
@@ -5395,9 +5473,10 @@ function LoseControl:ADDON_LOADED(arg1)
 			end
 		end
 		self:CompileSpells(1)
-		self:CompileArenaSpells()
+		self:CompileArenaSpells(1)
 	  L.SpellsPVEConfig:Addon_Load()
 	  L.SpellsConfig:Addon_Load()
+		L.SpellsArenaConfig:Addon_Load()
 	end
 end
 
@@ -7407,12 +7486,15 @@ LossOfControlSpellsArena:SetPoint("CENTER", PrioritySliderArena.Drink_Purge, "CE
 OptionsPanel.default = function() -- This method will run when the player clicks "defaults"
 	L.SpellsConfig:ResetAllSpellList()
 	L.SpellsPVEConfig:ResetAllSpellList()
+	L.SpellsArenaConfig:ResetAllSpellList()
 	_G.LoseControlDB = nil
 	L.SpellsPVEConfig:WipeAll()
 	L.SpellsConfig:WipeAll()
+	L.SpellsArenaConfig:WipeAll()
 	LoseControl:ADDON_LOADED(addonName)
 	L.SpellsConfig:UpdateAll()
 	L.SpellsPVEConfig:UpdateAll()
+	L.SpellsArenaConfig:UpdateAll()
 	for _, v in pairs(LCframes) do
 		v:PLAYER_ENTERING_WORLD()
 	end
