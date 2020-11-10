@@ -1,5 +1,5 @@
 ## Interface: 90000
-## Title: LoseControl
+## Title: Bambi's LoseControl
 ## Author: Bambi, Kouri, millanzarreta
 ## Version: 9.0
 ## Notes: Displays & Discovers (PVE Spells: Discovered Tab) the duration of CC effects

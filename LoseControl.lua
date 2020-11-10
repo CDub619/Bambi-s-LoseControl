@@ -7387,6 +7387,11 @@ end
 -- Arrange all the options neatly
 title:SetPoint("TOPLEFT", 8, -10)
 
+local BambiText = OptionsPanel:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+BambiText:SetFont("Fonts\\MORPHEUS.ttf", 14 )
+BambiText:SetText("By ".."|cff00ccffBambi|r")
+BambiText:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 38, 1)
+
 Unlock:SetPoint("TOPLEFT",  title, "BOTTOMLEFT", 110, 22)
 DisableCooldownCount:SetPoint("TOPLEFT", Unlock, "BOTTOMLEFT", 0, 6)
 
@@ -8659,7 +8664,7 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 		UIDropDownMenu_Initialize(AnchorDropDown, function() -- called on refresh and also every time the drop down menu is opened
 			AddItem(AnchorDropDown, L["None"], "None")
 			AddItem(AnchorDropDown, "Blizzard", "Blizzard")
-			if PartyAnchor5 then AddItem(AnchorDropDown, "BambiUI", "BambiUI") end
+			if PartyAnchor5 then AddItem(AnchorDropDown, "Bambi's UI", "BambiUI") end
 			if Gladius then AddItem(AnchorDropDown, "Gladius", "Gladius") end
 			if _G[anchors["Perl"][unitId]] or (type(anchors["Perl"][unitId])=="table" and anchors["Perl"][unitId]) then AddItem(AnchorDropDown, "Perl", "Perl") end
 			if _G[anchors["XPerl"][unitId]] or (type(anchors["XPerl"][unitId])=="table" and anchors["XPerl"][unitId]) then AddItem(AnchorDropDown, "XPerl", "XPerl") end
