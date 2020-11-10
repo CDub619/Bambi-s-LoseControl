@@ -3139,6 +3139,10 @@ local anchors = {
 -- Default settings
 local DBdefaults = {
 	ArenaGladiusGloss = true, --Add option Check Box for This
+	InterruptIcons = false,
+	InterruptOverlay = false,
+	RedSmokeBomb = true,
+	DrawSwipeSetting = 0,
 
 	DiscoveredSpells = { },
 
@@ -4996,19 +5000,15 @@ function LoseControl:RegisterUnitEvents(enabled)
 			self:GetParent():Hide()
 		end
 	end
-	if (LoseControlDB.priority.Interrupt > 0) then
-		local someFrameEnabled = false
-		for _, v in pairs(LCframes) do
-			if v.frame and v.frame.enabled then
-				someFrameEnabled = true
-				break
-			end
+	local someFrameEnabled = false
+	for _, v in pairs(LCframes) do
+		if v.frame and v.frame.enabled then
+			someFrameEnabled = true
+			break
 		end
-		if someFrameEnabled then
-			LCframes["target"]:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-		else
-			LCframes["target"]:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-		end
+	end
+	if someFrameEnabled then
+		LCframes["target"]:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 	else
 		LCframes["target"]:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 	end
@@ -5094,7 +5094,7 @@ function LoseControl:DisableLossOfControlUI()
 end
 
 
-function LoseControl:CompileArenaSpells(typeUpdate)
+function LoseControl:CompileArenaSpells()
 
 	spellsArena = {}
 	spellIdsArena = {}
@@ -5106,7 +5106,7 @@ function LoseControl:CompileArenaSpells(typeUpdate)
 	--Build Custom Table for Check
 	for k, v in ipairs(_G.LoseControlDB.customSpellIdsArena) do
 		local spellID, prio, _, _, _, _, tabId  = unpack(v)
-		customSpells[spellID] = {spellID, prio, tabId, k}
+		customSpells[spellID] = {spellID, prio, k}
 	end
 	--Build the Spells Table
 	for i = 1, (#tabsArena) do
@@ -5130,35 +5130,33 @@ function LoseControl:CompileArenaSpells(typeUpdate)
 			if (not hash[spellID]) and (not customSpells[spellID]) then
 				hash[spellID] = {spellID, prio}
 			else
-				if typeUpdate == 1 then -- typeUpdate called in ADDON_LOAD as 1
-					if customSpells[spellID] then
-						local CspellID, Cprio, CtabId, Ck = unpack(customSpells[spellID])
-						if CspellID == spellID and Cprio == prio and CtabId == i then
-						tblremove(_G.LoseControlDB.customSpellIdsArena, Ck)
-						print("|cff00ccffLoseControl|r : "..spellID.." : "..prio.." |cff009900Restored Arena Spell to Orginal Value|r")
-						else
-							if type(spellID) == "number" then
-								if GetSpellInfo(spellID) then
-									local name = GetSpellInfo(spellID)
-									print("|cff00ccffLoseControl|r : "..CspellID.." : "..Cprio.." ("..name..") Modified Arena Spell ".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
-								end
-							else
-									print("|cff00ccffLoseControl|r : "..CspellID.." : "..Cprio.." (not spellId) Modified Arena Spell ".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
-							end
-							tblinsert(toremove, {i , l, removed, spellID})
-							removed = removed + 1
-						end
+				if customSpells[spellID] then
+					local CspellID, Cprio, Ck = unpack(customSpells[spellID])
+					if CspellID == spellID and Cprio == prio then
+					tblremove(_G.LoseControlDB.customSpellIdsArena, Ck)
+					print("|cff00ccffLoseControl|r : "..spellID.." : "..prio.." |cff009900Restored Arena Spell to Orginal Value|r")
 					else
-						local HspellID, Hprio = unpack(hash[spellID])
 						if type(spellID) == "number" then
+							if GetSpellInfo(spellID) then
 								local name = GetSpellInfo(spellID)
-								print("|cff00ccffLoseControl|r : "..HspellID.." : "..Hprio.." ("..name..") ".."|cffff0000Duplicate Arena Spell in Lua |r".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
+								print("|cff00ccffLoseControl|r : "..CspellID.." : "..Cprio.." ("..name..") Modified Arena Spell ".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
+							end
 						else
-								print("|cff00ccffLoseControl|r : "..HspellID.." : "..Hprio.." (not spellId) ".."|cff009900Duplicate Arena Spell in Lua |r".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
+								print("|cff00ccffLoseControl|r : "..CspellID.." : "..Cprio.." (not spellId) Modified Arena Spell ".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
 						end
 						tblinsert(toremove, {i , l, removed, spellID})
 						removed = removed + 1
 					end
+				else
+					local HspellID, Hprio = unpack(hash[spellID])
+					if type(spellID) == "number" then
+							local name = GetSpellInfo(spellID)
+							print("|cff00ccffLoseControl|r : "..HspellID.." : "..Hprio.." ("..name..") ".."|cffff0000Duplicate Arena Spell in Lua |r".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
+					else
+							print("|cff00ccffLoseControl|r : "..HspellID.." : "..Hprio.." (not spellId) ".."|cff009900Duplicate Arena Spell in Lua |r".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
+					end
+					tblinsert(toremove, {i , l, removed, spellID})
+					removed = removed + 1
 				end
 			end
 		end
@@ -5169,16 +5167,12 @@ function LoseControl:CompileArenaSpells(typeUpdate)
 	tblremove(spellsArena[i], l - r)
 	end
 	--ReAdd all dbCustom Spells to spells
-		for k,v in ipairs(_G.LoseControlDB.customSpellIdsArena) do
-			local spellID, prio, instanceType, zone, duration, customname, _, cleuEvent, position  = unpack(v)
-			if prio ~= "Delete" then
-				if position then
-					tblinsert(spellsArena[position], 1, v)
-				else
-					tblinsert(spellsArena[tabsArenaIndex[prio]], 1, v) --v[7]: Category to enter spell / v[8]: Tab to update / v[9]: Table
-				end
-			end
+	for k,v in ipairs(_G.LoseControlDB.customSpellIdsArena) do
+		local spellID, prio, instanceType, zone, duration, customname, _, cleuEvent  = unpack(v)
+		if prio ~= "Delete" then
+			tblinsert(spellsArena[tabsArenaIndex[prio]], 1, v) --v[7]: Category to enter spell / v[8]: Tab to update / v[9]: Table
 		end
+	end
 
 		--Make spellIds from Spells for AuraFilter
 	for i = 1, #spellsArena do
@@ -5267,35 +5261,33 @@ function LoseControl:CompileSpells(typeUpdate)
 					if (not hash[spellID]) and (not customSpells[spellID]) then
 						hash[spellID] = {spellID, prio}
 					else
-						if typeUpdate == 1 then -- typeUpdate called in ADDON_LOAD as 1
-							if customSpells[spellID] then
-								local CspellID, Cprio, CtabId, Ck = unpack(customSpells[spellID])
-								if CspellID == spellID and Cprio == prio and CtabId == i then
-								tblremove(_G.LoseControlDB.customSpellIds, Ck)
-								print("|cff00ccffLoseControl|r : "..spellID.." : "..prio.." |cff009900Restored to Orginal Value|r")
-								else
-									if type(spellID) == "number" then
-										if GetSpellInfo(spellID) then
-											local name = GetSpellInfo(spellID)
-											print("|cff00ccffLoseControl|r : "..CspellID.." : "..Cprio.." ("..name..") Modified Spell ".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
-										end
-									else
-											print("|cff00ccffLoseControl|r : "..CspellID.." : "..Cprio.." (not spellId) Modified Spell ".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
-									end
-									tblinsert(toremove, {i , l, x, removed, spellID})
-									removed = removed + 1
-								end
+						if customSpells[spellID] then
+							local CspellID, Cprio, CtabId, Ck = unpack(customSpells[spellID])
+							if CspellID == spellID and Cprio == prio and CtabId == i then
+							tblremove(_G.LoseControlDB.customSpellIds, Ck)
+							print("|cff00ccffLoseControl|r : "..spellID.." : "..prio.." |cff009900Restored to Orginal Value|r")
 							else
-								local HspellID, Hprio = unpack(hash[spellID])
 								if type(spellID) == "number" then
+									if GetSpellInfo(spellID) then
 										local name = GetSpellInfo(spellID)
-										print("|cff00ccffLoseControl|r : "..HspellID.." : "..Hprio.." ("..name..") ".."|cffff0000Duplicate Spell in Lua |r".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
+										print("|cff00ccffLoseControl|r : "..CspellID.." : "..Cprio.." ("..name..") Modified Spell ".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
+									end
 								else
-										print("|cff00ccffLoseControl|r : "..HspellID.." : "..Hprio.." (not spellId) ".."|cff009900Duplicate Spell in Lua |r".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
+										print("|cff00ccffLoseControl|r : "..CspellID.." : "..Cprio.." (not spellId) Modified Spell ".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
 								end
 								tblinsert(toremove, {i , l, x, removed, spellID})
 								removed = removed + 1
 							end
+						else
+							local HspellID, Hprio = unpack(hash[spellID])
+							if type(spellID) == "number" then
+									local name = GetSpellInfo(spellID)
+									print("|cff00ccffLoseControl|r : "..HspellID.." : "..Hprio.." ("..name..") ".."|cffff0000Duplicate Spell in Lua |r".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
+							else
+									print("|cff00ccffLoseControl|r : "..HspellID.." : "..Hprio.." (not spellId) ".."|cff009900Duplicate Spell in Lua |r".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
+							end
+							tblinsert(toremove, {i , l, x, removed, spellID})
+							removed = removed + 1
 						end
 					end
 				end
@@ -6106,7 +6098,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 	local maxExpirationTime = 0
 	local newExpirationTime = 0
 	local maxPriorityIsInterrupt = false
-	local Icon, Duration, Hue, Name
+	local Icon, Duration, Hue, Name, Spell
 	local LayeredHue = nil
 	local forceEventUnitAuraAtEnd = false
 	local buffs= {}
@@ -6510,6 +6502,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 									forceEventUnitAuraAtEnd = false
 									Hue = hue
 									Name = name
+									Spell = spellId
 									local nextTimerUpdate = expirationTime - GetTime() + 0.05
 									if nextTimerUpdate < 0.05 then
 										nextTimerUpdate = 0.05
@@ -6539,6 +6532,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 									forceEventUnitAuraAtEnd = false
 									Hue = hue
 									Name = name
+									Spell = spellId
 									local nextTimerUpdate = expirationTime - GetTime() + 0.05
 									if nextTimerUpdate < 0.05 then
 										nextTimerUpdate = 0.05
@@ -6569,6 +6563,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 									forceEventUnitAuraAtEnd = false
 									Hue = hue
 									Name = name
+									Spell = spellId
 									local nextTimerUpdate = expirationTime - GetTime() + 0.05
 									if nextTimerUpdate < 0.05 then
 										nextTimerUpdate = 0.05
@@ -6598,6 +6593,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 									forceEventUnitAuraAtEnd = false
 									Hue = hue
 									Name = name
+									Spell = spellId
 									local nextTimerUpdate = expirationTime - GetTime() + 0.05
 									if nextTimerUpdate < 0.05 then
 										nextTimerUpdate = 0.05
@@ -6623,27 +6619,28 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 					end
 				end
 			end
-			for schoolIntId, schoolIntFrame in pairs(self.iconInterruptList) do
-				if spellSchoolInteruptsTable[schoolIntId][1] then
-					if (not schoolIntFrame:IsShown()) then
-						schoolIntFrame:Show()
-					end
-					local orderInt = 1
-					for schoolInt2Id, schoolInt2Info in pairs(spellSchoolInteruptsTable) do
-						if ((schoolInt2Info[1]) and ((spellSchoolInteruptsTable[schoolIntId][2] < schoolInt2Info[2]) or ((spellSchoolInteruptsTable[schoolIntId][2] == schoolInt2Info[2]) and (schoolIntId > schoolInt2Id)))) then
-							orderInt = orderInt + 1
+			if _G.LoseControlDB.InterruptIcons then
+				for schoolIntId, schoolIntFrame in pairs(self.iconInterruptList) do
+					if spellSchoolInteruptsTable[schoolIntId][1] then
+						if (not schoolIntFrame:IsShown()) then
+							schoolIntFrame:Show()
 						end
+						local orderInt = 1
+						for schoolInt2Id, schoolInt2Info in pairs(spellSchoolInteruptsTable) do
+							if ((schoolInt2Info[1]) and ((spellSchoolInteruptsTable[schoolIntId][2] < schoolInt2Info[2]) or ((spellSchoolInteruptsTable[schoolIntId][2] == schoolInt2Info[2]) and (schoolIntId > schoolInt2Id)))) then
+								orderInt = orderInt + 1
+							end
+						end
+						schoolIntFrame:SetPoint("BOTTOMRIGHT", self.interruptIconOrderPos[orderInt][1], self.interruptIconOrderPos[orderInt][2])
+						schoolIntFrame.interruptIconOrder = orderInt
+					elseif schoolIntFrame:IsShown() then
+						schoolIntFrame.interruptIconOrder = nil
+						schoolIntFrame:Hide()
 					end
-					schoolIntFrame:SetPoint("BOTTOMRIGHT", self.interruptIconOrderPos[orderInt][1], self.interruptIconOrderPos[orderInt][2])
-					schoolIntFrame.interruptIconOrder = orderInt
-				elseif schoolIntFrame:IsShown() then
-					schoolIntFrame.interruptIconOrder = nil
-					schoolIntFrame:Hide()
 				end
 			end
 		end
 	end
-
 ----------------------------------------------------------------------
 --Filters for highest aura duration of specfied priority will not work for cleu , currently set for all snares
 ----------------------------------------------------------------------
@@ -6727,8 +6724,10 @@ end
 		if not buffs[i] then break end
 			if (buffs[i].col3.name == "EnemySmokeBomb") or (buffs[i].col3.name == "EnemyShadowyDuel") then --layered hue conidition
 				if buffs[i].col3.expirationTime > GetTime() then
-				LayeredHue = true
-				Hue = "Red"
+					if LoseControlDB.RedSmokeBomb then
+					LayeredHue = true
+					Hue = "Red"
+					end
 				local remaining = buffs[i].col3.expirationTime - GetTime() -- refires on layer exit, to reset the icons
 				if  remaining  < 0.05 then
 					 remaining  = 0.05
@@ -6786,14 +6785,23 @@ end
 
 		if maxPriorityIsInterrupt then
 			if self.frame.anchor == "Blizzard" then
-			--	self.iconInterruptBackground:SetTexture("Interface\\AddOns\\LoseControl\\Textures\\lc_interrupt_background_portrait") --CHRIS
+				if LoseControlDB.InterruptOverlay and interruptsIds[Spell] then
+				self.iconInterruptBackground:SetTexture("Interface\\AddOns\\LoseControl\\Textures\\lc_interrupt_background_portrait") --CHRIS
+				end
 			else
-			--	self.iconInterruptBackground:SetTexture("Interface\\AddOns\\LoseControl\\Textures\\lc_interrupt_background") --CHRIS
+				if LoseControlDB.InterruptOverlay and interruptsIds[Spell] then
+				self.iconInterruptBackground:SetTexture("Interface\\AddOns\\LoseControl\\Textures\\lc_interrupt_background") --CHRIS
+				end
 			end
 			if (not self.iconInterruptBackground:IsShown()) then
 				self.iconInterruptBackground:Show()
 			end
 		else
+			if self.iconInterruptBackground:IsShown() then
+				self.iconInterruptBackground:Hide()
+			end
+		end
+		if not interruptsIds[Spell] then
 			if self.iconInterruptBackground:IsShown() then
 				self.iconInterruptBackground:Hide()
 			end
@@ -6804,47 +6812,47 @@ end
 				self:SetSwipeTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMaskSmall")   --Set Smoke Bomb Icon
 				self.texture:SetDesaturated(1) --Destaurate Smoke Bomb Icon
 				self.texture:SetVertexColor(1, .2, .1); --Red Hue Set For Smoke Bomb Icon
-				self:SetSwipeColor(0, 0, 0, 0.0)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
+				self:SetSwipeColor(0, 0, 0, LoseControlDB.DrawSwipeSetting)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
 			elseif Hue == "Red_No_Desaturate" then -- Changes Hue to Red and any Icon Greater , could indicate in a barrier or smoke bomb etc..
 				SetPortraitToTexture(self.texture, Icon) -- Sets the texture to be displayed from a file applying a circular opacity mask making it look round like portraits
   			self:SetSwipeTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMaskSmall")   --Set Smoke Bomb Icon
 			  self.texture:SetDesaturated(nil) --Destaurate Smoke Bomb Icon
 		  	self.texture:SetVertexColor(1, 0, 0); --Red Hue Set For Smoke Bomb Icon
-			  self:SetSwipeColor(0, 0, 0, 0.0)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
+			  self:SetSwipeColor(0, 0, 0, LoseControlDB.DrawSwipeSetting)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
 		  elseif Hue == "Yellow" then -- Changes Hue to Red and any Icon Greater , could indicate in a barrier or smoke bomb etc..
 				SetPortraitToTexture(self.texture, Icon) -- Sets the texture to be displayed from a file applying a circular opacity mask making it look round like portraits
 				self:SetSwipeTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMaskSmall")   --Set Smoke Bomb Icon
 				self.texture:SetDesaturated(1) --Destaurate Smoke Bomb Icon
 				self.texture:SetVertexColor(1, 1, 0); --Red Hue Set For Smoke Bomb Icon
-				self:SetSwipeColor(0, 0, 0, 0.0)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
+				self:SetSwipeColor(0, 0, 0, LoseControlDB.DrawSwipeSetting)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
 			else
 				SetPortraitToTexture(self.texture, Icon) -- Sets the texture to be displayed from a file applying a circular opacity mask making it look round like portraits
 				self:SetSwipeTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMaskSmall")
 				self.texture:SetDesaturated(nil) --Destaurate Smoke Bomb Icon
 				self.texture:SetVertexColor(1, 1, 1)
-				self:SetSwipeColor(0, 0, 0, 0.0) ---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
+				self:SetSwipeColor(0, 0, 0, LoseControlDB.DrawSwipeSetting) ---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
 			end
 		else
 			if Hue == "Red" then -- Changes Icon Hue to Red
 				self.texture:SetTexture(Icon)   --Set Smoke Bomb Icon
 				self.texture:SetDesaturated(1) --Destaurate Smoke Bomb Icon
 				self.texture:SetVertexColor(1, .2, .1); --Red Hue Set For Smoke Bomb Icon
-				self:SetSwipeColor(0, 0, 0, 0.0)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
+				self:SetSwipeColor(0, 0, 0, LoseControlDB.DrawSwipeSetting)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
 			elseif Hue == "Red_No_Desaturate" then -- Changes Hue to Red and any Icon Greater , could indicate in a barrier or smoke bomb etc..
 			 self.texture:SetTexture(Icon)   --Set Smoke Bomb Icon
 			 self.texture:SetDesaturated(nil) --Destaurate Smoke Bomb Icon
 			 self.texture:SetVertexColor(1, 0, 0); --Red Hue Set For Smoke Bomb Icon
-			 self:SetSwipeColor(0, 0, 0, 0.0)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
+			 self:SetSwipeColor(0, 0, 0, LoseControlDB.DrawSwipeSetting)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
 		 elseif Hue == "Yellow" then -- Changes Hue to Red and any Icon Greater , could indicate in a barrier or smoke bomb etc..
 				self.texture:SetTexture(Icon)   --Set Smoke Bomb Icon
 				self.texture:SetDesaturated(1) --Destaurate Smoke Bomb Icon
 				self.texture:SetVertexColor(1, 1, 0); --Red Hue Set For Smoke Bomb Icon
-				self:SetSwipeColor(0, 0, 0, 0.0)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
+				self:SetSwipeColor(0, 0, 0, LoseControlDB.DrawSwipeSetting)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
 			else
 				self.texture:SetTexture(Icon)
 				self.texture:SetDesaturated(nil) --Destaurate Smoke Bomb Icon
 				self.texture:SetVertexColor(1, 1, 1)
-				self:SetSwipeColor(0, 0, 0, 0.0) ---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
+				self:SetSwipeColor(0, 0, 0, LoseControlDB.DrawSwipeSetting) ---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
 			end
 		end
 		if forceEventUnitAuraAtEnd and maxExpirationTime > 0 and Duration > 0 then
@@ -6867,7 +6875,11 @@ end
 			self:SetCooldown( maxExpirationTime - Duration, Duration )
 		else
 			if self:GetDrawSwipe() then
+				if LoseControlDB.DrawSwipeSetting > 0 then
+				self:SetDrawSwipe(true)
+				else
 				self:SetDrawSwipe(false)
+				end
 			end
 			self:SetCooldown(GetTime(), 0)
 			self:SetCooldown(GetTime(), 0)	--needs execute two times (or the icon can dissapear; yes, it's weird...)
@@ -7079,7 +7091,7 @@ function LoseControl:new(unitId)
 		[64] = o.iconInterruptArcane
 	}
 	for _, v in pairs(o.iconInterruptList) do
-		v:SetAlpha(0) 															--hide Interrupt Icons was 0.8
+		v:SetAlpha(.8) --hide Interrupt Icons
 		v:Hide()
 		SetPortraitToTexture(v, v:GetTexture())
 		v:SetTexCoord(0.08,0.92,0.08,0.92)
@@ -7328,6 +7340,13 @@ local function CreateSliderMain(text, parent, low, high, step, globalName)
 	return slider
 end
 
+
+local DrawSwipeSlider = CreateSliderMain(L[k], OptionsPanel, 0, 1, .1, "DrawSwipe")
+DrawSwipeSlider:SetScript("OnValueChanged", function(self, value)
+_G["DrawSwipeText"]:SetText("DrawSwipe" .. " (" .. ("%.1f"):format(value) .. ")")
+LoseControlDB.DrawSwipeSetting = value
+end)
+
 local PrioritySlider = {}
 for k in pairs(DBdefaults.priority) do
 	PrioritySlider[k] = CreateSliderMain(L[k], OptionsPanel, 0, 100, 1, "Priority"..k.."Slider")
@@ -7366,25 +7385,20 @@ end
 
 -------------------------------------------------------------------------------
 -- Arrange all the options neatly
-title:SetPoint("TOPLEFT", 12, -10)
-
-
+title:SetPoint("TOPLEFT", 8, -10)
 
 Unlock:SetPoint("TOPLEFT",  title, "BOTTOMLEFT", 110, 22)
 DisableCooldownCount:SetPoint("TOPLEFT", Unlock, "BOTTOMLEFT", 0, 6)
 
-DisableBlizzardCooldownCount:SetPoint("TOPLEFT", Unlock, "TOPRIGHT", 150, 0)
-DisableLossOfControlCooldown:SetPoint("TOPLEFT", DisableBlizzardCooldownCount, "BOTTOMLEFT", 0, 6)
-DisableLossOfControlCooldownAuxButton:SetPoint("TOPLEFT", DisableLossOfControlCooldown, "BOTTOMLEFT", 30, 6)
-DisableLossOfControlCooldownAuxText:SetPoint("TOPLEFT", DisableLossOfControlCooldownAuxButton, "TOPRIGHT", 4, 0)
+DisableBlizzardCooldownCount:SetPoint("TOPLEFT", subText, "TOPRIGHT", 15, 10)
+DisableLossOfControlCooldownAuxButton:SetPoint("TOPLEFT", Unlock, "TOPRIGHT", 54, -5)
 
 Priority:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -12)
 subText:SetPoint("TOPLEFT", Priority, "BOTTOMLEFT", 0, -3)
 PriorityDescription:SetPoint("TOPLEFT", subText, "BOTTOMLEFT", 0, -3)
 
-
 local prioritySpacing = -14
-PrioritySlider.CC:SetPoint("TOPLEFT", PriorityDescription, "BOTTOMLEFT", 0, -35)
+PrioritySlider.CC:SetPoint("TOPLEFT", PriorityDescription, "BOTTOMLEFT", 0, -45)
 PrioritySlider.Silence:SetPoint("TOPLEFT", PrioritySlider.CC, "BOTTOMLEFT", 0, prioritySpacing)
 PrioritySlider.RootPhyiscal_Special:SetPoint("TOPLEFT", PrioritySlider.Silence, "BOTTOMLEFT", 0, prioritySpacing)
 PrioritySlider.RootMagic_Special:SetPoint("TOPLEFT", PrioritySlider.RootPhyiscal_Special, "BOTTOMLEFT", 0, prioritySpacing)
@@ -7408,9 +7422,7 @@ PrioritySlider.Friendly_Smoke_Bomb:SetPoint("TOPLEFT", PrioritySlider.AOE_DMG_Mo
 PrioritySlider.AOE_Spell_Refections:SetPoint("TOPLEFT", PrioritySlider.Friendly_Smoke_Bomb, "BOTTOMLEFT", 0, prioritySpacing)
 PrioritySlider.Trees:SetPoint("TOPLEFT", PrioritySlider.AOE_Spell_Refections, "BOTTOMLEFT", 0, prioritySpacing)
 
-
-
-PrioritySlider.Snare:SetPoint("TOPLEFT", PrioritySlider.Trees, "TOPRIGHT", 45, 0)
+PrioritySlider.Snare:SetPoint("TOPLEFT", PrioritySlider.Trees, "TOPRIGHT", 42, 0)
 PrioritySlider.SnareMagic30:SetPoint("BOTTOMLEFT", PrioritySlider.Snare, "TOPLEFT", 0, prioritySpacing*-1)
 PrioritySlider.SnarePhysical30:SetPoint("BOTTOMLEFT", PrioritySlider.SnareMagic30, "TOPLEFT", 0, prioritySpacing*-1)
 PrioritySlider.SnareMagic50:SetPoint("BOTTOMLEFT", PrioritySlider.SnarePhysical30, "TOPLEFT", 0, prioritySpacing*-1)
@@ -7430,10 +7442,7 @@ PrioritySlider.Friendly_Defensives:SetPoint("BOTTOMLEFT", PrioritySlider.Mana_Re
 PrioritySlider.Freedoms:SetPoint("BOTTOMLEFT", PrioritySlider.Friendly_Defensives, "TOPLEFT", 0, prioritySpacing*-1)
 PrioritySlider.Speed_Freedoms:SetPoint("BOTTOMLEFT", PrioritySlider.Freedoms, "TOPLEFT", 0, prioritySpacing*-1)
 
-
-
-
-PrioritySliderArena.Snares_Casted_Melee:SetPoint("TOPLEFT", PrioritySlider.Snare, "TOPRIGHT", 45, 0)
+PrioritySliderArena.Snares_Casted_Melee:SetPoint("TOPLEFT", PrioritySlider.Snare, "TOPRIGHT", 42, 0)
 PrioritySliderArena.Snares_Ranged_Spamable:SetPoint("BOTTOMLEFT", PrioritySliderArena.Snares_Casted_Melee, "TOPLEFT", 0, prioritySpacing*-1)
 PrioritySliderArena.Special_Low:SetPoint("BOTTOMLEFT", PrioritySliderArena.Snares_Ranged_Spamable, "TOPLEFT", 0, prioritySpacing*-1)
 PrioritySliderArena.Snares_WithCDs:SetPoint("BOTTOMLEFT", PrioritySliderArena.Special_Low, "TOPLEFT", 0, prioritySpacing*-1)
@@ -7453,35 +7462,141 @@ PrioritySliderArena.CC:SetPoint("BOTTOMLEFT", PrioritySliderArena.Silence, "TOPL
 PrioritySliderArena.Immune:SetPoint("BOTTOMLEFT", PrioritySliderArena.CC, "TOPLEFT", 0, prioritySpacing*-1)
 PrioritySliderArena.Drink_Purge:SetPoint("BOTTOMLEFT", PrioritySliderArena.Immune, "TOPLEFT", 0, prioritySpacing*-1)
 
-local durationTypeCheckBox = {}
+local durationTypeCheckBoxNew = {}
+local durationTypeCheckBoxHigh = {}
+
 for k in pairs(DBdefaults.priority) do
-durationTypeCheckBox[k] = CreateFrame("CheckButton", O.."durationType"..k, OptionsPanel, "OptionsCheckButtonTemplate")
-durationTypeCheckBox[k]:SetScript("OnClick", function(self)
-	LoseControlDB.durationType[k] = self:GetChecked()
+durationTypeCheckBoxNew[k] = CreateFrame("CheckButton", O.."durationTypeNew"..k, OptionsPanel, "OptionsCheckButtonTemplate")
+durationTypeCheckBoxNew[k]:SetScript("OnClick", function(self)
+	if self:GetChecked() then
+		LoseControlDB.durationType[k] = false
+		durationTypeCheckBoxHigh[k]:SetChecked(false)
+	else
+		LoseControlDB.durationType[k] = true
+		durationTypeCheckBoxHigh[k]:SetChecked(true)
+	end
 end)
 end
 
 for k in pairs(DBdefaults.priority) do
-durationTypeCheckBox[k]:SetPoint("TOPLEFT", "Priority"..k.."Slider", "TOPRIGHT", 0, 9)
-durationTypeCheckBox[k]:SetScale(.8)
+durationTypeCheckBoxHigh[k] = CreateFrame("CheckButton", O.."durationTypeHigh"..k, OptionsPanel, "OptionsCheckButtonTemplate")
+durationTypeCheckBoxHigh[k]:SetScript("OnClick", function(self)
+	if self:GetChecked() then
+		LoseControlDB.durationType[k] = true
+		durationTypeCheckBoxNew[k]:SetChecked(false)
+	else
+		LoseControlDB.durationType[k] = false
+		durationTypeCheckBoxNew[k]:SetChecked(true)
+	end
+end)
 end
 
-local durationTypeCheckBoxArena = {}
+for k in pairs(DBdefaults.priority) do
+durationTypeCheckBoxNew[k]:SetPoint("TOPLEFT", "Priority"..k.."Slider", "TOPRIGHT", -2, 9)
+durationTypeCheckBoxNew[k]:SetScale(.8)
+end
+
+for k in pairs(DBdefaults.priority) do
+durationTypeCheckBoxHigh[k]:SetPoint("TOPLEFT", O.."durationTypeNew"..k, "TOPRIGHT", -5, 0)
+durationTypeCheckBoxHigh[k]:SetScale(.8)
+end
+
+local durationTypeCheckBoxArenaNew = {}
+local durationTypeCheckBoxArenaHigh = {}
+
 for k in pairs(DBdefaults.priorityArena) do
-durationTypeCheckBoxArena[k] = CreateFrame("CheckButton", O.."durationTypeArena"..k, OptionsPanel, "OptionsCheckButtonTemplate")
-durationTypeCheckBoxArena[k]:SetScript("OnClick", function(self)
-	LoseControlDB.durationType[k] = self:GetChecked()
+durationTypeCheckBoxArenaNew[k] = CreateFrame("CheckButton", O.."durationTypeArenaNew"..k, OptionsPanel, "OptionsCheckButtonTemplate")
+durationTypeCheckBoxArenaNew[k]:SetScript("OnClick", function(self)
+	if self:GetChecked() then
+		LoseControlDB.durationTypeArena[k] = false
+		durationTypeCheckBoxArenaHigh[k]:SetChecked(false)
+	else
+		LoseControlDB.durationTypeArena[k] = true
+		durationTypeCheckBoxArenaHigh[k]:SetChecked(true)
+	end
 end)
 end
 
 for k in pairs(DBdefaults.priorityArena) do
-durationTypeCheckBoxArena[k]:SetPoint("TOPLEFT", "priorityArena"..k.."Slider", "TOPRIGHT", 0, 9)
-durationTypeCheckBoxArena[k]:SetScale(.8)
+durationTypeCheckBoxArenaHigh[k] = CreateFrame("CheckButton", O.."durationTypeArenaHigh"..k, OptionsPanel, "OptionsCheckButtonTemplate")
+durationTypeCheckBoxArenaHigh[k]:SetScript("OnClick", function(self)
+	if self:GetChecked() then
+		LoseControlDB.durationTypeArena[k] = true
+		durationTypeCheckBoxArenaNew[k]:SetChecked(false)
+	else
+		LoseControlDB.durationTypeArena[k] = false
+		durationTypeCheckBoxArenaNew[k]:SetChecked(true)
+	end
+end)
 end
+
+for k in pairs(DBdefaults.priorityArena) do
+durationTypeCheckBoxArenaNew[k]:SetPoint("TOPLEFT", "priorityArena"..k.."Slider", "TOPRIGHT", -2, 9)
+durationTypeCheckBoxArenaNew[k]:SetScale(.8)
+end
+
+for k in pairs(DBdefaults.priorityArena) do
+durationTypeCheckBoxArenaHigh[k]:SetPoint("TOPLEFT", O.."durationTypeArenaNew"..k, "TOPRIGHT", -5, 0)
+durationTypeCheckBoxArenaHigh[k]:SetScale(.8)
+end
+
+local durtiontypeArenaText = OptionsPanel:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+durtiontypeArenaText:SetText("|cff00ccff[N]|r ".."|cffff0000[H] |r")
+durtiontypeArenaText:SetPoint("BOTTOMLEFT", O.."durationTypeArenaNewDrink_Purge", "TOPLEFT", 1, 0)
+
+local durtiontypeText = OptionsPanel:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+durtiontypeText:SetText("|cff00ccff[N]|r ".."|cffff0000[H] |r")
+durtiontypeText:SetPoint("BOTTOMLEFT", O.."durationTypeNewCC", "TOPLEFT", 1, 0)
+
+local durtiontypeText2 = OptionsPanel:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+durtiontypeText2:SetText("|cff00ccff[N]|r ".."|cffff0000[H] |r")
+durtiontypeText2:SetPoint("BOTTOMLEFT", O.."durationTypeNewSpeed_Freedoms", "TOPLEFT", 1, 0)
+
+local durtiontypeArenaText = OptionsPanel:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+durtiontypeArenaText:SetText("Set the duration for the priority:".."|cff00ccff[N]|r Newest Spell to affect you vs ".."|cffff0000[H] |r Highest duration spell affecting you ")
+durtiontypeArenaText:SetPoint("TOPLEFT", PriorityDescription, "BOTTOMLEFT", -1, -3)
 
 LossOfControlSpells:SetPoint("CENTER",PrioritySlider.Speed_Freedoms, "CENTER", 8, 55)
 LossOfControlSpellsPVE:SetPoint("CENTER", LossOfControlSpells, "CENTER", 0, -20)
 LossOfControlSpellsArena:SetPoint("CENTER", PrioritySliderArena.Drink_Purge, "CENTER", 8, 36)
+
+
+SetInterruptIcons = CreateFrame("CheckButton", O.."SetInterruptIcons", OptionsPanel, "OptionsCheckButtonTemplate")
+_G[O.."SetInterruptIconsText"]:SetText("Enable Interrupt Icons")
+SetInterruptIcons:SetScript("OnClick", function(self)
+	if self:GetChecked() then
+		LoseControlDB.InterruptIcons = true
+	else
+		LoseControlDB.InterruptIcons = false
+	end
+end)
+
+SetRedSmokeBomb = CreateFrame("CheckButton", O.."SetRedSmokeBomb", OptionsPanel, "OptionsCheckButtonTemplate")
+_G[O.."SetRedSmokeBombText"]:SetText("Enable Red Enemy Smoke Bomb / Shadowy Duel")
+SetRedSmokeBomb:SetScript("OnClick", function(self)
+	if self:GetChecked() then
+		LoseControlDB.RedSmokeBomb = true
+	else
+		LoseControlDB.RedSmokeBomb = false
+	end
+end)
+
+SetInterruptOverlay = CreateFrame("CheckButton", O.."SetInterruptOverlay", OptionsPanel, "OptionsCheckButtonTemplate")
+_G[O.."SetInterruptOverlayText"]:SetText("Enable Interrupt Overlay")
+SetInterruptOverlay:SetScript("OnClick", function(self)
+	if self:GetChecked() then
+		LoseControlDB.InterruptOverlay = true
+	else
+		LoseControlDB.InterruptOverlay = false
+	end
+end)
+
+SetInterruptIcons:SetPoint("TOPLEFT", LossOfControlSpells, "TOPRIGHT", 18, -2)
+SetInterruptOverlay:SetPoint("TOPLEFT", SetInterruptIcons, "BOTTOMLEFT", 0, 6)
+SetRedSmokeBomb:SetPoint("TOPLEFT", Unlock, "TOPRIGHT", 150, 0)
+DisableLossOfControlCooldown:SetPoint("TOPLEFT", SetRedSmokeBomb, "BOTTOMLEFT", 0, 6)
+DisableLossOfControlCooldownAuxText:SetPoint("TOPLEFT", DisableLossOfControlCooldown, "BOTTOMLEFT", 26, 10)
+DrawSwipeSlider:SetPoint("BOTTOMLEFT", SetInterruptIcons, "TOPLEFT", 1, 0)
 -------------------------------------------------------------------------------
 OptionsPanel.default = function() -- This method will run when the player clicks "defaults"
 	L.SpellsConfig:ResetAllSpellList()
@@ -7505,14 +7620,25 @@ OptionsPanel.refresh = function() -- This method will run when the Interface Opt
 	DisableCooldownCount:SetChecked(LoseControlDB.noCooldownCount)
 	DisableBlizzardCooldownCount:SetChecked(LoseControlDB.noBlizzardCooldownCount)
 	DisableLossOfControlCooldown:SetChecked(LoseControlDB.noLossOfControlCooldown)
+	DrawSwipeSlider:SetValue(LoseControlDB.DrawSwipeSetting)
 
 	for k in pairs(DBdefaults.priority) do
-	durationTypeCheckBox[k]:SetChecked(LoseControlDB.durationType[k])
+	if LoseControlDB.durationType[k] == false then durationTypeCheckBoxNew[k]:SetChecked(true) else durationTypeCheckBoxNew[k]:SetChecked(false) end
+	end
+	for k in pairs(DBdefaults.priority) do
+	if LoseControlDB.durationType[k] == true then durationTypeCheckBoxHigh[k]:SetChecked(true) else durationTypeCheckBoxHigh[k]:SetChecked(false) end
 	end
 
 	for k in pairs(DBdefaults.priorityArena) do
-	durationTypeCheckBoxArena[k]:SetChecked(LoseControlDB.durationTypeArena[k])
+	if LoseControlDB.durationTypeArena[k] == false then durationTypeCheckBoxArenaNew[k]:SetChecked(true) else durationTypeCheckBoxArenaNew[k]:SetChecked(false) end
 	end
+	for k in pairs(DBdefaults.priorityArena) do
+	if LoseControlDB.durationTypeArena[k] == true then durationTypeCheckBoxArenaHigh[k]:SetChecked(true) else durationTypeCheckBoxArenaHigh[k]:SetChecked(false) end
+	end
+
+	if LoseControlDB.InterruptIcons == false then SetInterruptIcons:SetChecked(false) else SetInterruptIcons:SetChecked(true) end
+	if LoseControlDB.InterruptOverlay == false then SetInterruptOverlay:SetChecked(false) else SetInterruptOverlay:SetChecked(true) end
+	if LoseControlDB.RedSmokeBomb == false then SetRedSmokeBomb:SetChecked(false) else SetRedSmokeBomb:SetChecked(true) end
 
 	if not LoseControlDB.noCooldownCount then
 		DisableBlizzardCooldownCount:Disable()

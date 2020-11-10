@@ -221,11 +221,11 @@ local function CustomAddedCompileSpells(spell, prio)
 	L.spellIdsArena[spell] = prio
 	_G.LoseControlDB.spellEnabledArena[spell]= true
 	L.SpellsArenaConfig:WipeSpellList(tabsIndex[prio])
-	tblinsert(_G.LoseControlDB.customSpellIdsArena, {spell, prio, nil, nil, nil, "Custom Spell", 1})
-	tblinsert(L.spellsArena[tabsIndex[prio]], 1, {spell, prio, nil, nil, nil, "Custom Spell", 1})
+	tblinsert(_G.LoseControlDB.customSpellIdsArena, {spell, prio, nil, nil, nil, "Custom Spell"})
+	tblinsert(L.spellsArena[tabsIndex[prio]], 1, {spell, prio, nil, nil, nil, "Custom Spell"})
 	L.SpellsArenaConfig:UpdateSpellList(tabsIndex[prio])
 	local priotext = L[prio] or prio
-	print("|cff00ccffLoseControl|r : ".."|cff009900Added |r"..spell.." |cff009900to to list: |r"..priotext.." (PVP)")
+	print("|cff00ccffLoseControl|r : ".."|cff009900Added |r"..spell.." |cff009900to to list: |r"..priotext.." (Arena)")
 end
 
 local function CustomPVPDropDownCompileSpells(spell , newPrio, oldPrio, c, duration)
@@ -241,21 +241,21 @@ local function CustomPVPDropDownCompileSpells(spell , newPrio, oldPrio, c, durat
 			SpellsArenaConfig:WipeSpellList(tabsIndex[oldPrio])
 			tblremove(L.spellsArena[tabsIndex[oldPrio]], k)
 			local priotext = L[oldPrio] or oldPrio
-			print("|cff00ccffLoseControl|r : ".."|cff009900Removed |r"..spellID.." |cff009900from list: |r"..priotext.." (PVP)")
+			print("|cff00ccffLoseControl|r : ".."|cff009900Removed |r"..spellID.." |cff009900from list: |r"..priotext.." (Arena)")
 			if newPrio == "Delete" then
 			 	L.spellIdsArena[spell] = nil
 				_G.LoseControlDB.spellEnabledArena[spell]= nil
 				if L.spellsArenaLua[spell] then
-				tblinsert(_G.LoseControlDB.customSpellIdsArena, {spell, newPrio, nil, nil, nil, customname, 1})  --v[7]: Category Tab to enter spell
+				tblinsert(_G.LoseControlDB.customSpellIdsArena, {spell, newPrio, nil, nil, nil, customname})  --v[7]: Category Tab to enter spell
 				end
 				DeleteSpellFrame(spell, duration, c)
 				SpellsArenaConfig:UpdateSpellList(tabsIndex[oldPrio])
 			else
 				L.spellIdsArena[spell] = newPrio
-				tblinsert(_G.LoseControlDB.customSpellIdsArena, {spell, newPrio, nil, nil, nil, "Custom Priority", 1})
-				tblinsert(L.spellsArena[tabsIndex[newPrio]], 1, {spell, newPrio, nil, nil, nil, "Custom Priority", 1})
+				tblinsert(_G.LoseControlDB.customSpellIdsArena, {spell, newPrio, nil, nil, nil, "Custom Priority"})
+				tblinsert(L.spellsArena[tabsIndex[newPrio]], 1, {spell, newPrio, nil, nil, nil, "Custom Priority"})
 				local priotext = L[newPrio] or newPrio
-				print("|cff00ccffLoseControl|r : ".."|cff009900Added |r"..spell.." |cff009900to to list: |r"..priotext.." (PVP)")
+				print("|cff00ccffLoseControl|r : ".."|cff009900Added |r"..spell.." |cff009900to to list: |r"..priotext.." (Arena)")
 				SpellsArenaConfig:UpdateSpellList(tabsIndex[oldPrio]);SpellsArenaConfig:UpdateTab(tabsIndex[newPrio]);
 			end
 			break
