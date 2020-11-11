@@ -7315,7 +7315,9 @@ PriorityDescription:SetText(L["PriorityDescription"])
 local function CreateSlider(text, parent, low, high, step, globalName)
 	local name = globalName or (parent:GetName() .. text)
 	local slider = CreateFrame("Slider", name, parent, "OptionsSliderTemplate")
-	slider:SetWidth(160)
+	slider:SetHeight(8)
+	slider:SetWidth(150)
+	slider:SetScale(.9)
 	slider:SetMinMaxValues(low, high)
 	slider:SetValueStep(step)
 	slider:SetObeyStepOnDrag(obeyStep)
@@ -7472,6 +7474,7 @@ local durationTypeCheckBoxHigh = {}
 
 for k in pairs(DBdefaults.priority) do
 durationTypeCheckBoxNew[k] = CreateFrame("CheckButton", O.."durationTypeNew"..k, OptionsPanel, "OptionsCheckButtonTemplate")
+durationTypeCheckBoxNew[k]:SetHitRectInsets(0, 0, 0, 0)
 durationTypeCheckBoxNew[k]:SetScript("OnClick", function(self)
 	if self:GetChecked() then
 		LoseControlDB.durationType[k] = false
@@ -7485,6 +7488,7 @@ end
 
 for k in pairs(DBdefaults.priority) do
 durationTypeCheckBoxHigh[k] = CreateFrame("CheckButton", O.."durationTypeHigh"..k, OptionsPanel, "OptionsCheckButtonTemplate")
+durationTypeCheckBoxHigh[k]:SetHitRectInsets(0, 0, 0, 0)
 durationTypeCheckBoxHigh[k]:SetScript("OnClick", function(self)
 	if self:GetChecked() then
 		LoseControlDB.durationType[k] = true
@@ -7511,6 +7515,7 @@ local durationTypeCheckBoxArenaHigh = {}
 
 for k in pairs(DBdefaults.priorityArena) do
 durationTypeCheckBoxArenaNew[k] = CreateFrame("CheckButton", O.."durationTypeArenaNew"..k, OptionsPanel, "OptionsCheckButtonTemplate")
+durationTypeCheckBoxArenaNew[k]:SetHitRectInsets(0, 0, 0, 0)
 durationTypeCheckBoxArenaNew[k]:SetScript("OnClick", function(self)
 	if self:GetChecked() then
 		LoseControlDB.durationTypeArena[k] = false
@@ -7524,6 +7529,7 @@ end
 
 for k in pairs(DBdefaults.priorityArena) do
 durationTypeCheckBoxArenaHigh[k] = CreateFrame("CheckButton", O.."durationTypeArenaHigh"..k, OptionsPanel, "OptionsCheckButtonTemplate")
+durationTypeCheckBoxArenaHigh[k]:SetHitRectInsets(0, 0, 0, 0)
 durationTypeCheckBoxArenaHigh[k]:SetScript("OnClick", function(self)
 	if self:GetChecked() then
 		LoseControlDB.durationTypeArena[k] = true
@@ -8122,9 +8128,12 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 		end)
 	end
 
+	local scalex= .82
+
 	local catListEnChecksButtons = { "CC", "Silence", "RootPhyiscal_Special", "PvE", "Immune", "ImmuneSpell", "ImmunePhysical", "Disarm", "Root", "Snare", "Other" }
 	local CategoriesCheckButtons = { }
 	local FriendlyInterrupt = CreateFrame("CheckButton", O..v.."FriendlyInterrupt", OptionsPanelFrame, "OptionsCheckButtonTemplate")
+	FriendlyInterrupt:SetScale(scalex)
 	FriendlyInterrupt:SetHitRectInsets(0, -36, 0, 0)
 	_G[O..v.."FriendlyInterruptText"]:SetText(L["CatFriendly"])
 	FriendlyInterrupt:SetScript("OnClick", function(self)
@@ -8140,9 +8149,10 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 			end
 		end
 	end)
-	tblinsert(CategoriesCheckButtons, { frame = FriendlyInterrupt, auraType = "interrupt", reaction = "friendly", categoryType = "Interrupt", anchorPos = CategoryEnabledInterruptLabel, xPos = 140, yPos = 5 })
+	tblinsert(CategoriesCheckButtons, { frame = FriendlyInterrupt, auraType = "interrupt", reaction = "friendly", categoryType = "Interrupt", anchorPos = CategoryEnabledInterruptLabel, xPos = 120, yPos = 5 })
 	if v == "target" or v == "targettarget" or v == "focus" or v == "focustarget" or strfind(v, "arena") then
 		local EnemyInterrupt = CreateFrame("CheckButton", O..v.."EnemyInterrupt", OptionsPanelFrame, "OptionsCheckButtonTemplate")
+		EnemyInterrupt:SetScale(scalex)
 		EnemyInterrupt:SetHitRectInsets(0, -36, 0, 0)
 		_G[O..v.."EnemyInterruptText"]:SetText(L["CatEnemy"])
 		EnemyInterrupt:SetScript("OnClick", function(self)
@@ -8152,10 +8162,11 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 				LCframes[v]:UNIT_AURA(v, 0)
 			end
 		end)
-		tblinsert(CategoriesCheckButtons, { frame = EnemyInterrupt, auraType = "interrupt", reaction = "enemy", categoryType = "Interrupt", anchorPos = CategoryEnabledInterruptLabel, xPos = 270, yPos = 5 })
+		tblinsert(CategoriesCheckButtons, { frame = EnemyInterrupt, auraType = "interrupt", reaction = "enemy", categoryType = "Interrupt", anchorPos = CategoryEnabledInterruptLabel, xPos = 250, yPos = 5 })
 	end
 	for _, cat in pairs(catListEnChecksButtons) do
 		local FriendlyBuff = CreateFrame("CheckButton", O..v.."Friendly"..cat.."Buff", OptionsPanelFrame, "OptionsCheckButtonTemplate")
+		FriendlyBuff:SetScale(scalex)
 		FriendlyBuff:SetHitRectInsets(0, -36, 0, 0)
 		_G[O..v.."Friendly"..cat.."BuffText"]:SetText(L["CatFriendlyBuff"])
 		FriendlyBuff:SetScript("OnClick", function(self)
@@ -8171,8 +8182,9 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 				end
 			end
 		end)
-		tblinsert(CategoriesCheckButtons, { frame = FriendlyBuff, auraType = "buff", reaction = "friendly", categoryType = cat, anchorPos = CategoriesLabels[cat], xPos = 140, yPos = 5 })
+		tblinsert(CategoriesCheckButtons, { frame = FriendlyBuff, auraType = "buff", reaction = "friendly", categoryType = cat, anchorPos = CategoriesLabels[cat], xPos = 120, yPos = 5 })
 		local FriendlyDebuff = CreateFrame("CheckButton", O..v.."Friendly"..cat.."Debuff", OptionsPanelFrame, "OptionsCheckButtonTemplate")
+		FriendlyDebuff:SetScale(scalex)
 		FriendlyDebuff:SetHitRectInsets(0, -36, 0, 0)
 		_G[O..v.."Friendly"..cat.."DebuffText"]:SetText(L["CatFriendlyDebuff"])
 		FriendlyDebuff:SetScript("OnClick", function(self)
@@ -8188,9 +8200,10 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 				end
 			end
 		end)
-		tblinsert(CategoriesCheckButtons, { frame = FriendlyDebuff, auraType = "debuff", reaction = "friendly", categoryType = cat, anchorPos = CategoriesLabels[cat], xPos = 205, yPos = 5 })
+		tblinsert(CategoriesCheckButtons, { frame = FriendlyDebuff, auraType = "debuff", reaction = "friendly", categoryType = cat, anchorPos = CategoriesLabels[cat], xPos = 185, yPos = 5 })
 		if v == "target" or v == "targettarget" or v == "focus" or v == "focustarget" or strfind(v, "arena") then
 			local EnemyBuff = CreateFrame("CheckButton", O..v.."Enemy"..cat.."Buff", OptionsPanelFrame, "OptionsCheckButtonTemplate")
+			EnemyBuff:SetScale(scalex)
 			EnemyBuff:SetHitRectInsets(0, -36, 0, 0)
 			_G[O..v.."Enemy"..cat.."BuffText"]:SetText(L["CatEnemyBuff"])
 			EnemyBuff:SetScript("OnClick", function(self)
@@ -8200,10 +8213,11 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 					LCframes[v]:UNIT_AURA(v, 0)
 				end
 			end)
-			tblinsert(CategoriesCheckButtons, { frame = EnemyBuff, auraType = "buff", reaction = "enemy", categoryType = cat, anchorPos = CategoriesLabels[cat], xPos = 270, yPos = 5 })
+			tblinsert(CategoriesCheckButtons, { frame = EnemyBuff, auraType = "buff", reaction = "enemy", categoryType = cat, anchorPos = CategoriesLabels[cat], xPos = 250, yPos = 5 })
 		end
 		if v == "target" or v == "targettarget" or v == "focus" or v == "focustarget" or strfind(v, "arena") then
 			local EnemyDebuff = CreateFrame("CheckButton", O..v.."Enemy"..cat.."Debuff", OptionsPanelFrame, "OptionsCheckButtonTemplate")
+			EnemyDebuff:SetScale(scalex)
 			EnemyDebuff:SetHitRectInsets(0, -36, 0, 0)
 			_G[O..v.."Enemy"..cat.."DebuffText"]:SetText(L["CatEnemyDebuff"])
 			EnemyDebuff:SetScript("OnClick", function(self)
@@ -8213,7 +8227,7 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 					LCframes[v]:UNIT_AURA(v, 0)
 				end
 			end)
-			tblinsert(CategoriesCheckButtons, { frame = EnemyDebuff, auraType = "debuff", reaction = "enemy", categoryType = cat, anchorPos = CategoriesLabels[cat], xPos = 335, yPos = 5 })
+			tblinsert(CategoriesCheckButtons, { frame = EnemyDebuff, auraType = "debuff", reaction = "enemy", categoryType = cat, anchorPos = CategoriesLabels[cat], xPos = 305, yPos = 5 })
 		end
 	end
 
@@ -8221,6 +8235,7 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 	if (v == "player") then
 		CategoriesCheckButtonsPlayer2 = { }
 		local FriendlyInterruptPlayer2 = CreateFrame("CheckButton", O..v.."FriendlyInterruptPlayer2", OptionsPanelFrame, "OptionsCheckButtonTemplate")
+		FriendlyInterruptPlayer2:SetScale(scalex)
 		FriendlyInterruptPlayer2:SetHitRectInsets(0, -36, 0, 0)
 		_G[O..v.."FriendlyInterruptPlayer2Text"]:SetText(L["CatFriendly"].."|cfff28614(Icon2)|r")
 		FriendlyInterruptPlayer2:SetScript("OnClick", function(self)
@@ -8230,9 +8245,10 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 				LCframeplayer2:UNIT_AURA(v, 0)
 			end
 		end)
-		tblinsert(CategoriesCheckButtonsPlayer2, { frame = FriendlyInterruptPlayer2, auraType = "interrupt", reaction = "friendly", categoryType = "Interrupt", anchorPos = CategoryEnabledInterruptLabel, xPos = 310, yPos = 5 })
+		tblinsert(CategoriesCheckButtonsPlayer2, { frame = FriendlyInterruptPlayer2, auraType = "interrupt", reaction = "friendly", categoryType = "Interrupt", anchorPos = CategoryEnabledInterruptLabel, xPos = 342, yPos = 5 })
 		for _, cat in pairs(catListEnChecksButtons) do
 			local FriendlyBuffPlayer2 = CreateFrame("CheckButton", O..v.."Friendly"..cat.."BuffPlayer2", OptionsPanelFrame, "OptionsCheckButtonTemplate")
+			FriendlyBuffPlayer2:SetScale(scalex)
 			FriendlyBuffPlayer2:SetHitRectInsets(0, -36, 0, 0)
 			_G[O..v.."Friendly"..cat.."BuffPlayer2Text"]:SetText(L["CatFriendlyBuff"].."|cfff28614(Icon2)|r")
 			FriendlyBuffPlayer2:SetScript("OnClick", function(self)
@@ -8242,8 +8258,9 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 					LCframeplayer2:UNIT_AURA(v, 0)
 				end
 			end)
-			tblinsert(CategoriesCheckButtonsPlayer2, { frame = FriendlyBuffPlayer2, auraType = "buff", reaction = "friendly", categoryType = cat, anchorPos = CategoriesLabels[cat], xPos = 310, yPos = 5 })
+			tblinsert(CategoriesCheckButtonsPlayer2, { frame = FriendlyBuffPlayer2, auraType = "buff", reaction = "friendly", categoryType = cat, anchorPos = CategoriesLabels[cat], xPos = 342, yPos = 5 })
 			local FriendlyDebuffPlayer2 = CreateFrame("CheckButton", O..v.."Friendly"..cat.."DebuffPlayer2", OptionsPanelFrame, "OptionsCheckButtonTemplate")
+			FriendlyDebuffPlayer2:SetScale(scalex)
 			FriendlyDebuffPlayer2:SetHitRectInsets(0, -36, 0, 0)
 			_G[O..v.."Friendly"..cat.."DebuffPlayer2Text"]:SetText(L["CatFriendlyDebuff"].."|cfff28614(Icon2)|r")
 			FriendlyDebuffPlayer2:SetScript("OnClick", function(self)
@@ -8253,7 +8270,7 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 					LCframeplayer2:UNIT_AURA(v, 0)
 				end
 			end)
-			tblinsert(CategoriesCheckButtonsPlayer2, { frame = FriendlyDebuffPlayer2, auraType = "debuff", reaction = "friendly", categoryType = cat, anchorPos = CategoriesLabels[cat], xPos = 419, yPos = 5 })
+			tblinsert(CategoriesCheckButtonsPlayer2, { frame = FriendlyDebuffPlayer2, auraType = "debuff", reaction = "friendly", categoryType = cat, anchorPos = CategoriesLabels[cat], xPos = 457, yPos = 5 })
 		end
 	end
 
@@ -8479,39 +8496,58 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 		end
 	end)
 
-	Enabled:SetPoint("TOPLEFT", 16, -32)
-	if DisableInBG then DisableInBG:SetPoint("TOPLEFT", Enabled, 200, 0) end
-	if DisableInRaid then DisableInRaid:SetPoint("TOPLEFT", Enabled, 200, -25) end
-	if ShowNPCInterrupts then ShowNPCInterrupts:SetPoint("TOPLEFT", Enabled, 200, 0) end
-	if DisablePlayerTargetTarget then DisablePlayerTargetTarget:SetPoint("TOPLEFT", Enabled, 200, -25) end
-	if DisableTargetTargetTarget then DisableTargetTargetTarget:SetPoint("TOPLEFT", Enabled, 200, -50) end
-	if DisablePlayerTargetPlayerTargetTarget then DisablePlayerTargetPlayerTargetTarget:SetPoint("TOPLEFT", Enabled, 200, -75) end
-	if DisableTargetDeadTargetTarget then DisableTargetDeadTargetTarget:SetPoint("TOPLEFT", Enabled, 200, -100) end
-	if DisableFocusFocusTarget then DisableFocusFocusTarget:SetPoint("TOPLEFT", Enabled, 200, -50) end
-	if DisablePlayerFocusPlayerFocusTarget then DisablePlayerFocusPlayerFocusTarget:SetPoint("TOPLEFT", Enabled, 200, -75) end
-	if DisableFocusDeadFocusTarget then DisableFocusDeadFocusTarget:SetPoint("TOPLEFT", Enabled, 200, -100) end
-	if DuplicatePlayerPortrait then DuplicatePlayerPortrait:SetPoint("TOPLEFT", Enabled, 305, 0) end
-	SizeSlider:SetPoint("TOPLEFT", Enabled, "BOTTOMLEFT", 0, -32)
-	AlphaSlider:SetPoint("TOPLEFT", SizeSlider, "BOTTOMLEFT", 0, -32)
-	AnchorDropDownLabel:SetPoint("TOPLEFT", AlphaSlider, "BOTTOMLEFT", 0, -12)
-	AnchorDropDown:SetPoint("TOPLEFT", AnchorDropDownLabel, "BOTTOMLEFT", 0, -8)
-	CategoriesEnabledLabel:SetPoint("TOPLEFT", AnchorDropDown, "BOTTOMLEFT", 0, -14)
-	CategoryEnabledInterruptLabel:SetPoint("TOPLEFT", CategoriesEnabledLabel, "BOTTOMLEFT", 0, -12)
-	CategoryEnabledCCLabel:SetPoint("TOPLEFT", CategoryEnabledInterruptLabel, "BOTTOMLEFT", 0, -8)
-	CategoryEnabledSilenceLabel:SetPoint("TOPLEFT", 	CategoryEnabledCCLabel, "BOTTOMLEFT", 0, -8)
-	CategoryEnabledRootPhyiscal_SpecialLabel:SetPoint("TOPLEFT", 	CategoryEnabledSilenceLabel, "BOTTOMLEFT", 0, -8)
+	Enabled:SetPoint("TOPLEFT", 8, -4)
+	if DisableInBG then DisableInBG:SetPoint("TOPLEFT", Enabled, 275, 0) end
+	if DisableInRaid then DisableInRaid:SetPoint("TOPLEFT", Enabled, 275, -25) end
+	local optiony = -13
+	local optionx = 450
+	if ShowNPCInterrupts then ShowNPCInterrupts:SetPoint("TOPLEFT", Enabled, optionx, 2);ShowNPCInterrupts:SetScale(.8) end
+	if DisablePlayerTargetTarget then DisablePlayerTargetTarget:SetPoint("TOPLEFT", Enabled, optionx, -13);DisablePlayerTargetTarget:SetScale(.8) end
+	if DisableTargetTargetTarget then DisableTargetTargetTarget:SetPoint("TOPLEFT", Enabled, optionx, -28); DisableTargetTargetTarget:SetScale(.8) end
+	if DisableFocusFocusTarget then DisableFocusFocusTarget:SetPoint("TOPLEFT", Enabled, optionx, -28);DisableFocusFocusTarget:SetScale(.8) end
+	if DisablePlayerTargetPlayerTargetTarget then DisablePlayerTargetPlayerTargetTarget:SetPoint("TOPLEFT", Enabled, optionx, -43);DisablePlayerTargetPlayerTargetTarget:SetScale(.8) end
+	if DisablePlayerFocusPlayerFocusTarget then DisablePlayerFocusPlayerFocusTarget:SetPoint("TOPLEFT", Enabled, optionx, -43);DisablePlayerFocusPlayerFocusTarget:SetScale(.8) end
+	if DisableTargetDeadTargetTarget then DisableTargetDeadTargetTarget:SetPoint("TOPLEFT", Enabled,optionx, -58);DisableTargetDeadTargetTarget:SetScale(.8) end
+	if DisableFocusDeadFocusTarget then DisableFocusDeadFocusTarget:SetPoint("TOPLEFT", Enabled, optionx, -58); DisableFocusDeadFocusTarget:SetScale(.8) end
 
-	CategoryEnabledPvELabel:SetPoint("TOPLEFT", CategoryEnabledRootPhyiscal_SpecialLabel, "BOTTOMLEFT", 0, -8)
-	CategoryEnabledImmuneLabel:SetPoint("TOPLEFT", CategoryEnabledPvELabel, "BOTTOMLEFT", 0, -8)
-	CategoryEnabledImmuneSpellLabel:SetPoint("TOPLEFT", CategoryEnabledImmuneLabel, "BOTTOMLEFT", 0, -8)
-	CategoryEnabledImmunePhysicalLabel:SetPoint("TOPLEFT", CategoryEnabledImmuneSpellLabel, "BOTTOMLEFT", 0, -8)
-	CategoryEnabledDisarmLabel:SetPoint("TOPLEFT", CategoryEnabledImmunePhysicalLabel, "BOTTOMLEFT", 0, -8)
-	CategoryEnabledRootLabel:SetPoint("TOPLEFT", CategoryEnabledDisarmLabel, "BOTTOMLEFT", 0, -8)
-	CategoryEnabledSnareLabel:SetPoint("TOPLEFT", CategoryEnabledRootLabel, "BOTTOMLEFT", 0, -8)
-	CategoryEnabledOtherLabel:SetPoint("TOPLEFT", CategoryEnabledSnareLabel, "BOTTOMLEFT", 0, -8)
-	if AlphaSlider2 then AlphaSlider2:SetPoint("TOPLEFT", Enabled, "BOTTOMLEFT", 305, -81) end
-	if AnchorDropDown2Label then AnchorDropDown2Label:SetPoint("TOPLEFT", AlphaSlider2, "BOTTOMLEFT", 0, -12) end
-	if AnchorDropDown2 then AnchorDropDown2:SetPoint("TOPLEFT", AnchorDropDown2Label, "BOTTOMLEFT", 0, -8) end
+	if DuplicatePlayerPortrait then DuplicatePlayerPortrait:SetPoint("TOPLEFT", Enabled, 275, 0) end
+	AnchorDropDown:SetPoint("TOPLEFT", Enabled, "BOTTOMLEFT", -13, -3)
+	AnchorDropDown:SetScale(.9)
+	AnchorDropDownLabel:SetPoint("BOTTOMLEFT", AnchorDropDown, "TOPRIGHT", 60,-2)
+	AnchorDropDownLabel:SetScale(.8)
+	SizeSlider:SetPoint("TOPLEFT", Enabled, "TOPRIGHT", 115, -20)
+	AlphaSlider:SetPoint("TOPLEFT", SizeSlider, "BOTTOMLEFT", 0, -16)
+	CategoriesEnabledLabel:SetPoint("TOPLEFT", AnchorDropDown, "BOTTOMLEFT", 17, -6)
+	local CategorySpacing = -4
+	local catscale = .85
+
+	CategoryEnabledInterruptLabel:SetPoint("TOPLEFT", CategoriesEnabledLabel, "BOTTOMLEFT", 0, -6)
+	CategoryEnabledInterruptLabel:SetScale(catscale)
+	CategoryEnabledCCLabel:SetPoint("TOPLEFT", CategoryEnabledInterruptLabel, "BOTTOMLEFT", 0, CategorySpacing)
+	CategoryEnabledCCLabel:SetScale(catscale)
+	CategoryEnabledSilenceLabel:SetPoint("TOPLEFT", 	CategoryEnabledCCLabel, "BOTTOMLEFT", 0, CategorySpacing)
+	CategoryEnabledSilenceLabel:SetScale(catscale)
+
+	CategoryEnabledRootPhyiscal_SpecialLabel:SetPoint("TOPLEFT", 	CategoryEnabledSilenceLabel, "BOTTOMLEFT", 0, CategorySpacing)
+	CategoryEnabledRootPhyiscal_SpecialLabel:SetScale(catscale)
+
+	CategoryEnabledPvELabel:SetPoint("TOPLEFT", CategoryEnabledRootPhyiscal_SpecialLabel, "BOTTOMLEFT", 0, CategorySpacing)
+	CategoryEnabledPvELabel:SetScale(catscale)
+	CategoryEnabledImmuneLabel:SetPoint("TOPLEFT", CategoryEnabledPvELabel, "BOTTOMLEFT", 0, CategorySpacing)
+	CategoryEnabledImmuneLabel:SetScale(catscale)
+	CategoryEnabledImmuneSpellLabel:SetPoint("TOPLEFT", CategoryEnabledImmuneLabel, "BOTTOMLEFT", 0, CategorySpacing)
+	CategoryEnabledImmuneSpellLabel:SetScale(catscale)
+	CategoryEnabledImmunePhysicalLabel:SetPoint("TOPLEFT", CategoryEnabledImmuneSpellLabel, "BOTTOMLEFT", 0, CategorySpacing)
+	CategoryEnabledImmunePhysicalLabel:SetScale(catscale)
+	CategoryEnabledDisarmLabel:SetPoint("TOPLEFT", CategoryEnabledImmunePhysicalLabel, "BOTTOMLEFT", 0, CategorySpacing)
+	CategoryEnabledDisarmLabel:SetScale(catscale)
+	CategoryEnabledRootLabel:SetPoint("TOPLEFT", CategoryEnabledDisarmLabel, "BOTTOMLEFT", 0, CategorySpacing)
+	CategoryEnabledRootLabel:SetScale(catscale)
+	CategoryEnabledSnareLabel:SetPoint("TOPLEFT", CategoryEnabledRootLabel, "BOTTOMLEFT", 0, CategorySpacing)
+	CategoryEnabledSnareLabel:SetScale(catscale)
+	CategoryEnabledOtherLabel:SetPoint("TOPLEFT", CategoryEnabledSnareLabel, "BOTTOMLEFT", 0, CategorySpacing)
+	CategoryEnabledOtherLabel:SetScale(catscale)
+
 	for _, checkbuttonframe in pairs(CategoriesCheckButtons) do
 		checkbuttonframe.frame:SetPoint("TOPLEFT", checkbuttonframe.anchorPos, checkbuttonframe.xPos, checkbuttonframe.yPos)
 	end
@@ -8520,6 +8556,10 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 			checkbuttonframeplayer2.frame:SetPoint("TOPLEFT", checkbuttonframeplayer2.anchorPos, checkbuttonframeplayer2.xPos, checkbuttonframeplayer2.yPos)
 		end
 	end
+
+	if AnchorDropDown2 then AnchorDropDown2:SetPoint("TOPLEFT", DuplicatePlayerPortrait, "BOTTOMLEFT", -13, -3); AnchorDropDown2:SetScale(.9) end
+	if AnchorDropDown2Label then AnchorDropDown2Label:SetPoint("BOTTOMLEFT", AnchorDropDown2, "TOPRIGHT", 60,-2);	AnchorDropDown2Label:SetScale(.8) end
+	if AlphaSlider2 then AlphaSlider2:SetPoint("TOPLEFT", AlphaSlider, "TOPRIGHT", 155, 0) end
 
 	OptionsPanelFrame.default = OptionsPanel.default
 	OptionsPanelFrame.refresh = function()
