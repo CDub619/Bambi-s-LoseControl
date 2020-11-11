@@ -94,26 +94,21 @@ local print = print
 local debug = false -- type "/lc debug on" if you want to see UnitAura info logged to the console
 local LCframes = {}
 local LCframeplayer2
+local Masque
+if Masque then
+Masque = LibStub("Masque", true)
+end
+
 local InterruptAuras = { }
 local SmokeBombAuras = { }
 local BeamAura = { }
 local DuelAura = { }
 local Arenastealth = {}
-local origSpellIdsChanged = { }
-
-if Masque then
-local Masque = LibStub("Masque", true)
-end
 
 local spellIds = {}
 local spellIdsArena = {}
 local interruptsIds = {}
 local cleuPrioCastedSpells = {}
-local spells = {}
-local spellsArena = {}
-local spellsLua = {}
-local spellsArenaLua
-
 
 -------------------------------------------------------------------------------
 -- Thanks to all the people on the Curse.com and WoWInterface forums who help keep this list up to date :)
@@ -149,28 +144,6 @@ local interrupts = {
 	{231665 , 3},		-- Avengers Shield (Paladin)
 	{91807 , 2},   --Shambling Rush
 }
-
---[[
-Drink_Purge = 19,
-Immune_Arena = 18,
-CC_Arena = 17,
-Silence_Arena = 16,
-Interrupt = 15, -- Needs to be same
-Special_High = 14,
-Ranged_Major_OffenisiveCDs = 13,
-Roots_90_Snares = 12,
-Disarms = 11,
-Melee_Major_OffenisiveCDs = 10,
-Big_Defensive_CDs = 9,
-Player_Party_OffensiveCDs = 9,
-Small_Offenisive_CDs = 8,
-Small_Defensive_CDs = 8,
-Freedoms_Speed = 8,
-Snares_WithCDs = 4,
-Special_Low = 3,
-Snares_Ranged_Spamable = 2,
-Snares_Casted_Melee = 1,
-]]
 
 local spellsArenaTable = {
 	----------------
@@ -3023,13 +2996,6 @@ for i = 1, #tabsArena do
 	tabsArenaIndex[tabsArena[i]] = i
 end
 
-if debug then
-	for k in pairs(spellIds) do
-		local name, _, icon = GetSpellInfo(k)
-		if not name then print(addonName, ": No spell name", k) end
-		if not icon then print(addonName, ": No spell icon", k) end
-	end
-end
 
 -------------------------------------------------------------------------------
 -- Global references for attaching icons to various unit frames
@@ -3138,10 +3104,11 @@ local anchors = {
 -------------------------------------------------------------------------------
 -- Default settings
 local DBdefaults = {
-	ArenaGladiusGloss = true, --Add option Check Box for This
+	EnableGladiusGloss = true, --Add option Check Box for This
 	InterruptIcons = false,
 	InterruptOverlay = false,
 	RedSmokeBomb = true,
+	lossOfControl = true,
 	DrawSwipeSetting = 0,
 
 	DiscoveredSpells = { },
@@ -4712,20 +4679,6 @@ local function cmp_col1_col2(lhs, rhs)
  return lhs.col2 > rhs.col2
 end
 
-local function dump(o)
-   if type(o) == 'table' then
-      local s = '{ '
-      for k,v in pairs(o) do
-         if type(k) ~= 'number' then k = '"'..k..'"' end
-         s = s .. '['..k..'] = ' .. dump(v) .. ','
-      end
-      return s .. '} '
-   else
-      return tostring(o)
-   end
-end
-
-
 local locBliz = CreateFrame("Frame")
 locBliz:RegisterEvent("LOSS_OF_CONTROL_ADDED")
 locBliz:SetScript("OnEvent", function(self, event, ...)
@@ -4765,16 +4718,16 @@ locBliz:SetScript("OnEvent", function(self, event, ...)
 					end
 					spellIds[spellID] = Type
 					LoseControlDB.spellEnabled[spellID]= true
-					tblinsert(LoseControlDB.customSpellIds, {spellID, Type, instanceType, name..": "..ZoneName, nil, "Discovered", #spells})
-					tblinsert(spells[#spells][tabsIndex[Type]], {spellID, Type, instanceType, name..": "..ZoneName, nil, "Discovered", #spells})
-					L.SpellsPVEConfig:UpdateTab(#spells-1)
+					tblinsert(LoseControlDB.customSpellIds, {spellID, Type, instanceType, name..": "..ZoneName, nil, "Discovered", #L.spells})
+					tblinsert(L.spells[#L.spells][tabsIndex[Type]], {spellID, Type, instanceType, name..": "..ZoneName, nil, "Discovered", #L.spells})
+					L.SpellsPVEConfig:UpdateTab(#L.spells-1)
 			  elseif (not interruptsIds[spellID]) and lockoutSchool > 0 then
 					print("Found New Interrupt",locType,"", spellID)
 					interruptsIds[spellID] = duration
 					LoseControlDB.spellEnabled[spellID]= true
-					tblinsert(LoseControlDB.customSpellIds, {spellID, "Interrupt", instanceType, name..": "..ZoneName, duration, "Discovered", #spells})
-					tblinsert(spells[#spells][tabsIndex["Interrupt"]], {spellID, "Interrupt", instanceType, name..": "..ZoneName, duration, "Discovered", #spells})
-					L.SpellsPVEConfig:UpdateTab(#spells-1)
+					tblinsert(LoseControlDB.customSpellIds, {spellID, "Interrupt", instanceType, name..": "..ZoneName, duration, "Discovered", #L.spells})
+					tblinsert(L.spells[#L.spells][tabsIndex["Interrupt"]], {spellID, "Interrupt", instanceType, name..": "..ZoneName, duration, "Discovered", #L.spells})
+					L.SpellsPVEConfig:UpdateTab(#L.spells-1)
 				else
 				end
 			end
@@ -4782,15 +4735,11 @@ locBliz:SetScript("OnEvent", function(self, event, ...)
 	end)
 
 
-
 local tooltip = CreateFrame("GameTooltip", "DebuffTextDebuffScanTooltip", UIParent, "GameTooltipTemplate")
-local tl2 = DebuffTextDebuffScanTooltipTextLeft2
-local snarestring = snarestring
-
 local function GetDebuffText(unitId, debuffNum)
 	tooltip:SetOwner(UIParent, "ANCHOR_NONE")
 	tooltip:SetUnitDebuff(unitId, debuffNum)
-	snarestring = tl2:GetText()
+	local snarestring = DebuffTextDebuffScanTooltipTextLeft2:GetText()
 	tooltip:Hide()
 	if snarestring then
 		if string.match(snarestring, "Movement") then
@@ -5096,10 +5045,10 @@ end
 
 function LoseControl:CompileArenaSpells()
 
-	spellsArena = {}
 	spellIdsArena = {}
-	spellsArenaLua = {}
 
+	local spellsArena = {}
+	local spellsArenaLua = {}
 	local hash = {}
 	local customSpells = {}
 	local toremove = {}
@@ -5217,12 +5166,12 @@ end
 
 function LoseControl:CompileSpells(typeUpdate)
 
-		spells = {}
 		spellIds = {}
 		interruptsIds = {}
 		cleuPrioCastedSpells = {}
-		spellsLua = {}
 
+		local	spells = {}
+		local spellsLua = {}
 		local hash = {}
 		local customSpells = {}
 		local toremove = {}
@@ -6133,9 +6082,9 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 					local Name, instanceType, _, _, _, _, _, instanceID, _, _ = GetInstanceInfo()
 					local ZoneName = GetZoneText()
 					LoseControlDB.spellEnabled[spellId]= true
-					tblinsert(LoseControlDB.customSpellIds, {spellId,  spellCategory, instanceType, Name..": "..ZoneName, nil, "Discovered", #spells})
-					tblinsert(spells[#spells][tabsIndex["Snare"]], {spellId,  spellCategory, instanceType, Name..": "..ZoneName, nil, "Discovered", #spells})
-					L.SpellsPVEConfig:UpdateTab(#spells-1)
+					tblinsert(LoseControlDB.customSpellIds, {spellId,  spellCategory, instanceType, Name..": "..ZoneName, nil, "Discovered", #L.spells})
+					tblinsert(L.spells[#L.spells][tabsIndex["Snare"]], {spellId,  spellCategory, instanceType, Name..": "..ZoneName, nil, "Discovered", #L.spells})
+					L.SpellsPVEConfig:UpdateTab(#L.spells-1)
 					local locClass = "Creature"
 					if source then
 					local guid, name = UnitGUID(source), UnitName(source)
@@ -6763,7 +6712,7 @@ end
 			end
 		end
 
-		if (LoseControlDB.ArenaGladiusGloss == true) and (self.unitId == "arena1") or (self.unitId == "arena2") or (self.unitId == "arena3")  or (self.unitId == "arena4") or (self.unitId == "arena5") and (self.frame.anchor == "Gladius") then
+		if LoseControlDB.EnableGladiusGloss and (self.unitId == "arena1") or (self.unitId == "arena2") or (self.unitId == "arena3")  or (self.unitId == "arena4") or (self.unitId == "arena5") and (self.frame.anchor == "Gladius") then
 			self.gloss:SetNormalTexture("Interface\\AddOns\\Gladius\\Images\\Gloss")
 			self.gloss.normalTexture = _G[self.gloss:GetName().."NormalTexture"]
 			self.gloss.normalTexture:SetHeight(self.frame.size)
@@ -7404,70 +7353,69 @@ Priority:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -12)
 subText:SetPoint("TOPLEFT", Priority, "BOTTOMLEFT", 0, -3)
 PriorityDescription:SetPoint("TOPLEFT", subText, "BOTTOMLEFT", 0, -3)
 
-local prioritySpacing = -14
 PrioritySlider.CC:SetPoint("TOPLEFT", PriorityDescription, "BOTTOMLEFT", 0, -45)
-PrioritySlider.Silence:SetPoint("TOPLEFT", PrioritySlider.CC, "BOTTOMLEFT", 0, prioritySpacing)
-PrioritySlider.RootPhyiscal_Special:SetPoint("TOPLEFT", PrioritySlider.Silence, "BOTTOMLEFT", 0, prioritySpacing)
-PrioritySlider.RootMagic_Special:SetPoint("TOPLEFT", PrioritySlider.RootPhyiscal_Special, "BOTTOMLEFT", 0, prioritySpacing)
-PrioritySlider.Root:SetPoint("TOPLEFT", PrioritySlider.RootMagic_Special, "BOTTOMLEFT", 0, prioritySpacing)
-PrioritySlider.ImmunePlayer:SetPoint("TOPLEFT", PrioritySlider.Root, "BOTTOMLEFT", 0, prioritySpacing)
-PrioritySlider.Disarm_Warning:SetPoint("TOPLEFT", PrioritySlider.ImmunePlayer, "BOTTOMLEFT", 0, prioritySpacing)
-PrioritySlider.CC_Warning:SetPoint("TOPLEFT", PrioritySlider.Disarm_Warning, "BOTTOMLEFT", 0, prioritySpacing)
-PrioritySlider.Enemy_Smoke_Bomb:SetPoint("TOPLEFT", PrioritySlider.CC_Warning, "BOTTOMLEFT", 0, prioritySpacing)
-PrioritySlider.Stealth:SetPoint("TOPLEFT", PrioritySlider.Enemy_Smoke_Bomb, "BOTTOMLEFT", 0, prioritySpacing)
-PrioritySlider.Immune:SetPoint("TOPLEFT", PrioritySlider.Stealth, "BOTTOMLEFT", 0, prioritySpacing)
-PrioritySlider.ImmuneSpell:SetPoint("TOPLEFT", PrioritySlider.Immune, "BOTTOMLEFT", 0, prioritySpacing)
-PrioritySlider.ImmunePhysical:SetPoint("TOPLEFT", PrioritySlider.ImmuneSpell, "BOTTOMLEFT", 0, prioritySpacing)
-PrioritySlider.AuraMastery_Cast_Auras:SetPoint("TOPLEFT", PrioritySlider.ImmunePhysical, "BOTTOMLEFT", 0, prioritySpacing)
-PrioritySlider.ROP_Vortex:SetPoint("TOPLEFT", PrioritySlider.AuraMastery_Cast_Auras, "BOTTOMLEFT", 0, prioritySpacing)
-PrioritySlider.Disarm:SetPoint("TOPLEFT", PrioritySlider.ROP_Vortex, "BOTTOMLEFT", 0, prioritySpacing)
-PrioritySlider.Haste_Reduction:SetPoint("TOPLEFT", PrioritySlider.Disarm, "BOTTOMLEFT", 0, prioritySpacing)
-PrioritySlider.Dmg_Hit_Reduction:SetPoint("TOPLEFT", PrioritySlider.Haste_Reduction, "BOTTOMLEFT", 0, prioritySpacing)
-PrioritySlider.Interrupt:SetPoint("TOPLEFT", PrioritySlider.Dmg_Hit_Reduction, "BOTTOMLEFT", 0, prioritySpacing)
-PrioritySlider.AOE_DMG_Modifiers:SetPoint("TOPLEFT", PrioritySlider.Interrupt, "BOTTOMLEFT", 0, prioritySpacing)
-PrioritySlider.Friendly_Smoke_Bomb:SetPoint("TOPLEFT", PrioritySlider.AOE_DMG_Modifiers, "BOTTOMLEFT", 0, prioritySpacing)
-PrioritySlider.AOE_Spell_Refections:SetPoint("TOPLEFT", PrioritySlider.Friendly_Smoke_Bomb, "BOTTOMLEFT", 0, prioritySpacing)
-PrioritySlider.Trees:SetPoint("TOPLEFT", PrioritySlider.AOE_Spell_Refections, "BOTTOMLEFT", 0, prioritySpacing)
+PrioritySlider.Silence:SetPoint("TOPLEFT", PrioritySlider.CC, "BOTTOMLEFT", 0, -14)
+PrioritySlider.RootPhyiscal_Special:SetPoint("TOPLEFT", PrioritySlider.Silence, "BOTTOMLEFT", 0, -14)
+PrioritySlider.RootMagic_Special:SetPoint("TOPLEFT", PrioritySlider.RootPhyiscal_Special, "BOTTOMLEFT", 0, -14)
+PrioritySlider.Root:SetPoint("TOPLEFT", PrioritySlider.RootMagic_Special, "BOTTOMLEFT", 0, -14)
+PrioritySlider.ImmunePlayer:SetPoint("TOPLEFT", PrioritySlider.Root, "BOTTOMLEFT", 0, -14)
+PrioritySlider.Disarm_Warning:SetPoint("TOPLEFT", PrioritySlider.ImmunePlayer, "BOTTOMLEFT", 0, -14)
+PrioritySlider.CC_Warning:SetPoint("TOPLEFT", PrioritySlider.Disarm_Warning, "BOTTOMLEFT", 0, -14)
+PrioritySlider.Enemy_Smoke_Bomb:SetPoint("TOPLEFT", PrioritySlider.CC_Warning, "BOTTOMLEFT", 0, -14)
+PrioritySlider.Stealth:SetPoint("TOPLEFT", PrioritySlider.Enemy_Smoke_Bomb, "BOTTOMLEFT", 0, -14)
+PrioritySlider.Immune:SetPoint("TOPLEFT", PrioritySlider.Stealth, "BOTTOMLEFT", 0, -14)
+PrioritySlider.ImmuneSpell:SetPoint("TOPLEFT", PrioritySlider.Immune, "BOTTOMLEFT", 0, -14)
+PrioritySlider.ImmunePhysical:SetPoint("TOPLEFT", PrioritySlider.ImmuneSpell, "BOTTOMLEFT", 0, -14)
+PrioritySlider.AuraMastery_Cast_Auras:SetPoint("TOPLEFT", PrioritySlider.ImmunePhysical, "BOTTOMLEFT", 0, -14)
+PrioritySlider.ROP_Vortex:SetPoint("TOPLEFT", PrioritySlider.AuraMastery_Cast_Auras, "BOTTOMLEFT", 0, -14)
+PrioritySlider.Disarm:SetPoint("TOPLEFT", PrioritySlider.ROP_Vortex, "BOTTOMLEFT", 0, -14)
+PrioritySlider.Haste_Reduction:SetPoint("TOPLEFT", PrioritySlider.Disarm, "BOTTOMLEFT", 0, -14)
+PrioritySlider.Dmg_Hit_Reduction:SetPoint("TOPLEFT", PrioritySlider.Haste_Reduction, "BOTTOMLEFT", 0, -14)
+PrioritySlider.Interrupt:SetPoint("TOPLEFT", PrioritySlider.Dmg_Hit_Reduction, "BOTTOMLEFT", 0, -14)
+PrioritySlider.AOE_DMG_Modifiers:SetPoint("TOPLEFT", PrioritySlider.Interrupt, "BOTTOMLEFT", 0, -14)
+PrioritySlider.Friendly_Smoke_Bomb:SetPoint("TOPLEFT", PrioritySlider.AOE_DMG_Modifiers, "BOTTOMLEFT", 0, -14)
+PrioritySlider.AOE_Spell_Refections:SetPoint("TOPLEFT", PrioritySlider.Friendly_Smoke_Bomb, "BOTTOMLEFT", 0, -14)
+PrioritySlider.Trees:SetPoint("TOPLEFT", PrioritySlider.AOE_Spell_Refections, "BOTTOMLEFT", 0, -14)
 
 PrioritySlider.Snare:SetPoint("TOPLEFT", PrioritySlider.Trees, "TOPRIGHT", 42, 0)
-PrioritySlider.SnareMagic30:SetPoint("BOTTOMLEFT", PrioritySlider.Snare, "TOPLEFT", 0, prioritySpacing*-1)
-PrioritySlider.SnarePhysical30:SetPoint("BOTTOMLEFT", PrioritySlider.SnareMagic30, "TOPLEFT", 0, prioritySpacing*-1)
-PrioritySlider.SnareMagic50:SetPoint("BOTTOMLEFT", PrioritySlider.SnarePhysical30, "TOPLEFT", 0, prioritySpacing*-1)
-PrioritySlider.SnarePosion50:SetPoint("BOTTOMLEFT", PrioritySlider.SnareMagic50, "TOPLEFT", 0, prioritySpacing*-1)
-PrioritySlider.SnarePhysical50:SetPoint("BOTTOMLEFT", PrioritySlider.SnarePosion50, "TOPLEFT", 0, prioritySpacing*-1)
-PrioritySlider.SnareMagic70:SetPoint("BOTTOMLEFT", PrioritySlider.SnarePhysical50, "TOPLEFT", 0, prioritySpacing*-1)
-PrioritySlider.SnarePhysical70:SetPoint("BOTTOMLEFT", PrioritySlider.SnareMagic70, "TOPLEFT", 0, prioritySpacing*-1)
-PrioritySlider.SnareSpecial:SetPoint("BOTTOMLEFT", PrioritySlider.SnarePhysical70, "TOPLEFT", 0, prioritySpacing*-1)
-PrioritySlider.PvE:SetPoint("BOTTOMLEFT", PrioritySlider.SnareSpecial, "TOPLEFT", 0, prioritySpacing*-1*2)
-PrioritySlider.Other:SetPoint("BOTTOMLEFT", PrioritySlider.PvE, "TOPLEFT", 0, prioritySpacing*-1)
-PrioritySlider.Movable_Cast_Auras:SetPoint("BOTTOMLEFT", PrioritySlider.Other, "TOPLEFT", 0, prioritySpacing*-1*2)
-PrioritySlider.Peronsal_Defensives:SetPoint("BOTTOMLEFT", PrioritySlider.Movable_Cast_Auras, "TOPLEFT", 0, prioritySpacing*-1)
-PrioritySlider.Personal_Offensives:SetPoint("BOTTOMLEFT", PrioritySlider.Peronsal_Defensives, "TOPLEFT", 0, prioritySpacing*-1)
-PrioritySlider.CC_Reduction:SetPoint("BOTTOMLEFT", PrioritySlider.Personal_Offensives, "TOPLEFT", 0, prioritySpacing*-1)
-PrioritySlider.Mana_Regen:SetPoint("BOTTOMLEFT", PrioritySlider.CC_Reduction, "TOPLEFT", 0, prioritySpacing*-1)
-PrioritySlider.Friendly_Defensives:SetPoint("BOTTOMLEFT", PrioritySlider.Mana_Regen, "TOPLEFT", 0, prioritySpacing*-1)
-PrioritySlider.Freedoms:SetPoint("BOTTOMLEFT", PrioritySlider.Friendly_Defensives, "TOPLEFT", 0, prioritySpacing*-1)
-PrioritySlider.Speed_Freedoms:SetPoint("BOTTOMLEFT", PrioritySlider.Freedoms, "TOPLEFT", 0, prioritySpacing*-1)
+PrioritySlider.SnareMagic30:SetPoint("BOTTOMLEFT", PrioritySlider.Snare, "TOPLEFT", 0, -14*-1)
+PrioritySlider.SnarePhysical30:SetPoint("BOTTOMLEFT", PrioritySlider.SnareMagic30, "TOPLEFT", 0, -14*-1)
+PrioritySlider.SnareMagic50:SetPoint("BOTTOMLEFT", PrioritySlider.SnarePhysical30, "TOPLEFT", 0, -14*-1)
+PrioritySlider.SnarePosion50:SetPoint("BOTTOMLEFT", PrioritySlider.SnareMagic50, "TOPLEFT", 0, -14*-1)
+PrioritySlider.SnarePhysical50:SetPoint("BOTTOMLEFT", PrioritySlider.SnarePosion50, "TOPLEFT", 0, -14*-1)
+PrioritySlider.SnareMagic70:SetPoint("BOTTOMLEFT", PrioritySlider.SnarePhysical50, "TOPLEFT", 0, -14*-1)
+PrioritySlider.SnarePhysical70:SetPoint("BOTTOMLEFT", PrioritySlider.SnareMagic70, "TOPLEFT", 0, -14*-1)
+PrioritySlider.SnareSpecial:SetPoint("BOTTOMLEFT", PrioritySlider.SnarePhysical70, "TOPLEFT", 0, -14*-1)
+PrioritySlider.PvE:SetPoint("BOTTOMLEFT", PrioritySlider.SnareSpecial, "TOPLEFT", 0, -14*-1*2)
+PrioritySlider.Other:SetPoint("BOTTOMLEFT", PrioritySlider.PvE, "TOPLEFT", 0, -14*-1)
+PrioritySlider.Movable_Cast_Auras:SetPoint("BOTTOMLEFT", PrioritySlider.Other, "TOPLEFT", 0, -14*-1*2)
+PrioritySlider.Peronsal_Defensives:SetPoint("BOTTOMLEFT", PrioritySlider.Movable_Cast_Auras, "TOPLEFT", 0, -14*-1)
+PrioritySlider.Personal_Offensives:SetPoint("BOTTOMLEFT", PrioritySlider.Peronsal_Defensives, "TOPLEFT", 0, -14*-1)
+PrioritySlider.CC_Reduction:SetPoint("BOTTOMLEFT", PrioritySlider.Personal_Offensives, "TOPLEFT", 0, -14*-1)
+PrioritySlider.Mana_Regen:SetPoint("BOTTOMLEFT", PrioritySlider.CC_Reduction, "TOPLEFT", 0, -14*-1)
+PrioritySlider.Friendly_Defensives:SetPoint("BOTTOMLEFT", PrioritySlider.Mana_Regen, "TOPLEFT", 0, -14*-1)
+PrioritySlider.Freedoms:SetPoint("BOTTOMLEFT", PrioritySlider.Friendly_Defensives, "TOPLEFT", 0, -14*-1)
+PrioritySlider.Speed_Freedoms:SetPoint("BOTTOMLEFT", PrioritySlider.Freedoms, "TOPLEFT", 0, -14*-1)
 
 PrioritySliderArena.Snares_Casted_Melee:SetPoint("TOPLEFT", PrioritySlider.Snare, "TOPRIGHT", 42, 0)
-PrioritySliderArena.Snares_Ranged_Spamable:SetPoint("BOTTOMLEFT", PrioritySliderArena.Snares_Casted_Melee, "TOPLEFT", 0, prioritySpacing*-1)
-PrioritySliderArena.Special_Low:SetPoint("BOTTOMLEFT", PrioritySliderArena.Snares_Ranged_Spamable, "TOPLEFT", 0, prioritySpacing*-1)
-PrioritySliderArena.Snares_WithCDs:SetPoint("BOTTOMLEFT", PrioritySliderArena.Special_Low, "TOPLEFT", 0, prioritySpacing*-1)
-PrioritySliderArena.Freedoms_Speed:SetPoint("BOTTOMLEFT", PrioritySliderArena.Snares_WithCDs, "TOPLEFT", 0, prioritySpacing*-1)
-PrioritySliderArena.Small_Defensive_CDs:SetPoint("BOTTOMLEFT", PrioritySliderArena.Freedoms_Speed, "TOPLEFT", 0, prioritySpacing*-1)
-PrioritySliderArena.Small_Offenisive_CDs:SetPoint("BOTTOMLEFT", PrioritySliderArena.Small_Defensive_CDs, "TOPLEFT", 0, prioritySpacing*-1)
-PrioritySliderArena.Player_Party_OffensiveCDs:SetPoint("BOTTOMLEFT", PrioritySliderArena.Small_Offenisive_CDs, "TOPLEFT", 0, prioritySpacing*-1)
-PrioritySliderArena.Big_Defensive_CDs:SetPoint("BOTTOMLEFT", PrioritySliderArena.Player_Party_OffensiveCDs, "TOPLEFT", 0, prioritySpacing*-1)
-PrioritySliderArena.Melee_Major_OffenisiveCDs:SetPoint("BOTTOMLEFT", PrioritySliderArena.Big_Defensive_CDs, "TOPLEFT", 0, prioritySpacing*-1)
-PrioritySliderArena.Disarms:SetPoint("BOTTOMLEFT", PrioritySliderArena.Melee_Major_OffenisiveCDs, "TOPLEFT", 0, prioritySpacing*-1)
-PrioritySliderArena.Roots_90_Snares:SetPoint("BOTTOMLEFT", PrioritySliderArena.Disarms, "TOPLEFT", 0, prioritySpacing*-1)
-PrioritySliderArena.Ranged_Major_OffenisiveCDs:SetPoint("BOTTOMLEFT", PrioritySliderArena.Roots_90_Snares, "TOPLEFT", 0, prioritySpacing*-1)
-PrioritySliderArena.Special_High:SetPoint("BOTTOMLEFT", PrioritySliderArena.Ranged_Major_OffenisiveCDs, "TOPLEFT", 0, prioritySpacing*-1)
-PrioritySliderArena.Interrupt:SetPoint("BOTTOMLEFT", PrioritySliderArena.Special_High, "TOPLEFT", 0, prioritySpacing*-1)
-PrioritySliderArena.Silence_Arena:SetPoint("BOTTOMLEFT", PrioritySliderArena.Interrupt, "TOPLEFT", 0, prioritySpacing*-1)
-PrioritySliderArena.CC_Arena:SetPoint("BOTTOMLEFT", PrioritySliderArena.Silence_Arena, "TOPLEFT", 0, prioritySpacing*-1)
-PrioritySliderArena.Immune_Arena:SetPoint("BOTTOMLEFT", PrioritySliderArena.CC_Arena, "TOPLEFT", 0, prioritySpacing*-1)
-PrioritySliderArena.Drink_Purge:SetPoint("BOTTOMLEFT", PrioritySliderArena.Immune_Arena, "TOPLEFT", 0, prioritySpacing*-1)
+PrioritySliderArena.Snares_Ranged_Spamable:SetPoint("BOTTOMLEFT", PrioritySliderArena.Snares_Casted_Melee, "TOPLEFT", 0, -14*-1)
+PrioritySliderArena.Special_Low:SetPoint("BOTTOMLEFT", PrioritySliderArena.Snares_Ranged_Spamable, "TOPLEFT", 0, -14*-1)
+PrioritySliderArena.Snares_WithCDs:SetPoint("BOTTOMLEFT", PrioritySliderArena.Special_Low, "TOPLEFT", 0, -14*-1)
+PrioritySliderArena.Freedoms_Speed:SetPoint("BOTTOMLEFT", PrioritySliderArena.Snares_WithCDs, "TOPLEFT", 0, -14*-1)
+PrioritySliderArena.Small_Defensive_CDs:SetPoint("BOTTOMLEFT", PrioritySliderArena.Freedoms_Speed, "TOPLEFT", 0, -14*-1)
+PrioritySliderArena.Small_Offenisive_CDs:SetPoint("BOTTOMLEFT", PrioritySliderArena.Small_Defensive_CDs, "TOPLEFT", 0, -14*-1)
+PrioritySliderArena.Player_Party_OffensiveCDs:SetPoint("BOTTOMLEFT", PrioritySliderArena.Small_Offenisive_CDs, "TOPLEFT", 0, -14*-1)
+PrioritySliderArena.Big_Defensive_CDs:SetPoint("BOTTOMLEFT", PrioritySliderArena.Player_Party_OffensiveCDs, "TOPLEFT", 0, -14*-1)
+PrioritySliderArena.Melee_Major_OffenisiveCDs:SetPoint("BOTTOMLEFT", PrioritySliderArena.Big_Defensive_CDs, "TOPLEFT", 0, -14*-1)
+PrioritySliderArena.Disarms:SetPoint("BOTTOMLEFT", PrioritySliderArena.Melee_Major_OffenisiveCDs, "TOPLEFT", 0, -14*-1)
+PrioritySliderArena.Roots_90_Snares:SetPoint("BOTTOMLEFT", PrioritySliderArena.Disarms, "TOPLEFT", 0, -14*-1)
+PrioritySliderArena.Ranged_Major_OffenisiveCDs:SetPoint("BOTTOMLEFT", PrioritySliderArena.Roots_90_Snares, "TOPLEFT", 0, -14*-1)
+PrioritySliderArena.Special_High:SetPoint("BOTTOMLEFT", PrioritySliderArena.Ranged_Major_OffenisiveCDs, "TOPLEFT", 0, -14*-1)
+PrioritySliderArena.Interrupt:SetPoint("BOTTOMLEFT", PrioritySliderArena.Special_High, "TOPLEFT", 0, -14*-1)
+PrioritySliderArena.Silence_Arena:SetPoint("BOTTOMLEFT", PrioritySliderArena.Interrupt, "TOPLEFT", 0, -14*-1)
+PrioritySliderArena.CC_Arena:SetPoint("BOTTOMLEFT", PrioritySliderArena.Silence_Arena, "TOPLEFT", 0, -14*-1)
+PrioritySliderArena.Immune_Arena:SetPoint("BOTTOMLEFT", PrioritySliderArena.CC_Arena, "TOPLEFT", 0, -14*-1)
+PrioritySliderArena.Drink_Purge:SetPoint("BOTTOMLEFT", PrioritySliderArena.Immune_Arena, "TOPLEFT", 0, -14*-1)
 
 local durationTypeCheckBoxNew = {}
 local durationTypeCheckBoxHigh = {}
@@ -7701,63 +7649,194 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 	local CategoriesEnabledLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoriesEnabledLabel", "ARTWORK", "GameFontNormal")
 	CategoriesEnabledLabel:SetText(L["CategoriesEnabledLabel"])
 	CategoriesEnabledLabel:SetJustifyH("LEFT")
-	local CategoryEnabledInterruptLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledInterruptLabel", "ARTWORK", "GameFontNormal")
-	CategoryEnabledInterruptLabel:SetText(L["Interrupt"]..":")
 
+	L.CategoryEnabledInterruptLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledInterruptLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledInterruptLabel:SetText(L["Interrupt"]..":")
 
-	local CategoryEnabledCCLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledCCLabel", "ARTWORK", "GameFontNormal")
-	CategoryEnabledCCLabel:SetText(L["CC"]..":")
-	local CategoryEnabledSilenceLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledSilenceLabel", "ARTWORK", "GameFontNormal")
-	CategoryEnabledSilenceLabel:SetText(L["Silence"]..":")
+	L.CategoryEnabledCCLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledCCLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledCCLabel:SetText(L["CC"]..":")
+	L.CategoryEnabledSilenceLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledSilenceLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledSilenceLabel:SetText(L["Silence"]..":")
+	L.CategoryEnabledRootPhyiscal_SpecialLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledRootPhyiscal_SpecialLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledRootPhyiscal_SpecialLabel:SetText(L["RootPhyiscal_Special"]..":")
+	L.CategoryEnabledRootMagic_SpecialLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledRootMagic_SpeciallLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledRootMagic_SpecialLabel:SetText(L["RootMagic_Special"]..":")
+	L.CategoryEnabledRootLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledRootLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledRootLabel:SetText(L["Root"]..":")
+	L.CategoryEnabledImmunePlayerLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledImmunePlayerLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledImmunePlayerLabel:SetText(L["ImmunePlayer"]..":")
+	L.CategoryEnabledDisarm_WarningLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledDisarm_WarningLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledDisarm_WarningLabel:SetText(L["Disarm_Warning"]..":")
+	L.CategoryEnabledCC_WarningLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledCC_WarningLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledEnemy_Smoke_BombLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledEnemy_Smoke_BombLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledCC_WarningLabel:SetText(L["CC_Warning"]..":")
+	L.CategoryEnabledEnemy_Smoke_BombLabel:SetText(L["Enemy_Smoke_Bomb"]..":")
+	L.CategoryEnabledStealthLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledStealthLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledStealthLabel:SetText(L["Stealth"]..":")
+	L.CategoryEnabledImmuneLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledImmuneLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledImmuneLabel:SetText(L["Immune"]..":")
+	L.CategoryEnabledImmuneSpellLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledImmuneSpellLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledImmuneSpellLabel:SetText(L["ImmuneSpell"]..":")
+	L.CategoryEnabledImmunePhysicalLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledImmunePhysicalLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledImmunePhysicalLabel:SetText(L["ImmunePhysical"]..":")
+	L.CategoryEnabledAuraMastery_Cast_AurasLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledAuraMastery_Cast_AurasLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledAuraMastery_Cast_AurasLabel:SetText(L["AuraMastery_Cast_Auras"]..":")
+	L.CategoryEnabledROP_VortexLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledROP_VortexLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledROP_VortexLabel:SetText(L["ROP_Vortex"]..":")
+	L.CategoryEnabledDisarmLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledDisarmLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledDisarmLabel:SetText(L["Disarm"]..":")
+	L.CategoryEnabledHaste_ReductionLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledHaste_ReductionLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledHaste_ReductionLabel:SetText(L["Haste_Reduction"]..":")
+	L.CategoryEnabledDmg_Hit_ReductionLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledDmg_Hit_ReductionLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledDmg_Hit_ReductionLabel:SetText(L["Dmg_Hit_Reduction"]..":")
+	L.CategoryEnabledAOE_DMG_ModifiersLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledAOE_DMG_ModifiersLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledAOE_DMG_ModifiersLabel:SetText(L["AOE_DMG_Modifiers"]..":")
+	L.CategoryEnabledFriendly_Smoke_BombLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledFriendly_Smoke_BombLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledFriendly_Smoke_BombLabel:SetText(L["Friendly_Smoke_Bomb"]..":")
+	L.CategoryEnabledAOE_Spell_RefectionsLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledAOE_Spell_RefectionsLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledAOE_Spell_RefectionsLabel:SetText(L["AOE_Spell_Refections"]..":")
+	L.CategoryEnabledTreesLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledTreesLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledTreesLabel:SetText(L["Trees"]..":")
+	L.CategoryEnabledSpeed_FreedomsLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledSpeed_FreedomsLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledSpeed_FreedomsLabel:SetText(L["Speed_Freedoms"]..":")
+	L.CategoryEnabledFreedomsLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledFreedomsLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledFreedomsLabel:SetText(L["Freedoms"]..":")
+	L.CategoryEnabledFriendly_DefensivesLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledFriendly_DefensivesLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledFriendly_DefensivesLabel:SetText(L["Friendly_Defensives"]..":")
+	L.CategoryEnabledMana_RegenLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledMana_RegenLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledCC_ReductionLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledCC_ReductionLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledMana_RegenLabel:SetText(L["Mana_Regen"]..":")
+	L.CategoryEnabledCC_ReductionLabel:SetText(L["CC_Reduction"]..":")
+	L.CategoryEnabledPersonal_OffensivesLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledPersonal_OffensivesLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledPersonal_OffensivesLabel:SetText(L["Personal_Offensives"]..":")
+	L.CategoryEnabledPeronsal_DefensivesLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledPeronsal_DefensivesLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledPeronsal_DefensivesLabel:SetText(L["Peronsal_Defensives"]..":")
+	L.CategoryEnabledMovable_Cast_AurasLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledMovable_Cast_AurasLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledMovable_Cast_AurasLabel:SetText(L["Movable_Cast_Auras"]..":")
+	L.CategoryEnabledOtherLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledOtherLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledPvELabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledPvELabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledOtherLabel:SetText(L["Other"]..":")
+	L.CategoryEnabledPvELabel:SetText(L["PvE"]..":")
+	L.CategoryEnabledSnareSpecialLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledSnareSpecialLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledSnareSpecialLabel:SetText(L["SnareSpecial"]..":")
+	L.CategoryEnabledSnarePhysical70Label = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledSnarePhysical70Label", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledSnarePhysical70Label:SetText(L["SnarePhysical70"]..":")
+	L.CategoryEnabledSnareMagic70Label = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledSnareMagic70Label", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledSnarePhysical50Label = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledSnarePhysical50Label", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledSnareMagic70Label:SetText(L["SnareMagic70"]..":")
+	L.CategoryEnabledSnarePhysical50Label:SetText(L["SnarePhysical50"]..":")
+	L.CategoryEnabledSnarePosion50Label = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledSnarePosion50Label", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledSnarePosion50Label:SetText(L["SnarePosion50"]..":")
+	L.CategoryEnabledSnareMagic50Label = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledSnareMagic50Label", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledSnareMagic50Label:SetText(L["SnareMagic50"]..":")
+	L.CategoryEnabledSnarePhysical30Label = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledSnarePhysical30Label", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledSnarePhysical30Label:SetText(L["SnarePhysical30"]..":")
+	L.CategoryEnabledSnareMagic30Label = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledSnareMagic30Label", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledSnareMagic30Label:SetText(L["SnareMagic30"]..":")
+	L.CategoryEnabledSnareLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledSnareLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledSnareLabel:SetText(L["Snare"]..":")
 
-	local CategoryEnabledRootPhyiscal_SpecialLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledRootPhyiscal_SpecialLabel", "ARTWORK", "GameFontNormal")
-	CategoryEnabledRootPhyiscal_SpecialLabel:SetText(L["RootPhyiscal_Special"]..":")
+	L.CategoryEnabledDrink_PurgeLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledDrink_PurgeLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledDrink_PurgeLabel:SetText(L["Drink_Purge"]..":")
+	L.CategoryEnabledImmune_ArenaLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledImmune_ArenaLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledImmune_ArenaLabel:SetText(L["Immune_Arena"]..":")
+	L.CategoryEnabledCC_ArenaLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledCC_ArenaLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledCC_ArenaLabel:SetText(L["CC_Arena"]..":")
+	L.CategoryEnabledSilence_ArenaLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledSilence_ArenaLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledSilence_ArenaLabel:SetText(L["Silence_Arena"]..":")
+	L.CategoryEnabledSpecial_HighLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledSpecial_HighLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledSpecial_HighLabel:SetText(L["Special_High"]..":")
+	L.CategoryEnabledRanged_Major_OffenisiveCDsLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledRanged_Major_OffenisiveCDsLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledRanged_Major_OffenisiveCDsLabel:SetText(L["Ranged_Major_OffenisiveCDs"]..":")
+	L.CategoryEnabledRoots_90_SnaresLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledRoots_90_SnaresLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledRoots_90_SnaresLabel:SetText(L["Roots_90_Snares"]..":")
+	L.CategoryEnabledDisarmsLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledDisarmsLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledDisarmsLabel:SetText(L["Disarms"]..":")
+	L.CategoryEnabledMelee_Major_OffenisiveCDsLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledMelee_Major_OffenisiveCDsLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledMelee_Major_OffenisiveCDsLabel:SetText(L["Melee_Major_OffenisiveCDs"]..":")
+	L.CategoryEnabledBig_Defensive_CDsLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledBig_Defensive_CDsLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledBig_Defensive_CDsLabel:SetText(L["Big_Defensive_CDs"]..":")
+	L.CategoryEnabledPlayer_Party_OffensiveCDsLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledPlayer_Party_OffensiveCDsLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledPlayer_Party_OffensiveCDsLabel:SetText(L["Small_Offenisive_CDs"]..":")
+	L.CategoryEnabledSmall_Offenisive_CDsLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledSmall_Offenisive_CDsLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledSmall_Offenisive_CDsLabel:SetText(L["Small_Offenisive_CDs"]..":")
+	L.CategoryEnabledSmall_Defensive_CDsLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledSmall_Defensive_CDsLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledSmall_Defensive_CDsLabel:SetText(L["Small_Defensive_CDs"]..":")
+	L.CategoryEnabledFreedoms_SpeedLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledFreedoms_SpeedLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledFreedoms_SpeedLabel:SetText(L["Freedoms_Speed"]..":")
+	L.CategoryEnabledSnares_WithCDsLabel = OptionsPanelFrame:CreateFontString(O..v.." CategoryEnabledSnares_WithCDsLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledSnares_WithCDsLabel:SetText(L["Snares_WithCDs"]..":")
+	L.CategoryEnabledSpecial_LowLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledSpecial_LowLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledSpecial_LowLabel:SetText(L["Special_Low"]..":")
+	L.CategoryEnabledSnares_Ranged_SpamableLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledSnares_Ranged_SpamableLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledSnares_Ranged_SpamableLabel:SetText(L["Snares_Ranged_Spamable"]..":")
+	L.CategoryEnabledSnares_Casted_MeleeLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledSnares_Casted_MeleeLabel", "ARTWORK", "GameFontNormal")
+	L.CategoryEnabledSnares_Casted_MeleeLabel:SetText(L["Snares_Casted_Melee"]..":")
 
-	local CategoryEnabledPvELabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledPvELabel", "ARTWORK", "GameFontNormal")
-	CategoryEnabledPvELabel:SetText(L["PvE"]..":")
-	local CategoryEnabledImmuneLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledImmuneLabel", "ARTWORK", "GameFontNormal")
-	CategoryEnabledImmuneLabel:SetText(L["Immune"]..":")
-	local CategoryEnabledImmuneSpellLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledImmuneSpellLabel", "ARTWORK", "GameFontNormal")
-	CategoryEnabledImmuneSpellLabel:SetText(L["ImmuneSpell"]..":")
-	local CategoryEnabledImmunePhysicalLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledImmunePhysicalLabel", "ARTWORK", "GameFontNormal")
-	CategoryEnabledImmunePhysicalLabel:SetText(L["ImmunePhysical"]..":")
-	local CategoryEnabledDisarmLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledDisarmLabel", "ARTWORK", "GameFontNormal")
-	CategoryEnabledDisarmLabel:SetText(L["Disarm"]..":")
-	local CategoryEnabledRootLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledRootLabel", "ARTWORK", "GameFontNormal")
-	CategoryEnabledRootLabel:SetText(L["Root"]..":")
-	local CategoryEnabledSnareLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledSnareLabel", "ARTWORK", "GameFontNormal")
-	CategoryEnabledSnareLabel:SetText(L["Snare"]..":")
-	local CategoryEnabledOtherLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledOtherLabel", "ARTWORK", "GameFontNormal")
-	CategoryEnabledOtherLabel:SetText(L["Other"]..":")
-
-
---ARENA
-	local CategoryEnabledCC_ArenaLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledCC_ArenaLabel", "ARTWORK", "GameFontNormal")
-	CategoryEnabledCC_ArenaLabel:SetText(L["CC_Arena"]..":")
 
 	local CategoriesLabels = {
-		["Interrupt"] = CategoryEnabledInterruptLabel,
-		["CC"] = CategoryEnabledCCLabel,
-		["Silence"] = CategoryEnabledSilenceLabel,
+		["Interrupt"] = L.CategoryEnabledInterruptLabel,
+		["CC"] = L.CategoryEnabledCCLabel,
+		["Silence"] = L.CategoryEnabledSilenceLabel,
+		["RootPhyiscal_Special"] = L.CategoryEnabledRootPhyiscal_SpecialLabel,
+		["RootMagic_Special"] = L.CategoryEnabledRootMagic_SpecialLabel,
+		["Root"] = L.CategoryEnabledRootLabel,
+		["ImmunePlayer"] = L.CategoryEnabledImmunePlayerLabel,
+		["Disarm_Warning"] = L.CategoryEnabledDisarm_WarningLabel,
+		["CC_Warning"] = L.CategoryEnabledCC_WarningLabel,
+		["Enemy_Smoke_Bomb"] = L.CategoryEnabledEnemy_Smoke_BombLabel,
+		["Stealth"] = L.CategoryEnabledStealthLabel,
+		["Immune"] = L.CategoryEnabledImmuneLabel,
+		["ImmuneSpell"] = L.CategoryEnabledImmuneSpellLabel,
+		["ImmunePhysical"] = L.CategoryEnabledImmunePhysicalLabel,
+		["AuraMastery_Cast_Auras"] = L.CategoryEnabledAuraMastery_Cast_AurasLabel,
+		["ROP_Vortex"] = L.CategoryEnabledROP_VortexLabel,
+		["Disarm"] = L.CategoryEnabledDisarmLabel,
+		["Haste_Reduction"] = L.CategoryEnabledHaste_ReductionLabel,
+		["Dmg_Hit_Reduction"] = L.CategoryEnabledDmg_Hit_ReductionLabel,
+		["AOE_DMG_Modifiers"] = L.CategoryEnabledAOE_DMG_ModifiersLabel,
+		["Friendly_Smoke_Bomb"] = L.CategoryEnabledFriendly_Smoke_BombLabel,
+		["AOE_Spell_Refections"] = L.CategoryEnabledAOE_Spell_RefectionsLabel,
+		["Trees"] = L.CategoryEnabledTreesLabel,
+		["Speed_Freedoms"] = L.CategoryEnabledSpeed_FreedomsLabel,
+		["Freedoms"] = L.CategoryEnabledFreedomsLabel,
+		["Friendly_Defensives"] = L.CategoryEnabledFriendly_DefensivesLabel,
+		["Mana_Regen"] = L.CategoryEnabledMana_RegenLabel,
+		["CC_Reduction"] = L.CategoryEnabledCC_ReductionLabel,
+		["Personal_Offensives"] = L.CategoryEnabledPersonal_OffensivesLabel,
+		["Peronsal_Defensives"] = L.CategoryEnabledPeronsal_DefensivesLabel,
+		["Movable_Cast_Auras"] = L.CategoryEnabledMovable_Cast_AurasLabel,
+		["Other"] =  L.CategoryEnabledOtherLabel,
+		["PvE"] = L.CategoryEnabledPvELabel,
+		["SnareSpecial"] = L.CategoryEnabledSnareSpecialLabel,
+		["SnarePhysical70"] = L.CategoryEnabledSnarePhysical70Label,
+		["SnareMagic70"] = L.CategoryEnabledSnareMagic70Label,
+		["SnarePhysical50"] = L.CategoryEnabledSnarePhysical50Label,
+		["SnarePosion50"] = L.CategoryEnabledSnarePosion50Label,
+		["SnareMagic50"] = L.CategoryEnabledSnareMagic50Label,
+		["SnarePhysical30"] = L.CategoryEnabledSnarePhysical30Label,
+		["SnareMagic30"] = L.CategoryEnabledSnareMagic30Label,
+		["Snare"] = L.CategoryEnabledSnareLabel,
 
-		["RootPhyiscal_Special"] = CategoryEnabledRootPhyiscal_SpecialLabel,
-
-		["PvE"] = CategoryEnabledPvELabel,
-		["Immune"] = CategoryEnabledImmuneLabel,
-		["ImmuneSpell"] = CategoryEnabledImmuneSpellLabel,
-		["ImmunePhysical"] = CategoryEnabledImmunePhysicalLabel,
-		["Disarm"] = CategoryEnabledDisarmLabel,
-		["Root"] = CategoryEnabledRootLabel,
-		["Snare"] = CategoryEnabledSnareLabel,
-		["Other"] = CategoryEnabledOtherLabel,
-
-
-
-		["CC_Arena"] = CategoryEnabledCC_ArenaLabel
-	}
-
-
-
+		["Drink_Purge"] = L.CategoryEnabledDrink_PurgeLabel,
+		["Immune_Arena"] = L.CategoryEnabledImmune_ArenaLabel,
+		["CC_Arena"] = L.CategoryEnabledCC_ArenaLabel,
+		["Silence_Arena"] = L.CategoryEnabledSilence_ArenaLabel,
+		["Special_High"] = L.CategoryEnabledSpecial_HighLabel,
+		["Ranged_Major_OffenisiveCDs"] = L.CategoryEnabledRanged_Major_OffenisiveCDsLabel,
+		["Roots_90_Snares"] = L.CategoryEnabledRoots_90_SnaresLabel,
+		["Disarms"] = L.CategoryEnabledDisarmsLabel,
+		["Melee_Major_OffenisiveCDs"] = L.CategoryEnabledMelee_Major_OffenisiveCDsLabel,
+		["Big_Defensive_CDs"] = L.CategoryEnabledBig_Defensive_CDsLabel,
+		["Player_Party_OffensiveCDs"] = L.CategoryEnabledPlayer_Party_OffensiveCDsLabel,
+		["Small_Offenisive_CDs"] = L.CategoryEnabledSmall_Offenisive_CDsLabel,
+		["Small_Defensive_CDs"] = L.CategoryEnabledSmall_Defensive_CDsLabel,
+		["Freedoms_Speed"] = L.CategoryEnabledFreedoms_SpeedLabel,
+		["Snares_WithCDs"] = L.CategoryEnabledSnares_WithCDsLabel,
+		["Special_Low"] = L.CategoryEnabledSpecial_LowLabel,
+		["Snares_Ranged_Spamable"] = L.CategoryEnabledSnares_Ranged_SpamableLabel,
+		["Snares_Casted_Melee"] = L.CategoryEnabledSnares_Casted_MeleeLabel,
+		}
 
 	local AnchorDropDown = CreateFrame("Frame", O..v.."AnchorDropDown", OptionsPanelFrame, "UIDropDownMenuTemplate")
 	function AnchorDropDown:OnClick()
@@ -8145,63 +8224,50 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 		end)
 	end
 
-	local scalex= .82
+	local EnableGladiusGloss
+	if strfind(v, "arena") then
+		EnableGladiusGloss = CreateFrame("CheckButton", O..v.."EnableGladiusGloss", OptionsPanelFrame, "OptionsCheckButtonTemplate")
+		_G[O..v.."EnableGladiusGlossText"]:SetText(L["EnableGladiusGloss"])
+		EnableGladiusGloss:SetScript("OnClick", function(self)
+			LoseControlDB.EnableGladiusGloss = self:GetChecked()
+		end)
+	end
+
+	local lossOfControl
+	if  v == "player" then
+		lossOfControl = CreateFrame("CheckButton", O..v.."lossOfControl", OptionsPanelFrame, "OptionsCheckButtonTemplate")
+		lossOfControl:SetScale(.82)
+		lossOfControl:SetHitRectInsets(0, 0, 0, 0)
+		_G[O..v.."lossOfControlText"]:SetText(L["lossOfControl"])
+		lossOfControl:SetScript("OnClick", function(self)
+			LoseControlDB.lossOfControl = self:GetChecked()
+			if (self:GetChecked()) then
+				SetCVar("lossOfControl", 1)
+			else
+				SetCVar("lossOfControl", 0)
+			end
+		end)
+	end
 
 	local catListEnChecksButtons = {
-	"CC",
-	"Silence",
-	"RootPhyiscal_Special",
-	"RootMagic_Special",
-	"Root",
-	"ImmunePlayer",
-	"Disarm_Warning",
-	"CC_Warning",
-	"Enemy_Smoke_Bomb",
-	"Stealth",
-	"Immune",
-	"ImmuneSpell",
-	"ImmunePhysical",
-	"AuraMastery_Cast_Auras",
-	"ROP_Vortex",
-	"Disarm",
-	"Haste_Reduction",
-	"Dmg_Hit_Reduction",
-	"Interrupt",
-	"AOE_DMG_Modifiers",
-	"Friendly_Smoke_Bomb",
-	"AOE_Spell_Refections",
-	"Trees",
-	"Speed_Freedoms",
-	"Freedoms",
-	"Friendly_Defensives",
-	"Mana_Regen",
-	"CC_Reduction",
-	"Personal_Offensives",
-	"Peronsal_Defensives",
-	"Movable_Cast_Auras",
-
-	"Other", --PVE only
-	"PvE", --PVE only
-
-	"SnareSpecial",
-	"SnarePhysical70",
-	"SnareMagic70",
-	"SnarePhysical50",
-	"SnarePosion50",
-	"SnareMagic50",
-	"SnarePhysical30",
-	"SnareMagic30",
-	"Snare",
-}
+																	"CC","Silence","RootPhyiscal_Special","RootMagic_Special","Root","ImmunePlayer","Disarm_Warning","CC_Warning","Enemy_Smoke_Bomb","Stealth",
+																	"Immune","ImmuneSpell","ImmunePhysical","AuraMastery_Cast_Auras","ROP_Vortex","Disarm","Haste_Reduction","Dmg_Hit_Reduction",
+																	"AOE_DMG_Modifiers","Friendly_Smoke_Bomb","AOE_Spell_Refections","Trees","Speed_Freedoms","Freedoms","Friendly_Defensives","Mana_Regen",
+																	"CC_Reduction","Personal_Offensives","Peronsal_Defensives","Movable_Cast_Auras","Other","PvE","SnareSpecial","SnarePhysical70","SnareMagic70",
+																	"SnarePhysical50","SnarePosion50","SnareMagic50","SnarePhysical30","SnareMagic30","Snare",
+																	}
+--Interrupts
 	local CategoriesCheckButtons = { }
 	local FriendlyInterrupt = CreateFrame("CheckButton", O..v.."FriendlyInterrupt", OptionsPanelFrame, "OptionsCheckButtonTemplate")
-	FriendlyInterrupt:SetScale(scalex)
+	FriendlyInterrupt:SetScale(.82)
 	FriendlyInterrupt:SetHitRectInsets(0, -36, 0, 0)
 	_G[O..v.."FriendlyInterruptText"]:SetText(L["CatFriendly"])
 	FriendlyInterrupt:SetScript("OnClick", function(self)
 		local frames = { v }
 		if v == "party" then
 			frames = { "party1", "party2", "party3", "party4" }
+		elseif v == "arena" then
+			frames = { "arena1", "arena2", "arena3", "arena4", "arena5" }
 		end
 		for _, frame in ipairs(frames) do
 			LoseControlDB.frames[frame].categoriesEnabled.interrupt.friendly = self:GetChecked()
@@ -8211,28 +8277,34 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 			end
 		end
 	end)
-	tblinsert(CategoriesCheckButtons, { frame = FriendlyInterrupt, auraType = "interrupt", reaction = "friendly", categoryType = "Interrupt", anchorPos = CategoryEnabledInterruptLabel, xPos = 120, yPos = 5 })
+	tblinsert(CategoriesCheckButtons, { frame = FriendlyInterrupt, auraType = "interrupt", reaction = "friendly", categoryType = "Interrupt", anchorPos = L.CategoryEnabledInterruptLabel, xPos = 120, yPos = 5 })
 
 	if v == "target" or v == "targettarget" or v == "focus" or v == "focustarget" or strfind(v, "arena") then
 		local EnemyInterrupt = CreateFrame("CheckButton", O..v.."EnemyInterrupt", OptionsPanelFrame, "OptionsCheckButtonTemplate")
-		EnemyInterrupt:SetScale(scalex)
+		EnemyInterrupt:SetScale(.82)
 		EnemyInterrupt:SetHitRectInsets(0, -36, 0, 0)
 		_G[O..v.."EnemyInterruptText"]:SetText(L["CatEnemy"])
 		EnemyInterrupt:SetScript("OnClick", function(self)
-			LoseControlDB.frames[v].categoriesEnabled.interrupt.enemy = self:GetChecked()
-			LCframes[v].maxExpirationTime = 0
-			if LoseControlDB.frames[v].enabled and not LCframes[v].unlockMode then
-				LCframes[v]:UNIT_AURA(v, 0)
+			local frames = { v }
+			if v == "arena" then
+				frames = { "arena1", "arena2", "arena3", "arena4", "arena5" }
+			end
+			for _, frame in ipairs(frames) do
+				LoseControlDB.frames[frame].categoriesEnabled.interrupt.enemy = self:GetChecked()
+				LCframes[frame].maxExpirationTime = 0
+				if LoseControlDB.frames[frame].enabled and not LCframes[frame].unlockMode then
+					LCframes[frame]:UNIT_AURA(frame, 0)
+				end
 			end
 		end)
-		tblinsert(CategoriesCheckButtons, { frame = EnemyInterrupt, auraType = "interrupt", reaction = "enemy", categoryType = "Interrupt", anchorPos = CategoryEnabledInterruptLabel, xPos = 250, yPos = 5 })
+		tblinsert(CategoriesCheckButtons, { frame = EnemyInterrupt, auraType = "interrupt", reaction = "enemy", categoryType = "Interrupt", anchorPos = L.CategoryEnabledInterruptLabel, xPos = 250, yPos = 5 })
 	end
 
----THIS FOR LOOP MAKES THE CAT ENABLED FOR EVERYTHING
+--Spells
 	for _, cat in pairs(catListEnChecksButtons) do
 		if not strfind(v, "arena") then
 			local FriendlyBuff = CreateFrame("CheckButton", O..v.."Friendly"..cat.."Buff", OptionsPanelFrame, "OptionsCheckButtonTemplate")
-			FriendlyBuff:SetScale(scalex)
+			FriendlyBuff:SetScale(.82)
 			FriendlyBuff:SetHitRectInsets(0, -36, 0, 0)
 			_G[O..v.."Friendly"..cat.."BuffText"]:SetText(L["CatFriendlyBuff"])
 			FriendlyBuff:SetScript("OnClick", function(self)
@@ -8253,7 +8325,7 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 
 		if not strfind(v, "arena") then
 			local FriendlyDebuff = CreateFrame("CheckButton", O..v.."Friendly"..cat.."Debuff", OptionsPanelFrame, "OptionsCheckButtonTemplate")
-			FriendlyDebuff:SetScale(scalex)
+			FriendlyDebuff:SetScale(.82)
 			FriendlyDebuff:SetHitRectInsets(0, -36, 0, 0)
 			_G[O..v.."Friendly"..cat.."DebuffText"]:SetText(L["CatFriendlyDebuff"])
 			FriendlyDebuff:SetScript("OnClick", function(self)
@@ -8274,7 +8346,7 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 
 			if v == "target" or v == "targettarget" or v == "focus" or v == "focustarget"  then
 				local EnemyBuff = CreateFrame("CheckButton", O..v.."Enemy"..cat.."Buff", OptionsPanelFrame, "OptionsCheckButtonTemplate")
-				EnemyBuff:SetScale(scalex)
+				EnemyBuff:SetScale(.82)
 				EnemyBuff:SetHitRectInsets(0, -36, 0, 0)
 				_G[O..v.."Enemy"..cat.."BuffText"]:SetText(L["CatEnemyBuff"])
 				EnemyBuff:SetScript("OnClick", function(self)
@@ -8289,7 +8361,7 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 
 			if v == "target" or v == "targettarget" or v == "focus" or v == "focustarget"  then
 				local EnemyDebuff = CreateFrame("CheckButton", O..v.."Enemy"..cat.."Debuff", OptionsPanelFrame, "OptionsCheckButtonTemplate")
-				EnemyDebuff:SetScale(scalex)
+				EnemyDebuff:SetScale(.82)
 				EnemyDebuff:SetHitRectInsets(0, -36, 0, 0)
 				_G[O..v.."Enemy"..cat.."DebuffText"]:SetText(L["CatEnemyDebuff"])
 				EnemyDebuff:SetScript("OnClick", function(self)
@@ -8306,17 +8378,12 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 
 
 
-
-
-
-
----THIS FOR LOOP MAKES THE CAT ENABLED FOR EVERYTHING
+---Spells Arena
 local catListEnChecksButtonsArena = {
 		"Drink_Purge",
 		"Immune_Arena",
 		"CC_Arena",
 		"Silence_Arena",
-		"Interrupt", -- Needs to be same
 		"Special_High",
 		"Ranged_Major_OffenisiveCDs",
 		"Roots_90_Snares",
@@ -8333,15 +8400,15 @@ local catListEnChecksButtonsArena = {
 		"Snares_Casted_Melee",
 }
 	for _, cat in pairs(catListEnChecksButtonsArena) do
-		if strfind(v, "arena") then
+		if v == "target" or v == "targettarget" or v == "focus" or v == "focustarget" or strfind(v, "arena") then
 			local FriendlyBuff = CreateFrame("CheckButton", O..v.."Friendly"..cat.."Buff", OptionsPanelFrame, "OptionsCheckButtonTemplate")
-			FriendlyBuff:SetScale(scalex)
+			FriendlyBuff:SetScale(.82)
 			FriendlyBuff:SetHitRectInsets(0, -36, 0, 0)
 			_G[O..v.."Friendly"..cat.."BuffText"]:SetText(L["CatFriendlyBuff"])
 			FriendlyBuff:SetScript("OnClick", function(self)
 				local frames = { v }
-				if v == "party" then
-					frames = { "party1", "party2", "party3", "party4" }
+				if v == "arena" then
+					frames = { "arena1", "arena2", "arena3", "arena4", "arena5" }
 				end
 				for _, frame in ipairs(frames) do
 					LoseControlDB.frames[frame].categoriesEnabled.buff.friendly[cat] = self:GetChecked()
@@ -8354,15 +8421,15 @@ local catListEnChecksButtonsArena = {
 			tblinsert(CategoriesCheckButtons, { frame = FriendlyBuff, auraType = "buff", reaction = "friendly", categoryType = cat, anchorPos = CategoriesLabels[cat], xPos = 120, yPos = 5 })
 		end
 
-		if strfind(v, "arena") then
+			if v == "target" or v == "targettarget" or v == "focus" or v == "focustarget" or strfind(v, "arena") then
 			local FriendlyDebuff = CreateFrame("CheckButton", O..v.."Friendly"..cat.."Debuff", OptionsPanelFrame, "OptionsCheckButtonTemplate")
-			FriendlyDebuff:SetScale(scalex)
+			FriendlyDebuff:SetScale(.82)
 			FriendlyDebuff:SetHitRectInsets(0, -36, 0, 0)
 			_G[O..v.."Friendly"..cat.."DebuffText"]:SetText(L["CatFriendlyDebuff"])
 			FriendlyDebuff:SetScript("OnClick", function(self)
 				local frames = { v }
-				if v == "party" then
-					frames = { "party1", "party2", "party3", "party4" }
+				if v == "arena" then
+					frames = { "arena1", "arena2", "arena3", "arena4", "arena5" }
 				end
 				for _, frame in ipairs(frames) do
 					LoseControlDB.frames[frame].categoriesEnabled.debuff.friendly[cat] = self:GetChecked()
@@ -8375,51 +8442,55 @@ local catListEnChecksButtonsArena = {
 			tblinsert(CategoriesCheckButtons, { frame = FriendlyDebuff, auraType = "debuff", reaction = "friendly", categoryType = cat, anchorPos = CategoriesLabels[cat], xPos = 185, yPos = 5 })
 		end
 
-			if strfind(v, "arena") then
-				local EnemyBuff = CreateFrame("CheckButton", O..v.."Enemy"..cat.."Buff", OptionsPanelFrame, "OptionsCheckButtonTemplate")
-				EnemyBuff:SetScale(scalex)
-				EnemyBuff:SetHitRectInsets(0, -36, 0, 0)
-				_G[O..v.."Enemy"..cat.."BuffText"]:SetText(L["CatEnemyBuff"])
-				EnemyBuff:SetScript("OnClick", function(self)
-					LoseControlDB.frames[v].categoriesEnabled.buff.enemy[cat] = self:GetChecked()
-					LCframes[v].maxExpirationTime = 0
-					if LoseControlDB.frames[v].enabled and not LCframes[v].unlockMode then
-						LCframes[v]:UNIT_AURA(v, 0)
+			if v == "target" or v == "targettarget" or v == "focus" or v == "focustarget" or strfind(v, "arena") then
+			local EnemyBuff = CreateFrame("CheckButton", O..v.."Enemy"..cat.."Buff", OptionsPanelFrame, "OptionsCheckButtonTemplate")
+			EnemyBuff:SetScale(.82)
+			EnemyBuff:SetHitRectInsets(0, -36, 0, 0)
+			_G[O..v.."Enemy"..cat.."BuffText"]:SetText(L["CatEnemyBuff"])
+			EnemyBuff:SetScript("OnClick", function(self)
+				local frames = { v }
+				if v == "arena" then
+					frames = { "arena1", "arena2", "arena3", "arena4", "arena5" }
+				end
+				for _, frame in ipairs(frames) do
+					LoseControlDB.frames[frame].categoriesEnabled.buff.enemy[cat] = self:GetChecked()
+					LCframes[frame].maxExpirationTime = 0
+					if LoseControlDB.frames[frame].enabled and not LCframes[frame].unlockMode then
+						LCframes[frame]:UNIT_AURA(frame, 0)
 					end
-				end)
-				tblinsert(CategoriesCheckButtons, { frame = EnemyBuff, auraType = "buff", reaction = "enemy", categoryType = cat, anchorPos = CategoriesLabels[cat], xPos = 250, yPos = 5 })
-			end
+				end
+			end)
+			tblinsert(CategoriesCheckButtons, { frame = EnemyBuff, auraType = "buff", reaction = "enemy", categoryType = cat, anchorPos = CategoriesLabels[cat], xPos = 250, yPos = 5 })
+		end
 
-			if strfind(v, "arena") then
-				local EnemyDebuff = CreateFrame("CheckButton", O..v.."Enemy"..cat.."Debuff", OptionsPanelFrame, "OptionsCheckButtonTemplate")
-				EnemyDebuff:SetScale(scalex)
-				EnemyDebuff:SetHitRectInsets(0, -36, 0, 0)
-				_G[O..v.."Enemy"..cat.."DebuffText"]:SetText(L["CatEnemyDebuff"])
-				EnemyDebuff:SetScript("OnClick", function(self)
-					LoseControlDB.frames[v].categoriesEnabled.debuff.enemy[cat] = self:GetChecked()
-					LCframes[v].maxExpirationTime = 0
-					if LoseControlDB.frames[v].enabled and not LCframes[v].unlockMode then
-						LCframes[v]:UNIT_AURA(v, 0)
+		if v == "target" or v == "targettarget" or v == "focus" or v == "focustarget" or strfind(v, "arena") then
+			local EnemyDebuff = CreateFrame("CheckButton", O..v.."Enemy"..cat.."Debuff", OptionsPanelFrame, "OptionsCheckButtonTemplate")
+			EnemyDebuff:SetScale(.82)
+			EnemyDebuff:SetHitRectInsets(0, -36, 0, 0)
+			_G[O..v.."Enemy"..cat.."DebuffText"]:SetText(L["CatEnemyDebuff"])
+			EnemyDebuff:SetScript("OnClick", function(self)
+				local frames = { v }
+				if v == "arena" then
+					frames = { "arena1", "arena2", "arena3", "arena4", "arena5" }
+				end
+				for _, frame in ipairs(frames) do
+					LoseControlDB.frames[frame].categoriesEnabled.debuff.enemy[cat] = self:GetChecked()
+					LCframes[frame].maxExpirationTime = 0
+					if LoseControlDB.frames[frame].enabled and not LCframes[frame].unlockMode then
+						LCframes[frame]:UNIT_AURA(frame, 0)
 					end
-				end)
-				tblinsert(CategoriesCheckButtons, { frame = EnemyDebuff, auraType = "debuff", reaction = "enemy", categoryType = cat, anchorPos = CategoriesLabels[cat], xPos = 305, yPos = 5 })
-			end
+				end
+			end)
+			tblinsert(CategoriesCheckButtons, { frame = EnemyDebuff, auraType = "debuff", reaction = "enemy", categoryType = cat, anchorPos = CategoriesLabels[cat], xPos = 305, yPos = 5 })
+		end
 	end
-
-
-
-
-
-
-
-
 
 
 	local CategoriesCheckButtonsPlayer2
 	if (v == "player") then
 		CategoriesCheckButtonsPlayer2 = { }
 		local FriendlyInterruptPlayer2 = CreateFrame("CheckButton", O..v.."FriendlyInterruptPlayer2", OptionsPanelFrame, "OptionsCheckButtonTemplate")
-		FriendlyInterruptPlayer2:SetScale(scalex)
+		FriendlyInterruptPlayer2:SetScale(.82)
 		FriendlyInterruptPlayer2:SetHitRectInsets(0, -36, 0, 0)
 		_G[O..v.."FriendlyInterruptPlayer2Text"]:SetText(L["CatFriendly"].."|cfff28614(Icon2)|r")
 		FriendlyInterruptPlayer2:SetScript("OnClick", function(self)
@@ -8429,10 +8500,10 @@ local catListEnChecksButtonsArena = {
 				LCframeplayer2:UNIT_AURA(v, 0)
 			end
 		end)
-		tblinsert(CategoriesCheckButtonsPlayer2, { frame = FriendlyInterruptPlayer2, auraType = "interrupt", reaction = "friendly", categoryType = "Interrupt", anchorPos = CategoryEnabledInterruptLabel, xPos = 250, yPos = 5 })
+		tblinsert(CategoriesCheckButtonsPlayer2, { frame = FriendlyInterruptPlayer2, auraType = "interrupt", reaction = "friendly", categoryType = "Interrupt", anchorPos = L.CategoryEnabledInterruptLabel, xPos = 250, yPos = 5 })
 		for _, cat in pairs(catListEnChecksButtons) do
 			local FriendlyBuffPlayer2 = CreateFrame("CheckButton", O..v.."Friendly"..cat.."BuffPlayer2", OptionsPanelFrame, "OptionsCheckButtonTemplate")
-			FriendlyBuffPlayer2:SetScale(scalex)
+			FriendlyBuffPlayer2:SetScale(.82)
 			FriendlyBuffPlayer2:SetHitRectInsets(0, -36, 0, 0)
 			_G[O..v.."Friendly"..cat.."BuffPlayer2Text"]:SetText(L["CatFriendlyBuff"].."|cfff28614(Icon2)|r")
 			FriendlyBuffPlayer2:SetScript("OnClick", function(self)
@@ -8444,7 +8515,7 @@ local catListEnChecksButtonsArena = {
 			end)
 			tblinsert(CategoriesCheckButtonsPlayer2, { frame = FriendlyBuffPlayer2, auraType = "buff", reaction = "friendly", categoryType = cat, anchorPos = CategoriesLabels[cat], xPos = 250, yPos = 5 })
 			local FriendlyDebuffPlayer2 = CreateFrame("CheckButton", O..v.."Friendly"..cat.."DebuffPlayer2", OptionsPanelFrame, "OptionsCheckButtonTemplate")
-			FriendlyDebuffPlayer2:SetScale(scalex)
+			FriendlyDebuffPlayer2:SetScale(.82)
 			FriendlyDebuffPlayer2:SetHitRectInsets(0, -36, 0, 0)
 			_G[O..v.."Friendly"..cat.."DebuffPlayer2Text"]:SetText(L["CatFriendlyDebuff"].."|cfff28614(Icon2)|r")
 			FriendlyDebuffPlayer2:SetScript("OnClick", function(self)
@@ -8559,6 +8630,8 @@ local catListEnChecksButtonsArena = {
 		local enabled = self:GetChecked()
 		if enabled then
 			if DisableInBG then BlizzardOptionsPanel_CheckButton_Enable(DisableInBG) end
+			if EnableGladiusGloss then BlizzardOptionsPanel_CheckButton_Enable(EnableGladiusGloss) end
+			if lossOfControl then BlizzardOptionsPanel_CheckButton_Enable(lossOfControl) end
 			if DisableInRaid then BlizzardOptionsPanel_CheckButton_Enable(DisableInRaid) end
 			if ShowNPCInterrupts then BlizzardOptionsPanel_CheckButton_Enable(ShowNPCInterrupts) end
 			if DisablePlayerTargetTarget then BlizzardOptionsPanel_CheckButton_Enable(DisablePlayerTargetTarget) end
@@ -8584,20 +8657,11 @@ local catListEnChecksButtonsArena = {
 				end
 			end
 			CategoriesEnabledLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
-			CategoryEnabledInterruptLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
-			CategoryEnabledCCLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
-			CategoryEnabledSilenceLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
 
-			CategoryEnabledRootPhyiscal_SpecialLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
+			for k, catColor in ipairs(CategoriesLabels) do
+			catColor:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
+			end
 
-			CategoryEnabledPvELabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
-			CategoryEnabledImmuneLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
-			CategoryEnabledImmuneSpellLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
-			CategoryEnabledImmunePhysicalLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
-			CategoryEnabledDisarmLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
-			CategoryEnabledRootLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
-			CategoryEnabledSnareLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
-			CategoryEnabledOtherLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
 			BlizzardOptionsPanel_Slider_Enable(SizeSlider)
 			BlizzardOptionsPanel_Slider_Enable(AlphaSlider)
 			UIDropDownMenu_EnableDropDown(AnchorDropDown)
@@ -8610,6 +8674,8 @@ local catListEnChecksButtonsArena = {
 			end
 		else
 			if DisableInBG then BlizzardOptionsPanel_CheckButton_Disable(DisableInBG) end
+			if EnableGladiusGloss then BlizzardOptionsPanel_CheckButton_Disable(EnableGladiusGloss) end
+			if lossOfControl then BlizzardOptionsPanel_CheckButton_Disable(lossOfControl) end
 			if DisableInRaid then BlizzardOptionsPanel_CheckButton_Disable(DisableInRaid) end
 			if ShowNPCInterrupts then BlizzardOptionsPanel_CheckButton_Disable(ShowNPCInterrupts) end
 			if DisablePlayerTargetTarget then BlizzardOptionsPanel_CheckButton_Disable(DisablePlayerTargetTarget) end
@@ -8629,19 +8695,11 @@ local catListEnChecksButtonsArena = {
 				end
 			end
 			CategoriesEnabledLabel:SetVertexColor(GRAY_FONT_COLOR:GetRGB())
-			CategoryEnabledInterruptLabel:SetVertexColor(GRAY_FONT_COLOR:GetRGB())
-			CategoryEnabledCCLabel:SetVertexColor(GRAY_FONT_COLOR:GetRGB())
-			CategoryEnabledSilenceLabel:SetVertexColor(GRAY_FONT_COLOR:GetRGB())
-			CategoryEnabledRootPhyiscal_SpecialLabel:SetVertexColor(GRAY_FONT_COLOR:GetRGB())
 
-			CategoryEnabledPvELabel:SetVertexColor(GRAY_FONT_COLOR:GetRGB())
-			CategoryEnabledImmuneLabel:SetVertexColor(GRAY_FONT_COLOR:GetRGB())
-			CategoryEnabledImmuneSpellLabel:SetVertexColor(GRAY_FONT_COLOR:GetRGB())
-			CategoryEnabledImmunePhysicalLabel:SetVertexColor(GRAY_FONT_COLOR:GetRGB())
-			CategoryEnabledDisarmLabel:SetVertexColor(GRAY_FONT_COLOR:GetRGB())
-			CategoryEnabledRootLabel:SetVertexColor(GRAY_FONT_COLOR:GetRGB())
-			CategoryEnabledSnareLabel:SetVertexColor(GRAY_FONT_COLOR:GetRGB())
-			CategoryEnabledOtherLabel:SetVertexColor(GRAY_FONT_COLOR:GetRGB())
+			for k, catGrey in ipairs(CategoriesLabels) do
+			catGrey:SetVertexColor(GRAY_FONT_COLOR:GetRGB())
+			end
+
 			BlizzardOptionsPanel_Slider_Disable(SizeSlider)
 			BlizzardOptionsPanel_Slider_Disable(AlphaSlider)
 			UIDropDownMenu_DisableDropDown(AnchorDropDown)
@@ -8683,17 +8741,16 @@ local catListEnChecksButtonsArena = {
 
 	Enabled:SetPoint("TOPLEFT", 8, -4)
 	if DisableInBG then DisableInBG:SetPoint("TOPLEFT", Enabled, 275, 0) end
+	if EnableGladiusGloss then EnableGladiusGloss:SetPoint("TOPLEFT", Enabled, 275, -25)end
 	if DisableInRaid then DisableInRaid:SetPoint("TOPLEFT", Enabled, 275, -25) end
-	local optiony = -13
-	local optionx = 450
-	if ShowNPCInterrupts then ShowNPCInterrupts:SetPoint("TOPLEFT", Enabled, optionx, 2);ShowNPCInterrupts:SetScale(.8) end
-	if DisablePlayerTargetTarget then DisablePlayerTargetTarget:SetPoint("TOPLEFT", Enabled, optionx, -13);DisablePlayerTargetTarget:SetScale(.8) end
-	if DisableTargetTargetTarget then DisableTargetTargetTarget:SetPoint("TOPLEFT", Enabled, optionx, -28); DisableTargetTargetTarget:SetScale(.8) end
-	if DisableFocusFocusTarget then DisableFocusFocusTarget:SetPoint("TOPLEFT", Enabled, optionx, -28);DisableFocusFocusTarget:SetScale(.8) end
-	if DisablePlayerTargetPlayerTargetTarget then DisablePlayerTargetPlayerTargetTarget:SetPoint("TOPLEFT", Enabled, optionx, -43);DisablePlayerTargetPlayerTargetTarget:SetScale(.8) end
-	if DisablePlayerFocusPlayerFocusTarget then DisablePlayerFocusPlayerFocusTarget:SetPoint("TOPLEFT", Enabled, optionx, -43);DisablePlayerFocusPlayerFocusTarget:SetScale(.8) end
-	if DisableTargetDeadTargetTarget then DisableTargetDeadTargetTarget:SetPoint("TOPLEFT", Enabled,optionx, -58);DisableTargetDeadTargetTarget:SetScale(.8) end
-	if DisableFocusDeadFocusTarget then DisableFocusDeadFocusTarget:SetPoint("TOPLEFT", Enabled, optionx, -58); DisableFocusDeadFocusTarget:SetScale(.8) end
+	if ShowNPCInterrupts then ShowNPCInterrupts:SetPoint("TOPLEFT", Enabled, 450, 2);ShowNPCInterrupts:SetScale(.8) end
+	if DisablePlayerTargetTarget then DisablePlayerTargetTarget:SetPoint("TOPLEFT", Enabled, 450, -13);DisablePlayerTargetTarget:SetScale(.8) end
+	if DisableTargetTargetTarget then DisableTargetTargetTarget:SetPoint("TOPLEFT", Enabled, 450, -28); DisableTargetTargetTarget:SetScale(.8) end
+	if DisableFocusFocusTarget then DisableFocusFocusTarget:SetPoint("TOPLEFT", Enabled, 450, -28);DisableFocusFocusTarget:SetScale(.8) end
+	if DisablePlayerTargetPlayerTargetTarget then DisablePlayerTargetPlayerTargetTarget:SetPoint("TOPLEFT", Enabled, 450, -43);DisablePlayerTargetPlayerTargetTarget:SetScale(.8) end
+	if DisablePlayerFocusPlayerFocusTarget then DisablePlayerFocusPlayerFocusTarget:SetPoint("TOPLEFT", Enabled, 450, -43);DisablePlayerFocusPlayerFocusTarget:SetScale(.8) end
+	if DisableTargetDeadTargetTarget then DisableTargetDeadTargetTarget:SetPoint("TOPLEFT", Enabled,450, -58);DisableTargetDeadTargetTarget:SetScale(.8) end
+	if DisableFocusDeadFocusTarget then DisableFocusDeadFocusTarget:SetPoint("TOPLEFT", Enabled, 450, -58); DisableFocusDeadFocusTarget:SetScale(.8) end
 
 	if DuplicatePlayerPortrait then DuplicatePlayerPortrait:SetPoint("TOPLEFT", Enabled, 275, 0) end
 	AnchorDropDown:SetPoint("TOPLEFT", Enabled, "BOTTOMLEFT", -13, -3)
@@ -8702,29 +8759,48 @@ local catListEnChecksButtonsArena = {
 	AnchorDropDownLabel:SetScale(.8)
 	SizeSlider:SetPoint("TOPLEFT", Enabled, "TOPRIGHT", 115, -20)
 	AlphaSlider:SetPoint("TOPLEFT", SizeSlider, "BOTTOMLEFT", 0, -16)
-	CategoriesEnabledLabel:SetPoint("TOPLEFT", AnchorDropDown, "BOTTOMLEFT", 17, -6)
+	CategoriesEnabledLabel:SetPoint("TOPLEFT", AnchorDropDown, "BOTTOMLEFT", 17, -3)
 
-	local CategorySpacing = -4
-	local catscale = .85
-		if CategoryEnabledInterruptLabel then CategoryEnabledInterruptLabel:SetPoint("TOPLEFT", CategoriesEnabledLabel, "BOTTOMLEFT", 0, -6); CategoryEnabledInterruptLabel:SetScale(catscale) end
+	if L.CategoryEnabledInterruptLabel then L.CategoryEnabledInterruptLabel:SetPoint("TOPLEFT", CategoriesEnabledLabel, "BOTTOMLEFT", 0, -6); L.CategoryEnabledInterruptLabel:SetScale(.75) end
 
 	if v ~= "arena" then
-		if CategoryEnabledCCLabel then CategoryEnabledCCLabel:SetPoint("TOPLEFT", CategoryEnabledInterruptLabel, "BOTTOMLEFT", 0, CategorySpacing); CategoryEnabledCCLabel:SetScale(catscale) end
-		if CategoryEnabledSilenceLabel then CategoryEnabledSilenceLabel:SetPoint("TOPLEFT", 	CategoryEnabledCCLabel, "BOTTOMLEFT", 0, CategorySpacing); CategoryEnabledSilenceLabel:SetScale(catscale) end
-		if CategoryEnabledRootPhyiscal_SpecialLabel then CategoryEnabledRootPhyiscal_SpecialLabel:SetPoint("TOPLEFT", 	CategoryEnabledSilenceLabel, "BOTTOMLEFT", 0, CategorySpacing); CategoryEnabledRootPhyiscal_SpecialLabel:SetScale(catscale) end
-		if CategoryEnabledPvELabel then CategoryEnabledPvELabel:SetPoint("TOPLEFT", CategoryEnabledRootPhyiscal_SpecialLabel, "BOTTOMLEFT", 0, CategorySpacing); CategoryEnabledPvELabel:SetScale(catscale) end
-		if CategoryEnabledImmuneLabel then CategoryEnabledImmuneLabel:SetPoint("TOPLEFT", CategoryEnabledPvELabel, "BOTTOMLEFT", 0, CategorySpacing); CategoryEnabledImmuneLabel:SetScale(catscale) end
-		if CategoryEnabledImmuneSpellLabel then CategoryEnabledImmuneSpellLabel:SetPoint("TOPLEFT", CategoryEnabledImmuneLabel, "BOTTOMLEFT", 0, CategorySpacing); CategoryEnabledImmuneSpellLabel:SetScale(catscale) end
-		if CategoryEnabledImmunePhysicalLabel then CategoryEnabledImmunePhysicalLabel:SetPoint("TOPLEFT", CategoryEnabledImmuneSpellLabel, "BOTTOMLEFT", 0, CategorySpacing);	CategoryEnabledImmunePhysicalLabel:SetScale(catscale) end
-		if CategoryEnabledDisarmLabel then CategoryEnabledDisarmLabel:SetPoint("TOPLEFT", CategoryEnabledImmunePhysicalLabel, "BOTTOMLEFT", 0, CategorySpacing); CategoryEnabledDisarmLabel:SetScale(catscale) end
-		if CategoryEnabledRootLabel then CategoryEnabledRootLabel:SetPoint("TOPLEFT", CategoryEnabledDisarmLabel, "BOTTOMLEFT", 0, CategorySpacing); CategoryEnabledRootLabel:SetScale(catscale) end
-		if CategoryEnabledSnareLabel then CategoryEnabledSnareLabel:SetPoint("TOPLEFT", CategoryEnabledRootLabel, "BOTTOMLEFT", 0, CategorySpacing); CategoryEnabledSnareLabel:SetScale(catscale) end
-		if CategoryEnabledOtherLabel then CategoryEnabledOtherLabel:SetPoint("TOPLEFT", CategoryEnabledSnareLabel, "BOTTOMLEFT", 0, CategorySpacing); CategoryEnabledOtherLabel:SetScale(catscale) end
+		local labels ={
+		  L.CategoryEnabledCCLabel,L.CategoryEnabledSilenceLabel,L.CategoryEnabledRootPhyiscal_SpecialLabel,L.CategoryEnabledRootMagic_SpecialLabel,L.CategoryEnabledRootLabel,L.CategoryEnabledImmunePlayerLabel,L.CategoryEnabledDisarm_WarningLabel,L.CategoryEnabledCC_WarningLabel,L.CategoryEnabledEnemy_Smoke_BombLabel,L.CategoryEnabledStealthLabel,L.CategoryEnabledImmuneLabel,L.CategoryEnabledImmuneSpellLabel,L.CategoryEnabledImmunePhysicalLabel,L.CategoryEnabledAuraMastery_Cast_AurasLabel,L.CategoryEnabledROP_VortexLabel,L.CategoryEnabledDisarmLabel,L.CategoryEnabledHaste_ReductionLabel,L.CategoryEnabledDmg_Hit_ReductionLabel,L.CategoryEnabledAOE_DMG_ModifiersLabel,L.CategoryEnabledFriendly_Smoke_BombLabel,L.CategoryEnabledAOE_Spell_RefectionsLabel,L.CategoryEnabledTreesLabel,L.CategoryEnabledSpeed_FreedomsLabel,L.CategoryEnabledFreedomsLabel,L.CategoryEnabledFriendly_DefensivesLabel,L.CategoryEnabledMana_RegenLabel,L.CategoryEnabledCC_ReductionLabel,L.CategoryEnabledPersonal_OffensivesLabel,L.CategoryEnabledPeronsal_DefensivesLabel,L.CategoryEnabledMovable_Cast_AurasLabel,L.CategoryEnabledOtherLabel,L.CategoryEnabledPvELabel,L.CategoryEnabledSnareSpecialLabel,L.CategoryEnabledSnarePhysical70Label,L.CategoryEnabledSnareMagic70Label,L.CategoryEnabledSnarePhysical50Label,L.CategoryEnabledSnarePosion50Label,L.CategoryEnabledSnareMagic50Label,L.CategoryEnabledSnarePhysical30Label,L.CategoryEnabledSnareMagic30Label,L.CategoryEnabledSnareLabel
+		  }
+	  for k, catEn in ipairs(labels) do
+	    if k == 1 then
+	      if catEn then catEn:SetPoint("TOPLEFT", L.CategoryEnabledInterruptLabel, "BOTTOMLEFT", 0, -3); catEn:SetScale(.75) end
+	    else
+	      if catEn then catEn:SetPoint("TOPLEFT", labels[k-1], "BOTTOMLEFT", 0, -3); catEn:SetScale(.75) end
+	    end
+	  end
 	end
 
 	if v == "arena" then
-		if CategoryEnabledCC_ArenaLabel then CategoryEnabledCC_ArenaLabel:SetPoint("TOPLEFT", CategoryEnabledInterruptLabel, "BOTTOMLEFT", 0, CategorySpacing); CategoryEnabledCC_ArenaLabel:SetScale(catscale) end
+		local labelsArena ={									L.CategoryEnabledDrink_PurgeLabel,L.CategoryEnabledImmune_ArenaLabel,L.CategoryEnabledCC_ArenaLabel,L.CategoryEnabledSilence_ArenaLabel,L.CategoryEnabledSpecial_HighLabel,L.CategoryEnabledRanged_Major_OffenisiveCDsLabel,L.CategoryEnabledRoots_90_SnaresLabel,L.CategoryEnabledDisarmsLabel,L.CategoryEnabledMelee_Major_OffenisiveCDsLabel,L.CategoryEnabledBig_Defensive_CDsLabel,L.CategoryEnabledPlayer_Party_OffensiveCDsLabel,L.CategoryEnabledSmall_Offenisive_CDsLabel,L.CategoryEnabledSmall_Defensive_CDsLabel,L.CategoryEnabledFreedoms_SpeedLabel,L.CategoryEnabledSnares_WithCDsLabel,L.CategoryEnabledSpecial_LowLabel,L.CategoryEnabledSnares_Ranged_SpamableLabel,L.CategoryEnabledSnares_Casted_MeleeLabel,
+		              }
+	  for k, catEn in ipairs(labelsArena) do
+	    if k == 1 then
+	      if catEn then catEn:SetPoint("TOPLEFT", L.CategoryEnabledInterruptLabel, "BOTTOMLEFT", 0, -3); catEn:SetScale(.75) end
+	    else
+	      if catEn then catEn:SetPoint("TOPLEFT", labelsArena[k-1], "BOTTOMLEFT", 0, -3); catEn:SetScale(.75) end
+	    end
+	  end
 	end
+
+	if v == "target" or v == "targettarget" or v == "focus" or v == "focustarget"  then
+		local labelsArena ={									L.CategoryEnabledDrink_PurgeLabel,L.CategoryEnabledImmune_ArenaLabel,L.CategoryEnabledCC_ArenaLabel,L.CategoryEnabledSilence_ArenaLabel,L.CategoryEnabledSpecial_HighLabel,L.CategoryEnabledRanged_Major_OffenisiveCDsLabel,L.CategoryEnabledRoots_90_SnaresLabel,L.CategoryEnabledDisarmsLabel,L.CategoryEnabledMelee_Major_OffenisiveCDsLabel,L.CategoryEnabledBig_Defensive_CDsLabel,L.CategoryEnabledPlayer_Party_OffensiveCDsLabel,L.CategoryEnabledSmall_Offenisive_CDsLabel,L.CategoryEnabledSmall_Defensive_CDsLabel,L.CategoryEnabledFreedoms_SpeedLabel,L.CategoryEnabledSnares_WithCDsLabel,L.CategoryEnabledSpecial_LowLabel,L.CategoryEnabledSnares_Ranged_SpamableLabel,L.CategoryEnabledSnares_Casted_MeleeLabel,
+		              }
+	  for k, catEn in ipairs(labelsArena) do
+	    if k == 1 then
+	      if catEn then catEn:SetPoint("TOPLEFT", L.CategoryEnabledCCLabel, "TOPRIGHT", 381, 0); catEn:SetScale(.75) end
+	    else
+	      if catEn then catEn:SetPoint("TOPLEFT", labelsArena[k-1], "BOTTOMLEFT", 0, -3); catEn:SetScale(.75) end
+	    end
+	  end
+	end
+
+	if lossOfControl then lossOfControl:SetPoint("TOPLEFT", L.CategoryEnabledCCLabel, "TOPRIGHT", 475, 7) end
 
 	for _, checkbuttonframe in pairs(CategoriesCheckButtons) do
 		checkbuttonframe.frame:SetPoint("TOPLEFT", checkbuttonframe.anchorPos, checkbuttonframe.xPos, checkbuttonframe.yPos)
@@ -8748,10 +8824,17 @@ local catListEnChecksButtonsArena = {
 			unitId = "party1"
 		elseif unitId == "arena" then
 			DisableInBG:SetChecked(LoseControlDB.disableArenaInBG)
+			EnableGladiusGloss:SetChecked(LoseControlDB.EnableGladiusGloss)
 			unitId = "arena1"
 		elseif unitId == "player" then
 			DuplicatePlayerPortrait:SetChecked(LoseControlDB.duplicatePlayerPortrait)
 			AlphaSlider2:SetValue(LoseControlDB.frames.player2.alpha * 100)
+			lossOfControl:SetChecked(LoseControlDB.lossOfControl)
+				if LoseControlDB.lossOfControl then
+					SetCVar("lossOfControl", 1)
+				else
+					SetCVar("lossOfControl", 0)
+				end
 		elseif unitId == "target" then
 			ShowNPCInterrupts:SetChecked(LoseControlDB.showNPCInterruptsTarget)
 		elseif unitId == "focus" then
@@ -8791,6 +8874,8 @@ local catListEnChecksButtonsArena = {
 		Enabled:SetChecked(frame.enabled)
 		if frame.enabled then
 			if DisableInBG then BlizzardOptionsPanel_CheckButton_Enable(DisableInBG) end
+			if EnableGladiusGloss then BlizzardOptionsPanel_CheckButton_Enable(EnableGladiusGloss) end
+			if lossOfControl then BlizzardOptionsPanel_CheckButton_Enable(lossOfControl) end
 			if DisableInRaid then BlizzardOptionsPanel_CheckButton_Enable(DisableInRaid) end
 			if ShowNPCInterrupts then BlizzardOptionsPanel_CheckButton_Enable(ShowNPCInterrupts) end
 			if DisablePlayerTargetTarget then BlizzardOptionsPanel_CheckButton_Enable(DisablePlayerTargetTarget) end
@@ -8816,18 +8901,11 @@ local catListEnChecksButtonsArena = {
 				end
 			end
 			CategoriesEnabledLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
-			CategoryEnabledInterruptLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
-			CategoryEnabledCCLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
-			CategoryEnabledSilenceLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
-			CategoryEnabledRootPhyiscal_SpecialLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
-			CategoryEnabledPvELabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
-			CategoryEnabledImmuneLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
-			CategoryEnabledImmuneSpellLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
-			CategoryEnabledImmunePhysicalLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
-			CategoryEnabledDisarmLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
-			CategoryEnabledRootLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
-			CategoryEnabledSnareLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
-			CategoryEnabledOtherLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
+
+			for k, catColor in ipairs(CategoriesLabels) do
+			catColor:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
+			end
+
 			BlizzardOptionsPanel_Slider_Enable(SizeSlider)
 			BlizzardOptionsPanel_Slider_Enable(AlphaSlider)
 			UIDropDownMenu_EnableDropDown(AnchorDropDown)
@@ -8840,6 +8918,8 @@ local catListEnChecksButtonsArena = {
 			end
 		else
 			if DisableInBG then BlizzardOptionsPanel_CheckButton_Disable(DisableInBG) end
+			if EnableGladiusGloss then BlizzardOptionsPanel_CheckButton_Disable(EnableGladiusGloss) end
+			if lossOfControl then BlizzardOptionsPanel_CheckButton_Disable(lossOfControl) end
 			if DisableInRaid then BlizzardOptionsPanel_CheckButton_Disable(DisableInRaid) end
 			if ShowNPCInterrupts then BlizzardOptionsPanel_CheckButton_Disable(ShowNPCInterrupts) end
 			if DisablePlayerTargetTarget then BlizzardOptionsPanel_CheckButton_Disable(DisablePlayerTargetTarget) end
@@ -8859,18 +8939,11 @@ local catListEnChecksButtonsArena = {
 				end
 			end
 			CategoriesEnabledLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
-			CategoryEnabledInterruptLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
-			CategoryEnabledCCLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
-			CategoryEnabledSilenceLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
-			CategoryEnabledRootPhyiscal_SpecialLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
-			CategoryEnabledPvELabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
-			CategoryEnabledImmuneLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
-			CategoryEnabledImmuneSpellLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
-			CategoryEnabledImmunePhysicalLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
-			CategoryEnabledDisarmLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
-			CategoryEnabledRootLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
-			CategoryEnabledSnareLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
-			CategoryEnabledOtherLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
+
+			for k, catColor in ipairs(CategoriesLabels) do
+			catColor:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
+			end
+
 			BlizzardOptionsPanel_Slider_Disable(SizeSlider)
 			BlizzardOptionsPanel_Slider_Disable(AlphaSlider)
 			UIDropDownMenu_DisableDropDown(AnchorDropDown)
