@@ -119,7 +119,7 @@ local spellsArenaLua
 -- Thanks to all the people on the Curse.com and WoWInterface forums who help keep this list up to date :)
 local cleuSpells = { -- nil = Do Not Show
 
-{17, 60,  "CC",  "Silence", "cleuEvent1", "cleuEventArena1" },
+{17, 60,  "CC",  "Silence_Arena", "cleuEvent1", "cleuEventArena1" },
 {8921 , 15, "Trees",  nil, "cleuEvent2", "cleuEventArena2"},
 {93402 , 5,  "Trees",  nil, "cleuEvent3", "cleuEventArena3"},
 
@@ -152,9 +152,9 @@ local interrupts = {
 
 --[[
 Drink_Purge = 19,
-Immune = 18,
-CC = 17,
-Silence = 16,
+Immune_Arena = 18,
+CC_Arena = 17,
+Silence_Arena = 16,
 Interrupt = 15, -- Needs to be same
 Special_High = 14,
 Ranged_Major_OffenisiveCDs = 13,
@@ -176,13 +176,13 @@ local spellsArenaTable = {
 	----------------
 	-- Hunter
 	----------------
-	{186265 , "Immune"}, --Aspect of the Turtle
-	{3355 , "CC"}, --Freezing Trap
-	{203337 , "CC"}, --Freezing Trap
-	{24394 , "CC"}, --Intimidation
-	{213691 , "CC"}, --Scatter Shot
-	{202933 , "Silence"}, --Spider Sting
-	{233022 , "Silence"}, --Spider Sting
+	{186265 , "Immune_Arena"}, --Aspect of the Turtle
+	{3355 , "CC_Arena"}, --Freezing Trap
+	{203337 , "CC_Arena"}, --Freezing Trap
+	{24394 , "CC_Arena"}, --Intimidation
+	{213691 , "CC_Arena"}, --Scatter Shot
+	{202933 , "Silence_Arena"}, --Spider Sting
+	{233022 , "Silence_Arena"}, --Spider Sting
 	{191241 , "Special_High"}, --Sticky Bomb
 	{199483 , "Special_High"}, --Camouflage
 	{5384 , "Special_High"}, --Fiegn Death
@@ -218,49 +218,49 @@ local spellsArenaTable = {
 	-- Shaman
 	----------------
 
-	{"Hex" , "CC"},
-	{305485 , "CC"}, --Lightning Lasso
-	{118345 , "CC"}, --Pulverize
-	{77505 , "CC"}, --Earthquake
-	{197214 , "CC"}, --Sundering
+	{"Hex" , "CC_Arena"},
+	{305485 , "CC_Arena"}, --Lightning Lasso
+	{118345 , "CC_Arena"}, --Pulverize
+	{77505 , "CC_Arena"}, --Earthquake
+	{197214 , "CC_Arena"}, --Sundering
 	{290641 , "Special_High"}, --Ancestral Gift
 	{8178 , "Special_High"}, --Grounding Totem Effect
 
 	----------------
 	-- Death Knight
 	----------------
-	{48707 , "Immune"}, --Anti-Magic Shell
-	{221562 , "CC"}, --Asphyxiate
-	{108194 , "CC"}, --Asphyxiate
-	{91800 , "CC"}, --Gnaw
-	{210141 , "CC"}, --Zombie Explosion
-	{91797 , "CC"}, --Monstrous Blow
-	{287254 , "CC"}, --Dead of Winter
-	{207167 , "CC"}, --Blinding Sleet
-	{204490 , "Silence"}, --Strangulate
+	{48707 , "Immune_Arena"}, --Anti-Magic Shell
+	{221562 , "CC_Arena"}, --Asphyxiate
+	{108194 , "CC_Arena"}, --Asphyxiate
+	{91800 , "CC_Arena"}, --Gnaw
+	{210141 , "CC_Arena"}, --Zombie Explosion
+	{91797 , "CC_Arena"}, --Monstrous Blow
+	{287254 , "CC_Arena"}, --Dead of Winter
+	{207167 , "CC_Arena"}, --Blinding Sleet
+	{204490 , "Silence_Arena"}, --Strangulate
 	{77606 , "Special_High"}, --Dark Simulacrum
 
 	----------------
 	-- Druid
 	----------------
 	{114108 , "Drink_Purge"}, --Soul of the Forest
-	{5211 , "CC"}, --Mighty Bash
-	{163505 , "CC"}, --Rake
-	{203123 , "CC"}, --Maim
-	{202244 , "CC"}, --Overrun
-	{33786 , "CC"}, --Cyclone
-	{209753 , "CC"}, --Cyclone
-	{2637 , "CC"}, --Hibernate
-	{81261 , "Silence"}, --Solar Beam
+	{5211 , "CC_Arena"}, --Mighty Bash
+	{163505 , "CC_Arena"}, --Rake
+	{203123 , "CC_Arena"}, --Maim
+	{202244 , "CC_Arena"}, --Overrun
+	{33786 , "CC_Arena"}, --Cyclone
+	{209753 , "CC_Arena"}, --Cyclone
+	{2637 , "CC_Arena"}, --Hibernate
+	{81261 , "Silence_Arena"}, --Solar Beam
 	{5215 , "Special_High"}, --Prowl
 
 	----------------
 	-- Mage
 	----------------
-	{45438 , "Immune"}, --Ice Block
-	{"Polymorph" , "CC"},
-	{82691 , "CC"}, --Ring of Frost
-	{31661 , "CC"}, --Dragon's Breath
+	{45438 , "Immune_Arena"}, --Ice Block
+	{"Polymorph" , "CC_Arena"},
+	{82691 , "CC_Arena"}, --Ring of Frost
+	{31661 , "CC_Arena"}, --Dragon's Breath
 	{66 , "Special_High"}, --Invisibility
 	{32612 , "Special_High"}, --Invisibility
 	{110960 , "Special_High"}, --Greater Invisibility
@@ -269,53 +269,53 @@ local spellsArenaTable = {
 	----------------
 	-- Monk
 	----------------
-	{119381 , "CC"}, --Leg Sweep
-	{202346 , "CC"}, --Double Barrel
-	{202274 , "CC"}, --Incendiary Brew
-	{198909 , "CC"}, --Song of Chi-ji
-	{115078 , "CC"}, --Paralysis
+	{119381 , "CC_Arena"}, --Leg Sweep
+	{202346 , "CC_Arena"}, --Double Barrel
+	{202274 , "CC_Arena"}, --Incendiary Brew
+	{198909 , "CC_Arena"}, --Song of Chi-ji
+	{115078 , "CC_Arena"}, --Paralysis
 	{209584 , "Special_High"}, --Zen Focus Tea
 
 	----------------
 	-- Palladin
 	----------------
 	{210294 , "Drink_Purge"}, --Divine Favor
-	{642 , "Immune"}, --Divine Shield
-	{228050 , "Immune"}, --Divine Shield (PvP Guardian of the Forgotten Queen)
-	{204018 , "Immune"}, --Blessing of Spellwarding
-	{853 , "CC"}, --Hammer of Justice
-	{20066 , "CC"}, --Repentance
-	{105421 , "CC"}, --Blinding Light
-	{217824 , "Silence"}, --Shield of Virtue
+	{642 , "Immune_Arena"}, --Divine Shield
+	{228050 , "Immune_Arena"}, --Divine Shield (PvP Guardian of the Forgotten Queen)
+	{204018 , "Immune_Arena"}, --Blessing of Spellwarding
+	{853 , "CC_Arena"}, --Hammer of Justice
+	{20066 , "CC_Arena"}, --Repentance
+	{105421 , "CC_Arena"}, --Blinding Light
+	{217824 , "Silence_Arena"}, --Shield of Virtue
 
 	----------------
 	-- Priest
 	----------------
-	{47585 , "Immune"}, --Dispersion
-	{215769 , "Immune"}, --Spirit of Redemption
-	{64044 , "CC"}, --Psychic Horror
-	{200200 , "CC"}, --Holy Word: Chastise
-	{200196 , "CC"}, --Holy Word: Chastise
-	{87204 , "CC"}, --Sin and Punishment
-	{9484 , "CC"}, --Shackle Undead
-	{8122 , "CC"}, --Psychic Scream
-	{605 , "CC"}, --Mind Control
-	{205369 , "CC"}, --Mind Bomb
-	{226943 , "CC"}, --Mind Bomb
-	{15487 , "Silence"}, --Silence
+	{47585 , "Immune_Arena"}, --Dispersion
+	{215769 , "Immune_Arena"}, --Spirit of Redemption
+	{64044 , "CC_Arena"}, --Psychic Horror
+	{200200 , "CC_Arena"}, --Holy Word: Chastise
+	{200196 , "CC_Arena"}, --Holy Word: Chastise
+	{87204 , "CC_Arena"}, --Sin and Punishment
+	{9484 , "CC_Arena"}, --Shackle Undead
+	{8122 , "CC_Arena"}, --Psychic Scream
+	{605 , "CC_Arena"}, --Mind Control
+	{205369 , "CC_Arena"}, --Mind Bomb
+	{226943 , "CC_Arena"}, --Mind Bomb
+	{15487 , "Silence_Arena"}, --Silence_Arena
 	{289655 , "Special_High"}, --Holy Word: Concentration
 
 	----------------
 	-- Rogue
 	----------------
-	{45182 , "Immune"}, --Cheating Death
-	{1833 , "CC"}, --Cheap Shot
-	{408 , "CC"}, --Kidney Shot
-	{199804 , "CC"}, --Between the Eyes
-	{2094 , "CC"}, --Blind
-	{6770 , "CC"}, --Sap
-	{1776 , "CC"}, --Gouge
-	{1330 , "Silence"}, --Garrote - Silence
+	{45182 , "Immune_Arena"}, --Cheating Death
+	{1833 , "CC_Arena"}, --Cheap Shot
+	{408 , "CC_Arena"}, --Kidney Shot
+	{199804 , "CC_Arena"}, --Between the Eyes
+	{2094 , "CC_Arena"}, --Blind
+	{6770 , "CC_Arena"}, --Sap
+	{1776 , "CC_Arena"}, --Gouge
+	{1330 , "Silence_Arena"}, --Garrote - Silence_Arena
 	{212183 , "Special_High"}, --Smoke Bomb
 	{207736 , "Special_High"}, --Shadowy Duel
 	{11327 , "Special_High"}, --Vanish
@@ -325,40 +325,40 @@ local spellsArenaTable = {
 	----------------
 	-- Warlock
 	----------------
-	{30283 , "CC"}, --Shadowfury
-	{22703 , "CC"}, --Infernal Awakening
-	{89766 , "CC"}, --Axe Toss
-	{213688 , "CC"}, --Fel Cleave
-	{118699 , "CC"}, --Fear
-	{6789 , "CC"}, --Mortal Coil
-	{6358 , "CC"}, --Seduction
-	{261589 , "CC"}, --Seduction
-	{115268 , "CC"}, --Mesmerize
-	{710 , "CC"}, --Bansih
-	{196364 , "Silence"}, --Unstable Affliction
+	{30283 , "CC_Arena"}, --Shadowfury
+	{22703 , "CC_Arena"}, --Infernal Awakening
+	{89766 , "CC_Arena"}, --Axe Toss
+	{213688 , "CC_Arena"}, --Fel Cleave
+	{118699 , "CC_Arena"}, --Fear
+	{6789 , "CC_Arena"}, --Mortal Coil
+	{6358 , "CC_Arena"}, --Seduction
+	{261589 , "CC_Arena"}, --Seduction
+	{115268 , "CC_Arena"}, --Mesmerize
+	{710 , "CC_Arena"}, --Bansih
+	{196364 , "Silence_Arena"}, --Unstable Affliction
 
 	----------------
 	-- Warrior
 	----------------
-	{46924  , "Immune"}, -- Bladestorm (not immune to dmg}, only to LoC)
-	{227847 , "Immune"}, -- Bladestorm (not immune to dmg}, only to LoC)
-	{132169 , "CC"}, --Storm Bolt
-	{199085 , "CC"}, --Warpath
-	{132168 , "CC"}, --Shockwave
-	{5246 , "CC"}, --Intimidating Shout
+	{46924  , "Immune_Arena"}, -- Bladestorm (not immune to dmg}, only to LoC)
+	{227847 , "Immune_Arena"}, -- Bladestorm (not immune to dmg}, only to LoC)
+	{132169 , "CC_Arena"}, --Storm Bolt
+	{199085 , "CC_Arena"}, --Warpath
+	{132168 , "CC_Arena"}, --Shockwave
+	{5246 , "CC_Arena"}, --Intimidating Shout
 
 	----------------
 	-- Demon Hunter
 	----------------
-	{211881 , "CC"}, --Fel Eruption
-	{179057 , "CC"}, --Choas Nova
-	{205630 , "CC"}, --Illidan's Grasp
-	{208618 , "CC"}, --Illidan's Grasp
-	{221527 , "CC"}, --Imprison
-	{217832 , "CC"}, --Imprison
-	{207685 , "CC"}, --Sigil of Misery
-	{213491 , "CC"}, --Demonic Trample
-	{47476 , "Silence"}, --Sigil of Silence
+	{211881 , "CC_Arena"}, --Fel Eruption
+	{179057 , "CC_Arena"}, --Choas Nova
+	{205630 , "CC_Arena"}, --Illidan's Grasp
+	{208618 , "CC_Arena"}, --Illidan's Grasp
+	{221527 , "CC_Arena"}, --Imprison
+	{217832 , "CC_Arena"}, --Imprison
+	{207685 , "CC_Arena"}, --Sigil of Misery
+	{213491 , "CC_Arena"}, --Demonic Trample
+	{47476 , "Silence_Arena"}, --Sigil of Silence_Arena
 
 	----------------
 	-- Misc.
@@ -366,10 +366,10 @@ local spellsArenaTable = {
 
 	{"Drink" , "Drink_Purge"},
 	{"Refreshment" , "Drink_Purge"},
-	{107079 , "CC"}, --Quaking Palm
-	{20549 , "CC"}, --War Stomp
-	{255654 , "CC"}, --Bull Rush
-	{287712 , "CC"}, --Haymaker
+	{107079 , "CC_Arena"}, --Quaking Palm
+	{20549 , "CC_Arena"}, --War Stomp
+	{255654 , "CC_Arena"}, --Bull Rush
+	{287712 , "CC_Arena"}, --Haymaker
 
 	{186257 , "Freedoms_Speed"}, --Aspect of the Cheetah
 	{5116 , "Snares_WithCDs"}, --Concussive Shot
@@ -2994,9 +2994,9 @@ local tabs = {
 
 local tabsArena = {
 	"Drink_Purge",
-	"Immune",
-	"CC",
-	"Silence",
+	"Immune_Arena",
+	"CC_Arena",
+	"Silence_Arena",
 	"Interrupt", -- Needs to be same
 	"Special_High",
 	"Ranged_Major_OffenisiveCDs",
@@ -3266,9 +3266,9 @@ local DBdefaults = {
 	},
 	priorityArena = {		-- higher numbers have more priority; 0 = disabled
 			Drink_Purge = 100,
-			Immune = 95,
-			CC = 85,
-			Silence = 80,
+			Immune_Arena = 95,
+			CC_Arena = 85,
+			Silence_Arena = 80,
 			Interrupt = 75, -- Needs to be same
 			Special_High = 65,
 			Ranged_Major_OffenisiveCDs = 60,
@@ -3287,9 +3287,9 @@ local DBdefaults = {
 	},
 	durationTypeArena ={
 			Drink_Purge = false,
-			Immune = false,
-			CC = false,
-			Silence = false,
+			Immune_Arena = false,
+			CC_Arena = false,
+			Silence_Arena = false,
 			Interrupt = false, -- Needs to be same
 			Special_High = false,
 			Ranged_Major_OffenisiveCDs = false,
@@ -3594,7 +3594,7 @@ local DBdefaults = {
 					PvE = true,
 					Other = true,
 
-					Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+					Drink_Purge = true,	Immune_Arena = true, CC_Arena = true,	Silence_Arena = true,		Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
 					Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
 				 },
 					enemy    = { CC = true,
@@ -3630,7 +3630,7 @@ local DBdefaults = {
 					PvE = true,
 					Other = true,
 
-					Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+					Drink_Purge = true,	Immune_Arena = true, CC_Arena = true,	Silence_Arena = true,		Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
 					Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
 				 }
 				},
@@ -3668,7 +3668,7 @@ local DBdefaults = {
 					PvE = true,
 					Other = true,
 
-					Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+					Drink_Purge = true,	Immune_Arena = true, CC_Arena = true,	Silence_Arena = true,		Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
 					Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
 				 },
 					enemy    = { CC = true,
@@ -3704,7 +3704,7 @@ local DBdefaults = {
 					PvE = true,
 					Other = true,
 
-					Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+					Drink_Purge = true,	Immune_Arena = true, CC_Arena = true,	Silence_Arena = true,		Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
 					Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
 				}
 				},
@@ -3754,7 +3754,7 @@ local DBdefaults = {
 					PvE = true,
 					Other = true,
 
-					Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+					Drink_Purge = true,	Immune_Arena = true, CC_Arena = true,	Silence_Arena = true,		Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
 					Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
 				 },
 					enemy    = { CC = true,
@@ -3790,7 +3790,7 @@ local DBdefaults = {
 					PvE = true,
 					Other = true,
 
-					Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+					Drink_Purge = true,	Immune_Arena = true, CC_Arena = true,	Silence_Arena = true,		Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
 					Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
 				}
 				},
@@ -3828,7 +3828,7 @@ local DBdefaults = {
 					PvE = true,
 					Other = true,
 
-					Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+					Drink_Purge = true,	Immune_Arena = true, CC_Arena = true,	Silence_Arena = true,		Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
 					Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
 				 },
 					enemy    = { CC = true,
@@ -3864,7 +3864,7 @@ local DBdefaults = {
 					PvE = true,
 					Other = true,
 
-					Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+					Drink_Purge = true,	Immune_Arena = true, CC_Arena = true,	Silence_Arena = true,		Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
 					Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
 				}
 				},
@@ -3914,7 +3914,7 @@ local DBdefaults = {
 					PvE = true,
 					Other = true,
 
-					Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+					Drink_Purge = true,	Immune_Arena = true, CC_Arena = true,	Silence_Arena = true,		Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
 					Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
 				 },
 					enemy    = { CC = true,
@@ -3950,7 +3950,7 @@ local DBdefaults = {
 					PvE = true,
 					Other = true,
 
-					Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+					Drink_Purge = true,	Immune_Arena = true, CC_Arena = true,	Silence_Arena = true,		Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
 					Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
 				 }
 				},
@@ -3988,7 +3988,7 @@ local DBdefaults = {
 					PvE = true,
 					Other = true,
 
-					Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+					Drink_Purge = true,	Immune_Arena = true, CC_Arena = true,	Silence_Arena = true,		Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
 					Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
 				},
 					enemy    = { CC = true,
@@ -4024,7 +4024,7 @@ local DBdefaults = {
 					PvE = true,
 					Other = true,
 
-					Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+					Drink_Purge = true,	Immune_Arena = true, CC_Arena = true,	Silence_Arena = true,		Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
 					Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
 				 }
 				},
@@ -4074,7 +4074,7 @@ local DBdefaults = {
 					PvE = true,
 					Other = true,
 
-					Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+					Drink_Purge = true,	Immune_Arena = true, CC_Arena = true,	Silence_Arena = true,		Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
 					Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
 				},
 					enemy    = { CC = true,
@@ -4110,7 +4110,7 @@ local DBdefaults = {
 					PvE = true,
 					Other = true,
 
-					Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+					Drink_Purge = true,	Immune_Arena = true, CC_Arena = true,	Silence_Arena = true,		Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
 					Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
 				 }
 				},
@@ -4148,7 +4148,7 @@ local DBdefaults = {
 					PvE = true,
 					Other = true,
 
-					Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+					Drink_Purge = true,	Immune_Arena = true, CC_Arena = true,	Silence_Arena = true,		Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
 					Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
 				},
 					enemy    = { CC = true,
@@ -4184,7 +4184,7 @@ local DBdefaults = {
 					PvE = true,
 					Other = true,
 
-					Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+					Drink_Purge = true,	Immune_Arena = true, CC_Arena = true,	Silence_Arena = true,		Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
 					Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
 				 }
 				},
@@ -4542,21 +4542,21 @@ local DBdefaults = {
 			categoriesEnabled = {
 				buff = {
 					friendly = {
-						Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+						Drink_Purge = true,	Immune_Arena = true, CC_Arena = true,	Silence_Arena = true,		Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
 						Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
 						},
 					enemy    = {
-						Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+						Drink_Purge = true,	Immune_Arena = true, CC_Arena = true,	Silence_Arena = true, 	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
 						Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
 				}
 				},
 				debuff = {
 					friendly = {
-						Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+						Drink_Purge = true,Immune_Arena = true, CC_Arena = true,	Silence_Arena = true,		Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
 						Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
 				},
 					enemy    = {
-						Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+						Drink_Purge = true,	Immune_Arena = true, CC_Arena = true,	Silence_Arena = true,		Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
 						Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
 				}
 				},
@@ -4574,21 +4574,21 @@ local DBdefaults = {
 			categoriesEnabled = {
 				buff = {
 					friendly = {
-						Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+						Drink_Purge = true,	Immune_Arena = true, CC_Arena = true,	Silence_Arena = true,		Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
 						Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
 						},
 					enemy    = {
-						Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+						Drink_Purge = true,Immune_Arena = true, CC_Arena = true,	Silence_Arena = true,		Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
 						Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
 				}
 				},
 				debuff = {
 					friendly = {
-						Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+						Drink_Purge = true,	Immune_Arena = true, CC_Arena = true,	Silence_Arena = true,		Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
 						Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
 				},
 					enemy    = {
-						Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+						Drink_Purge = true,Immune_Arena = true, CC_Arena = true,	Silence_Arena = true,		Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
 						Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
 				}
 				},
@@ -4606,21 +4606,21 @@ local DBdefaults = {
 			categoriesEnabled = {
 				buff = {
 					friendly = {
-						Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+						Drink_Purge = true,	Immune_Arena = true, CC_Arena = true,	Silence_Arena = true,		Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
 						Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
 						},
 					enemy    = {
-						Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+						Drink_Purge = true,	Immune_Arena = true, CC_Arena = true,	Silence_Arena = true,		Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
 						Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
 				}
 				},
 				debuff = {
 					friendly = {
-						Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+						Drink_Purge = true,	Immune_Arena = true, CC_Arena = true,	Silence_Arena = true,		Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
 						Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
 				},
 					enemy    = {
-						Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+						Drink_Purge = true,	Immune_Arena = true, CC_Arena = true,	Silence_Arena = true,		Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
 						Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
 				}
 				},
@@ -4638,21 +4638,21 @@ local DBdefaults = {
 			categoriesEnabled = {
 				buff = {
 					friendly = {
-						Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+						Drink_Purge = true,	Immune_Arena = true, CC_Arena = true,	Silence_Arena = true,		Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
 						Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
 						},
 					enemy    = {
-						Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+						Drink_Purge = true,Immune_Arena = true, CC_Arena = true,	Silence_Arena = true,		Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
 						Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
 				}
 				},
 				debuff = {
 					friendly = {
-						Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+						Drink_Purge = true,	Immune_Arena = true, CC_Arena = true,	Silence_Arena = true,		Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
 						Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
 				},
 					enemy    = {
-						Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+						Drink_Purge = true,	Immune_Arena = true, CC_Arena = true,	Silence_Arena = true,		Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
 						Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
 				}
 				},
@@ -4670,21 +4670,21 @@ local DBdefaults = {
 			categoriesEnabled = {
 				buff = {
 					friendly = {
-						Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+						Drink_Purge = true,	Immune_Arena = true, CC_Arena = true,	Silence_Arena = true,		Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
 						Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
 						},
 					enemy    = {
-						Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+						Drink_Purge = true,	Immune_Arena = true, CC_Arena = true,	Silence_Arena = true,		Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
 						Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
 				}
 				},
 				debuff = {
 					friendly = {
-						Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+						Drink_Purge = true,	Immune_Arena = true, CC_Arena = true,	Silence_Arena = true,		Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
 						Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
 				},
 					enemy    = {
-						Drink_Purge = true,	Immune = true, CC = true,	Silence = true,	Interrupt = true,	Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
+						Drink_Purge = true,	Immune_Arena = true, CC_Arena = true,	Silence_Arena = true,		Special_High = true, Ranged_Major_OffenisiveCDs = true, Roots_90_Snares = true,	Disarms = true,	Melee_Major_OffenisiveCDs = true,	Big_Defensive_CDs = true,	Player_Party_OffensiveCDs = true,
 						Small_Offenisive_CDs = true,	Small_Defensive_CDs = true,	Freedoms_Speed = true,	Snares_WithCDs = true,	Special_Low = true,	Snares_Ranged_Spamable = true,	Snares_Casted_Melee = true
 				}
 				},
@@ -7464,10 +7464,10 @@ PrioritySliderArena.Roots_90_Snares:SetPoint("BOTTOMLEFT", PrioritySliderArena.D
 PrioritySliderArena.Ranged_Major_OffenisiveCDs:SetPoint("BOTTOMLEFT", PrioritySliderArena.Roots_90_Snares, "TOPLEFT", 0, prioritySpacing*-1)
 PrioritySliderArena.Special_High:SetPoint("BOTTOMLEFT", PrioritySliderArena.Ranged_Major_OffenisiveCDs, "TOPLEFT", 0, prioritySpacing*-1)
 PrioritySliderArena.Interrupt:SetPoint("BOTTOMLEFT", PrioritySliderArena.Special_High, "TOPLEFT", 0, prioritySpacing*-1)
-PrioritySliderArena.Silence:SetPoint("BOTTOMLEFT", PrioritySliderArena.Interrupt, "TOPLEFT", 0, prioritySpacing*-1)
-PrioritySliderArena.CC:SetPoint("BOTTOMLEFT", PrioritySliderArena.Silence, "TOPLEFT", 0, prioritySpacing*-1)
-PrioritySliderArena.Immune:SetPoint("BOTTOMLEFT", PrioritySliderArena.CC, "TOPLEFT", 0, prioritySpacing*-1)
-PrioritySliderArena.Drink_Purge:SetPoint("BOTTOMLEFT", PrioritySliderArena.Immune, "TOPLEFT", 0, prioritySpacing*-1)
+PrioritySliderArena.Silence_Arena:SetPoint("BOTTOMLEFT", PrioritySliderArena.Interrupt, "TOPLEFT", 0, prioritySpacing*-1)
+PrioritySliderArena.CC_Arena:SetPoint("BOTTOMLEFT", PrioritySliderArena.Silence_Arena, "TOPLEFT", 0, prioritySpacing*-1)
+PrioritySliderArena.Immune_Arena:SetPoint("BOTTOMLEFT", PrioritySliderArena.CC_Arena, "TOPLEFT", 0, prioritySpacing*-1)
+PrioritySliderArena.Drink_Purge:SetPoint("BOTTOMLEFT", PrioritySliderArena.Immune_Arena, "TOPLEFT", 0, prioritySpacing*-1)
 
 local durationTypeCheckBoxNew = {}
 local durationTypeCheckBoxHigh = {}
@@ -7703,10 +7703,13 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 	CategoriesEnabledLabel:SetJustifyH("LEFT")
 	local CategoryEnabledInterruptLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledInterruptLabel", "ARTWORK", "GameFontNormal")
 	CategoryEnabledInterruptLabel:SetText(L["Interrupt"]..":")
+
+
 	local CategoryEnabledCCLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledCCLabel", "ARTWORK", "GameFontNormal")
 	CategoryEnabledCCLabel:SetText(L["CC"]..":")
 	local CategoryEnabledSilenceLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledSilenceLabel", "ARTWORK", "GameFontNormal")
 	CategoryEnabledSilenceLabel:SetText(L["Silence"]..":")
+
 	local CategoryEnabledRootPhyiscal_SpecialLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledRootPhyiscal_SpecialLabel", "ARTWORK", "GameFontNormal")
 	CategoryEnabledRootPhyiscal_SpecialLabel:SetText(L["RootPhyiscal_Special"]..":")
 
@@ -7726,10 +7729,17 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 	CategoryEnabledSnareLabel:SetText(L["Snare"]..":")
 	local CategoryEnabledOtherLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledOtherLabel", "ARTWORK", "GameFontNormal")
 	CategoryEnabledOtherLabel:SetText(L["Other"]..":")
+
+
+
+	local CategoryEnabledCC_ArenaLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledCC_ArenaLabel", "ARTWORK", "GameFontNormal")
+	CategoryEnabledCC_ArenaLabel:SetText(L["CC_Arena"]..":")
+
 	local CategoriesLabels = {
 		["Interrupt"] = CategoryEnabledInterruptLabel,
 		["CC"] = CategoryEnabledCCLabel,
 		["Silence"] = CategoryEnabledSilenceLabel,
+
 		["RootPhyiscal_Special"] = CategoryEnabledRootPhyiscal_SpecialLabel,
 
 		["PvE"] = CategoryEnabledPvELabel,
@@ -7739,8 +7749,15 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 		["Disarm"] = CategoryEnabledDisarmLabel,
 		["Root"] = CategoryEnabledRootLabel,
 		["Snare"] = CategoryEnabledSnareLabel,
-		["Other"] = CategoryEnabledOtherLabel
+		["Other"] = CategoryEnabledOtherLabel,
+
+
+
+		["CC_Arena"] = CategoryEnabledCC_ArenaLabel
 	}
+
+
+
 
 	local AnchorDropDown = CreateFrame("Frame", O..v.."AnchorDropDown", OptionsPanelFrame, "UIDropDownMenuTemplate")
 	function AnchorDropDown:OnClick()
@@ -8130,7 +8147,52 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 
 	local scalex= .82
 
-	local catListEnChecksButtons = { "CC", "Silence", "RootPhyiscal_Special", "PvE", "Immune", "ImmuneSpell", "ImmunePhysical", "Disarm", "Root", "Snare", "Other" }
+	local catListEnChecksButtons = {
+	"CC",
+	"Silence",
+	"RootPhyiscal_Special",
+	"RootMagic_Special",
+	"Root",
+	"ImmunePlayer",
+	"Disarm_Warning",
+	"CC_Warning",
+	"Enemy_Smoke_Bomb",
+	"Stealth",
+	"Immune",
+	"ImmuneSpell",
+	"ImmunePhysical",
+	"AuraMastery_Cast_Auras",
+	"ROP_Vortex",
+	"Disarm",
+	"Haste_Reduction",
+	"Dmg_Hit_Reduction",
+	"Interrupt",
+	"AOE_DMG_Modifiers",
+	"Friendly_Smoke_Bomb",
+	"AOE_Spell_Refections",
+	"Trees",
+	"Speed_Freedoms",
+	"Freedoms",
+	"Friendly_Defensives",
+	"Mana_Regen",
+	"CC_Reduction",
+	"Personal_Offensives",
+	"Peronsal_Defensives",
+	"Movable_Cast_Auras",
+
+	"Other", --PVE only
+	"PvE", --PVE only
+
+	"SnareSpecial",
+	"SnarePhysical70",
+	"SnareMagic70",
+	"SnarePhysical50",
+	"SnarePosion50",
+	"SnareMagic50",
+	"SnarePhysical30",
+	"SnareMagic30",
+	"Snare",
+}
 	local CategoriesCheckButtons = { }
 	local FriendlyInterrupt = CreateFrame("CheckButton", O..v.."FriendlyInterrupt", OptionsPanelFrame, "OptionsCheckButtonTemplate")
 	FriendlyInterrupt:SetScale(scalex)
@@ -8150,6 +8212,7 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 		end
 	end)
 	tblinsert(CategoriesCheckButtons, { frame = FriendlyInterrupt, auraType = "interrupt", reaction = "friendly", categoryType = "Interrupt", anchorPos = CategoryEnabledInterruptLabel, xPos = 120, yPos = 5 })
+
 	if v == "target" or v == "targettarget" or v == "focus" or v == "focustarget" or strfind(v, "arena") then
 		local EnemyInterrupt = CreateFrame("CheckButton", O..v.."EnemyInterrupt", OptionsPanelFrame, "OptionsCheckButtonTemplate")
 		EnemyInterrupt:SetScale(scalex)
@@ -8164,72 +8227,193 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 		end)
 		tblinsert(CategoriesCheckButtons, { frame = EnemyInterrupt, auraType = "interrupt", reaction = "enemy", categoryType = "Interrupt", anchorPos = CategoryEnabledInterruptLabel, xPos = 250, yPos = 5 })
 	end
+
+---THIS FOR LOOP MAKES THE CAT ENABLED FOR EVERYTHING
 	for _, cat in pairs(catListEnChecksButtons) do
-		local FriendlyBuff = CreateFrame("CheckButton", O..v.."Friendly"..cat.."Buff", OptionsPanelFrame, "OptionsCheckButtonTemplate")
-		FriendlyBuff:SetScale(scalex)
-		FriendlyBuff:SetHitRectInsets(0, -36, 0, 0)
-		_G[O..v.."Friendly"..cat.."BuffText"]:SetText(L["CatFriendlyBuff"])
-		FriendlyBuff:SetScript("OnClick", function(self)
-			local frames = { v }
-			if v == "party" then
-				frames = { "party1", "party2", "party3", "party4" }
-			end
-			for _, frame in ipairs(frames) do
-				LoseControlDB.frames[frame].categoriesEnabled.buff.friendly[cat] = self:GetChecked()
-				LCframes[frame].maxExpirationTime = 0
-				if LoseControlDB.frames[frame].enabled and not LCframes[frame].unlockMode then
-					LCframes[frame]:UNIT_AURA(frame, 0)
+		if not strfind(v, "arena") then
+			local FriendlyBuff = CreateFrame("CheckButton", O..v.."Friendly"..cat.."Buff", OptionsPanelFrame, "OptionsCheckButtonTemplate")
+			FriendlyBuff:SetScale(scalex)
+			FriendlyBuff:SetHitRectInsets(0, -36, 0, 0)
+			_G[O..v.."Friendly"..cat.."BuffText"]:SetText(L["CatFriendlyBuff"])
+			FriendlyBuff:SetScript("OnClick", function(self)
+				local frames = { v }
+				if v == "party" then
+					frames = { "party1", "party2", "party3", "party4" }
 				end
-			end
-		end)
-		tblinsert(CategoriesCheckButtons, { frame = FriendlyBuff, auraType = "buff", reaction = "friendly", categoryType = cat, anchorPos = CategoriesLabels[cat], xPos = 120, yPos = 5 })
-		local FriendlyDebuff = CreateFrame("CheckButton", O..v.."Friendly"..cat.."Debuff", OptionsPanelFrame, "OptionsCheckButtonTemplate")
-		FriendlyDebuff:SetScale(scalex)
-		FriendlyDebuff:SetHitRectInsets(0, -36, 0, 0)
-		_G[O..v.."Friendly"..cat.."DebuffText"]:SetText(L["CatFriendlyDebuff"])
-		FriendlyDebuff:SetScript("OnClick", function(self)
-			local frames = { v }
-			if v == "party" then
-				frames = { "party1", "party2", "party3", "party4" }
-			end
-			for _, frame in ipairs(frames) do
-				LoseControlDB.frames[frame].categoriesEnabled.debuff.friendly[cat] = self:GetChecked()
-				LCframes[frame].maxExpirationTime = 0
-				if LoseControlDB.frames[frame].enabled and not LCframes[frame].unlockMode then
-					LCframes[frame]:UNIT_AURA(frame, 0)
-				end
-			end
-		end)
-		tblinsert(CategoriesCheckButtons, { frame = FriendlyDebuff, auraType = "debuff", reaction = "friendly", categoryType = cat, anchorPos = CategoriesLabels[cat], xPos = 185, yPos = 5 })
-		if v == "target" or v == "targettarget" or v == "focus" or v == "focustarget" or strfind(v, "arena") then
-			local EnemyBuff = CreateFrame("CheckButton", O..v.."Enemy"..cat.."Buff", OptionsPanelFrame, "OptionsCheckButtonTemplate")
-			EnemyBuff:SetScale(scalex)
-			EnemyBuff:SetHitRectInsets(0, -36, 0, 0)
-			_G[O..v.."Enemy"..cat.."BuffText"]:SetText(L["CatEnemyBuff"])
-			EnemyBuff:SetScript("OnClick", function(self)
-				LoseControlDB.frames[v].categoriesEnabled.buff.enemy[cat] = self:GetChecked()
-				LCframes[v].maxExpirationTime = 0
-				if LoseControlDB.frames[v].enabled and not LCframes[v].unlockMode then
-					LCframes[v]:UNIT_AURA(v, 0)
+				for _, frame in ipairs(frames) do
+					LoseControlDB.frames[frame].categoriesEnabled.buff.friendly[cat] = self:GetChecked()
+					LCframes[frame].maxExpirationTime = 0
+					if LoseControlDB.frames[frame].enabled and not LCframes[frame].unlockMode then
+						LCframes[frame]:UNIT_AURA(frame, 0)
+					end
 				end
 			end)
-			tblinsert(CategoriesCheckButtons, { frame = EnemyBuff, auraType = "buff", reaction = "enemy", categoryType = cat, anchorPos = CategoriesLabels[cat], xPos = 250, yPos = 5 })
+			tblinsert(CategoriesCheckButtons, { frame = FriendlyBuff, auraType = "buff", reaction = "friendly", categoryType = cat, anchorPos = CategoriesLabels[cat], xPos = 120, yPos = 5 })
 		end
-		if v == "target" or v == "targettarget" or v == "focus" or v == "focustarget" or strfind(v, "arena") then
-			local EnemyDebuff = CreateFrame("CheckButton", O..v.."Enemy"..cat.."Debuff", OptionsPanelFrame, "OptionsCheckButtonTemplate")
-			EnemyDebuff:SetScale(scalex)
-			EnemyDebuff:SetHitRectInsets(0, -36, 0, 0)
-			_G[O..v.."Enemy"..cat.."DebuffText"]:SetText(L["CatEnemyDebuff"])
-			EnemyDebuff:SetScript("OnClick", function(self)
-				LoseControlDB.frames[v].categoriesEnabled.debuff.enemy[cat] = self:GetChecked()
-				LCframes[v].maxExpirationTime = 0
-				if LoseControlDB.frames[v].enabled and not LCframes[v].unlockMode then
-					LCframes[v]:UNIT_AURA(v, 0)
+
+		if not strfind(v, "arena") then
+			local FriendlyDebuff = CreateFrame("CheckButton", O..v.."Friendly"..cat.."Debuff", OptionsPanelFrame, "OptionsCheckButtonTemplate")
+			FriendlyDebuff:SetScale(scalex)
+			FriendlyDebuff:SetHitRectInsets(0, -36, 0, 0)
+			_G[O..v.."Friendly"..cat.."DebuffText"]:SetText(L["CatFriendlyDebuff"])
+			FriendlyDebuff:SetScript("OnClick", function(self)
+				local frames = { v }
+				if v == "party" then
+					frames = { "party1", "party2", "party3", "party4" }
+				end
+				for _, frame in ipairs(frames) do
+					LoseControlDB.frames[frame].categoriesEnabled.debuff.friendly[cat] = self:GetChecked()
+					LCframes[frame].maxExpirationTime = 0
+					if LoseControlDB.frames[frame].enabled and not LCframes[frame].unlockMode then
+						LCframes[frame]:UNIT_AURA(frame, 0)
+					end
 				end
 			end)
-			tblinsert(CategoriesCheckButtons, { frame = EnemyDebuff, auraType = "debuff", reaction = "enemy", categoryType = cat, anchorPos = CategoriesLabels[cat], xPos = 305, yPos = 5 })
+			tblinsert(CategoriesCheckButtons, { frame = FriendlyDebuff, auraType = "debuff", reaction = "friendly", categoryType = cat, anchorPos = CategoriesLabels[cat], xPos = 185, yPos = 5 })
 		end
+
+			if v == "target" or v == "targettarget" or v == "focus" or v == "focustarget"  then
+				local EnemyBuff = CreateFrame("CheckButton", O..v.."Enemy"..cat.."Buff", OptionsPanelFrame, "OptionsCheckButtonTemplate")
+				EnemyBuff:SetScale(scalex)
+				EnemyBuff:SetHitRectInsets(0, -36, 0, 0)
+				_G[O..v.."Enemy"..cat.."BuffText"]:SetText(L["CatEnemyBuff"])
+				EnemyBuff:SetScript("OnClick", function(self)
+					LoseControlDB.frames[v].categoriesEnabled.buff.enemy[cat] = self:GetChecked()
+					LCframes[v].maxExpirationTime = 0
+					if LoseControlDB.frames[v].enabled and not LCframes[v].unlockMode then
+						LCframes[v]:UNIT_AURA(v, 0)
+					end
+				end)
+				tblinsert(CategoriesCheckButtons, { frame = EnemyBuff, auraType = "buff", reaction = "enemy", categoryType = cat, anchorPos = CategoriesLabels[cat], xPos = 250, yPos = 5 })
+			end
+
+			if v == "target" or v == "targettarget" or v == "focus" or v == "focustarget"  then
+				local EnemyDebuff = CreateFrame("CheckButton", O..v.."Enemy"..cat.."Debuff", OptionsPanelFrame, "OptionsCheckButtonTemplate")
+				EnemyDebuff:SetScale(scalex)
+				EnemyDebuff:SetHitRectInsets(0, -36, 0, 0)
+				_G[O..v.."Enemy"..cat.."DebuffText"]:SetText(L["CatEnemyDebuff"])
+				EnemyDebuff:SetScript("OnClick", function(self)
+					LoseControlDB.frames[v].categoriesEnabled.debuff.enemy[cat] = self:GetChecked()
+					LCframes[v].maxExpirationTime = 0
+					if LoseControlDB.frames[v].enabled and not LCframes[v].unlockMode then
+						LCframes[v]:UNIT_AURA(v, 0)
+					end
+				end)
+				tblinsert(CategoriesCheckButtons, { frame = EnemyDebuff, auraType = "debuff", reaction = "enemy", categoryType = cat, anchorPos = CategoriesLabels[cat], xPos = 305, yPos = 5 })
+			end
 	end
+
+
+
+
+
+
+
+
+---THIS FOR LOOP MAKES THE CAT ENABLED FOR EVERYTHING
+local catListEnChecksButtonsArena = {
+		"Drink_Purge",
+		"Immune_Arena",
+		"CC_Arena",
+		"Silence_Arena",
+		"Interrupt", -- Needs to be same
+		"Special_High",
+		"Ranged_Major_OffenisiveCDs",
+		"Roots_90_Snares",
+		"Disarms",
+		"Melee_Major_OffenisiveCDs",
+		"Big_Defensive_CDs",
+		"Player_Party_OffensiveCDs",
+		"Small_Offenisive_CDs",
+		"Small_Defensive_CDs",
+		"Freedoms_Speed",
+		"Snares_WithCDs",
+		"Special_Low",
+		"Snares_Ranged_Spamable",
+		"Snares_Casted_Melee",
+}
+	for _, cat in pairs(catListEnChecksButtonsArena) do
+		if strfind(v, "arena") then
+			local FriendlyBuff = CreateFrame("CheckButton", O..v.."Friendly"..cat.."Buff", OptionsPanelFrame, "OptionsCheckButtonTemplate")
+			FriendlyBuff:SetScale(scalex)
+			FriendlyBuff:SetHitRectInsets(0, -36, 0, 0)
+			_G[O..v.."Friendly"..cat.."BuffText"]:SetText(L["CatFriendlyBuff"])
+			FriendlyBuff:SetScript("OnClick", function(self)
+				local frames = { v }
+				if v == "party" then
+					frames = { "party1", "party2", "party3", "party4" }
+				end
+				for _, frame in ipairs(frames) do
+					LoseControlDB.frames[frame].categoriesEnabled.buff.friendly[cat] = self:GetChecked()
+					LCframes[frame].maxExpirationTime = 0
+					if LoseControlDB.frames[frame].enabled and not LCframes[frame].unlockMode then
+						LCframes[frame]:UNIT_AURA(frame, 0)
+					end
+				end
+			end)
+			tblinsert(CategoriesCheckButtons, { frame = FriendlyBuff, auraType = "buff", reaction = "friendly", categoryType = cat, anchorPos = CategoriesLabels[cat], xPos = 120, yPos = 5 })
+		end
+
+		if strfind(v, "arena") then
+			local FriendlyDebuff = CreateFrame("CheckButton", O..v.."Friendly"..cat.."Debuff", OptionsPanelFrame, "OptionsCheckButtonTemplate")
+			FriendlyDebuff:SetScale(scalex)
+			FriendlyDebuff:SetHitRectInsets(0, -36, 0, 0)
+			_G[O..v.."Friendly"..cat.."DebuffText"]:SetText(L["CatFriendlyDebuff"])
+			FriendlyDebuff:SetScript("OnClick", function(self)
+				local frames = { v }
+				if v == "party" then
+					frames = { "party1", "party2", "party3", "party4" }
+				end
+				for _, frame in ipairs(frames) do
+					LoseControlDB.frames[frame].categoriesEnabled.debuff.friendly[cat] = self:GetChecked()
+					LCframes[frame].maxExpirationTime = 0
+					if LoseControlDB.frames[frame].enabled and not LCframes[frame].unlockMode then
+						LCframes[frame]:UNIT_AURA(frame, 0)
+					end
+				end
+			end)
+			tblinsert(CategoriesCheckButtons, { frame = FriendlyDebuff, auraType = "debuff", reaction = "friendly", categoryType = cat, anchorPos = CategoriesLabels[cat], xPos = 185, yPos = 5 })
+		end
+
+			if strfind(v, "arena") then
+				local EnemyBuff = CreateFrame("CheckButton", O..v.."Enemy"..cat.."Buff", OptionsPanelFrame, "OptionsCheckButtonTemplate")
+				EnemyBuff:SetScale(scalex)
+				EnemyBuff:SetHitRectInsets(0, -36, 0, 0)
+				_G[O..v.."Enemy"..cat.."BuffText"]:SetText(L["CatEnemyBuff"])
+				EnemyBuff:SetScript("OnClick", function(self)
+					LoseControlDB.frames[v].categoriesEnabled.buff.enemy[cat] = self:GetChecked()
+					LCframes[v].maxExpirationTime = 0
+					if LoseControlDB.frames[v].enabled and not LCframes[v].unlockMode then
+						LCframes[v]:UNIT_AURA(v, 0)
+					end
+				end)
+				tblinsert(CategoriesCheckButtons, { frame = EnemyBuff, auraType = "buff", reaction = "enemy", categoryType = cat, anchorPos = CategoriesLabels[cat], xPos = 250, yPos = 5 })
+			end
+
+			if strfind(v, "arena") then
+				local EnemyDebuff = CreateFrame("CheckButton", O..v.."Enemy"..cat.."Debuff", OptionsPanelFrame, "OptionsCheckButtonTemplate")
+				EnemyDebuff:SetScale(scalex)
+				EnemyDebuff:SetHitRectInsets(0, -36, 0, 0)
+				_G[O..v.."Enemy"..cat.."DebuffText"]:SetText(L["CatEnemyDebuff"])
+				EnemyDebuff:SetScript("OnClick", function(self)
+					LoseControlDB.frames[v].categoriesEnabled.debuff.enemy[cat] = self:GetChecked()
+					LCframes[v].maxExpirationTime = 0
+					if LoseControlDB.frames[v].enabled and not LCframes[v].unlockMode then
+						LCframes[v]:UNIT_AURA(v, 0)
+					end
+				end)
+				tblinsert(CategoriesCheckButtons, { frame = EnemyDebuff, auraType = "debuff", reaction = "enemy", categoryType = cat, anchorPos = CategoriesLabels[cat], xPos = 305, yPos = 5 })
+			end
+	end
+
+
+
+
+
+
+
+
+
 
 	local CategoriesCheckButtonsPlayer2
 	if (v == "player") then
@@ -8245,7 +8429,7 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 				LCframeplayer2:UNIT_AURA(v, 0)
 			end
 		end)
-		tblinsert(CategoriesCheckButtonsPlayer2, { frame = FriendlyInterruptPlayer2, auraType = "interrupt", reaction = "friendly", categoryType = "Interrupt", anchorPos = CategoryEnabledInterruptLabel, xPos = 342, yPos = 5 })
+		tblinsert(CategoriesCheckButtonsPlayer2, { frame = FriendlyInterruptPlayer2, auraType = "interrupt", reaction = "friendly", categoryType = "Interrupt", anchorPos = CategoryEnabledInterruptLabel, xPos = 250, yPos = 5 })
 		for _, cat in pairs(catListEnChecksButtons) do
 			local FriendlyBuffPlayer2 = CreateFrame("CheckButton", O..v.."Friendly"..cat.."BuffPlayer2", OptionsPanelFrame, "OptionsCheckButtonTemplate")
 			FriendlyBuffPlayer2:SetScale(scalex)
@@ -8258,7 +8442,7 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 					LCframeplayer2:UNIT_AURA(v, 0)
 				end
 			end)
-			tblinsert(CategoriesCheckButtonsPlayer2, { frame = FriendlyBuffPlayer2, auraType = "buff", reaction = "friendly", categoryType = cat, anchorPos = CategoriesLabels[cat], xPos = 342, yPos = 5 })
+			tblinsert(CategoriesCheckButtonsPlayer2, { frame = FriendlyBuffPlayer2, auraType = "buff", reaction = "friendly", categoryType = cat, anchorPos = CategoriesLabels[cat], xPos = 250, yPos = 5 })
 			local FriendlyDebuffPlayer2 = CreateFrame("CheckButton", O..v.."Friendly"..cat.."DebuffPlayer2", OptionsPanelFrame, "OptionsCheckButtonTemplate")
 			FriendlyDebuffPlayer2:SetScale(scalex)
 			FriendlyDebuffPlayer2:SetHitRectInsets(0, -36, 0, 0)
@@ -8270,7 +8454,7 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 					LCframeplayer2:UNIT_AURA(v, 0)
 				end
 			end)
-			tblinsert(CategoriesCheckButtonsPlayer2, { frame = FriendlyDebuffPlayer2, auraType = "debuff", reaction = "friendly", categoryType = cat, anchorPos = CategoriesLabels[cat], xPos = 457, yPos = 5 })
+			tblinsert(CategoriesCheckButtonsPlayer2, { frame = FriendlyDebuffPlayer2, auraType = "debuff", reaction = "friendly", categoryType = cat, anchorPos = CategoriesLabels[cat], xPos = 359, yPos = 5 })
 		end
 	end
 
@@ -8403,6 +8587,7 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 			CategoryEnabledInterruptLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
 			CategoryEnabledCCLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
 			CategoryEnabledSilenceLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
+
 			CategoryEnabledRootPhyiscal_SpecialLabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
 
 			CategoryEnabledPvELabel:SetVertexColor(NORMAL_FONT_COLOR:GetRGB())
@@ -8518,35 +8703,28 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 	SizeSlider:SetPoint("TOPLEFT", Enabled, "TOPRIGHT", 115, -20)
 	AlphaSlider:SetPoint("TOPLEFT", SizeSlider, "BOTTOMLEFT", 0, -16)
 	CategoriesEnabledLabel:SetPoint("TOPLEFT", AnchorDropDown, "BOTTOMLEFT", 17, -6)
+
 	local CategorySpacing = -4
 	local catscale = .85
+		if CategoryEnabledInterruptLabel then CategoryEnabledInterruptLabel:SetPoint("TOPLEFT", CategoriesEnabledLabel, "BOTTOMLEFT", 0, -6); CategoryEnabledInterruptLabel:SetScale(catscale) end
 
-	CategoryEnabledInterruptLabel:SetPoint("TOPLEFT", CategoriesEnabledLabel, "BOTTOMLEFT", 0, -6)
-	CategoryEnabledInterruptLabel:SetScale(catscale)
-	CategoryEnabledCCLabel:SetPoint("TOPLEFT", CategoryEnabledInterruptLabel, "BOTTOMLEFT", 0, CategorySpacing)
-	CategoryEnabledCCLabel:SetScale(catscale)
-	CategoryEnabledSilenceLabel:SetPoint("TOPLEFT", 	CategoryEnabledCCLabel, "BOTTOMLEFT", 0, CategorySpacing)
-	CategoryEnabledSilenceLabel:SetScale(catscale)
+	if v ~= "arena" then
+		if CategoryEnabledCCLabel then CategoryEnabledCCLabel:SetPoint("TOPLEFT", CategoryEnabledInterruptLabel, "BOTTOMLEFT", 0, CategorySpacing); CategoryEnabledCCLabel:SetScale(catscale) end
+		if CategoryEnabledSilenceLabel then CategoryEnabledSilenceLabel:SetPoint("TOPLEFT", 	CategoryEnabledCCLabel, "BOTTOMLEFT", 0, CategorySpacing); CategoryEnabledSilenceLabel:SetScale(catscale) end
+		if CategoryEnabledRootPhyiscal_SpecialLabel then CategoryEnabledRootPhyiscal_SpecialLabel:SetPoint("TOPLEFT", 	CategoryEnabledSilenceLabel, "BOTTOMLEFT", 0, CategorySpacing); CategoryEnabledRootPhyiscal_SpecialLabel:SetScale(catscale) end
+		if CategoryEnabledPvELabel then CategoryEnabledPvELabel:SetPoint("TOPLEFT", CategoryEnabledRootPhyiscal_SpecialLabel, "BOTTOMLEFT", 0, CategorySpacing); CategoryEnabledPvELabel:SetScale(catscale) end
+		if CategoryEnabledImmuneLabel then CategoryEnabledImmuneLabel:SetPoint("TOPLEFT", CategoryEnabledPvELabel, "BOTTOMLEFT", 0, CategorySpacing); CategoryEnabledImmuneLabel:SetScale(catscale) end
+		if CategoryEnabledImmuneSpellLabel then CategoryEnabledImmuneSpellLabel:SetPoint("TOPLEFT", CategoryEnabledImmuneLabel, "BOTTOMLEFT", 0, CategorySpacing); CategoryEnabledImmuneSpellLabel:SetScale(catscale) end
+		if CategoryEnabledImmunePhysicalLabel then CategoryEnabledImmunePhysicalLabel:SetPoint("TOPLEFT", CategoryEnabledImmuneSpellLabel, "BOTTOMLEFT", 0, CategorySpacing);	CategoryEnabledImmunePhysicalLabel:SetScale(catscale) end
+		if CategoryEnabledDisarmLabel then CategoryEnabledDisarmLabel:SetPoint("TOPLEFT", CategoryEnabledImmunePhysicalLabel, "BOTTOMLEFT", 0, CategorySpacing); CategoryEnabledDisarmLabel:SetScale(catscale) end
+		if CategoryEnabledRootLabel then CategoryEnabledRootLabel:SetPoint("TOPLEFT", CategoryEnabledDisarmLabel, "BOTTOMLEFT", 0, CategorySpacing); CategoryEnabledRootLabel:SetScale(catscale) end
+		if CategoryEnabledSnareLabel then CategoryEnabledSnareLabel:SetPoint("TOPLEFT", CategoryEnabledRootLabel, "BOTTOMLEFT", 0, CategorySpacing); CategoryEnabledSnareLabel:SetScale(catscale) end
+		if CategoryEnabledOtherLabel then CategoryEnabledOtherLabel:SetPoint("TOPLEFT", CategoryEnabledSnareLabel, "BOTTOMLEFT", 0, CategorySpacing); CategoryEnabledOtherLabel:SetScale(catscale) end
+	end
 
-	CategoryEnabledRootPhyiscal_SpecialLabel:SetPoint("TOPLEFT", 	CategoryEnabledSilenceLabel, "BOTTOMLEFT", 0, CategorySpacing)
-	CategoryEnabledRootPhyiscal_SpecialLabel:SetScale(catscale)
-
-	CategoryEnabledPvELabel:SetPoint("TOPLEFT", CategoryEnabledRootPhyiscal_SpecialLabel, "BOTTOMLEFT", 0, CategorySpacing)
-	CategoryEnabledPvELabel:SetScale(catscale)
-	CategoryEnabledImmuneLabel:SetPoint("TOPLEFT", CategoryEnabledPvELabel, "BOTTOMLEFT", 0, CategorySpacing)
-	CategoryEnabledImmuneLabel:SetScale(catscale)
-	CategoryEnabledImmuneSpellLabel:SetPoint("TOPLEFT", CategoryEnabledImmuneLabel, "BOTTOMLEFT", 0, CategorySpacing)
-	CategoryEnabledImmuneSpellLabel:SetScale(catscale)
-	CategoryEnabledImmunePhysicalLabel:SetPoint("TOPLEFT", CategoryEnabledImmuneSpellLabel, "BOTTOMLEFT", 0, CategorySpacing)
-	CategoryEnabledImmunePhysicalLabel:SetScale(catscale)
-	CategoryEnabledDisarmLabel:SetPoint("TOPLEFT", CategoryEnabledImmunePhysicalLabel, "BOTTOMLEFT", 0, CategorySpacing)
-	CategoryEnabledDisarmLabel:SetScale(catscale)
-	CategoryEnabledRootLabel:SetPoint("TOPLEFT", CategoryEnabledDisarmLabel, "BOTTOMLEFT", 0, CategorySpacing)
-	CategoryEnabledRootLabel:SetScale(catscale)
-	CategoryEnabledSnareLabel:SetPoint("TOPLEFT", CategoryEnabledRootLabel, "BOTTOMLEFT", 0, CategorySpacing)
-	CategoryEnabledSnareLabel:SetScale(catscale)
-	CategoryEnabledOtherLabel:SetPoint("TOPLEFT", CategoryEnabledSnareLabel, "BOTTOMLEFT", 0, CategorySpacing)
-	CategoryEnabledOtherLabel:SetScale(catscale)
+	if v == "arena" then
+		if CategoryEnabledCC_ArenaLabel then CategoryEnabledCC_ArenaLabel:SetPoint("TOPLEFT", CategoryEnabledInterruptLabel, "BOTTOMLEFT", 0, CategorySpacing); CategoryEnabledCC_ArenaLabel:SetScale(catscale) end
+	end
 
 	for _, checkbuttonframe in pairs(CategoriesCheckButtons) do
 		checkbuttonframe.frame:SetPoint("TOPLEFT", checkbuttonframe.anchorPos, checkbuttonframe.xPos, checkbuttonframe.yPos)

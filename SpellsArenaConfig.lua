@@ -34,9 +34,9 @@ local defaults = {
 
 local tabs = {
 	"Drink_Purge",
-	"Immune",
-	"CC",
-	"Silence",
+	"Immune_Arena",
+	"CC_Arena",
+	"Silence_Arena",
 	"Interrupt", -- Needs to be same
 	"Special_High",
 	"Ranged_Major_OffenisiveCDs",

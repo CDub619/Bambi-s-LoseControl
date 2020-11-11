@@ -539,7 +539,7 @@ else -- default English
 	L["Other"]       = "Other"
 	L["PvE"]         = "PvE"
 
-
+	L["CC_Arena"] = "CCARENA"
 
 	L["player"] = "Player"
 	L["pet"]    = "Pet"
