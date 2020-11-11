@@ -7731,7 +7731,7 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 	CategoryEnabledOtherLabel:SetText(L["Other"]..":")
 
 
-
+--ARENA
 	local CategoryEnabledCC_ArenaLabel = OptionsPanelFrame:CreateFontString(O..v.."CategoryEnabledCC_ArenaLabel", "ARTWORK", "GameFontNormal")
 	CategoryEnabledCC_ArenaLabel:SetText(L["CC_Arena"]..":")
 
