@@ -3109,8 +3109,8 @@ local DBdefaults = {
 	InterruptOverlay = false,
 	RedSmokeBomb = true,
 	lossOfControl = true,
+	lossOfControlInterrupt = 1,
 	DrawSwipeSetting = 0,
-
 	DiscoveredSpells = { },
 
 	spellEnabled = { },
@@ -7292,7 +7292,8 @@ local function CreateSliderMain(text, parent, low, high, step, globalName)
 end
 
 
-local DrawSwipeSlider = CreateSliderMain(L[k], OptionsPanel, 0, 1, .1, "DrawSwipe")
+
+local DrawSwipeSlider = CreateSliderMain(nil, OptionsPanel, 0, 1, .1, "DrawSwipe")
 DrawSwipeSlider:SetScript("OnValueChanged", function(self, value)
 _G["DrawSwipeText"]:SetText("DrawSwipe" .. " (" .. ("%.1f"):format(value) .. ")")
 LoseControlDB.DrawSwipeSetting = value
@@ -8040,7 +8041,7 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 
 	local AlphaSlider = CreateSlider(L["Opacity"], OptionsPanelFrame, 0, 100, 2, OptionsPanelFrame:GetName() .. "OpacitySlider") -- I was going to use a range of 0 to 1 but Blizzard's slider chokes on decimal values
 	AlphaSlider:SetScript("OnValueChanged", function(self, value)
-		_G[self:GetName() .. "Text"]:SetText(L["Opacity"] .. " (" .. value .. "%)")
+		_G[self:GetName() .. "Text"]:SetText(L["Opacity"] .. " (" .. ("%.0f"):format(value) .. "%)")
 		local frames = { v }
 		if v == "party" then
 			frames = { "party1", "party2", "party3", "party4" }
@@ -8057,7 +8058,7 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 	if v == "player" then
 		AlphaSlider2 = CreateSlider(L["Opacity"], OptionsPanelFrame, 0, 100, 2, OptionsPanelFrame:GetName() .. "Opacity2Slider") -- I was going to use a range of 0 to 1 but Blizzard's slider chokes on decimal values
 		AlphaSlider2:SetScript("OnValueChanged", function(self, value)
-			_G[self:GetName() .. "Text"]:SetText(L["Opacity"] .. " (" .. value .. "%)")
+			_G[self:GetName() .. "Text"]:SetText(L["Opacity"] .. " (" .. ("%.0f"):format(value) .. "%)")
 			local frames = { v }
 			if v == "player" then
 				LoseControlDB.frames.player2.alpha = value / 100 -- the real alpha value
@@ -8233,6 +8234,18 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 		end)
 	end
 
+	local lossOfControlInterrupt
+	if  v == "player" then
+		lossOfControlInterrupt = CreateSlider(L["lossOfControlInterrupt"], OptionsPanelFrame, 0, 2, 1, "IconSizeSlider")
+		lossOfControlInterrupt:SetScript("OnValueChanged", function(self, value)
+		lossOfControlInterrupt:SetScale(.82)
+		lossOfControlInterrupt:SetWidth(180)
+			_G[self:GetName() .. "Text"]:SetText(L["lossOfControlInterrupt"] .. " (" .. ("%.0f"):format(value) .. ")")
+			LoseControlDB.lossOfControlInterrupt = ("%.0f"):format(value)-- the real alpha value
+			SetCVar("lossOfControlInterrupt", ("%.0f"):format(value))
+		end)
+	end
+
 	local lossOfControl
 	if  v == "player" then
 		lossOfControl = CreateFrame("CheckButton", O..v.."lossOfControl", OptionsPanelFrame, "OptionsCheckButtonTemplate")
@@ -8243,11 +8256,15 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 			LoseControlDB.lossOfControl = self:GetChecked()
 			if (self:GetChecked()) then
 				SetCVar("lossOfControl", 1)
+				BlizzardOptionsPanel_Slider_Enable(lossOfControlInterrupt)
 			else
 				SetCVar("lossOfControl", 0)
+				BlizzardOptionsPanel_Slider_Disable(lossOfControlInterrupt)
 			end
 		end)
 	end
+
+
 
 	local catListEnChecksButtons = {
 																	"CC","Silence","RootPhyiscal_Special","RootMagic_Special","Root","ImmunePlayer","Disarm_Warning","CC_Warning","Enemy_Smoke_Bomb","Stealth",
@@ -8663,6 +8680,7 @@ local catListEnChecksButtonsArena = {
 			end
 
 			BlizzardOptionsPanel_Slider_Enable(SizeSlider)
+			BlizzardOptionsPanel_Slider_Enable(lossOfControlInterrupt)
 			BlizzardOptionsPanel_Slider_Enable(AlphaSlider)
 			UIDropDownMenu_EnableDropDown(AnchorDropDown)
 			if LoseControlDB.duplicatePlayerPortrait then
@@ -8702,6 +8720,7 @@ local catListEnChecksButtonsArena = {
 
 			BlizzardOptionsPanel_Slider_Disable(SizeSlider)
 			BlizzardOptionsPanel_Slider_Disable(AlphaSlider)
+			BlizzardOptionsPanel_Slider_Disable(lossOfControlInterrupt)
 			UIDropDownMenu_DisableDropDown(AnchorDropDown)
 			if AlphaSlider2 then BlizzardOptionsPanel_Slider_Disable(AlphaSlider2) end
 			if AnchorDropDown2 then UIDropDownMenu_DisableDropDown(AnchorDropDown2) end
@@ -8801,6 +8820,7 @@ local catListEnChecksButtonsArena = {
 	end
 
 	if lossOfControl then lossOfControl:SetPoint("TOPLEFT", L.CategoryEnabledCCLabel, "TOPRIGHT", 475, 7) end
+	if lossOfControlInterrupt then lossOfControlInterrupt:SetPoint("TOPLEFT", lossOfControl, "BOTTOMLEFT", 0, -15) end
 
 	for _, checkbuttonframe in pairs(CategoriesCheckButtons) do
 		checkbuttonframe.frame:SetPoint("TOPLEFT", checkbuttonframe.anchorPos, checkbuttonframe.xPos, checkbuttonframe.yPos)
@@ -8830,11 +8850,9 @@ local catListEnChecksButtonsArena = {
 			DuplicatePlayerPortrait:SetChecked(LoseControlDB.duplicatePlayerPortrait)
 			AlphaSlider2:SetValue(LoseControlDB.frames.player2.alpha * 100)
 			lossOfControl:SetChecked(LoseControlDB.lossOfControl)
-				if LoseControlDB.lossOfControl then
-					SetCVar("lossOfControl", 1)
-				else
-					SetCVar("lossOfControl", 0)
-				end
+			SetCVar("lossOfControl", LoseControlDB.lossOfControl)
+			lossOfControlInterrupt:SetValue(LoseControlDB.lossOfControlInterrupt)
+			SetCVar("lossOfControlInterrupt", LoseControlDB.lossOfControlInterrupt)
 		elseif unitId == "target" then
 			ShowNPCInterrupts:SetChecked(LoseControlDB.showNPCInterruptsTarget)
 		elseif unitId == "focus" then
@@ -8909,6 +8927,13 @@ local catListEnChecksButtonsArena = {
 			BlizzardOptionsPanel_Slider_Enable(SizeSlider)
 			BlizzardOptionsPanel_Slider_Enable(AlphaSlider)
 			UIDropDownMenu_EnableDropDown(AnchorDropDown)
+			if LoseControlDB.lossOfControl then
+			 	if lossOfControlInterrupt then BlizzardOptionsPanel_Slider_Enable(lossOfControlInterrupt) end
+				--
+			else
+				if lossOfControlInterrupt then BlizzardOptionsPanel_Slider_Disable(lossOfControlInterrupt) end
+				--
+			end
 			if LoseControlDB.duplicatePlayerPortrait then
 				if AlphaSlider2 then BlizzardOptionsPanel_Slider_Enable(AlphaSlider2) end
 				if AnchorDropDown2 then UIDropDownMenu_EnableDropDown(AnchorDropDown2) end
@@ -8947,6 +8972,8 @@ local catListEnChecksButtonsArena = {
 			BlizzardOptionsPanel_Slider_Disable(SizeSlider)
 			BlizzardOptionsPanel_Slider_Disable(AlphaSlider)
 			UIDropDownMenu_DisableDropDown(AnchorDropDown)
+			if lossOfControlInterrupt then BlizzardOptionsPanel_Slider_Disable(lossOfControlInterrupt) end
+			--
 			if AlphaSlider2 then BlizzardOptionsPanel_Slider_Disable(AlphaSlider2) end
 			if AnchorDropDown2 then UIDropDownMenu_DisableDropDown(AnchorDropDown2) end
 		end

@@ -589,6 +589,7 @@ else -- default English
 
 	L["EnableGladiusGloss"] = "Enable Gladius Gloss on Class Icon"
 	L["lossOfControl"] = "Blizzard Loss of Control"
+	L["lossOfControlInterrupt"] = "Blizzard LOC: Interrupt"
 	L["player"] = "Player"
 	L["pet"]    = "Pet"
 	L["target"] = "Target"
