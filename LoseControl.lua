@@ -3110,6 +3110,10 @@ local DBdefaults = {
 	RedSmokeBomb = true,
 	lossOfControl = true,
 	lossOfControlInterrupt = 1,
+	lossOfControlFull  = 0,
+	lossOfControlSilence = 0,
+	lossOfControlDisarm = 0,
+	lossOfControlRoot = 0,
 	DrawSwipeSetting = 0,
 	DiscoveredSpells = { },
 
@@ -3313,7 +3317,7 @@ local DBdefaults = {
 						Movable_Cast_Auras = true,
 					  SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 						PvE = true,
-						Other = true,
+						Other = false,
 					 }
 				},
 				debuff ={
@@ -3349,7 +3353,7 @@ local DBdefaults = {
 						Movable_Cast_Auras = true,
 					  SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 						PvE = true,
-						Other = true,
+						Other = false,
 					 }
 			},
 				interrupt = {
@@ -3396,7 +3400,7 @@ local DBdefaults = {
 						Movable_Cast_Auras = true,
 						SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 						PvE = true,
-						Other = true
+						Other = false,
 					 }
 				},
 				debuff = {
@@ -3432,7 +3436,7 @@ local DBdefaults = {
 						Movable_Cast_Auras = true,
 						SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 						PvE = true,
-						Other = true
+						Other = false,
 					 }
 			},
 				interrupt = {
@@ -4201,7 +4205,7 @@ local DBdefaults = {
 						 Movable_Cast_Auras = false,
 					   SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 						 PvE = true,
-						 Other = true,
+						 Other = false,
 					 }
 				},
 					debuff ={
@@ -4238,7 +4242,7 @@ local DBdefaults = {
 							Movable_Cast_Auras = false,
 							SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 							PvE = true,
-							Other = true,
+							Other = false,
 						}
 			},
 				interrupt = {
@@ -4286,7 +4290,7 @@ local DBdefaults = {
 						 Movable_Cast_Auras = false,
 					   SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 						 PvE = true,
-						 Other = true,
+						 Other = false,
 					 }
 				},
 					debuff ={
@@ -4323,7 +4327,7 @@ local DBdefaults = {
 							Movable_Cast_Auras = false,
 							SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 							PvE = true,
-							Other = true,
+							Other = false,
 						}
 			},
 				interrupt = {
@@ -4371,7 +4375,7 @@ local DBdefaults = {
 						 Movable_Cast_Auras = false,
 					   SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 						 PvE = true,
-						 Other = true,
+						 Other = false,
 					 }
 				},
 					debuff ={
@@ -4408,7 +4412,7 @@ local DBdefaults = {
 							Movable_Cast_Auras = false,
 							SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 							PvE = true,
-							Other = true,
+							Other = false,
 						}
 			},
 				interrupt = {
@@ -4456,7 +4460,7 @@ local DBdefaults = {
 						 Movable_Cast_Auras = false,
 					   SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 						 PvE = true,
-						 Other = true,
+						 Other = false,
 					 }
 				},
 					debuff ={
@@ -4493,7 +4497,7 @@ local DBdefaults = {
 							Movable_Cast_Auras = false,
 							SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 							PvE = true,
-							Other = true,
+							Other = false,
 						}
 			},
 				interrupt = {
@@ -8236,20 +8240,68 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 
 	local lossOfControlInterrupt
 	if  v == "player" then
-		lossOfControlInterrupt = CreateSlider(L["lossOfControlInterrupt"], OptionsPanelFrame, 0, 2, 1, "IconSizeSlider")
+		lossOfControlInterrupt = CreateSlider(L["lossOfControlInterrupt"], OptionsPanelFrame, 0, 2, 1, "lossOfControlInterrupt")
 		lossOfControlInterrupt:SetScript("OnValueChanged", function(self, value)
 		lossOfControlInterrupt:SetScale(.82)
-		lossOfControlInterrupt:SetWidth(180)
+		lossOfControlInterrupt:SetWidth(200)
 			_G[self:GetName() .. "Text"]:SetText(L["lossOfControlInterrupt"] .. " (" .. ("%.0f"):format(value) .. ")")
 			LoseControlDB.lossOfControlInterrupt = ("%.0f"):format(value)-- the real alpha value
 			SetCVar("lossOfControlInterrupt", ("%.0f"):format(value))
 		end)
 	end
 
+	local lossOfControlFull
+	if  v == "player" then
+		lossOfControlFull = CreateSlider(L["lossOfControlFull"], OptionsPanelFrame, 0, 2, 1, "lossOfControlFull")
+		lossOfControlFull:SetScript("OnValueChanged", function(self, value)
+		lossOfControlFull:SetScale(.82)
+		lossOfControlFull:SetWidth(200)
+			_G[self:GetName() .. "Text"]:SetText(L["lossOfControlFull"] .. " (" .. ("%.0f"):format(value) .. ")")
+			LoseControlDB.lossOfControlFull = ("%.0f"):format(value)-- the real alpha value
+			SetCVar("lossOfControlFull", ("%.0f"):format(value))
+		end)
+	end
+
+	local lossOfControlSilence
+	if  v == "player" then
+		lossOfControlSilence = CreateSlider(L["lossOfControlSilence"], OptionsPanelFrame, 0, 2, 1, "lossOfControlSilence")
+		lossOfControlSilence:SetScript("OnValueChanged", function(self, value)
+		lossOfControlSilence:SetScale(.82)
+		lossOfControlSilence:SetWidth(200)
+			_G[self:GetName() .. "Text"]:SetText(L["lossOfControlSilence"] .. " (" .. ("%.0f"):format(value) .. ")")
+			LoseControlDB.lossOfControlSilence = ("%.0f"):format(value)-- the real alpha value
+			SetCVar("lossOfControlSilence", ("%.0f"):format(value))
+		end)
+	end
+
+	local lossOfControlDisarm
+	if  v == "player" then
+		lossOfControlDisarm = CreateSlider(L["lossOfControlDisarm"], OptionsPanelFrame, 0, 2, 1, "lossOfControlDisarm")
+		lossOfControlDisarm:SetScript("OnValueChanged", function(self, value)
+		lossOfControlDisarm:SetScale(.82)
+		lossOfControlDisarm:SetWidth(200)
+			_G[self:GetName() .. "Text"]:SetText(L["lossOfControlDisarm"] .. " (" .. ("%.0f"):format(value) .. ")")
+			LoseControlDB.lossOfControlDisarm = ("%.0f"):format(value)-- the real alpha value
+			SetCVar("lossOfControlDisarm", ("%.0f"):format(value))
+		end)
+	end
+
+	local lossOfControlRoot
+	if  v == "player" then
+		lossOfControlRoot = CreateSlider(L["lossOfControlRoot"], OptionsPanelFrame, 0, 2, 1, "lossOfControlRoot")
+		lossOfControlRoot:SetScript("OnValueChanged", function(self, value)
+		lossOfControlRoot:SetScale(.82)
+		lossOfControlRoot:SetWidth(200)
+			_G[self:GetName() .. "Text"]:SetText(L["lossOfControlRoot"] .. " (" .. ("%.0f"):format(value) .. ")")
+			LoseControlDB.lossOfControlRoot = ("%.0f"):format(value)-- the real alpha value
+			SetCVar("lossOfControlRoot", ("%.0f"):format(value))
+		end)
+	end
+
 	local lossOfControl
 	if  v == "player" then
 		lossOfControl = CreateFrame("CheckButton", O..v.."lossOfControl", OptionsPanelFrame, "OptionsCheckButtonTemplate")
-		lossOfControl:SetScale(.82)
+		lossOfControl:SetScale(1)
 		lossOfControl:SetHitRectInsets(0, 0, 0, 0)
 		_G[O..v.."lossOfControlText"]:SetText(L["lossOfControl"])
 		lossOfControl:SetScript("OnClick", function(self)
@@ -8257,9 +8309,17 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 			if (self:GetChecked()) then
 				SetCVar("lossOfControl", 1)
 				BlizzardOptionsPanel_Slider_Enable(lossOfControlInterrupt)
+				BlizzardOptionsPanel_Slider_Enable(lossOfControlFull)
+				BlizzardOptionsPanel_Slider_Enable(lossOfControlSilence)
+				BlizzardOptionsPanel_Slider_Enable(lossOfControlDisarm)
+				BlizzardOptionsPanel_Slider_Enable(lossOfControlRoot)
 			else
 				SetCVar("lossOfControl", 0)
 				BlizzardOptionsPanel_Slider_Disable(lossOfControlInterrupt)
+				BlizzardOptionsPanel_Slider_Disable(lossOfControlFull)
+				BlizzardOptionsPanel_Slider_Disable(lossOfControlSilence)
+				BlizzardOptionsPanel_Slider_Disable(lossOfControlDisarm)
+				BlizzardOptionsPanel_Slider_Disable(lossOfControlRoot)
 			end
 		end)
 	end
@@ -8681,6 +8741,10 @@ local catListEnChecksButtonsArena = {
 
 			BlizzardOptionsPanel_Slider_Enable(SizeSlider)
 			BlizzardOptionsPanel_Slider_Enable(lossOfControlInterrupt)
+			BlizzardOptionsPanel_Slider_Enable(lossOfControlFull)
+			BlizzardOptionsPanel_Slider_Enable(lossOfControlSilence)
+			BlizzardOptionsPanel_Slider_Enable(lossOfControlDisarm)
+			BlizzardOptionsPanel_Slider_Enable(lossOfControlRoot)
 			BlizzardOptionsPanel_Slider_Enable(AlphaSlider)
 			UIDropDownMenu_EnableDropDown(AnchorDropDown)
 			if LoseControlDB.duplicatePlayerPortrait then
@@ -8721,6 +8785,10 @@ local catListEnChecksButtonsArena = {
 			BlizzardOptionsPanel_Slider_Disable(SizeSlider)
 			BlizzardOptionsPanel_Slider_Disable(AlphaSlider)
 			BlizzardOptionsPanel_Slider_Disable(lossOfControlInterrupt)
+			BlizzardOptionsPanel_Slider_Disable(lossOfControlFull)
+			BlizzardOptionsPanel_Slider_Disable(lossOfControlSilence)
+			BlizzardOptionsPanel_Slider_Disable(lossOfControlDisarm)
+			BlizzardOptionsPanel_Slider_Disable(lossOfControlRoot)
 			UIDropDownMenu_DisableDropDown(AnchorDropDown)
 			if AlphaSlider2 then BlizzardOptionsPanel_Slider_Disable(AlphaSlider2) end
 			if AnchorDropDown2 then UIDropDownMenu_DisableDropDown(AnchorDropDown2) end
@@ -8774,7 +8842,7 @@ local catListEnChecksButtonsArena = {
 	if DuplicatePlayerPortrait then DuplicatePlayerPortrait:SetPoint("TOPLEFT", Enabled, 275, 0) end
 	AnchorDropDown:SetPoint("TOPLEFT", Enabled, "BOTTOMLEFT", -13, -3)
 	AnchorDropDown:SetScale(.9)
-	AnchorDropDownLabel:SetPoint("BOTTOMLEFT", AnchorDropDown, "TOPRIGHT", 60,-2)
+	AnchorDropDownLabel:SetPoint("BOTTOMLEFT", AnchorDropDown, "TOPRIGHT", 60,-1)
 	AnchorDropDownLabel:SetScale(.8)
 	SizeSlider:SetPoint("TOPLEFT", Enabled, "TOPRIGHT", 115, -20)
 	AlphaSlider:SetPoint("TOPLEFT", SizeSlider, "BOTTOMLEFT", 0, -16)
@@ -8819,9 +8887,12 @@ local catListEnChecksButtonsArena = {
 	  end
 	end
 
-	if lossOfControl then lossOfControl:SetPoint("TOPLEFT", L.CategoryEnabledCCLabel, "TOPRIGHT", 475, 7) end
-	if lossOfControlInterrupt then lossOfControlInterrupt:SetPoint("TOPLEFT", lossOfControl, "BOTTOMLEFT", 0, -15) end
-
+	if lossOfControl then lossOfControl:SetPoint("TOPLEFT", L.CategoryEnabledCCLabel, "TOPRIGHT", 390, 7) end
+	if lossOfControlInterrupt then lossOfControlInterrupt:SetPoint("TOPLEFT", lossOfControl, "BOTTOMLEFT", 0, -18) end
+	if lossOfControlFull then lossOfControlFull:SetPoint("TOPLEFT", lossOfControlInterrupt, "BOTTOMLEFT", 0, -18) end
+	if lossOfControlSilence then lossOfControlSilence:SetPoint("TOPLEFT", lossOfControlFull, "BOTTOMLEFT", 0, -18) end
+	if lossOfControlDisarm then lossOfControlDisarm:SetPoint("TOPLEFT", lossOfControlSilence, "BOTTOMLEFT", 0, -18) end
+	if lossOfControlRoot then lossOfControlRoot:SetPoint("TOPLEFT", lossOfControlDisarm, "BOTTOMLEFT", 0, -18) end
 	for _, checkbuttonframe in pairs(CategoriesCheckButtons) do
 		checkbuttonframe.frame:SetPoint("TOPLEFT", checkbuttonframe.anchorPos, checkbuttonframe.xPos, checkbuttonframe.yPos)
 	end
@@ -8853,6 +8924,18 @@ local catListEnChecksButtonsArena = {
 			SetCVar("lossOfControl", LoseControlDB.lossOfControl)
 			lossOfControlInterrupt:SetValue(LoseControlDB.lossOfControlInterrupt)
 			SetCVar("lossOfControlInterrupt", LoseControlDB.lossOfControlInterrupt)
+
+			lossOfControlFull:SetValue(LoseControlDB.lossOfControlFull)
+			SetCVar("lossOfControlFull", LoseControlDB.lossOfControlFull)
+
+			lossOfControlSilence:SetValue(LoseControlDB.lossOfControlSilence)
+			SetCVar("lossOfControlSilence", LoseControlDB.lossOfControlSilence)
+
+			lossOfControlDisarm:SetValue(LoseControlDB.lossOfControlDisarm)
+			SetCVar("lossOfControlDisarm", LoseControlDB.lossOfControlDisarm)
+
+			lossOfControlRoot:SetValue(LoseControlDB.lossOfControlRoot)
+			SetCVar("lossOfControlRoot", LoseControlDB.lossOfControlRoot)
 		elseif unitId == "target" then
 			ShowNPCInterrupts:SetChecked(LoseControlDB.showNPCInterruptsTarget)
 		elseif unitId == "focus" then
@@ -8929,10 +9012,17 @@ local catListEnChecksButtonsArena = {
 			UIDropDownMenu_EnableDropDown(AnchorDropDown)
 			if LoseControlDB.lossOfControl then
 			 	if lossOfControlInterrupt then BlizzardOptionsPanel_Slider_Enable(lossOfControlInterrupt) end
+				if lossOfControlFull then BlizzardOptionsPanel_Slider_Enable(lossOfControlFull) end
+				if lossOfControlSilence then BlizzardOptionsPanel_Slider_Enable(lossOfControlSilence) end
+				if lossOfControlDisarm then BlizzardOptionsPanel_Slider_Enable(lossOfControlDisarm) end
+				if lossOfControlRoot then BlizzardOptionsPanel_Slider_Enable(lossOfControlRoot) end
 				--
 			else
 				if lossOfControlInterrupt then BlizzardOptionsPanel_Slider_Disable(lossOfControlInterrupt) end
-				--
+				if lossOfControlFull then BlizzardOptionsPanel_Slider_Disable(lossOfControlFull) end
+				if lossOfControlSilence then BlizzardOptionsPanel_Slider_Disable(lossOfControlSilence) end
+				if lossOfControlDisarm then BlizzardOptionsPanel_Slider_Disable(lossOfControlDisarm) end
+				if lossOfControlRoot then BlizzardOptionsPanel_Slider_Disable(lossOfControlRoot) end
 			end
 			if LoseControlDB.duplicatePlayerPortrait then
 				if AlphaSlider2 then BlizzardOptionsPanel_Slider_Enable(AlphaSlider2) end
@@ -8973,7 +9063,10 @@ local catListEnChecksButtonsArena = {
 			BlizzardOptionsPanel_Slider_Disable(AlphaSlider)
 			UIDropDownMenu_DisableDropDown(AnchorDropDown)
 			if lossOfControlInterrupt then BlizzardOptionsPanel_Slider_Disable(lossOfControlInterrupt) end
-			--
+			if lossOfControlFull then BlizzardOptionsPanel_Slider_Disable(lossOfControlFull) end
+			if lossOfControlSilence then BlizzardOptionsPanel_Slider_Disable(lossOfControlSilence) end
+			if lossOfControlDisarm then BlizzardOptionsPanel_Slider_Disable(lossOfControlDisarm) end
+			if lossOfControlRoot then BlizzardOptionsPanel_Slider_Disable(lossOfControlRoot) end
 			if AlphaSlider2 then BlizzardOptionsPanel_Slider_Disable(AlphaSlider2) end
 			if AnchorDropDown2 then UIDropDownMenu_DisableDropDown(AnchorDropDown2) end
 		end
