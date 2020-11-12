@@ -8893,6 +8893,14 @@ local catListEnChecksButtonsArena = {
 	if lossOfControlSilence then lossOfControlSilence:SetPoint("TOPLEFT", lossOfControlFull, "BOTTOMLEFT", 0, -18) end
 	if lossOfControlDisarm then lossOfControlDisarm:SetPoint("TOPLEFT", lossOfControlSilence, "BOTTOMLEFT", 0, -18) end
 	if lossOfControlRoot then lossOfControlRoot:SetPoint("TOPLEFT", lossOfControlDisarm, "BOTTOMLEFT", 0, -18) end
+	if v == "player" then
+		local LoCOptions = OptionsPanelFrame:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+		LoCOptions:SetFont("Fonts\\FRIZQT__.TTF", 11 )
+		LoCOptions:SetText("Blizzard Loss of Control must be \nenabled to discover new spells \n\n|cffff00000:|r Disables Bliz LoC Type \n1: Shows icon for small duartion \n|cff00ff002:|r Shows icon for full duration \n \n ")
+		LoCOptions:SetJustifyH("LEFT")
+		LoCOptions:SetPoint("TOPLEFT", lossOfControlRoot, "TOPLEFT", -5, -15)
+	end
+
 	for _, checkbuttonframe in pairs(CategoriesCheckButtons) do
 		checkbuttonframe.frame:SetPoint("TOPLEFT", checkbuttonframe.anchorPos, checkbuttonframe.xPos, checkbuttonframe.yPos)
 	end
