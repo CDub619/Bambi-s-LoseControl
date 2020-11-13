@@ -322,7 +322,7 @@ local function SetTabs(frame, numTabs, ...)
 	for i = 1, numTabs do
 		local tab = CreateFrame("Button", frameName.."Tab"..i, frame, "CharacterFrameTabButtonTemplate");
 		tab:SetID(i);
-		tab:SetFrameLevel(2)
+		tab:SetFrameLevel(20)
 
 		if L[select(i, ...)] then
 			tab:SetText(L[select(i, ...)].."                                                                    "); --String Needs to be 20
@@ -418,7 +418,7 @@ local function CreateMenu()
 	local BambiTag = string.format("|cff%s%s|r", hex:upper(), "By Bambi");
 	UISpellsArenaConfig.Title:SetText('LoseControl PVP Spells Config '..BambiTag)
 	UISpellsArenaConfig:SetFrameStrata("DIALOG");
-	UISpellsArenaConfig:SetFrameLevel(2);
+	UISpellsArenaConfig:SetFrameLevel(20);
 	UISpellsArenaConfig:EnableMouse(true);
 	UISpellsArenaConfig:SetMovable(true)
 	UISpellsArenaConfig:RegisterForDrag("LeftButton")

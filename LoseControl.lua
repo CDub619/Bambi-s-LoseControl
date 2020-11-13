@@ -113,36 +113,35 @@ local cleuPrioCastedSpells = {}
 -------------------------------------------------------------------------------
 -- Thanks to all the people on the Curse.com and WoWInterface forums who help keep this list up to date :)
 local cleuSpells = { -- nil = Do Not Show
-
-{17, 60,  "CC",  "Silence_Arena", "cleuEvent1", "cleuEventArena1" },
-{8921 , 15, "Trees",  nil, "cleuEvent2", "cleuEventArena2"},
-{93402 , 5,  "Trees",  nil, "cleuEvent3", "cleuEventArena3"},
-
+ {198103, 60, "PvE",  "Small_Defensive_CDs", "Earth Elemental", "Earth Elemental"}, --Shaman Earth Ele
+ {288853, 25, nil,  "Melee_Major_OffenisiveCDs", "Raise Abomination", "Raise Abomination"}, --Dk Raise Abomination
+ --{spellId, duration. prio, prioArena, name, nameArena} --must have both names
 }
 
 local interrupts = {
-	{1766   , 5},		-- Kick (Rogue)
-	{2139   , 6},		-- Counterspell (Mage)
-	{6552   , 4},		-- Pummel (Warrior)1766
-	{13491  , 5},		-- Pummel (Iron Knuckles Item)
-	{19647  , 6},		-- Spell Lock (felhunter) (Warlock)
 	{29443  , 10},	-- Counterspell (Clutch of Foresight)
+	{13491  , 5},		-- Pummel (Iron Knuckles Item)
+	{183752 , 3},		-- Consume Magic (Demon Hunter)
+	{6552   , 4},		-- Pummel (Warrior)
+	{115781 , 6},		-- Optical Blast (Warlock)
+	{212619 , 6},		-- Call Felhunter (Warlock)
+	{132409 , 6},		-- Spell Lock (command demon) (Warlock)
+	{19647  , 6},		-- Spell Lock (felhunter) (Warlock)
+	{1766   , 5},		-- Kick (Rogue)
+	{231665 , 3},		-- Avengers Shield (Paladin)
+	{217824 , 4},		-- Shield of Virtue (Protec Paladin)
+	{96231  , 4},		-- Rebuke (Paladin)
+	{116705 , 4},		-- Spear Hand Strike (Monk)
+	{2139   , 6},		-- Counterspell (Mage)
+	{97547  , 5},		-- Solar Beam (Druid Balance)
+	{93985  , 4},		-- Skull Bash (Druid Feral)
+	{91807 ,  2},   --Shambling Rush
+	{91802  , 2},		-- Shambling Rush (Death Knight)
 	{47528  , 3},		-- Mind Freeze (Death Knight)
 	{57994  , 3},		-- Wind Shear (Shaman)
-	{91802  , 2},		-- Shambling Rush (Death Knight)
-	{96231  , 4},		-- Rebuke (Paladin)
-	{93985  , 4},		-- Skull Bash (Druid Feral)
-	{97547  , 5},		-- Solar Beam (Druid Balance)
-	{115781 , 6},		-- Optical Blast (Warlock)
-	{116705 , 4},		-- Spear Hand Strike (Monk)
-	{132409 , 6},		-- Spell Lock (command demon) (Warlock)
 	{147362 , 3},		-- Countershot (Hunter)
-	{183752 , 3},		-- Consume Magic (Demon Hunter)
 	{187707 , 3},		-- Muzzle (Hunter)
-	{212619 , 6},		-- Call Felhunter (Warlock)
-	{217824 , 4},		-- Shield of Virtue (Protec Paladin)
-	{231665 , 3},		-- Avengers Shield (Paladin)
-	{91807 , 2},   --Shambling Rush
+
 }
 
 local spellsArenaTable = {
@@ -198,6 +197,31 @@ local spellsArenaTable = {
 	{197214 , "CC_Arena"}, --Sundering
 	{290641 , "Special_High"}, --Ancestral Gift
 	{8178 , "Special_High"}, --Grounding Totem Effect
+	{114051 , "Ranged_Major_OffenisiveCDs"}, --Ascendance Enhancement
+	{114050 , "Ranged_Major_OffenisiveCDs"}, --Ascendance
+	{191634 , "Ranged_Major_OffenisiveCDs"}, --Stormkeeper
+	{320137 , "Ranged_Major_OffenisiveCDs"}, --Stormkeeper
+	{204361 , "Ranged_Major_OffenisiveCDs"}, --Bloodlust
+	{204362 , "Ranged_Major_OffenisiveCDs"}, --Heroism
+	{64695 , "Roots_90_Snares"}, --Earthgrab
+	{285515 , "Roots_90_Snares"}, --Surge of Power
+	{207498 , "Big_Defensive_CDs"}, --Ancestral Protection
+	{108271 , "Big_Defensive_CDs"}, --Astral Shift
+	{210918 , "Big_Defensive_CDs"}, --Ethereal Form
+	{118337 , "Big_Defensive_CDs"}, --Harden Skin
+	{114052 , "Big_Defensive_CDs"}, --Ascendance
+	{201633 , "Big_Defensive_CDs"}, --Earthen Wall
+	{325174 , "Big_Defensive_CDs"}, --Spirit Link Totem
+	{201846 , "Small_Offenisive_CDs"}, --Stormbringer
+	{79206 , "Small_Defensive_CDs"}, --Spiritwalker's Grace
+	{58875 , "Freedoms_Speed"}, --Spirit Walk
+	{192082 , "Freedoms_Speed"}, -- Wind Rush
+	{182387 , "Snares_WithCDs"}, --Earthquake
+	{51490 , "Snares_WithCDs"}, --Thunderstorm
+	{204293 , "Special_Low"}, --Spirit Link
+	{260881 , "Special_Low"}, --Spirit Wolf
+	{2645 , "Special_Low"}, --Ghost Wolf
+	{196840 , "Snares_Ranged_Spamable"}, --Frost Shock
 
 	----------------
 	-- Death Knight
@@ -212,6 +236,27 @@ local spellsArenaTable = {
 	{207167 , "CC_Arena"}, --Blinding Sleet
 	{204490 , "Silence_Arena"}, --Strangulate
 	{77606 , "Special_High"}, --Dark Simulacrum
+	{91807 , "Roots_90_Snares"}, --Shambling Rush
+	{204085 , "Roots_90_Snares"}, --Deathchill
+	{233395 , "Roots_90_Snares"}, --Deathchill
+	{47568 , "Melee_Major_OffenisiveCDs"}, --Empower Rune Weapon
+	{207256 , "Melee_Major_OffenisiveCDs"}, --Obliteration
+	{51271 , "Melee_Major_OffenisiveCDs"}, --Pillar of Frost
+	{215711 , "Melee_Major_OffenisiveCDs"}, --Soul Reaper
+	{207289 , "Melee_Major_OffenisiveCDs"}, --Unholy Frenzy
+	{48792 , "Big_Defensive_CDs"}, --Icebound Fortitude
+	{49039 , "Big_Defensive_CDs"}, --Lichborne
+	{145629 , "Big_Defensive_CDs"}, --Anti-Magic Zone
+	{114556 , "Big_Defensive_CDs"}, --Purgatory
+	{204206, "Player_Party_OffensiveCDs"}, --Chill Streak
+	{77616 , "Small_Offenisive_CDs"}, --Dark Simulacrum
+	{288977 , "Small_Defensive_CDs"}, --Transfusion
+	{48743 , "Small_Defensive_CDs"}, --Death Pact
+	{48265 , "Freedoms_Speed"}, -- Death's Advance
+	{212552 , "Freedoms_Speed"}, -- Wind Rush
+	{45524 , "Snares_Ranged_Spamable"}, --Chains of Ice
+
+
 
 	----------------
 	-- Druid
@@ -226,6 +271,48 @@ local spellsArenaTable = {
 	{2637 , "CC_Arena"}, --Hibernate
 	{81261 , "Silence_Arena"}, --Solar Beam
 	{5215 , "Special_High"}, --Prowl
+	{106951, "Ranged_Major_OffenisiveCDs"}, --Berserk (Feral)
+	{102543 , "Ranged_Major_OffenisiveCDs"}, --Incarnation: King of the Jungle
+	{194223, "Ranged_Major_OffenisiveCDs"}, --Celestial Alignment
+	{102560 , "Ranged_Major_OffenisiveCDs"}, --Incarnation: Chosen of Elune
+	{50334 , "Ranged_Major_OffenisiveCDs"}, --Berserk (Guardian)
+	{102558 , "Ranged_Major_OffenisiveCDs"}, --Incarnation: Guardian of Ursoc
+	{339 , "Roots_90_Snares"}, --Entangling Roots
+	{102359 , "Roots_90_Snares"}, --Mass Entanglement
+	{45334 , "Roots_90_Snares"}, --Immobilized
+	{127797 , "Roots_90_Snares"}, --Ursol's Vortex
+	{102793 , "Roots_90_Snares"}, --Ursol's Vortex
+	{209749 , "Disarms"}, --Faerie Swarm
+	{22812 , "Big_Defensive_CDs"}, --Barkskin
+	{102342 , "Big_Defensive_CDs"}, --IronBark
+	{247563 , "Big_Defensive_CDs"}, --Nature's Grasp
+	{29166 , "Big_Defensive_CDs"}, --Innervate
+	{117679 , "Big_Defensive_CDs"}, --Incarnation: Tree of Life
+	--{33891 , "Big_Defensive_CDs"}, --Tree of life
+	{61336 , "Big_Defensive_CDs"}, --Survival Instincts
+	{202461 , "Small_Offenisive_CDs"}, --Stellar Drift
+	{5217 , "Small_Offenisive_CDs"}, --Tiger's Fury
+	{22842 , "Small_Defensive_CDs"}, --Frenzied Regeneration
+	{192081 , "Small_Defensive_CDs"}, --Ironfur
+	{200947 , "Small_Defensive_CDs"}, --Encroaching Vines
+	{236696 , "Small_Defensive_CDs"}, --Thorns
+	{1850 , "Freedoms_Speed"}, --Dash
+	{77764 , "Freedoms_Speed"}, --Stampeding Roar
+	{252216 , "Freedoms_Speed"}, --Tiger's Dash
+	{201940, "Special_Low"}, --Protector of the Pack
+	{768 , "Special_Low"}, --Cat Forn
+	{5487 , "Special_Low"}, --Bear Form
+	{783 , "Special_Low"}, --Travel Form
+	{197625 , "Special_Low"}, --Moonkin Form
+	{24858 , "Special_Low"}, --Moonkin Form
+
+
+
+
+
+
+
+
 
 	----------------
 	-- Mage
@@ -344,10 +431,6 @@ local spellsArenaTable = {
 	{255654 , "CC_Arena"}, --Bull Rush
 	{287712 , "CC_Arena"}, --Haymaker
 
-	{186257 , "Freedoms_Speed"}, --Aspect of the Cheetah
-	{5116 , "Snares_WithCDs"}, --Concussive Shot
-	{204205 , "Special_Low"}, --Wild Protector
-	{135299 , "Snares_Ranged_Spamable"}, --Tar Trap
 
 	}
 
@@ -525,7 +608,6 @@ local spellsTable = {
 	{248519 , "ImmuneSpell"},		-- Interlope (pvp honor talent)
 	--{202914 , "Silence"},			-- Spider Sting (pvp honor talent) --no silence}, this its the previous effect
 	{202933 , "Silence"},			-- Spider Sting	(pvp honor talent) --this its the silence effect
-	{5384   , "Other"},				-- Feign Death
 
 	  ----------------
 	  -- Hunter Pets
@@ -874,7 +956,6 @@ local spellsTable = {
 	{18499  , "Other"},				-- Berserker Rage
 	{107574 , "Other"},				-- Avatar
 	{262228 , "Other"},				-- Deadly Calm
-	{198819 , "Other"},				-- Sharpen Blade (70% heal reduction)
 	{236321 , "Other"},				-- War Banner
 	{236438 , "Other"},				-- War Banner
 	{236439 , "Other"},				-- War Banner
@@ -1216,9 +1297,6 @@ local spellsTable = {
 	{26108  , "CC"},				-- Glimpse of Madness (Dark Edge of Insanity axe)
 	{9462   , "Snare"},				-- Mirefin Fungus
 	{19137  , "Snare"},				-- Slow
-	{21847  , "CC"},				-- Snowman
-	{21848  , "CC"},				-- Snowman
-	{21980  , "CC"},				-- Snowman
 	{6724   , "Immune"},			-- Light of Elune
 	{24360  , "CC"},				-- Greater Dreamless Sleep Potion
 	{15822  , "CC"},				-- Dreamless Sleep Potion
@@ -1927,23 +2005,12 @@ local spellsTable = {
 	{245386 , "Other"},				-- Darkest Darkness (healing taken reduced by 99%)
 	{274972 , "Other"},				-- Breath of Darkness (healing taken reduced by 75%)
 },
---[[
+
 	------------------------
 	-- BfA Mythics
-	-- --- Common to all
-	--Samh'rek}, Beckoner of Chaos 																								--CHRIS
-	{314483 , "CC"},				-- Cascading Terror 																	--CHRIS
-	--Urg'roth}, Breaker of Heroes 																								--CHRIS
-	{314308 , "Other"},				-- Spirit Breaker (damage taken increased by 100%)	--CHRIS
-	{314392 , "Snare"},				-- Vile Corruption 																	--CHRIS
-	{314387 , "Snare"},				-- Vile Corruption 																	--CHRIS
-	--Voidweaver Mal'thir 																												--CHRIS
-	{314406 , "Snare"},				-- Crippling Pestilence 														--CHRIS
-	{314411 , "Other"},				-- Lingering Doubt (casting speed reduced by 70%) 	--CHRIS
-	--Blood of the Corruptor 																											--CHRIS
-	{314592 , "Snare"},				-- Mind Flay 																				--CHRIS
-	{314565 , "Snare"},				-- Defiled Ground
+
 	-- -- Operation: Mechagon
+{"Operation: Mechagon",
 	{297283 , "CC"},				-- Cave In
 	{294995 , "CC"},				-- Cave In
 	{298259 , "CC"},				-- Gooped
@@ -1978,7 +2045,9 @@ local spellsTable = {
 	{285388 , "Snare"},				-- Vent Jets
 	{298602 , "Other"},				-- Smoke Cloud
 	{300675 , "Other"},				-- Toxic Fog
+},
 	-- -- Atal'Dazar
+{"Atal'Dazar",
 	{255371 , "CC"},				-- Terrifying Visage
 	{255041 , "CC"},				-- Terrifying Screech
 	{252781 , "CC"},				-- Unstable Hex
@@ -1990,7 +2059,9 @@ local spellsTable = {
 	{253721 , "Immune"},			-- Bulwark of Juju (90% damage reduction)
 	{257483 , "Snare"},			--Pile of Bones (Rezan Boss) --CHRIS
 	{250036 , "Snare"},			--Shadowy Remains (Yazma) --CHRIS
+},
 	-- -- Kings' Rest
+{"Kings' Rest",
 	{268796 , "CC"},				-- Impaling Spear
 	{269369 , "CC"},				-- Deathly Roar
 	{267702 , "CC"},				-- Entomb
@@ -2002,8 +2073,10 @@ local spellsTable = {
 	{267626 , "CC"},				-- Dessication (damage done reduced by 50%)
 	{270931 , "Snare"},				-- Darkshot
 	{270499 , "Snare"},				-- Frost Shock
-	  {271564 , "Snare"},				-- Embalming Fluid --CHRIS
+  {271564 , "Snare"},				-- Embalming Fluid --CHRIS
+},
 	-- -- The MOTHERLODE!!
+{"The MOTHERLODE!!",
 	{257337 , "CC"},				-- Shocking Claw
 	{257371 , "CC"},				-- Tear Gas
 	{275907 , "CC"},				-- Tectonic Smash
@@ -2018,7 +2091,9 @@ local spellsTable = {
 	{269278 , "CC"},				-- Panic!
 	{260189 , "Immune"},			-- Configuration: Drill (damage taken reduced 99%)
 	{268704 , "Snare"},				-- Furious Quake
+},
 	-- -- Shrine of the Storm
+{"Shrine of the Storm",
 	{268027 , "CC"},				-- Rising Tides
 	{276268 , "CC"},				-- Heaving Blow
 	{269131 , "CC"},				-- Ancient Mindbender
@@ -2040,7 +2115,9 @@ local spellsTable = {
 	{267899 , "Snare"},				-- Hindering Cleave
 	{268896 , "Snare"},				-- Mind Rend
 	{264560 , "Snare"},				-- Choking Brine --CHRIS
+},
 	-- -- Temple of Sethraliss
+{"Temple of Sethraliss",
 	{280032 , "CC"},				-- Neurotoxin
 	{268993 , "CC"},				-- Cheap Shot
 	{268008 , "CC"},				-- Snake Charm
@@ -2052,7 +2129,9 @@ local spellsTable = {
 	{261635 , "Immune"},			-- Stoneshield Potion
 	{273274 , "Snare"},				-- Polarized Field
 	{275566 , "Snare"},				-- Numb Hands
+},
 	-- -- Waycrest Manor
+{"Waycrest Manor",
 	{265407 , "Silence"},			-- Dinner Bell
 	{263891 , "CC"},				-- Grasping Thorns
 	{260900 , "CC"},				-- Soul Manipulation
@@ -2072,7 +2151,9 @@ local spellsTable = {
 	{264040 , "Snare"},				-- Uprooted Thorns
 	{264712 , "Snare"},				-- Rotten Expulsion
 	{261440 , "Snare"},				-- Virulent Pathogen
+},
 	-- -- Tol Dagor
+{"Tol Dagor",
 	{258058 , "Root"},				-- Squeeze
 	{259711 , "Root"},				-- Lockdown
 	{258313 , "CC"},				-- Handcuff (Pacified and Silenced)
@@ -2087,7 +2168,9 @@ local spellsTable = {
 	{265271 , "Snare"},				-- Sewer Slime
 	{257777 , "Snare"},				-- Crippling Shiv
 	{259188 , "Snare"},				-- Heavily Armed
+},
 	-- -- Freehold
+{"Freehold",
 	{274516 , "CC"},				-- Slippery Suds
 	{257949 , "CC"},				-- Slippery
 	{258875 , "CC"},				-- Blackout Barrel
@@ -2101,7 +2184,9 @@ local spellsTable = {
 	{257747 , "Snare"},				-- Earth Shaker
 	{257784 , "Snare"},				-- Frost Blast
 	{272554 , "Snare"},				-- Bloody Mess
+},
 	-- -- Siege of Boralus
+{"Siege of Boralus",
 	{256957 , "Immune"},			-- Watertight Shell
 	{257069 , "CC"},				-- Watertight Shell
 	{261428 , "CC"},				-- Hangman's Noose
@@ -2114,13 +2199,17 @@ local spellsTable = {
 	{270624 , "Root"},				-- Crushing Embrace
 	{256897 , "Root"},				-- Clamping-Jaws --CHRIS
 	{272834 , "Snare"},				-- Viscous Slobber
+},
 	-- -- The Underrot
+{"The Underrot",
 	{265377 , "Root"},				-- Hooked Snare
 	{272609 , "CC"},				-- Maddening Gaze
 	{265511 , "CC"},				-- Spirit Drain
 	{278961 , "CC"},				-- Decaying Mind
 	{269406 , "CC"},				-- Purge Corruption
 	{258347 , "Silence"},			-- Sonic Screech
+},
+--[[
 	------------------------
 	---- PVE LEGION
 	------------------------
@@ -4722,15 +4811,15 @@ locBliz:SetScript("OnEvent", function(self, event, ...)
 					end
 					spellIds[spellID] = Type
 					LoseControlDB.spellEnabled[spellID]= true
-					tblinsert(LoseControlDB.customSpellIds, {spellID, Type, instanceType, name..": "..ZoneName, nil, "Discovered", #L.spells})
-					tblinsert(L.spells[#L.spells][tabsIndex[Type]], {spellID, Type, instanceType, name..": "..ZoneName, nil, "Discovered", #L.spells})
+					tblinsert(LoseControlDB.customSpellIds, {spellID, Type, instanceType, name.."\n"..ZoneName, nil, "Discovered", #L.spells})
+					tblinsert(L.spells[#L.spells][tabsIndex[Type]], {spellID, Type, instanceType, name.."\n"..ZoneName, nil, "Discovered", #L.spells})
 					L.SpellsPVEConfig:UpdateTab(#L.spells-1)
 			  elseif (not interruptsIds[spellID]) and lockoutSchool > 0 then
 					print("Found New Interrupt",locType,"", spellID)
 					interruptsIds[spellID] = duration
 					LoseControlDB.spellEnabled[spellID]= true
-					tblinsert(LoseControlDB.customSpellIds, {spellID, "Interrupt", instanceType, name..": "..ZoneName, duration, "Discovered", #L.spells})
-					tblinsert(L.spells[#L.spells][tabsIndex["Interrupt"]], {spellID, "Interrupt", instanceType, name..": "..ZoneName, duration, "Discovered", #L.spells})
+					tblinsert(LoseControlDB.customSpellIds, {spellID, "Interrupt", instanceType, name.."\n"..ZoneName, duration, "Discovered", #L.spells})
+					tblinsert(L.spells[#L.spells][tabsIndex["Interrupt"]], {spellID, "Interrupt", instanceType, name.."\n"..ZoneName, duration, "Discovered", #L.spells})
 					L.SpellsPVEConfig:UpdateTab(#L.spells-1)
 				else
 				end
@@ -5279,7 +5368,7 @@ function LoseControl:CompileSpells(typeUpdate)
 		interruptsIds[spellID] = duration
 		end
 		--Make cleuPrioCastedSpells for cleu -- only need to compile 1x for arena and players
-		for k, v in ipairs(cleuSpells) do
+		for _, v in ipairs(cleuSpells) do
 		local spellID, duration, prio, prioArena, cleuEvent, cleuEventArena = unpack(v)
 		cleuPrioCastedSpells[spellID] = {["duration"] = duration, ["priority"] = prio, ["priorityArena"] = prioArena,  ["name"] = cleuEvent,  ["nameArena"] = cleuEventArena}
 		end
@@ -5930,16 +6019,22 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 					--Duel Enemy Check, do not need speperate prio for cleu + aura
 					-----------------------------------------------------------------------------------------------------------------
 					if ((event == "SPELL_CAST_SUCCESS") and (spellId == 207736)) then
-						if (sourceGUID == UnitGUID("arena1")) or (sourceGUID == UnitGUID("arena2")) or (sourceGUID == UnitGUID("arena3")) then
+						if sourceGUID and (bit_band(sourceFlags, COMBATLOG_OBJECT_REACTION_HOSTILE) == COMBATLOG_OBJECT_REACTION_HOSTILE) then
 							local duration = 6
 							local expirationTime = GetTime() + duration
 							if (DuelAura[sourceGUID] == nil) then
 								DuelAura[sourceGUID] = {}
 							end
+							if (DuelAura[destGUID] == nil) then
+								DuelAura[destGUID] = {}
+							end
 							DuelAura[sourceGUID] = { ["duration"] = duration, ["expirationTime"] = expirationTime, ["destGUID"] = destGUID }
+							DuelAura[destGUID] = { ["duration"] = duration, ["expirationTime"] = expirationTime, ["destGUID"] = destGUID }
 							print("cleu enemy Dueled Data Stored destGUID is"..destGUID)
+							print("cleu enemy Dueled Data Stored sourceGUID is"..sourceGUID)
 							C_Timer.After(duration + 1, function()	-- execute in some close next frame to accurate use of UnitAura function
 							DuelAura[sourceGUID] = nil
+							DuelAura[destGUID] = nil
 							end)
 						end
 					end
@@ -6086,8 +6181,8 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 					local Name, instanceType, _, _, _, _, _, instanceID, _, _ = GetInstanceInfo()
 					local ZoneName = GetZoneText()
 					LoseControlDB.spellEnabled[spellId]= true
-					tblinsert(LoseControlDB.customSpellIds, {spellId,  spellCategory, instanceType, Name..": "..ZoneName, nil, "Discovered", #L.spells})
-					tblinsert(L.spells[#L.spells][tabsIndex["Snare"]], {spellId,  spellCategory, instanceType, Name..": "..ZoneName, nil, "Discovered", #L.spells})
+					tblinsert(LoseControlDB.customSpellIds, {spellId,  spellCategory, instanceType, Name.."\n"..ZoneName, nil, "Discovered", #L.spells})
+					tblinsert(L.spells[#L.spells][tabsIndex["Snare"]], {spellId,  spellCategory, instanceType, Name.."\n"..ZoneName, nil, "Discovered", #L.spells})
 					L.SpellsPVEConfig:UpdateTab(#L.spells-1)
 					local locClass = "Creature"
 					if source then
@@ -6115,54 +6210,21 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 			--Enemy Duel
 			-----------------------------------------------------------------------------------------------------------------
 			if spellId == 207736 then --Shodowey Duel enemy on friendly, friendly frame (red)
-				if source then
-					--print(source)
-					if UnitIsEnemy("player", source) then --still returns true for an enemy currently under mindcontrol I can add your fix.
-						spellIds[spellId] = "Enemy_Smoke_Bomb"
-						print(unitId.."Dueled is enemy check")
-							if (unitId == "arena1") or (unitId == "arena2") or (unitId == "arena3") or (UnitGUID(unitId) == UnitGUID("arena1")) or (UnitGUID(unitId) == UnitGUID("arena2")) or (UnitGUID(unitId) == UnitGUID("arena3")) then
-							spellIds[spellId] = "Special_High"
-							end
-							name = "EnemyShadowyDuel"
-					elseif not UnitIsEnemy("player", source) then
-						print(unitId.."Dueled is Friendly check")
-						spellIds[spellId] = "Friendly_Smoke_Bomb"
-							if (unitId == "arena1") or (unitId == "arena2") or (unitId == "arena3") or (UnitGUID(unitId) == UnitGUID("arena1")) or (UnitGUID(unitId) == UnitGUID("arena2")) or (UnitGUID(unitId) == UnitGUID("arena3")) then
-							spellIds[spellId] = "Special_High"
-							end
-							name = "FriendlyShadowyDuel"
-		  		end
+				if DuelAura[UnitGUID(unitId)] then --enemyDuel
+					name = "EnemyShadowyDuel"
+					spellIds[spellId] = "Enemy_Smoke_Bomb"
+					print(unitId.."Duel is Enemy")
+					if (UnitGUID(unitId) == "arena1") or (unitId == "arena2") or (unitId == "arena3") or (UnitGUID(unitId) == UnitGUID("arena1")) or (UnitGUID(unitId) == UnitGUID("arena2")) or (UnitGUID(unitId) == UnitGUID("arena3")) then
+					spellIds[spellId] = "Special_High"
+					end
 				else
-						spellIds[spellId] = "Friendly_Smoke_Bomb"
-						print(unitId.."Dueled is w/o source check")
-						if (unitId == "arena1") or (unitId == "arena2") or (unitId == "arena3") or (UnitGUID(unitId) == UnitGUID("arena1")) or (UnitGUID(unitId) == UnitGUID("arena2")) or (UnitGUID(unitId) == UnitGUID("arena3")) then
-						print(unitId.."Dueled is w/o source and "..unitId)
-						spellIds[spellId] = "Special_High"
-						name = "FriendlyShadowyDuel"
-						else
-							if DuelAura[UnitGUID("arena1")] then
-								if (DuelAura[UnitGUID("arena1")].destGUID == UnitGUID(unitId)) then
-								print(DuelAura[UnitGUID("arena1")].destGUID)
-								name = "EnemyShadowyDuel"
-								spellIds[spellId] = "Enemy_Smoke_Bomb"
-								end
-							end
-							if DuelAura[UnitGUID("arena2")] then
-								if (DuelAura[UnitGUID("arena2")].destGUID == UnitGUID(unitId)) then
-								print(DuelAura[UnitGUID("arena2")].destGUID)
-								name = "EnemyShadowyDuel"
-								spellIds[spellId] = "Enemy_Smoke_Bomb"
-								end
-							end
-							if DuelAura[UnitGUID("arena3")] then
-								if (DuelAura[UnitGUID("arena3")].destGUID == UnitGUID(unitId)) then
-								print(DuelAura[UnitGUID("arena3")].destGUID)
-								name = "EnemyShadowyDuel"
-								spellIds[spellId] = "Enemy_Smoke_Bomb"
-								end
-							end
-						end
-				end
+					print(UnitGUID(unitId).."Duel is Friendly")
+					name = "FriendlyShadowyDuel"
+					spellIds[spellId] = "Friendly_Smoke_Bomb"
+					if (unitId == "arena1") or (unitId == "arena2") or (unitId == "arena3") or (UnitGUID(unitId) == UnitGUID("arena1")) or (UnitGUID(unitId) == UnitGUID("arena2")) or (UnitGUID(unitId) == UnitGUID("arena3")) then
+					spellIds[spellId] = "Special_High"
+					end
+	  		end
 			end
 
 			-----------------------------------------------------------------------------------------------------------------
@@ -7129,6 +7191,7 @@ function Unlock:OnClick()
 				v:Show()
 				v:GetParent():Show()
 				v:SetDrawSwipe(true)
+				v:SetSwipeColor(0, 0, 0, LoseControlDB.DrawSwipeSetting)
 				v:SetCooldown( GetTime(), 60 )
 				v:GetParent():SetAlpha(frame.alpha) -- hack to apply the alpha to the cooldown timer
 				v:SetMovable(true)
@@ -7152,6 +7215,7 @@ function Unlock:OnClick()
 			LCframeplayer2:Show()
 			LCframeplayer2:GetParent():Show()
 			LCframeplayer2:SetDrawSwipe(true)
+			LCframeplayer2:SetSwipeColor(0, 0, 0, LoseControlDB.DrawSwipeSetting)
 			LCframeplayer2:SetCooldown( GetTime(), 60 )
 			LCframeplayer2:GetParent():SetAlpha(frame.alpha) -- hack to apply the alpha to the cooldown timer
 		end

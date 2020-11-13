@@ -686,7 +686,7 @@ local numberOfSpellChecksPerRow = 5
 								spellCheck.text:SetText(aString3);
 							elseif zone then
 								local aString1 = substring(GetSpellInfo(spellID), 0, 17)..": "..substring(prio, 0, 6) or "SPELL REMOVED: "..spellID
-								local aString2 = " ("..zone..")"
+								local aString2 = zone
 								local cutString1 = substring(aString1, 0, 23);
 								local cutString2 = substring(aString2, 0, 23);
 								local	aString3 = cutString1.."\n"..cutString2
@@ -759,14 +759,14 @@ local numberOfSpellChecksPerRow = 5
 						elseif zone then
 							if duration then
 								local aString1 = substring(GetSpellInfo(spellID), 0, 14)..": "..substring(prio, 0, 5)..": "..math.floor(duration) or "SPELL REMOVED: "..spellID
-								local aString2 = " ("..zone..")"
+								local aString2 = zone
 								local cutString1 = substring(aString1, 0, 23);
 								local cutString2 = substring(aString2, 0, 23);
 							  local	aString3 = cutString1.."\n"..cutString2
 								spellCheck.text:SetText(aString3);
 							else
 								local aString1 = substring(GetSpellInfo(spellID), 0, 17)..": "..substring(prio, 0, 6) or "SPELL REMOVED: "..spellID
-								local aString2 = " ("..zone..")"
+								local aString2 = zone
 								local cutString1 = substring(aString1, 0, 23);
 								local cutString2 = substring(aString2, 0, 23);
 							  local	aString3 = cutString1.."\n"..cutString2
