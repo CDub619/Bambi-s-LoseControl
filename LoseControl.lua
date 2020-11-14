@@ -65,30 +65,60 @@ local UnitClass = UnitClass
 local UnitExists = UnitExists
 local UnitIsPlayer = UnitIsPlayer
 local UnitIsUnit = UnitIsUnit
+local UnitIsEnemy = UnitIsEnemy
 local UnitHealth = UnitHealth
+local UnitName = UnitName
+local UnitGUID = UnitGUID
 local CombatLogGetCurrentEventInfo = CombatLogGetCurrentEventInfo
+local IsInInstance = IsInInstance
+local GetArenaOpponentSpec = GetArenaOpponentSpec
 local GetPlayerInfoByGUID = GetPlayerInfoByGUID
+local GetInspectSpecialization = GetInspectSpecialization
 local GetSpellInfo = GetSpellInfo
 local GetTime = GetTime
+local GetName = GetName
+local GetNumGroupMembers = GetNumGroupMembers
+local GetNumArenaOpponents = GetNumArenaOpponents
+local GetInstanceInfo = GetInstanceInfo
+local GetZoneText = GetZoneText
 local SetPortraitToTexture = SetPortraitToTexture
 local ipairs = ipairs
 local pairs = pairs
 local next = next
 local type = type
 local select = select
+local strsplit = strsplit
 local strfind = string.find
+local strmatch = string.match
 local tblinsert = table.insert
 local tblremove= table.remove
 local mathfloor = math.floor
 local mathabs = math.abs
 local bit_band = bit.band
+local tblsort = table.sort
+local Ctimer = C_Timer.After
+local CLocData = C_LossOfControl.GetActiveLossOfControlData
 local unpack = unpack
 local SetScript = SetScript
+local SetUnitDebuff = SetUnitDebuff
+local SetOwner = SetOwner
 local OnEvent = OnEvent
 local CreateFrame = CreateFrame
 local SetTexture = SetTexture
+local SetNormalTexture = SetNormalTexture
+local SetSwipeTexture = SetSwipeTexture
 local SetCooldown = SetCooldown
-local SetAlpha, SetPoint = SetAlpha, SetPoint
+local SetAlpha, SetPoint, SetParent, SetFrameLevel, SetDrawSwipe, SetSwipeColor, SetScale, SetHeight, SetWidth, SetDesaturated, SetVertexColor = SetAlpha, SetPoint, SetParent, SetFrameLevel, SetDrawSwipe, SetSwipeColor,  SetScale, SetHeight, SetWidth, SetDesaturated, SetVertexColor
+local ClearAllPoints = ClearAllPoints
+local GetParent = GetParent
+local GetFrameLevel = GetFrameLevel
+local GetDrawSwipe = GetDrawSwipe
+local GetDrawLayer = GetDrawLayer
+local GetAlpha = GetAlpha
+local Hide = Hide
+local Show = Show
+local IsShown = IsShown
+local IsVisible = IsVisible
 local playerGUID
 local print = print
 local debug = false -- type "/lc debug on" if you want to see UnitAura info logged to the console
@@ -113,8 +143,11 @@ local cleuPrioCastedSpells = {}
 -------------------------------------------------------------------------------
 -- Thanks to all the people on the Curse.com and WoWInterface forums who help keep this list up to date :)
 local cleuSpells = { -- nil = Do Not Show
- {198103, 60, "PvE",  "Small_Defensive_CDs", "Earth Elemental", "Earth Elemental"}, --Shaman Earth Ele
- {288853, 25, nil,  "Melee_Major_OffenisiveCDs", "Raise Abomination", "Raise Abomination"}, --Dk Raise Abomination
+ {198103, 60, "PvE",  "Small_Defensive_CDs", "Earth Ele", "Earth Ele"}, --Shaman Earth Ele
+ {288853, 25, nil,  "Melee_Major_OffenisiveCDs", "Abomination", "Abomination"}, --Dk Raise Abomination
+ {123904, 24, nil,  "Small_Offenisive_CDs", "Xuen", "Xuen"}, --WW Xuen Pet Summmon
+ {34433, 15, nil,  "Small_Offenisive_CDs", "Shadowfiend", "Shadowfiend"}, --Disc Pet Summmon
+ {123040, 15, nil,  "Small_Offenisive_CDs", "Mindbender", "Mindbender"}, --Disc Pet Summmon
  --{spellId, duration. prio, prioArena, name, nameArena} --must have both names
 }
 
@@ -141,7 +174,6 @@ local interrupts = {
 	{57994  , 3},		-- Wind Shear (Shaman)
 	{147362 , 3},		-- Countershot (Hunter)
 	{187707 , 3},		-- Muzzle (Hunter)
-
 }
 
 local spellsArenaTable = {
@@ -189,7 +221,6 @@ local spellsArenaTable = {
 	----------------
 	-- Shaman
 	----------------
-
 	{"Hex" , "CC_Arena"},
 	{305485 , "CC_Arena"}, --Lightning Lasso
 	{118345 , "CC_Arena"}, --Pulverize
@@ -256,8 +287,6 @@ local spellsArenaTable = {
 	{212552 , "Freedoms_Speed"}, -- Wind Rush
 	{45524 , "Snares_Ranged_Spamable"}, --Chains of Ice
 
-
-
 	----------------
 	-- Druid
 	----------------
@@ -306,14 +335,6 @@ local spellsArenaTable = {
 	{197625 , "Special_Low"}, --Moonkin Form
 	{24858 , "Special_Low"}, --Moonkin Form
 
-
-
-
-
-
-
-
-
 	----------------
 	-- Mage
 	----------------
@@ -325,6 +346,29 @@ local spellsArenaTable = {
 	{32612 , "Special_High"}, --Invisibility
 	{110960 , "Special_High"}, --Greater Invisibility
 	{198158 , "Special_High"}, --Mass Invisibility
+  {190319, "Ranged_Major_OffenisiveCDs"}, --Combustion
+  {12042, "Ranged_Major_OffenisiveCDs"}, --Arcane Power
+  {12472, "Ranged_Major_OffenisiveCDs"}, --Icy Veins
+  {198144, "Ranged_Major_OffenisiveCDs"}, --Ice Form
+  {122 , "Roots_90_Snares"}, --Frost Nova
+  {198121 , "Roots_90_Snares"}, --Frost Bite
+  {33395 , "Roots_90_Snares"}, --Freeze
+  {157997 , "Roots_90_Snares"}, --Ice Nova
+  {228600 , "Roots_90_Snares"}, --Glacial Spike
+  {198111 , "Big_Defensive_CDs"}, --Temporal Shield
+  {113862 , "Big_Defensive_CDs"}, --Greater Invisibility
+  {87023 , "Big_Defensive_CDs"}, --Cauterilze
+  {108839 , "Small_Offenisive_CDs"}, --Ice Floes
+  {198065 , "Small_Offenisive_CDs"}, --Prismatic Cloak
+  {116014 , "Small_Offenisive_CDs"}, --Rune of Power
+  {108843 , "Small_Defensive_CDs"}, --Blazing Speed
+  {120 , "Snares_WithCDs"}, --Cone of Cold
+  {11426 , "Special_Low"}, --Ice Barrier
+  {235313 , "Special_Low"}, --Blazing Barrier
+  {235450 , "Special_Low"}, --Prismatic Barrier
+  {414425 , "Special_Low"}, --Hypothermia
+  {31589 , "Snares_Ranged_Spamable"}, --Slow
+
 
 	----------------
 	-- Monk
@@ -335,6 +379,21 @@ local spellsArenaTable = {
 	{198909 , "CC_Arena"}, --Song of Chi-ji
 	{115078 , "CC_Arena"}, --Paralysis
 	{209584 , "Special_High"}, --Zen Focus Tea
+  {116706 , "Roots_90_Snares"}, --Disable
+  {201787 , "Roots_90_Snares"}, --Heavy-Handed Strike
+  {233759 , "Disarms"}, --Grapple Weapon
+  {152173 , "Melee_Major_OffenisiveCDs"}, --Serenity
+  {137639 , "Melee_Major_OffenisiveCDs"}, --Storm, Earth, and Fire
+	{125174 , "Big_Defensive_CDs"}, --Touch of Karma
+  {116849 , "Big_Defensive_CDs"}, --Life Cacoon
+  {122783 , "Big_Defensive_CDs"}, --Diffuse Magic
+  {243435 , "Big_Defensive_CDs"}, --Fortifying Brew
+  {122278 , "Big_Defensive_CDs"}, --Damoen Harm
+  {115176 , "Big_Defensive_CDs"}, --Zen Meditation
+  {247483 , "Small_Offenisive_CDs"}, --Tigereye Brew
+  {201447 , "Freedoms_Speed"}, --Ride the Wind
+  {116841 , "Freedoms_Speed"}, --Tiger's Lust
+  {248646 , "Special_Low"}, --Tigereye Brew
 
 	----------------
 	-- Palladin
@@ -347,6 +406,26 @@ local spellsArenaTable = {
 	{20066 , "CC_Arena"}, --Repentance
 	{105421 , "CC_Arena"}, --Blinding Light
 	{217824 , "Silence_Arena"}, --Shield of Virtue
+  {31884, "Ranged_Major_OffenisiveCDs"}, --Avenging Wrath
+  {231895, "Ranged_Major_OffenisiveCDs"}, --Crusade
+	{1022 , "Big_Defensive_CDs"}, --Blessing of Protection
+  {6940 , "Big_Defensive_CDs"}, --Blessing of Sacrifice
+  {199448 , "Big_Defensive_CDs"}, --Blessing of Sacrifice
+  {199450 , "Big_Defensive_CDs"}, --Ultimate  Sacrifice
+  {31821 , "Big_Defensive_CDs"}, --Aura Mastery
+  {498 , "Big_Defensive_CDs"}, --Divine Protection
+  {216331 , "Big_Defensive_CDs"}, --Avenging Crusader
+  {184662 , "Big_Defensive_CDs"}, --Shield of Vengeance
+  {205191 , "Big_Defensive_CDs"}, --Eye for an Eye
+  {210256 , "Big_Defensive_CDs"}, --Blessing of Sanctuary
+  {86659 , "Big_Defensive_CDs"}, --Guardian of Ancient Kings
+  {318501 , "Big_Defensive_CDs"}, --Ardent Defender
+  {204150 , "Big_Defensive_CDs"}, --Aegis of Light
+  {105809 , "Small_Defensive_CDs"}, --Holy Avenger
+  {1044 , "Freedoms_Speed"}, --Blessing of Freedom
+  {221886 , "Freedoms_Speed"}, --Tiger's Lust
+  {183218 , "Snares_WithCDs"}, --Hand of Hinderance
+  {25771 , "Special_Low"}, --Forbearance
 
 	----------------
 	-- Priest
@@ -364,6 +443,28 @@ local spellsArenaTable = {
 	{226943 , "CC_Arena"}, --Mind Bomb
 	{15487 , "Silence_Arena"}, --Silence_Arena
 	{289655 , "Special_High"}, --Holy Word: Concentration
+  {33206 , "Big_Defensive_CDs"}, --Pain Suprresion
+  {81782 , "Big_Defensive_CDs"}, --Power Word: Barrier
+  {213602 , "Big_Defensive_CDs"}, --Greater Fade
+  {47788 , "Big_Defensive_CDs"}, --Guardian Spirit
+  {232707 , "Big_Defensive_CDs"}, --Ray of Hope
+	{199845, "Player_Party_OffensiveCDs"}, --Psyflay PvP Talent 50% MS)
+  {197871 , "Small_Offenisive_CDs"}, --Dark Archangel
+  {194249 , "Small_Offenisive_CDs"}, --Voidform
+  {247776 , "Small_Offenisive_CDs"}, --Mind Trauma
+  {47536 , "Small_Defensive_CDs"}, --Rapture
+  {197862 , "Small_Defensive_CDs"}, --Archangel
+  {200183 , "Small_Defensive_CDs"}, --Apotheosis
+  {213610 , "Small_Defensive_CDs"}, --Holy Ward
+  {64901 , "Small_Defensive_CDs"}, --Symbol of Hope
+  {15286 , "Small_Defensive_CDs"}, --Vampiric Embrace
+  {19236 , "Small_Defensive_CDs"}, --Desperate Prayer
+  {204263 , "Snares_WithCDs"}, --Shining FOrce
+  {193065, "Special_Low"}, --Masochism
+  {265258 , "Special_Low"}, --Twist of Fate
+  {123254 , "Special_Low"}, --Twist of Fate
+  {65081 , "Special_Low"}, --Body and Soul
+  {121557, "Special_Low"}, --Angelic Feather
 
 	----------------
 	-- Rogue
@@ -3489,7 +3590,7 @@ local DBdefaults = {
 						Movable_Cast_Auras = true,
 						SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 						PvE = true,
-						Other = false,
+						Other = true,
 					 }
 				},
 				debuff = {
@@ -3525,7 +3626,7 @@ local DBdefaults = {
 						Movable_Cast_Auras = true,
 						SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 						PvE = true,
-						Other = false,
+						Other = true,
 					 }
 			},
 				interrupt = {
@@ -4777,7 +4878,7 @@ locBliz:RegisterEvent("LOSS_OF_CONTROL_ADDED")
 locBliz:SetScript("OnEvent", function(self, event, ...)
 	if (event == "LOSS_OF_CONTROL_ADDED") then
 		for i = 1, 40 do
-		local data = C_LossOfControl.GetActiveLossOfControlData(i);
+		local data = CLocData(i);
 		 	if not data then break end
 			  local locType = data.locType;
 			 	local spellID = data.spellID;
@@ -4835,7 +4936,7 @@ local function GetDebuffText(unitId, debuffNum)
 	local snarestring = DebuffTextDebuffScanTooltipTextLeft2:GetText()
 	tooltip:Hide()
 	if snarestring then
-		if string.match(snarestring, "Movement") then
+		if strmatch(snarestring, "Movement") then
 		return true
 	  else
 		return false
@@ -4876,7 +4977,7 @@ function LoseControl:RegisterUnitEvents(enabled)
 						self.unitGUID = UnitGUID(self.unitId)
 						self:UNIT_AURA(self.unitId, 300)
 						self.timerActive = true
-						C_Timer.After(2.5, self.UpdateStateFuncCache)
+						Ctimer(2.5, self.UpdateStateFuncCache)
 					else
 						self.timerActive = false
 					end
@@ -4909,7 +5010,7 @@ function LoseControl:RegisterUnitEvents(enabled)
 						TframeToTDebuff:HookScript("OnShow", function()
 							if (self.frame.enabled) then
 								local timeCombatLogAuraEvent = GetTime()
-								C_Timer.After(0.01, function()	-- execute in some close next frame to depriorize this event
+								Ctimer(0.01, function()	-- execute in some close next frame to depriorize this event
 									if ((not self.unlockMode) and (self.lastTimeUnitAuraEvent == nil or self.lastTimeUnitAuraEvent < timeCombatLogAuraEvent)) then
 										self.unitGUID = UnitGUID(self.unitId)
 										self:UNIT_AURA(self.unitId, 40)
@@ -4920,7 +5021,7 @@ function LoseControl:RegisterUnitEvents(enabled)
 						TframeToTDebuff:HookScript("OnHide", function()
 							if (self.frame.enabled) then
 								local timeCombatLogAuraEvent = GetTime()
-								C_Timer.After(0.01, function()	-- execute in some close next frame to depriorize this event
+								Ctimer(0.01, function()	-- execute in some close next frame to depriorize this event
 									if ((not self.unlockMode) and (self.lastTimeUnitAuraEvent == nil or self.lastTimeUnitAuraEvent < timeCombatLogAuraEvent)) then
 										self.unitGUID = UnitGUID(self.unitId)
 										self:UNIT_AURA(self.unitId, 43)
@@ -4950,7 +5051,7 @@ function LoseControl:RegisterUnitEvents(enabled)
 						self.unitGUID = UnitGUID(self.unitId)
 						self:UNIT_AURA(self.unitId, 300)
 						self.timerActive = true
-						C_Timer.After(2.5, self.UpdateStateFuncCache)
+						Ctimer(2.5, self.UpdateStateFuncCache)
 					else
 						self.timerActive = false
 					end
@@ -4983,7 +5084,7 @@ function LoseControl:RegisterUnitEvents(enabled)
 						FframeToTDebuff:HookScript("OnShow", function()
 							if (self.frame.enabled) then
 								local timeCombatLogAuraEvent = GetTime()
-								C_Timer.After(0.01, function()	-- execute in some close next frame to depriorize this event
+								Ctimer(0.01, function()	-- execute in some close next frame to depriorize this event
 									if ((not self.unlockMode) and (self.lastTimeUnitAuraEvent == nil or self.lastTimeUnitAuraEvent < timeCombatLogAuraEvent)) then
 										self.unitGUID = UnitGUID(self.unitId)
 										self:UNIT_AURA(self.unitId, 30)
@@ -4994,7 +5095,7 @@ function LoseControl:RegisterUnitEvents(enabled)
 						FframeToTDebuff:HookScript("OnHide", function()
 							if (self.frame.enabled) then
 								local timeCombatLogAuraEvent = GetTime()
-								C_Timer.After(0.01, function()	-- execute in some close next frame to depriorize this event
+								Ctimer(0.01, function()	-- execute in some close next frame to depriorize this event
 									if ((not self.unlockMode) and (self.lastTimeUnitAuraEvent == nil or self.lastTimeUnitAuraEvent < timeCombatLogAuraEvent)) then
 										self.unitGUID = UnitGUID(self.unitId)
 										self:UNIT_AURA(self.unitId, 31)
@@ -5577,15 +5678,72 @@ function LoseControl:CheckSUFUnitsAnchors(updateFrame)
 end
 
 function LoseControl:CheckGladiusUnitsAnchors(updateFrame)
-	local frames = {}
-	local gladiusFrame
-	local inInstance, instanceType = IsInInstance()
-	if (strfind(self.unitId, "arena")) and LoseControlDB.frames[self.unitId].anchor == "Gladius" then
-		if Gladius and (not anchors.Gladius[self.unitId]) then
-			local frames = {}
-			if not GladiusClassIconFramearena1 and instanceType ~= "arena" then
-				gladiusFrame = "on"
-				frames = { "arena1", "arena2", "arena3", "arena4", "arena5" }
+  if (strfind(self.unitId, "arena")) and LoseControlDB.frames[self.unitId].anchor == "Gladius" then
+    local inInstance, instanceType = IsInInstance();  local gladiusFrame;  local frames = {}
+  	if Gladius and (not anchors.Gladius[self.unitId]) then
+  		if not GladiusClassIconFramearena1 and instanceType ~= "arena" then
+  			gladiusFrame = "on"
+  			frames = { "arena1", "arena2", "arena3", "arena4", "arena5" }
+  			if DEFAULT_CHAT_FRAME.editBox:IsVisible() then
+  				DEFAULT_CHAT_FRAME.editBox:SetText("/gladius test")
+  				ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox, 0)
+  			else
+  				DEFAULT_CHAT_FRAME.editBox:Show()
+  				DEFAULT_CHAT_FRAME.editBox:SetText("/gladius test")
+  				ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox, 0)
+  				DEFAULT_CHAT_FRAME.editBox:Hide()
+  			end
+    	end
+  		if GladiusClassIconFramearena1 then frames[1] = "arena1" end
+    	if GladiusClassIconFramearena2 then frames[2] = "arena2" end
+  		if GladiusClassIconFramearena3 then frames[3] = "arena3" end
+  		if GladiusClassIconFramearena4 then frames[4] = "arena4" end
+  		if GladiusClassIconFramearena5 then frames[5] = "arena5" end
+  			for _, unitId in pairs(frames) do
+  				if (unitId == "arena1") and anchors.Gladius.arena1 == nil then anchors.Gladius.arena1 = GladiusClassIconFramearena1 or nil end
+  				if (unitId == "arena2") and anchors.Gladius.arena2 == nil then anchors.Gladius.arena2 = GladiusClassIconFramearena2 or nil end
+  				if (unitId == "arena3") and anchors.Gladius.arena3 == nil then anchors.Gladius.arena3 = GladiusClassIconFramearena3 or nil end
+  				if (unitId == "arena4") and anchors.Gladius.arena4 == nil then anchors.Gladius.arena4 = GladiusClassIconFramearena4 or nil end
+  				if (unitId == "arena5") and anchors.Gladius.arena5 == nil then anchors.Gladius.arena5 = GladiusClassIconFramearena5 or nil end
+  				if updateFrame and anchors.Gladius[unitId] ~= nil then
+					local frame = LoseControlDB.frames[self.fakeUnitId or unitId]
+					local icon = LCframes[unitId]
+					local newAnchor = _G[anchors[frame.anchor][unitId]] or (type(anchors[frame.anchor][unitId])=="table" and anchors[frame.anchor][unitId] or UIParent)
+					if newAnchor ~= nil and icon.anchor ~= newAnchor then
+						icon.anchor = newAnchor
+						icon.parent:SetParent(icon.anchor:GetParent()) -- or LoseControl) -- If Hide() is called on the parent frame, its children are hidden too. This also sets the frame strata to be the same as the parent's.
+						icon:ClearAllPoints() -- if we don't do this then the frame won't always move
+						icon:GetParent():ClearAllPoints()
+						icon:SetWidth(frame.size)
+						icon:SetHeight(frame.size)
+						icon:GetParent():SetWidth(frame.size)
+						icon:SetPoint(
+							frame.point or "CENTER",
+							icon.anchor,
+							frame.relativePoint or "CENTER",
+							frame.x or 0,
+							frame.y or 0
+						)
+						icon:GetParent():SetPoint(
+							frame.point or "CENTER",
+							icon.anchor,
+							frame.relativePoint or "CENTER",
+							frame.x or 0,
+							frame.y or 0
+						)
+						if icon.anchor:GetParent() then
+							icon:SetFrameLevel(icon.anchor:GetParent():GetFrameLevel()+((frame.anchor ~= "None" and frame.anchor ~= "Blizzard") and 3 or 0))
+						end
+						if #frames < 5 then
+						print("|cff00ccffLoseControl|r : Successfully Anchored "..unitId.." frame to Gladius")
+					  end
+					end
+				end
+			end
+			if #frames == 5 then
+			print("|cff00ccffLoseControl|r : Successfully Anchored All Arena Frames")
+			end
+			if gladiusFrame == "on" then
 				if DEFAULT_CHAT_FRAME.editBox:IsVisible() then
 					DEFAULT_CHAT_FRAME.editBox:SetText("/gladius test")
 					ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox, 0)
@@ -5595,70 +5753,9 @@ function LoseControl:CheckGladiusUnitsAnchors(updateFrame)
 					ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox, 0)
 					DEFAULT_CHAT_FRAME.editBox:Hide()
 				end
-	  	end
-			if GladiusClassIconFramearena1 then frames[1] = "arena1" end
-	  	if GladiusClassIconFramearena2 then frames[2] = "arena2" end
-			if GladiusClassIconFramearena3 then frames[3] = "arena3" end
-			if GladiusClassIconFramearena4 then frames[4] = "arena4" end
-			if GladiusClassIconFramearena5 then frames[5] = "arena5" end
-				for _, unitId in pairs(frames) do
-					if (unitId == "arena1") and anchors.Gladius.arena1 == nil then anchors.Gladius.arena1 = GladiusClassIconFramearena1 or nil end
-					if (unitId == "arena2") and anchors.Gladius.arena2 == nil then anchors.Gladius.arena2 = GladiusClassIconFramearena2 or nil end
-					if (unitId == "arena3") and anchors.Gladius.arena3 == nil then anchors.Gladius.arena3 = GladiusClassIconFramearena3 or nil end
-					if (unitId == "arena4") and anchors.Gladius.arena4 == nil then anchors.Gladius.arena4 = GladiusClassIconFramearena4 or nil end
-					if (unitId == "arena5") and anchors.Gladius.arena5 == nil then anchors.Gladius.arena5 = GladiusClassIconFramearena5 or nil end
-					if updateFrame and anchors.Gladius[unitId] ~= nil then
-						local frame = LoseControlDB.frames[self.fakeUnitId or unitId]
-						local icon = LCframes[unitId]
-						local newAnchor = _G[anchors[frame.anchor][unitId]] or (type(anchors[frame.anchor][unitId])=="table" and anchors[frame.anchor][unitId] or UIParent)
-						if newAnchor ~= nil and icon.anchor ~= newAnchor then
-							icon.anchor = newAnchor
-							icon.parent:SetParent(icon.anchor:GetParent()) -- or LoseControl) -- If Hide() is called on the parent frame, its children are hidden too. This also sets the frame strata to be the same as the parent's.
-							icon:ClearAllPoints() -- if we don't do this then the frame won't always move
-							icon:GetParent():ClearAllPoints()
-							icon:SetWidth(frame.size)
-							icon:SetHeight(frame.size)
-							icon:GetParent():SetWidth(frame.size)
-							icon:SetPoint(
-								frame.point or "CENTER",
-								icon.anchor,
-								frame.relativePoint or "CENTER",
-								frame.x or 0,
-								frame.y or 0
-							)
-							icon:GetParent():SetPoint(
-								frame.point or "CENTER",
-								icon.anchor,
-								frame.relativePoint or "CENTER",
-								frame.x or 0,
-								frame.y or 0
-							)
-							if icon.anchor:GetParent() then
-								icon:SetFrameLevel(icon.anchor:GetParent():GetFrameLevel()+((frame.anchor ~= "None" and frame.anchor ~= "Blizzard") and 3 or 0))
-							end
-							if #frames < 5 then
-							print("|cff00ccffLoseControl|r : Successfully Anchored "..unitId.." frame to Gladius")
-						  end
-						end
-					end
-				end
-				if #frames == 5 then
-				print("|cff00ccffLoseControl|r : Successfully Anchored All Arena Frames")
-				end
-				if gladiusFrame == "on" then
-					if DEFAULT_CHAT_FRAME.editBox:IsVisible() then
-						DEFAULT_CHAT_FRAME.editBox:SetText("/gladius test")
-						ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox, 0)
-					else
-						DEFAULT_CHAT_FRAME.editBox:Show()
-						DEFAULT_CHAT_FRAME.editBox:SetText("/gladius test")
-						ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox, 0)
-						DEFAULT_CHAT_FRAME.editBox:Hide()
-					end
-				end
 			end
 		end
-	return true
+	end
 end
 -- Initialize a frame's position and register for events
 function LoseControl:PLAYER_ENTERING_WORLD() -- this correctly anchors enemy arena frames that aren't created until you zone into an arena
@@ -5666,6 +5763,7 @@ function LoseControl:PLAYER_ENTERING_WORLD() -- this correctly anchors enemy are
 	self.frame = LoseControlDB.frames[self.fakeUnitId or unitId] -- store a local reference to the frame's settings
 	local frame = self.frame
 	local inInstance, instanceType = IsInInstance()
+  if (instanceType=="arena" or instanceType=="pvp") then LoseControlDB.priority["PvE"] = 0 else LoseControlDB.priority["PvE"] = 10 end --Disables PVE in Arena
 	local enabled = frame.enabled and not (
 		inInstance and instanceType == "pvp" and (
 			( LoseControlDB.disablePartyInBG and strfind(unitId, "party") ) or
@@ -5676,14 +5774,14 @@ function LoseControl:PLAYER_ENTERING_WORLD() -- this correctly anchors enemy are
 	)
 	if (ShadowUF ~= nil) and not(self:CheckSUFUnitsAnchors(false)) and (self.SUFDelayedSearch == nil) then
 		self.SUFDelayedSearch = GetTime()
-		C_Timer.After(8, function()	-- delay checking to make sure all variables of the other addons are loaded
+		Ctimer(8, function()	-- delay checking to make sure all variables of the other addons are loaded
 			self:CheckSUFUnitsAnchors(true)
 		end)
 	end
 	if strfind(unitId, "arena") then
 	if (Gladius ~= nil) and (self.GladiusDelayedSearch == nil) then
 		self.GladiusDelayedSearch = GetTime()
-		C_Timer.After(3, function()	-- delay checking to make sure all variables of the other addons are loaded
+		Ctimer(3, function()	-- delay checking to make sure all variables of the other addons are loaded
 			self:CheckGladiusUnitsAnchors(true)
 		end)
 	end
@@ -5992,7 +6090,7 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 								SmokeBombAuras[sourceGUID] = {}
 							end
 					  	SmokeBombAuras[sourceGUID] = { ["duration"] = duration, ["expirationTime"] = expirationTime }
-							C_Timer.After(duration + 1, function()	-- execute in some close next frame to accurate use of UnitAura function
+							Ctimer(duration + 1, function()	-- execute in some close next frame to accurate use of UnitAura function
 							SmokeBombAuras[sourceGUID] = nil
 							end)
 					  end
@@ -6009,7 +6107,7 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 								BeamAura[sourceGUID] = {}
 							end
 							BeamAura[sourceGUID] = { ["duration"] = duration, ["expirationTime"] = expirationTime }
-							C_Timer.After(duration + 1, function()	-- execute in some close next frame to accurate use of UnitAura function
+							Ctimer(duration + 1, function()	-- execute in some close next frame to accurate use of UnitAura function
 							BeamAura[sourceGUID] = nil
 							end)
 						end
@@ -6032,7 +6130,7 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 							DuelAura[destGUID] = { ["duration"] = duration, ["expirationTime"] = expirationTime, ["destGUID"] = destGUID }
 							print("cleu enemy Dueled Data Stored destGUID is"..destGUID)
 							print("cleu enemy Dueled Data Stored sourceGUID is"..sourceGUID)
-							C_Timer.After(duration + 1, function()	-- execute in some close next frame to accurate use of UnitAura function
+							Ctimer(duration + 1, function()	-- execute in some close next frame to accurate use of UnitAura function
 							DuelAura[sourceGUID] = nil
 							DuelAura[destGUID] = nil
 							end)
@@ -6115,7 +6213,7 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 				 (event == "SPELL_AURA_BROKEN_SPELL") or (event == "SPELL_PERIODIC_AURA_BROKEN_SPELL") or
 				 (event == "UNIT_DIED") or (event == "UNIT_DESTROYED") or (event == "UNIT_DISSIPATES") then
 					local timeCombatLogAuraEvent = GetTime()
-					C_Timer.After(0.01, function()	-- execute in some close next frame to accurate use of UnitAura function
+					Ctimer(0.01, function()	-- execute in some close next frame to accurate use of UnitAura function
 						if ((not self.unlockMode) and (self.lastTimeUnitAuraEvent ~= timeCombatLogAuraEvent)) then
 							self:UNIT_AURA(self.unitId, 3)
 						end
@@ -6273,7 +6371,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 								end
 						end
 						if #root then
-							table.sort(root, cmp_col1)
+							tblsort(root, cmp_col1)
 						end
 						if root[1] then
 						expirationTime = root[1].col1 + .01
@@ -6376,6 +6474,26 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 					end
 				end
 			end
+
+      if (spellId == 31884) then --Avenging Wrath
+        local i, specID
+        if (unitId == "arena1") or (unitId == "arena2") or (unitId == "arena3") then
+          if strfind(unitId, "1") then i = 1 elseif strfind(unitId, "2") then i = 2 elseif strfind(unitId, "3") then i = 3 end
+          specID = GetArenaOpponentSpec(i);
+        elseif (UnitGUID(unitId) == UnitGUID("arena1")) or (UnitGUID(unitId) == UnitGUID("arena2")) or (UnitGUID(unitId) == UnitGUID("arena3")) then
+          specID = GetInspectSpecialization(unitId)
+        end
+        if specID then
+          if (specID == 70) or (specID == 66) then
+            print("Ret Wings Active "..unitId)
+            spellIds[spellId] = "Ranged_Major_OffenisiveCDs" --Sets Prio to Ret/Prot Wings to DMG
+          else
+            print("Holy Wings Active "..unitId)
+            spellIds[spellId] = "Big_Defensive_CDs" --Sets Prio to Holy Wings to Defensive
+          end
+        end
+      end
+
 
 			local spellCategory = spellIds[spellId] or spellIds[name]
 			local Priority = priority[spellCategory]
@@ -6522,7 +6640,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 									if nextTimerUpdate < 0.05 then
 										nextTimerUpdate = 0.05
 									end
-									C_Timer.After(nextTimerUpdate, function()
+									Ctimer(nextTimerUpdate, function()
 										if ((not self.unlockMode) and (self.lastTimeUnitAuraEvent == nil or self.lastTimeUnitAuraEvent < (GetTime() - 0.04))) then
 											self:UNIT_AURA(unitId, 20)
 										end
@@ -6552,7 +6670,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 									if nextTimerUpdate < 0.05 then
 										nextTimerUpdate = 0.05
 									end
-									C_Timer.After(nextTimerUpdate, function()
+									Ctimer(nextTimerUpdate, function()
 										if ((not self.unlockMode) and (self.lastTimeUnitAuraEvent == nil or self.lastTimeUnitAuraEvent < (GetTime() - 0.04))) then
 											self:UNIT_AURA(unitId, 20)
 										end
@@ -6583,7 +6701,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 									if nextTimerUpdate < 0.05 then
 										nextTimerUpdate = 0.05
 									end
-									C_Timer.After(nextTimerUpdate, function()
+									Ctimer(nextTimerUpdate, function()
 										if ((not self.unlockMode) and (self.lastTimeUnitAuraEvent == nil or self.lastTimeUnitAuraEvent < (GetTime() - 0.04))) then
 											self:UNIT_AURA(unitId, 20)
 										end
@@ -6613,7 +6731,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 									if nextTimerUpdate < 0.05 then
 										nextTimerUpdate = 0.05
 									end
-									C_Timer.After(nextTimerUpdate, function()
+									Ctimer(nextTimerUpdate, function()
 										if ((not self.unlockMode) and (self.lastTimeUnitAuraEvent == nil or self.lastTimeUnitAuraEvent < (GetTime() - 0.04))) then
 											self:UNIT_AURA(unitId, 20)
 										end
@@ -6660,8 +6778,8 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 --Filters for highest aura duration of specfied priority will not work for cleu , currently set for all snares
 ----------------------------------------------------------------------
 	if #buffs then
-		table.sort(buffs, cmp_col1)
-		table.sort(buffs, cmp_col1_col2)
+		tblsort(buffs, cmp_col1)
+		tblsort(buffs, cmp_col1_col2)
 	end
 
 ----------------------------------------------------------------------
@@ -6671,8 +6789,8 @@ if Arenastealth[unitId] and (not UnitExists(unitId)) then
 	for i = 1, #Arenastealth[unitId] do
 	  buffs[i] =  {["col1"] = Arenastealth[unitId][i].col1 , ["col2"]  = Arenastealth[unitId][i].col2 , ["col3"] = { ["name"] = Arenastealth[unitId][i].col3.name, ["duration"] = Arenastealth[unitId][i].col3.duration, ["expirationTime"] = Arenastealth[unitId][i].col3.expirationTime,  ["icon"] = Arenastealth[unitId][i].col3.icon, ["localForceEventUnitAuraAtEnd"] = Arenastealth[unitId][i].col3.localForceEventUnitAuraAtEnd, ["hue"] = Arenastealth[unitId][i].col3.hue }}
 	end
-	table.sort(buffs, cmp_col1)
-	table.sort(buffs, cmp_col1_col2)
+	tblsort(buffs, cmp_col1)
+	tblsort(buffs, cmp_col1_col2)
 end
 
 -----------------------------------------------------------------------
@@ -6694,7 +6812,7 @@ end
 								if nextTimerUpdate < 0.05 then
 									nextTimerUpdate = 0.05
 								end
-								C_Timer.After(nextTimerUpdate, function()
+								Ctimer(nextTimerUpdate, function()
 										self:UNIT_AURA(unitId, -5)
 								end)
 								foundbuff = 1
@@ -6747,7 +6865,7 @@ end
 				if  remaining  < 0.05 then
 					 remaining  = 0.05
 				end
-				C_Timer.After(remaining + .05, function() self:UNIT_AURA(unitId, -55) end)
+				Ctimer(remaining + .05, function() self:UNIT_AURA(unitId, -55) end)
 				end
 			end
 		end
@@ -6875,7 +6993,7 @@ end
 			if nextTimerUpdate < 0.10 then
 				nextTimerUpdate = 0.10
 			end
-			C_Timer.After(nextTimerUpdate, function()
+			Ctimer(nextTimerUpdate, function()
 				if ((not self.unlockMode) and (self.lastTimeUnitAuraEvent == nil or self.lastTimeUnitAuraEvent < (GetTime() - 0.08))) then
 					self:UNIT_AURA(unitId, 4)
 				end
