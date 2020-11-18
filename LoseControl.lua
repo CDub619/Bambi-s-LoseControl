@@ -144,10 +144,12 @@ local cleuPrioCastedSpells = {}
 -- Thanks to all the people on the Curse.com and WoWInterface forums who help keep this list up to date :)
 local cleuSpells = { -- nil = Do Not Show
  {198103, 60, "PvE",  "Small_Defensive_CDs", "Earth Ele", "Earth Ele"}, --Shaman Earth Ele
+ {205636, 10, "PvE",  "Small_Defensive_CDs", "Trees", "Trees"}, --Shaman Earth Ele
  {288853, 25, nil,  "Melee_Major_OffenisiveCDs", "Abomination", "Abomination"}, --Dk Raise Abomination
  {123904, 24, nil,  "Small_Offenisive_CDs", "Xuen", "Xuen"}, --WW Xuen Pet Summmon
  {34433, 15, nil,  "Small_Offenisive_CDs", "Shadowfiend", "Shadowfiend"}, --Disc Pet Summmon
  {123040, 15, nil,  "Small_Offenisive_CDs", "Mindbender", "Mindbender"}, --Disc Pet Summmon
+ {1122, 30, nil,  "Ranged_Major_OffenisiveCDs", "Infernals", "Infernals"}, --Warlock Infernals
  --{spellId, duration. prio, prioArena, name, nameArena} --must have both names
 }
 
@@ -296,7 +298,7 @@ local spellsArenaTable = {
 	{203123 , "CC_Arena"}, --Maim
 	{202244 , "CC_Arena"}, --Overrun
 	{33786 , "CC_Arena"}, --Cyclone
-	{209753 , "CC_Arena"}, --Cyclone
+	{99 , "CC_Arena"}, --Incapacitating Roar
 	{2637 , "CC_Arena"}, --Hibernate
 	{81261 , "Silence_Arena"}, --Solar Beam
 	{5215 , "Special_High"}, --Prowl
@@ -448,7 +450,7 @@ local spellsArenaTable = {
   {213602 , "Big_Defensive_CDs"}, --Greater Fade
   {47788 , "Big_Defensive_CDs"}, --Guardian Spirit
   {232707 , "Big_Defensive_CDs"}, --Ray of Hope
-	{199845, "Player_Party_OffensiveCDs"}, --Psyflay PvP Talent 50% MS)
+	{199845, "Player_Party_OffensiveCDs"}, --Psyflay (PvP Talent 50% MS)
   {197871 , "Small_Offenisive_CDs"}, --Dark Archangel
   {194249 , "Small_Offenisive_CDs"}, --Voidform
   {247776 , "Small_Offenisive_CDs"}, --Mind Trauma
@@ -482,6 +484,31 @@ local spellsArenaTable = {
 	{11327 , "Special_High"}, --Vanish
 	{115191 , "Special_High"}, --Stealth
 	{1784 , "Special_High"}, --Stealth
+  {198222 , "Roots_90_Snares"}, --System Shock
+  {207777 , "Disarms"}, --Dismantle
+  {197091 , "Disarms"}, --Neurotoxin
+  {212150 , "Disarms"}, --Cheap Tricks
+  {13750 , "Melee_Major_OffenisiveCDs"}, --Adrenaline Rush
+  {198529 , "Melee_Major_OffenisiveCDs"}, --Plunder Armor
+  {121471 , "Melee_Major_OffenisiveCDs"}, --Shadow Blades
+  {185422 , "Melee_Major_OffenisiveCDs"}, --Shadow Dance
+  {79140, "Player_Party_OffensiveCDs"}, --Vendetta
+  {31224 , "Big_Defensive_CDs"}, --Cloak of Shadows
+  {5277, "Big_Defensive_CDs"}, --Evasion
+  {199027, "Big_Defensive_CDs"}, --Veil of Midnight
+  {51690 , "Small_Offenisive_CDs"}, --Killing Spree
+  {57934 , "Small_Offenisive_CDs"}, --Tricks of the Trade (PvP)
+  {193359 , "Small_Offenisive_CDs"}, --True Bearing
+  {13877 , "Small_Offenisive_CDs"}, --Blade Flurry
+  {115192 , "Small_Offenisive_CDs"}, --Subterfuge
+  {185311, "Small_Defensive_CDs"}, --Crimson Vial
+  {1966, "Small_Defensive_CDs"}, --Fient
+  {197003 , "Freedoms_Speed"}, --Maneuverability
+  {2983 , "Freedoms_Speed"}, --Sprint
+  {36554 , "Freedoms_Speed"}, --Shadowstep
+  {269513 , "Freedoms_Speed"}, --Death from Above
+  {185763 , "Snares_Ranged_Spamable"}, --Pistol Shot
+  {3409 , "Snares_Ranged_Spamable"}, --Crippling Poison
 
 	----------------
 	-- Warlock
@@ -497,6 +524,18 @@ local spellsArenaTable = {
 	{115268 , "CC_Arena"}, --Mesmerize
 	{710 , "CC_Arena"}, --Bansih
 	{196364 , "Silence_Arena"}, --Unstable Affliction
+  {221705 , "Special_High"}, --Casting Circle
+  {104773, "Special_High"}, --Unending Resolve
+  {113860, "Ranged_Major_OffenisiveCDs"}, --Dark Soul: Instability
+  {113858, "Ranged_Major_OffenisiveCDs"}, --Dark Soul: Misery
+  {212295 , "Big_Defensive_CDs"}, --Nether Ward
+  {200587, "Player_Party_OffensiveCDs"}, --Fel Fissure (PvP Talent 50% MS)
+  {1714 , "Small_Offenisive_CDs"}, --Curse of Tongues
+  {702 , "Small_Offenisive_CDs"}, --Curse of Weakness
+  {199954 , "Small_Offenisive_CDs"}, --Curse of Fragility
+  {80240 , "Small_Offenisive_CDs"}, --Havoc
+  {196099, "Special_Low"}, --Grimoire of Sacrifice
+  {285933, "Special_Low"}, --Demon Armor
 
 	----------------
 	-- Warrior
@@ -539,59 +578,308 @@ local spellsTable = {
 
 {"PVP", --TAB
 
-	{66 , "Stealth"}, --Invis
-	{32612 , "Stealth"}, --Invis
-	{110960 , "Stealth"}, --Invis
-	{198158 , "Stealth"}, -- Mass Invis
-	{5215 , "Stealth"}, --Prowl
+  {3355   , "CC"},				-- Freezing Trap
+  {203337 , "CC"},				-- Freezing Trap (Diamond Ice - pvp honor talent)
+  {24394  , "CC"},				-- Intimidation
+  {213691 , "CC"},				-- Scatter Shot (pvp honor talent)
 
-	{1784 , "Stealth"}, --Stealth
-	{115191 , "Stealth"}, --Stealth
-	{11327 , "Stealth"}, --Vanish
-	{207736 , "Stealth"},	-- Shadowy Duel
+  {"Hex"  , "CC"},				-- Hex
+  {51514  , "CC"},				-- Hex
+  {210873 , "CC"},				-- Hex (compy)
+  {211010 , "CC"},				-- Hex (snake)
+  {211015 , "CC"},				-- Hex (cockroach)
+  {211004 , "CC"},				-- Hex (spider)
+  {196942 , "CC"},				-- Hex (Voodoo Totem)
+  {269352 , "CC"},				-- Hex (skeletal hatchling)
+  {277778 , "CC"},				-- Hex (zandalari Tendonripper)
+  {277784 , "CC"},				-- Hex (wicker mongrel)
+  {77505  , "CC"},				-- Earthquake
+  {118905 , "CC"},				-- Static Charge (Capacitor Totem)
+  {305485 , "CC"},				-- Lightning Lasso
+  {197214 , "CC"},				-- Sundering
+  {118345 , "CC"},				-- Pulverize (Shaman Primal Earth Elemental)
 
-	{199483 , "Stealth"}, --Camo
-	{5384 , "Stealth"}, --Fiegn Death
+  {108194 , "CC"},				-- Asphyxiate
+  {221562 , "CC"},				-- Asphyxiate
+  {207167 , "CC"},				-- Blinding Sleet
+  {287254 , "CC"},				-- Dead of Winter (pvp talent)
+  {210141 , "CC"},				-- Zombie Explosion (Reanimation PvP Talent)
+  {91800  , "CC"},				-- Gnaw
+  {91797  , "CC"},				-- Monstrous Blow (Dark Transformation)
 
-	{58984 , "Stealth"}, --Meld
+  {33786  , "CC"},				-- Cyclone
+  {5211   , "CC"},				-- Mighty Bash
+  {163505 , "CC"},				-- Rake
+  {203123 , "CC"},				-- Maim
+  {202244 , "CC"},				-- Overrun (pvp honor talent)
+  {99     , "CC"},			-- Incapacitating Roar
+  {2637   , "CC"},				-- Hibernate
+
+  {"Polymorph"   , "CC"},	-- Polymorph
+  {118    , "CC"},				-- Polymorph
+  {61305  , "CC"},				-- Polymorph: Black Cat
+  {28272  , "CC"},				-- Polymorph: Pig
+  {61721  , "CC"},				-- Polymorph: Rabbit
+  {61780  , "CC"},				-- Polymorph: Turkey
+  {28271  , "CC"},				-- Polymorph: Turtle
+  {161353 , "CC"},				-- Polymorph: Polar bear cub
+  {126819 , "CC"},				-- Polymorph: Porcupine
+  {161354 , "CC"},				-- Polymorph: Monkey
+  {61025  , "CC"},				-- Polymorph: Serpent
+  {161355 , "CC"},				-- Polymorph: Penguin
+  {277787 , "CC"},				-- Polymorph: Direhorn
+  {277792 , "CC"},				-- Polymorph: Bumblebee
+  {161372 , "CC"},				-- Polymorph: Peacock
+  {82691  , "CC"},				-- Ring of Frost
+  {140376 , "CC"},				-- Ring of Frost
+  {31661  , "CC"},				-- Dragon's Breath
+
+  {119381 , "CC"},				-- Leg Sweep
+  {115078 , "CC"},				-- Paralysis
+	{198909 , "CC"},				-- Song of Chi-Ji
+  {202274 , "CC"},				-- Incendiary Brew (honor talent)
+	{202346 , "CC"},				-- Double Barrel (honor talent)
+
+  {853    , "CC"},				-- Hammer of Justice
+  {105421 , "CC"},				-- Blinding Light
+  {20066  , "CC"},				-- Repentance
+
+  {605    , "CC"},				-- Dominate Mind
+	{8122   , "CC"},				-- Psychic Scream
+	{9484   , "CC"},				-- Shackle Undead
+	{64044  , "CC"},				-- Psychic Horror
+	{87204  , "CC"},				-- Sin and Punishment
+  {226943 , "CC"},				-- Mind Bomb
+  {205369 , "CC"},				-- Mind Bomb
+  {200196 , "CC"},				-- Holy Word: Chastise
+  {200200 , "CC"},				-- Holy Word: Chastise (talent)
+
+  {2094   , "CC"},				-- Blind
+  {1833   , "CC"},				-- Cheap Shot
+  {1776   , "CC"},				-- Gouge
+  {408    , "CC"},				-- Kidney Shot
+  {6770   , "CC"},				-- Sap
+  {199804 , "CC"},				-- Between the eyes
+
+	{118699 , "CC"},				-- Fear
+	{6789   , "CC"},				-- Mortal Coil
+	{30283  , "CC"},				-- Shadowfury
+  {710    , "CC"},				-- Banish
+	{22703  , "CC"},				-- Infernal Awakening
+  {213688 , "CC"},		  	-- Fel Cleave (Fel Lord - PvP Talent)
+  {89766  , "CC"},		  	-- Axe Toss (Felguard/Wrathguard)
+  {115268 , "CC"},			  -- Mesmerize (Shivarra)
+  {6358   , "CC"},		  	-- Seduction (Succubus)
+  {261589  , "CC"},			  -- Seduction (Succubus)
+  {171017 , "CC"},			  -- Meteor Strike (infernal)
+  {171018 , "CC"},			  -- Meteor Strike (abisal)
+
+	{5246   , "CC"},				-- Intimidating Shout (aoe)
+	{132169 , "CC"},				-- Storm Bolt
+	{132168 , "CC"},				-- Shockwave
+  {199085 , "CC"},				-- Warpath
+
+  {179057 , "CC"},				-- Chaos Nova
+	{211881 , "CC"},				-- Fel Eruption
+  {217832 , "CC"},				-- Imprison
+  {221527 , "CC"},				-- Imprison (pvp talent)
+	{200166 , "CC"},				-- Metamorfosis stun
+	{207685 , "CC"},				-- Sigil of Misery
+  {205630 , "CC"},				-- Illidan's Grasp
+  {208618 , "CC"},				-- Illidan's Grasp (throw stun)
+	{213491 , "CC"},				-- Demonic Trample Stun
+
+  {20549  , "CC"},				-- War Stomp (tauren racial)
+  {107079 , "CC"},				-- Quaking Palm (pandaren racial)
+  {255723 , "CC"},				-- Bull Rush (highmountain tauren racial)
+  {287712 , "CC"},				-- Haymaker (kul tiran racial)
+
+  {202914 , "Silence"},			-- Spider Sting (pvp honor talent) --no silence}, this its the previous effect
+  {202933 , "Silence"},			-- Spider Sting	(pvp honor talent) --this its the silence effect
+	{47476  , "Silence"},			-- Strangulate
+	{81261  , "Silence"},			-- Solar Beam
+	{217824 , "Silence"},			-- Shield of Virtue (pvp honor talent)
+	{15487  , "Silence"},			-- Silence
+  {1330   , "Silence"},			-- Garrote - Silence
+  {196364 , "Silence"},			-- Unstable Affliction
+	{204490 , "Silence"},			-- Sigil of Silence
+
+  {212638 , "RootPhyiscal_Special"},				-- Tracker's Net (pvp honor talent) -- Also -80% hit chance melee & range physical (CC and Root category)
+
+	{117526 , "Root"},				-- Binding Shot
+  {190927 , "Root"},				-- Harpoon
+	{162480 , "Root"},				-- Steel Trap
+  {53148  , "Root"},				-- Charge (tenacity ability)
+  {64695  , "Root"},				-- Earthgrab (Earthgrab Totem)
+  {285515 , "Root"},	      -- Surge of Power
+  {233395 , "Root"},				-- Deathchill (pvp talent)
+  {204085 , "Root"},				-- Deathchill (pvp talent)
+  {91807  , "Root"},				-- Shambling Rush (Dark Transformation)
+  {339    , "Root"},				-- Entangling Roots
+  {45334  , "Root"},				-- Immobilized (Wild Charge - Bear)
+  {102359 , "Root"},				-- Mass Entanglement
+  {122    , "Root"},				-- Frost Nova
+  {198121 , "Root"},				-- Frostbite (pvp talent)
+  {157997 , "Root"},				-- Ice Nova
+  {228600 , "Root"},				-- Glacial Spike
+  {33395  , "Root"},				-- Freeze
+	{116706 , "Root"},				-- Disable
+	{105771 , "Root"},				-- Charge (root)
+	{199042 , "Root"},				-- Thunderstruck
+
+  {642    , "ImmunePlayer"},			-- Divine Shield
+	{47585  , "ImmunePlayer"},			-- Dispersion
+  {27827  , "ImmunePlayer"},			-- Spirit of Redemption
+  {290114 , "ImmunePlayer"},			-- Spirit of Redemption	(pvp honor talent)
+  {215769 , "ImmunePlayer"},			-- Spirit of Redemption	(pvp honor talent)
+  {213602 , "ImmunePlayer"},			-- Greater Fade (pvp honor talent - protects vs spells. melee}, ranged attacks + 50% speed)
+
+	{202797 , "Disarm_Warning"},   -- Viper Sting Healing Reduction
+	{77606  , "Disarm_Warning"},   -- Dark Simulacrum
+	{197091 , "Disarm_Warning"},   -- Neurotoxin
+	{206649 , "Disarm_Warning"},	 -- Eye of Leotheras (no silence}, 4% dmg and duration reset for spell casted)
+
+  {117405 , "CC_Warning"},      -- Binding Shot
+  {191241 , "CC_Warning"},      -- Sticky Bomb
+  {182387 , "CC_Warning"},      -- Earthquake
+
+  {199483 , "Stealth"},     -- Camo
+  {5384   , "Stealth"},     -- Fiegn Death
+  {5215   , "Stealth"},     -- Prowl
+  {66     , "Stealth"},     -- Invis
+  {32612  , "Stealth"},     -- Invis
+  {110960 , "Stealth"},     -- Greater Invis
+  {198158 , "Stealth"},     -- Mass Invis
+  {1784   , "Stealth"},     -- Stealth
+  {115191 , "Stealth"},     -- Stealth
+  {11327  , "Stealth"},     -- Vanish
+  {207736 , "Stealth"},	    -- Shadowy Duel
+  {114018 , "Stealth"},	    -- Shroud of Concealment
+  {58984  , "Stealth"},     -- Meld
+
+  {228050 , "Immune"},			-- Divine Shield (Guardian of the Forgotten Queen)
+  {1022   , "Immune"},	    -- Hand of Protection
+  {204018 , "Immune"},	   	-- Blessing of Spellwarding
+  {199448 , "Immune"},			-- Blessing of Sacrifice (Ultimate Sacrifice pvp talent) (not immune}, 100% damage transfered to paladin)
+
+--  "ImmuneSpell",
+--	"ImmunePhysical",
+
+  {289655 , "AuraMastery_Cast_Auras"},			-- Holy Word: Concentration
+
+	{127797 , "ROP_Vortex"},				-- Ursol's Vortex
+	{102793 , "ROP_Vortex"},				-- Ursol's Vortex
+
+	{209749 , "Disarm"},			-- Faerie Swarm (pvp honor talent)
+	{233759 , "Disarm"},			-- Grapple Weapon
+	{207777 , "Disarm"},			-- Dismantle
+	--{197091 , "Disarm"},			-- Neurotoxin
+  {236236 , "Disarm"},			-- Disarm (pvp honor talent - protection)
+  {236077 , "Disarm"},			-- Disarm (pvp honor talent)S
+
+  {247777 , "Haste_Reduction"},			-- Mind Trauma
+  {199890 , "Haste_Reduction"},			-- Curse of Tongues
+
+	{236273 , "Dmg_Hit_Reduction"},		-- Duel
+  {199892 , "Dmg_Hit_Reduction"},   -- Curse of Weakness
+  {200947 , "Dmg_Hit_Reduction"},   -- Encraching Vines
+  {202900 , "Dmg_Hit_Reduction"},   -- Scorpid Sting
+  {203268 , "Dmg_Hit_Reduction"},   -- Sticky Tar
+	{212150 , "Dmg_Hit_Reduction"},		-- Cheap Tricks (pvp honor talent) (-75%  melee & range physical hit chance)
+
+  --Interrupt
+
+  {204361 , "AOE_DMG_Modifiers"},				-- Bloodlust (Shamanism pvp talent)
+  {204362 , "AOE_DMG_Modifiers"},				-- Heroism (Shamanism pvp talent
+  {208963 , "AOE_DMG_Modifiers"},				-- Skyfury Totem (Shamanism pvp talent
+  {197871 , "AOE_DMG_Modifiers"},				-- Dark Archangel
+  {57934  , "AOE_DMG_Modifiers"},				-- Tricks of the Trade
+
+  {212183 , "Friendly_Smoke_Bomb"},			-- Smoke Bomb
+
+	{8178   , "AOE_Spell_Refections"},		-- Grounding Totem Effect (Grounding Totem)
+  {213915 , "AOE_Spell_Refections"},		-- Mass Spell Reflection
+
+  {212522 , "Speed_Freedoms"},		-- Wraith Walk
+  {48265  , "Speed_Freedoms"},		-- Death's Advance
+  {108843 , "Speed_Freedoms"},		-- Blazing Speed
+  {269513 , "Speed_Freedoms"},		-- Death from Above
+  {197003 , "Speed_Freedoms"},		-- Maneuverability
+  {205629 , "Speed_Freedoms"},		-- Demonic Trample
+
+  {54216 , "Freedoms"},		-- Master's Call
+  {118922 , "Freedoms"},		-- Posthaste
+  {186257 , "Freedoms"},		-- Aspect of the Cheetah
+  {192082 , "Freedoms"},		-- Wind Rush
+  {58875 , "Freedoms"},		-- Spirit Walk
+  {77764 , "Freedoms"},		-- Stampeding Roar
+  {1850 , "Freedoms"},		-- Dash
+  {252216 , "Freedoms"},		-- Tiger Dash
+  {201447 , "Freedoms"},		-- Ride the Wind
+  {116841 , "Freedoms"},		-- Tiger's Lust
+  {1044 , "Freedoms"},		-- Blessing of Freedom
+  {221886 , "Freedoms"},		-- Divine Steed
+  {36554 , "Freedoms"},		-- Shadowstep
+  {2983 , "Freedoms"},		-- Sprint
+  {68992 , "Freedoms"},		-- Darkflight
+
+  {6940 , "Friendly_Defensives"},		-- Blessing of Sacrifice
+  {147833 , "Friendly_Defensives"},		-- Intervene
+  {213871 , "Friendly_Defensives"},		-- Bodyguard
+
+  {26166, "Mana_Regen"},		-- Innervate
+  {64901, "Mana_Regen"},		-- Symbol of Hope
+
+  --{213644, "CC_Reduction"},		-- Nimble Brew
+  {210256, "CC_Reduction"},		-- Blessing of Sanctuary
+  {213610, "CC_Reduction"},		-- Holy Ward
+  {236321, "CC_Reduction"},		-- War Banner
+
+  {200183, "Personal_Offensives"},		-- Apotheosis
+  {319952, "Personal_Offensives"},		-- Surrender to Madness
+  {117679, "Personal_Offensives"},		-- Incarnation
+
+  {22842, "Peronsal_Defensives"},		-- Frenzied Regeneration
+  {22812, "Peronsal_Defensives"},		-- Barkskin
+
+  {108839, "Movable_Cast_Auras"},		-- Ice Floes
+
+  --"Other", --
+	--"PvE", --PVE only
+
+  {201787, "SnareSpecial"},		-- Heavy-Handed Strikes
+  {199845, "SnareSpecial"},		-- Psyflay (pvp honor talent)
+  {198222, "SnareSpecial"},		-- System Shock (pvp honor talent) (90% slow)
+  {200587, "SnareSpecial"},		-- Fel Fissure
+
+  {45524, "SnarePhysical70"},		-- Chains of Ice
+  {273977, "SnarePhysical70"},		-- Grip of the Dead
+  {157981, "SnarePhysical70"},		-- Blast Wave
+  {248744, "SnarePhysical70"},		-- Shiv
+  {198813, "SnarePhysical70"},		-- Vengeful Retreat
+  {247121, "SnarePhysical70"},		-- Metamorphosis
+
 
 
 	----------------
 	-- Demonhunter
 	----------------
-	{179057 , "CC"},				-- Chaos Nova
-	{205630 , "CC"},				-- Illidan's Grasp
-	{208618 , "CC"},				-- Illidan's Grasp (throw stun)
-	{217832 , "CC"},				-- Imprison
-	{221527 , "CC"},				-- Imprison (pvp talent)
+
 	{204843 , "Snare"},				-- Sigil of Chains
-	{207685 , "CC"},				-- Sigil of Misery
-	{204490 , "Silence"},			-- Sigil of Silence
-	{211881 , "CC"},				-- Fel Eruption
-	{200166 , "CC"},				-- Metamorfosis stun
-	{247121 , "Snare"},				-- Metamorfosis snare
-	{196555 , "Immune"},			-- Netherwalk
-	{188499 , "ImmunePhysical"},	-- Blade Dance (dodge chance increased by 100%)
-	{213491 , "CC"},				-- Demonic Trample Stun
-	{206649 , "Silence"},			-- Eye of Leotheras (no silence}, 4% dmg and duration reset for spell casted)
+	{196555 , "Other"},			  -- Netherwalk
+	{188499 , "Other"},	      -- Blade Dance (dodge chance increased by 100%)
 	{232538 , "Snare"},				-- Rain of Chaos
 	{213405 , "Snare"},				-- Master of the Glaive
 	{210003 , "Snare"},				-- Razor Spikes
-	{198813 , "Snare"},				-- Vengeful Retreat
 	{198589 , "Other"},				-- Blur
 	{209426 , "Other"},				-- Darkness
 
 	----------------
 	-- Death Knight
 	----------------
-	{108194 , "CC"},				-- Asphyxiate
-	{221562 , "CC"},				-- Asphyxiate
-	{47476  , "Silence"},			-- Strangulate
-	{96294  , "Root"},				-- Chains of Ice (Chilblains)
-	{45524  , "Snare"},				-- Chains of Ice
+
 	{115018 , "Other"},				-- Desecrated Ground (Immune to CC)
-	{207319 , "Immune"},			-- Corpse Shield (not immune}, 90% damage redirected to pet)
-	{48707  , "ImmuneSpell"},		-- Anti-Magic Shell
+	{48707  , "Other"},	     	-- Anti-Magic Shell
 	{51271  , "Other"},				-- Pillar of Frost
 	{48792  , "Other"},				-- Icebound Fortitude
 	{287081 , "Other"},				-- Lichborne
@@ -599,17 +887,7 @@ local spellsTable = {
 	{194679 , "Other"},				-- Rune Tap
 	{152279 , "Other"},				-- Breath of Sindragosa
 	{207289 , "Other"},				-- Unholy Frenzy
-	{145629 , "ImmuneSpell"},		-- Anti-Magic Zone (not immune}, 60% damage reduction)
-	{207167 , "CC"},				-- Blinding Sleet
-	{207165 , "CC"},				-- Abomination's Might
-	{207171 , "Root"},				-- Winter is Coming
-	{287254 , "CC"},				-- Dead of Winter (pvp talent)
-	{210141 , "CC"},				-- Zombie Explosion (Reanimation PvP Talent)
-	{206961 , "CC"},				-- Tremble Before Me
-	{248406 , "CC"},				-- Cold Heart (legendary)
-	{233395 , "Root"},				-- Deathchill (pvp talent)
-	{204085 , "Root"},				-- Deathchill (pvp talent)
-	{273977 , "Snare"},				-- Grip of the Dead
+	{145629 , "Other"},		    -- Anti-Magic Zone (not immune}, 60% damage reduction)
 	{206930 , "Snare"},				-- Heart Strike
 	{228645 , "Snare"},				-- Heart Strike
 	{211831 , "Snare"},				-- Abomination's Might (slow)
@@ -622,98 +900,49 @@ local spellsTable = {
 	{191719 , "Snare"},				-- Gravitational Pull (artifact trait)
 	{204206 , "Snare"},				-- Chill Streak (pvp honor talent)
 
-	  ----------------
-	  -- Death Knight Ghoul
-	  ----------------
-	  {212332 , "CC"},				-- Smash
-	  {212336 , "CC"},				-- Smash
-	  {212337 , "CC"},				-- Powerful Smash
-	  {47481  , "CC"},				-- Gnaw
-	  {91800  , "CC"},				-- Gnaw
-	  {91797  , "CC"},				-- Monstrous Blow (Dark Transformation)
-	  {91807  , "Root"},				-- Shambling Rush (Dark Transformation)
-	  {212540 , "Root"},				-- Flesh Hook (Abomination)
-
 	----------------
 	-- Druid
 	----------------
-	{33786  , "CC"},				-- Cyclone
-	{209753 , "CC"},				-- Cyclone
-	{99     , "CC"},				-- Incapacitating Roar
-	{236748 , "CC"},				-- Intimidating Roar
-	{163505 , "CC"},				-- Rake
-	{22570  , "CC"},				-- Maim
-	{203123 , "CC"},				-- Maim
-	{203126 , "CC"},				-- Maim (pvp honor talent)
-	{236025 , "CC"},				-- Enraged Maim (pvp honor talent)
-	{5211   , "CC"},				-- Mighty Bash
-	{2637   , "CC"},				-- Hibernate
-	{81261  , "Silence"},			-- Solar Beam
-	{339    , "Root"},				-- Entangling Roots
-	{235963 , "CC"},				-- Entangling Roots (Earthen Grasp - feral pvp talent) -- Also -80% hit chance (CC and Root category)
-	{45334  , "Root"},				-- Immobilized (Wild Charge - Bear)
-	{102359 , "Root"},				-- Mass Entanglement
-	{102793 , "Snare"},				-- Ursol's Vortex
+
 	{50259  , "Snare"},				-- Dazed (Wild Charge - Cat)
 	{58180  , "Snare"},				-- Infected Wounds
 	{61391  , "Snare"},				-- Typhoon
-	{127797 , "Snare"},				-- Ursol's Vortex
 	{232559 , "Snare"},				-- Thorns (pvp honor talent)
-	{61336  , "Immune"},			-- Survival Instincts (not immune}, damage taken reduced by 50%)
+	{61336  , "Other"},			  -- Survival Instincts (not immune}, damage taken reduced by 50%)
 	{305497 , "Other"},				-- Thorns (pvp honor talent)
 	{102543 , "Other"},				-- Incarnation: King of the Jungle
 	{106951 , "Other"},				-- Berserk
 	{102558 , "Other"},				-- Incarnation: Guardian of Ursoc
 	{102560 , "Other"},				-- Incarnation: Chosen of Elune
-	{117679 , "Other"},				-- Incarnation: Tree of Life
 	{236696 , "Other"},				-- Thorns
 	{29166  , "Other"},				-- Innervate
-	{22812  , "Other"},				-- Barkskin
 	{102342 , "Other"},				-- Ironbark
-	{202244 , "CC"},				-- Overrun (pvp honor talent)
-	{209749 , "Disarm"},			-- Faerie Swarm (pvp honor talent)
 
 	----------------
 	-- Hunter
 	----------------
-	{117526 , "Root"},				-- Binding Shot
-	{3355   , "CC"},				-- Freezing Trap
-	{13809  , "CC"},				-- Ice Trap 1
 	{195645 , "Snare"},				-- Wing Clip
-	{19386  , "CC"},				-- Wyvern Sting
-	{128405 , "Root"},				-- Narrow Escape
-	{201158 , "Root"},				-- Super Sticky Tar (root)
 	{111735 , "Snare"},				-- Tar
 	{135299 , "Snare"},				-- Tar Trap
 	{5116   , "Snare"},				-- Concussive Shot
 	{194279 , "Snare"},				-- Caltrops
 	{206755 , "Snare"},				-- Ranger's Net (snare)
 	{236699 , "Snare"},				-- Super Sticky Tar (slow)
-	{213691 , "CC"},				-- Scatter Shot (pvp honor talent)
-	{186265 , "Immune"},			-- Deterrence (aspect of the turtle)
-	{19574  , "ImmuneSpell"},		-- Bestial Wrath (only if The Beast Within (212704) it's active) (immune to some CC's)
-	{190927 , "Root"},				-- Harpoon
-	{212331 , "Root"},				-- Harpoon
-	{212353 , "Root"},				-- Harpoon
-	{162480 , "Root"},				-- Steel Trap
-	{200108 , "Root"},				-- Ranger's Net
-	{212638 , "CC"},				-- Tracker's Net (pvp honor talent) -- Also -80% hit chance melee & range physical (CC and Root category)
+	{186265 , "Other"},			  -- Deterrence (aspect of the turtle)
+	{19574  , "Other"},		    -- Bestial Wrath (only if The Beast Within (212704) it's active) (immune to some CC's)
 	{186387 , "Snare"},				-- Bursting Shot
 	{224729 , "Snare"},				-- Bursting Shot
 	{266779 , "Other"},				-- Coordinated Assault
 	{193530 , "Other"},				-- Aspect of the Wild
 	{186289 , "Other"},				-- Aspect of the Eagle
 	{288613 , "Other"},				-- Trueshot
-	{203337 , "CC"},				-- Freezing Trap (Diamond Ice - pvp honor talent)
-	{202748 , "Immune"},			-- Survival Tactics (pvp honor talent) (not immune}, 99% damage reduction)
-	{248519 , "ImmuneSpell"},		-- Interlope (pvp honor talent)
-	--{202914 , "Silence"},			-- Spider Sting (pvp honor talent) --no silence}, this its the previous effect
-	{202933 , "Silence"},			-- Spider Sting	(pvp honor talent) --this its the silence effect
+	{202748 , "Other"},			  -- Survival Tactics (pvp honor talent) (not immune}, 99% damage reduction)
+	{248519 , "Other"},	    	-- Interlope (pvp honor talent)
 
 	  ----------------
 	  -- Hunter Pets
 	  ----------------
-	  {24394  , "CC"},				-- Intimidation
+
 	  {50433  , "Snare"},				-- Ankle Crack (Crocolisk)
 	  {54644  , "Snare"},				-- Frost Breath (Chimaera)
 	  {35346  , "Snare"},				-- Warp Time (Warp Stalker)
@@ -727,46 +956,25 @@ local spellsTable = {
 	  {263423 , "Snare"},				-- Lock Jaw (Dog)
 	  {50285  , "Snare"},				-- Dust Cloud (Tallstrider)
 	  {263840 , "Snare"},				-- Furious Bite (Wolf)
-	  {54216  , "Other"},				-- Master's Call (root and snare immune only)
-	  {53148  , "Root"},				-- Charge (tenacity ability)
-	  {26064  , "Immune"},			-- Shell Shield (damage taken reduced 50%) (Turtle)
-	  {90339  , "Immune"},			-- Harden Carapace (damage taken reduced 50%) (Beetle)
-	  {160063 , "Immune"},			-- Solid Shell (damage taken reduced 50%) (Shale Spider)
-	  {264022 , "Immune"},			-- Niuzao's Fortitude (damage taken reduced 60%) (Oxen)
-	  {263920 , "Immune"},			-- Gruff (damage taken reduced 60%) (Goat)
-	  {263867 , "Immune"},			-- Obsidian Skin (damage taken reduced 50%) (Core Hound)
-	  {279410 , "Immune"},			-- Bulwark (damage taken reduced 50%) (Krolusk)
-	  {263938 , "Immune"},			-- Silverback (damage taken reduced 60%) (Gorilla)
-	  {263869 , "Immune"},			-- Bristle (damage taken reduced 50%) (Boar)
-	  {263868 , "Immune"},			-- Defense Matrix (damage taken reduced 50%) (Mechanical)
-	  {263926 , "Immune"},			-- Thick Fur (damage taken reduced 60%) (Bear)
-	  {263865 , "Immune"},			-- Scale Shield (damage taken reduced 50%) (Scalehide)
-	  {279400 , "Immune"},			-- Ancient Hide (damage taken reduced 60%) (Pterrordax)
-	  {160058 , "Immune"},			-- Thick Hide (damage taken reduced 60%) (Clefthoof)
+	  {26064  , "Other"},			-- Shell Shield (damage taken reduced 50%) (Turtle)
+	  {90339  , "Other"},			-- Harden Carapace (damage taken reduced 50%) (Beetle)
+	  {160063 , "Other"},			-- Solid Shell (damage taken reduced 50%) (Shale Spider)
+	  {264022 , "Other"},			-- Niuzao's Fortitude (damage taken reduced 60%) (Oxen)
+	  {263920 , "Other"},			-- Gruff (damage taken reduced 60%) (Goat)
+	  {263867 , "Other"},			-- Obsidian Skin (damage taken reduced 50%) (Core Hound)
+	  {279410 , "Other"},			-- Bulwark (damage taken reduced 50%) (Krolusk)
+	  {263938 , "Other"},			-- Silverback (damage taken reduced 60%) (Gorilla)
+	  {263869 , "Other"},			-- Bristle (damage taken reduced 50%) (Boar)
+	  {263868 , "Other"},			-- Defense Matrix (damage taken reduced 50%) (Mechanical)
+	  {263926 , "Other"},			-- Thick Fur (damage taken reduced 60%) (Bear)
+	  {263865 , "Other"},			-- Scale Shield (damage taken reduced 50%) (Scalehide)
+	  {279400 , "Other"},			-- Ancient Hide (damage taken reduced 60%) (Pterrordax)
+	  {160058 , "Other"},			-- Thick Hide (damage taken reduced 60%) (Clefthoof)
 
 	----------------
 	-- Mage
 	----------------
-	{44572  , "CC"},				-- Deep Freeze
-	{31661  , "CC"},				-- Dragon's Breath
-	{118    , "CC"},				-- Polymorph
-	{61305  , "CC"},				-- Polymorph: Black Cat
-	{28272  , "CC"},				-- Polymorph: Pig
-	{61721  , "CC"},				-- Polymorph: Rabbit
-	{61780  , "CC"},				-- Polymorph: Turkey
-	{28271  , "CC"},				-- Polymorph: Turtle
-	{161353 , "CC"},				-- Polymorph: Polar bear cub
-	{126819 , "CC"},				-- Polymorph: Porcupine
-	{161354 , "CC"},				-- Polymorph: Monkey
-	{61025  , "CC"},				-- Polymorph: Serpent
-	{161355 , "CC"},				-- Polymorph: Penguin
-	{277787 , "CC"},				-- Polymorph: Direhorn
-	{277792 , "CC"},				-- Polymorph: Bumblebee
-	{161372 , "CC"},				-- Polymorph: Peacock
-	{82691  , "CC"},				-- Ring of Frost
-	{140376 , "CC"},				-- Ring of Frost
-	{122    , "Root"},				-- Frost Nova
-	{111340 , "Root"},				-- Ice Ward
+
 	{120    , "Snare"},				-- Cone of Cold
 	{116    , "Snare"},				-- Frostbolt
 	{44614  , "Snare"},				-- Frostfire Bolt
@@ -778,50 +986,30 @@ local spellsTable = {
 	{135029 , "Snare"},				-- Water Jet
 	{59638  , "Snare"},				-- Frostbolt (Mirror Images)
 	{228354 , "Snare"},				-- Flurry
-	{157981 , "Snare"},				-- Blast Wave
 	{2120   , "Snare"},				-- Flamestrike
 	{236299 , "Snare"},				-- Chrono Shift
-	{45438  , "Immune"},			-- Ice Block
-	{198065 , "ImmuneSpell"},		-- Prismatic Cloak (pvp talent) (not immune}, 50% magic damage reduction)
-	{198121 , "Root"},				-- Frostbite (pvp talent)
-	{220107 , "Root"},				-- Frostbite
-	{157997 , "Root"},				-- Ice Nova
-	{228600 , "Root"},				-- Glacial Spike
+	{45438  , "Other"},			-- Ice Block
+	{198065 , "Other"},	-- Prismatic Cloak (pvp talent) (not immune}, 50% magic damage reduction)
 	{110959 , "Other"},				-- Greater Invisibility
 	{198144 , "Other"},				-- Ice form (stun/knockback immune)
 	{12042  , "Other"},				-- Arcane Power
 	{190319 , "Other"},				-- Combustion
 	{12472  , "Other"},				-- Icy Veins
-	{198111 , "Immune"},			-- Temporal Shield (not immune}, heals all damage taken after 4 sec)
-
-	  ----------------
-	  -- Mage Water Elemental
-	  ----------------
-	  {33395  , "Root"},				-- Freeze
+	{198111 , "Other"},			-- Temporal Shield (not immune}, heals all damage taken after 4 sec)
 
 	----------------
 	-- Monk
 	----------------
-	{123393 , "CC"},				-- Breath of Fire (Glyph of Breath of Fire)
-	{119392 , "CC"},				-- Charging Ox Wave
-	{119381 , "CC"},				-- Leg Sweep
-	{115078 , "CC"},				-- Paralysis
-	{116706 , "Root"},				-- Disable
+
 	{116095 , "Snare"},				-- Disable
 	{118585 , "Snare"},				-- Leer of the Ox
 	{123586 , "Snare"},				-- Flying Serpent Kick
 	{121253 , "Snare"},				-- Keg Smash
 	{196733 , "Snare"},				-- Special Delivery
-	{205320 , "Snare"},				-- Strike of the Windlord (artifact trait)
 	{125174 , "Immune"},			-- Touch of Karma
-	{122783 , "ImmuneSpell"},		-- Diffuse Magic (not immune}, 60% magic damage reduction)
-	{198909 , "CC"},				-- Song of Chi-Ji
-	{233759 , "Disarm"},			-- Grapple Weapon
-	{202274 , "CC"},				-- Incendiary Brew (honor talent)
-	{202346 , "CC"},				-- Double Barrel (honor talent)
-	{123407 , "Root"},				-- Spinning Fire Blossom (honor talent)
-	{115176 , "Immune"},			-- Zen Meditation (60% damage reduction)
-	{202248 , "ImmuneSpell"},		-- Guided Meditation (pvp honor talent) (redirect spells to monk)
+	{122783 , "Other"},     	-- Diffuse Magic (not immune}, 60% magic damage reduction)
+	{115176 , "Other"},		  	-- Zen Meditation (60% damage reduction)
+	{202248 , "Other"},	      -- Guided Meditation (pvp honor talent) (redirect spells to monk)
 	{201325 , "Other"},				-- Zen Moment
 	{122278 , "Other"},				-- Dampen Harm
 	{243435 , "Other"},				-- Fortifying Brew
@@ -835,128 +1023,61 @@ local spellsTable = {
 	{137639 , "Other"},				-- Storm}, Earth}, and Fire
 	{152173 , "Other"},				-- Serenity
 	{115080 , "Other"},				-- Touch of Death
-	{199387 , "Snare"},				-- Spirit Tether (artifact trait)
 
 	----------------
 	-- Paladin
 	----------------
-	{105421 , "CC"},				-- Blinding Light
-	{105593 , "CC"},				-- Fist of Justice
-	{853    , "CC"},				-- Hammer of Justice
-	{20066  , "CC"},				-- Repentance
-	{31935  , "Silence"},			-- Avenger's Shield
-	{187219 , "Silence"},			-- Avenger's Shield (pvp talent)
-	{199512 , "Silence"},			-- Avenger's Shield (unknow use)
-	{217824 , "Silence"},			-- Shield of Virtue (pvp honor talent)
+
 	{204242 , "Snare"},				-- Consecration (talent Consecrated Ground)
 	{183218 , "Snare"},				-- Hand of Hindrance
-	{642    , "Immune"},			-- Divine Shield
 	{31821  , "Other"},				-- Aura Mastery
-	{210256 , "Other"},				-- Blessing of Sanctuary
 	{210294 , "Other"},				-- Divine Favor
 	{105809 , "Other"},				-- Holy Avenger
-	{1044   , "Other"},				-- Blessing of Freedom
-	{1022   , "ImmunePhysical"},	-- Hand of Protection
-	{204018 , "ImmuneSpell"},		-- Blessing of Spellwarding
 	{31850  , "Other"},				-- Ardent Defender
 	{31884  , "Other"},				-- Avenging Wrath
 	{216331 , "Other"},				-- Avenging Crusader
 	{86659  , "Other"},				-- Guardian of Ancient Kings
-	{228050 , "Immune"},			-- Divine Shield (Guardian of the Forgotten Queen)
 	{205273 , "Snare"},				-- Wake of Ashes (artifact trait) (snare)
-	{205290 , "CC"},				-- Wake of Ashes (artifact trait) (stun)
 	{255937 , "Snare"},				-- Wake of Ashes (talent) (snare)
-	{255941 , "CC"},				-- Wake of Ashes (talent) (stun)
-	{199448 , "Immune"},			-- Blessing of Sacrifice (Ultimate Sacrifice pvp talent) (not immune}, 100% damage transfered to paladin)
 
 	----------------
 	-- Priest
 	----------------
-	{605    , "CC"},				-- Dominate Mind
-	 {81782    , "CC"},				-- Barrier
-	{64044  , "CC"},				-- Psychic Horror
-	{8122   , "CC"},				-- Psychic Scream
-	{9484   , "CC"},				-- Shackle Undead
-	{87204  , "CC"},				-- Sin and Punishment
-	{15487  , "Silence"},			-- Silence
-	{64058  , "Disarm"},			-- Psychic Horror
-	{87194  , "Root"},				-- Glyph of Mind Blast
-	{114404 , "Root"},				-- Void Tendril's Grasp
+
 	{15407  , "Snare"},				-- Mind Flay
-	{47585  , "Immune"},			-- Dispersion
 	{47788  , "Other"},				-- Guardian Spirit (prevent the target from dying)
-	{200183 , "Other"},				-- Apotheosis
 	{197268 , "Other"},				-- Ray of Hope
 	{33206  , "Other"},				-- Pain Suppression
-	{27827  , "Immune"},			-- Spirit of Redemption
-	{290114 , "Immune"},			-- Spirit of Redemption	(pvp honor talent)
-	{215769 , "Immune"},			-- Spirit of Redemption	(pvp honor talent)
-	{213602 , "Immune"},			-- Greater Fade (pvp honor talent - protects vs spells. melee}, ranged attacks + 50% speed)
-	{232707 , "Immune"},			-- Ray of Hope (pvp honor talent - not immune}, only delay damage and heal)
-	{213610 , "Other"},				-- Holy Ward (pvp honor talent - wards against the next loss of control effect)
-	{289655 , "Other"},				-- Holy Word: Concentration
-	{226943 , "CC"},				-- Mind Bomb
-	{200196 , "CC"},				-- Holy Word: Chastise
-	{200200 , "CC"},				-- Holy Word: Chastise (talent)
+	{232707 , "Other"},		  	-- Ray of Hope (pvp honor talent - not immune}, only delay damage and heal)
 	{204263 , "Snare"},				-- Shining Force
-	{199845 , "Snare"},				-- Psyflay (pvp honor talent - Psyfiend)
 	{210979 , "Snare"},				-- Focus in the Light (artifact trait)
 
 	----------------
 	-- Rogue
 	----------------
 
-	{2094   , "CC"},				-- Blind
-	{1833   , "CC"},				-- Cheap Shot
-	{1776   , "CC"},				-- Gouge
-	{408    , "CC"},				-- Kidney Shot
-	{6770   , "CC"},				-- Sap
-	{196958 , "CC"},				-- Strike from the Shadows (stun effect)
-	{1330   , "Silence"},			-- Garrote - Silence
-	{280322 , "Silence"},			-- Garrote - Silence
 	{3409   , "Snare"},				-- Crippling Poison
 	{26679  , "Snare"},				-- Deadly Throw
 	{185763 , "Snare"},				-- Pistol Shot
 	{185778 , "Snare"},				-- Shellshocked
 	{206760 , "Snare"},				-- Night Terrors
 	{222775 , "Snare"},				-- Strike from the Shadows (daze effect)
-	{152150 , "Immune"},			-- Death from Above (in the air you are immune to CC)
-	{31224  , "ImmuneSpell"},		-- Cloak of Shadows
+	{31224  , "Other"},	     	-- Cloak of Shadows
 	{51690  , "Other"},				-- Killing Spree
 	{13750  , "Other"},				-- Adrenaline Rush
-	{199754 , "ImmunePhysical"},	-- Riposte (parry chance increased by 100%)
 	{1966   , "Other"},				-- Feint
 	{121471 , "Other"},				-- Shadow Blades
-	{45182  , "Immune"},			-- Cheating Death (-85% damage taken)
-	{5277   , "ImmunePhysical"},	-- Evasion (dodge chance increased by 100%)
-	{212183 , "Other"},				-- Smoke Bomb
-	{199804 , "CC"},				-- Between the eyes
-	{199740 , "CC"},				-- Bribe
-	{207777 , "Disarm"},			-- Dismantle
+	{45182  , "Other"},			  -- Cheating Death (-85% damage taken)
+	{5277   , "Other"},	      -- Evasion (dodge chance increased by 100%)
 	{185767 , "Snare"},				-- Cannonball Barrage
 	{212283 , "Other"},				-- Symbols of Death
-	{212150 , "CC"},				-- Cheap Tricks (pvp honor talent) (-75%  melee & range physical hit chance)
-	{199743 , "CC"},				-- Parley
-	{198222 , "Snare"},				-- System Shock (pvp honor talent) (90% slow)
 	{226364 , "Other"},				-- Evasion (Shadow Swiftness}, artifact trait)
 	{209786 , "Snare"},				-- Goremaw's Bite (artifact trait)
-
 
 	----------------
 	-- Shaman
 	----------------
-	{77505  , "CC"},				-- Earthquake
-	{51514  , "CC"},				-- Hex
-	{210873 , "CC"},				-- Hex (compy)
-	{211010 , "CC"},				-- Hex (snake)
-	{211015 , "CC"},				-- Hex (cockroach)
-	{211004 , "CC"},				-- Hex (spider)
-	{196942 , "CC"},				-- Hex (Voodoo Totem)
-	{269352 , "CC"},				-- Hex (skeletal hatchling)
-	{277778 , "CC"},				-- Hex (zandalari Tendonripper)
-	{277784 , "CC"},				-- Hex (wicker mongrel)
-	{118905 , "CC"},				-- Static Charge (Capacitor Totem)
-	{64695  , "Root"},				-- Earthgrab (Earthgrab Totem)
+
 	{3600   , "Snare"},				-- Earthbind (Earthbind Totem)
 	{116947 , "Snare"},				-- Earthbind (Earthgrab Totem)
 	{77478  , "Snare"},				-- Earthquake (Glyph of Unstable Earth)
@@ -971,55 +1092,23 @@ local spellsTable = {
 	{114050 , "Other"},				-- Ascendance (Elemental)
 	{114051 , "Other"},				-- Ascendance (Enhancement)
 	{114052 , "Other"},				-- Ascendance (Restoration)
-	{204361 , "Other"},				-- Bloodlust (Shamanism pvp talent)
-	{204362 , "Other"},				-- Heroism (Shamanism pvp talent)
-	{8178   , "ImmuneSpell"},		-- Grounding Totem Effect (Grounding Totem)
-	{204399 , "CC"},				-- Earthfury (PvP Talent)
-	{192058 , "CC"},				-- Lightning Surge totem (capacitor totem)
-	{210918 , "ImmunePhysical"},	-- Ethereal Form
-	{305485 , "CC"},				-- Lightning Lasso
-	{204437 , "CC"},				-- Lightning Lasso
-	{197214 , "CC"},				-- Sundering
+  {210918 , "Other"},	      -- Ethereal Form
 	{224126 , "Snare"},				-- Frozen Bite (Doom Wolves}, artifact trait)
-	{207654 , "Immune"},			-- Servant of the Queen (not immune}, 80% damage reduction - artifact trait)
-
-	  ----------------
-	  -- Shaman Pets
-	  ----------------
-	  {118345 , "CC"},				-- Pulverize (Shaman Primal Earth Elemental)
 
 	----------------
 	-- Warlock
 	----------------
-	{710    , "CC"},				-- Banish
-	{5782   , "CC"},				-- Fear
-	{118699 , "CC"},				-- Fear
-	{130616 , "CC"},				-- Fear (Glyph of Fear)
-	{5484   , "CC"},				-- Howl of Terror
-	{22703  , "CC"},				-- Infernal Awakening
-	{6789   , "CC"},				-- Mortal Coil
-	{30283  , "CC"},				-- Shadowfury
-	{43523  , "Silence"},			-- Unstable Affliction
-	{65813  , "Silence"},			-- Unstable Affliction
-	{196364 , "Silence"},			-- Unstable Affliction
-	{285155 , "Silence"},			-- Unstable Affliction
+
 	{110913 , "Other"},				-- Dark Bargain
 	{104773 , "Other"},				-- Unending Resolve
 	{113860 , "Other"},				-- Dark Soul: Misery
 	{113858 , "Other"},				-- Dark Soul: Instability
-	{212295 , "ImmuneSpell"},		-- Netherward (reflects spells)
-	{233582 , "Root"},				-- Entrenched in Flame (pvp honor talent)
+	{212295 , "Other"},	     	-- Netherward (reflects spells)
 
 	  ----------------
 	  -- Warlock Pets
 	  ----------------
-	  {32752  , "CC"},			-- Summoning Disorientation
-	  {89766  , "CC"},			-- Axe Toss (Felguard/Wrathguard)
-	  {115268 , "CC"},			-- Mesmerize (Shivarra)
-	  {6358   , "CC"},			-- Seduction (Succubus)
-	  {171017 , "CC"},			-- Meteor Strike (infernal)
-	  {171018 , "CC"},			-- Meteor Strike (abisal)
-	  {213688 , "CC"},			-- Fel Cleave (Fel Lord - PvP Talent)
+
 	  {170996 , "Snare"},			-- Debilitate (Terrorguard)
 	  {170995 , "Snare"},			-- Cripple (Doomguard)
 	  {6360   , "Snare"},			-- Whiplash (Succubus)
@@ -1027,50 +1116,30 @@ local spellsTable = {
 	----------------
 	-- Warrior
 	----------------
-	{118895 , "CC"},				-- Dragon Roar
-	{5246   , "CC"},				-- Intimidating Shout (aoe)
-	{132168 , "CC"},				-- Shockwave
-	{107570 , "CC"},				-- Storm Bolt
-	{132169 , "CC"},				-- Storm Bolt
-	{46968  , "CC"},				-- Shockwave
-	{213427 , "CC"},				-- Charge Stun Talent (Warbringer)
-	{7922   , "CC"},				-- Charge Stun Talent (Warbringer)
-	{237744 , "CC"},				-- Charge Stun Talent (Warbringer)
-	{107566 , "Root"},				-- Staggering Shout
-	{105771 , "Root"},				-- Charge (root)
+
 	{236027 , "Snare"},				-- Charge (snare)
 	{118000 , "Snare"},				-- Dragon Roar
 	{147531 , "Snare"},				-- Bloodbath
 	{1715   , "Snare"},				-- Hamstring
 	{12323  , "Snare"},				-- Piercing Howl
 	{6343   , "Snare"},				-- Thunder Clap
-	{46924  , "Immune"},			-- Bladestorm (not immune to dmg}, only to LoC)
-	{227847 , "Immune"},			-- Bladestorm (not immune to dmg}, only to LoC)
-	{199038 , "Immune"},			-- Leave No Man Behind (not immune}, 90% damage reduction)
-	{218826 , "Immune"},			-- Trial by Combat (warr fury artifact hidden trait) (only immune to death)
-	{23920  , "ImmuneSpell"},		-- Spell Reflection
-	{216890 , "ImmuneSpell"},		-- Spell Reflection
-	{213915 , "ImmuneSpell"},		-- Mass Spell Reflection
-	{114028 , "ImmuneSpell"},		-- Mass Spell Reflection
+	{46924  , "Other"},		    -- Bladestorm (not immune to dmg}, only to LoC)
+	{227847 , "Other"},			  -- Bladestorm (not immune to dmg}, only to LoC)
+	{199038 , "Other"},			  -- Leave No Man Behind (not immune}, 90% damage reduction)
+	{218826 , "Other"},			  -- Trial by Combat (warr fury artifact hidden trait) (only immune to death)
+	{23920  , "Other"},		    -- Spell Reflection
+	{216890 , "Other"},	   	  -- Spell Reflection
 	{871    , "Other"},				-- Shield Wall
 	{12975  , "Other"},				-- Last Stand
 	{18499  , "Other"},				-- Berserker Rage
 	{107574 , "Other"},				-- Avatar
 	{262228 , "Other"},				-- Deadly Calm
-	{236321 , "Other"},				-- War Banner
-	{236438 , "Other"},				-- War Banner
-	{236439 , "Other"},				-- War Banner
-	{236273 , "Other"},				-- Duel
 	{198817 , "Other"},				-- Sharpen Blade (pvp honor talent)
 	{198819 , "Other"},				-- Mortal Strike (Sharpen Blade pvp honor talent))
 	{184364 , "Other"},				-- Enraged Regeneration
-	{118038 , "ImmunePhysical"},	-- Die by the Sword (parry chance increased by 100%}, damage taken reduced by 30%)
-	{198760 , "ImmunePhysical"},	-- Intercept (pvp honor talent) (intercept the next ranged or melee hit)
-	{176289 , "CC"},				-- Siegebreaker
-	{199085 , "CC"},				-- Warpath
-	{199042 , "Root"},				-- Thunderstruck
-	{236236 , "Disarm"},			-- Disarm (pvp honor talent - protection)
-	{236077 , "Disarm"},			-- Disarm (pvp honor talent)
+	{118038 , "Other"},	      -- Die by the Sword (parry chance increased by 100%}, damage taken reduced by 30%)
+	{198760 , "Other"},	      -- Intercept (pvp honor talent) (intercept the next ranged or melee hit)
+
 },
 
 	----------------
@@ -1090,10 +1159,6 @@ local spellsTable = {
 	{127723 , "Root"},				-- Covered In Watermelon (trinket)
 	{42803  , "Snare"},				-- Frostbolt (trinket)
 	{195342 , "Snare"},				-- Shrink Ray (trinket)
-	{20549  , "CC"},				-- War Stomp (tauren racial)
-	{107079 , "CC"},				-- Quaking Palm (pandaren racial)
-	{255723 , "CC"},				-- Bull Rush (highmountain tauren racial)
-	{287712 , "CC"},				-- Haymaker (kul tiran racial)
 	{256948 , "Other"},				-- Spatial Rift (void elf racial)
 	{302731 , "Other"},				-- Ripple in Space (azerite essence)
 	{214459 , "Silence"},			-- Choking Flames (trinket)
@@ -3547,7 +3612,7 @@ local DBdefaults = {
 					 }
 			},
 				interrupt = {
-					friendly = true
+					friendly = false
 				}
 			}
 		},
@@ -4379,8 +4444,8 @@ local DBdefaults = {
 						 AuraMastery_Cast_Auras = false,
 					   ROP_Vortex = true,
 						 Disarm = true,
-						 Haste_Reduction = true,
-						 Dmg_Hit_Reduction = true,
+						 Haste_Reduction = false,
+						 Dmg_Hit_Reduction = false,
 						 AOE_DMG_Modifiers = true,
 						 Friendly_Smoke_Bomb = true,
 						 AOE_Spell_Refections = true,
@@ -4416,8 +4481,8 @@ local DBdefaults = {
 							AuraMastery_Cast_Auras = false,
 							ROP_Vortex = true,
 							Disarm = true,
-							Haste_Reduction = true,
-							Dmg_Hit_Reduction = true,
+              Haste_Reduction = false,
+ 						  Dmg_Hit_Reduction = false,
 							AOE_DMG_Modifiers = true,
 							Friendly_Smoke_Bomb = true,
 							AOE_Spell_Refections = true,
@@ -4464,8 +4529,8 @@ local DBdefaults = {
 						 AuraMastery_Cast_Auras = false,
 					   ROP_Vortex = true,
 						 Disarm = true,
-						 Haste_Reduction = true,
-						 Dmg_Hit_Reduction = true,
+             Haste_Reduction = false,
+						 Dmg_Hit_Reduction = false,
 						 AOE_DMG_Modifiers = true,
 						 Friendly_Smoke_Bomb = true,
 						 AOE_Spell_Refections = true,
@@ -4501,8 +4566,8 @@ local DBdefaults = {
 							AuraMastery_Cast_Auras = false,
 							ROP_Vortex = true,
 							Disarm = true,
-							Haste_Reduction = true,
-							Dmg_Hit_Reduction = true,
+              Haste_Reduction = false,
+			        Dmg_Hit_Reduction = false,
 							AOE_DMG_Modifiers = true,
 							Friendly_Smoke_Bomb = true,
 							AOE_Spell_Refections = true,
@@ -4549,8 +4614,8 @@ local DBdefaults = {
 						 AuraMastery_Cast_Auras = false,
 					   ROP_Vortex = true,
 						 Disarm = true,
-						 Haste_Reduction = true,
-						 Dmg_Hit_Reduction = true,
+             Haste_Reduction = false,
+						 Dmg_Hit_Reduction = false,
 						 AOE_DMG_Modifiers = true,
 						 Friendly_Smoke_Bomb = true,
 						 AOE_Spell_Refections = true,
@@ -4586,8 +4651,8 @@ local DBdefaults = {
 							AuraMastery_Cast_Auras = false,
 							ROP_Vortex = true,
 							Disarm = true,
-							Haste_Reduction = true,
-							Dmg_Hit_Reduction = true,
+              Haste_Reduction = false,
+ 					    Dmg_Hit_Reduction = false,
 							AOE_DMG_Modifiers = true,
 							Friendly_Smoke_Bomb = true,
 							AOE_Spell_Refections = true,
@@ -4634,8 +4699,8 @@ local DBdefaults = {
 						 AuraMastery_Cast_Auras = false,
 					   ROP_Vortex = true,
 						 Disarm = true,
-						 Haste_Reduction = true,
-						 Dmg_Hit_Reduction = true,
+             Haste_Reduction = false,
+						 Dmg_Hit_Reduction = false,
 						 AOE_DMG_Modifiers = true,
 						 Friendly_Smoke_Bomb = true,
 						 AOE_Spell_Refections = true,
@@ -4671,8 +4736,8 @@ local DBdefaults = {
 							AuraMastery_Cast_Auras = false,
 							ROP_Vortex = true,
 							Disarm = true,
-							Haste_Reduction = true,
-							Dmg_Hit_Reduction = true,
+              Haste_Reduction = false,
+ 						  Dmg_Hit_Reduction = false,
 							AOE_DMG_Modifiers = true,
 							Friendly_Smoke_Bomb = true,
 							AOE_Spell_Refections = true,
@@ -4936,7 +5001,7 @@ local function GetDebuffText(unitId, debuffNum)
 	local snarestring = DebuffTextDebuffScanTooltipTextLeft2:GetText()
 	tooltip:Hide()
 	if snarestring then
-		if strmatch(snarestring, "Movement") then
+		if strmatch(snarestring, "Movement") or strmatch(snarestring, "movement") then
 		return true
 	  else
 		return false
