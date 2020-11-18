@@ -852,7 +852,7 @@ local spellsTable = {
   {198222, "SnareSpecial"},		-- System Shock (pvp honor talent) (90% slow)
   {200587, "SnareSpecial"},		-- Fel Fissure
 
-  {45524, "SnarePhysical70"},		-- Chains of Ice
+  {45524,  "SnarePhysical70"},		-- Chains of Ice
   {273977, "SnarePhysical70"},		-- Grip of the Dead
   {157981, "SnarePhysical70"},		-- Blast Wave
   {248744, "SnarePhysical70"},		-- Shiv
@@ -865,12 +865,8 @@ local spellsTable = {
 	-- Demonhunter
 	----------------
 
-	{204843 , "Snare"},				-- Sigil of Chains
 	{196555 , "Other"},			  -- Netherwalk
 	{188499 , "Other"},	      -- Blade Dance (dodge chance increased by 100%)
-	{232538 , "Snare"},				-- Rain of Chaos
-	{213405 , "Snare"},				-- Master of the Glaive
-	{210003 , "Snare"},				-- Razor Spikes
 	{198589 , "Other"},				-- Blur
 	{209426 , "Other"},				-- Darkness
 
@@ -888,26 +884,11 @@ local spellsTable = {
 	{152279 , "Other"},				-- Breath of Sindragosa
 	{207289 , "Other"},				-- Unholy Frenzy
 	{145629 , "Other"},		    -- Anti-Magic Zone (not immune}, 60% damage reduction)
-	{206930 , "Snare"},				-- Heart Strike
-	{228645 , "Snare"},				-- Heart Strike
-	{211831 , "Snare"},				-- Abomination's Might (slow)
-	{200646 , "Snare"},				-- Unholy Mutation
-	{143375 , "Snare"},				-- Tightening Grasp
-	{211793 , "Snare"},				-- Remorseless Winter
-	{208278 , "Snare"},				-- Debilitating Infestation
-	{212764 , "Snare"},				-- White Walker
-	{190780 , "Snare"},				-- Frost Breath (Sindragosa's Fury) (artifact trait)
-	{191719 , "Snare"},				-- Gravitational Pull (artifact trait)
-	{204206 , "Snare"},				-- Chill Streak (pvp honor talent)
 
 	----------------
 	-- Druid
 	----------------
 
-	{50259  , "Snare"},				-- Dazed (Wild Charge - Cat)
-	{58180  , "Snare"},				-- Infected Wounds
-	{61391  , "Snare"},				-- Typhoon
-	{232559 , "Snare"},				-- Thorns (pvp honor talent)
 	{61336  , "Other"},			  -- Survival Instincts (not immune}, damage taken reduced by 50%)
 	{305497 , "Other"},				-- Thorns (pvp honor talent)
 	{102543 , "Other"},				-- Incarnation: King of the Jungle
@@ -921,17 +902,9 @@ local spellsTable = {
 	----------------
 	-- Hunter
 	----------------
-	{195645 , "Snare"},				-- Wing Clip
-	{111735 , "Snare"},				-- Tar
-	{135299 , "Snare"},				-- Tar Trap
-	{5116   , "Snare"},				-- Concussive Shot
-	{194279 , "Snare"},				-- Caltrops
-	{206755 , "Snare"},				-- Ranger's Net (snare)
-	{236699 , "Snare"},				-- Super Sticky Tar (slow)
+
 	{186265 , "Other"},			  -- Deterrence (aspect of the turtle)
 	{19574  , "Other"},		    -- Bestial Wrath (only if The Beast Within (212704) it's active) (immune to some CC's)
-	{186387 , "Snare"},				-- Bursting Shot
-	{224729 , "Snare"},				-- Bursting Shot
 	{266779 , "Other"},				-- Coordinated Assault
 	{193530 , "Other"},				-- Aspect of the Wild
 	{186289 , "Other"},				-- Aspect of the Eagle
@@ -943,19 +916,6 @@ local spellsTable = {
 	  -- Hunter Pets
 	  ----------------
 
-	  {50433  , "Snare"},				-- Ankle Crack (Crocolisk)
-	  {54644  , "Snare"},				-- Frost Breath (Chimaera)
-	  {35346  , "Snare"},				-- Warp Time (Warp Stalker)
-	  {160067 , "Snare"},				-- Web Spray (Spider)
-	  {160065 , "Snare"},				-- Tendon Rip (Silithid)
-	  {263852 , "Snare"},				-- Talon Rend (Bird of Prey)
-	  {263841 , "Snare"},				-- Petrifying Gaze (Basilisk)
-	  {288962 , "Snare"},				-- Blood Bolt (Blood Beast)
-	  {50245  , "Snare"},				-- Pin (Crab)
-	  {263446 , "Snare"},				-- Acid Spit (Worm)
-	  {263423 , "Snare"},				-- Lock Jaw (Dog)
-	  {50285  , "Snare"},				-- Dust Cloud (Tallstrider)
-	  {263840 , "Snare"},				-- Furious Bite (Wolf)
 	  {26064  , "Other"},			-- Shell Shield (damage taken reduced 50%) (Turtle)
 	  {90339  , "Other"},			-- Harden Carapace (damage taken reduced 50%) (Beetle)
 	  {160063 , "Other"},			-- Solid Shell (damage taken reduced 50%) (Shale Spider)
@@ -975,19 +935,6 @@ local spellsTable = {
 	-- Mage
 	----------------
 
-	{120    , "Snare"},				-- Cone of Cold
-	{116    , "Snare"},				-- Frostbolt
-	{44614  , "Snare"},				-- Frostfire Bolt
-	{31589  , "Snare"},				-- Slow
-	{10     , "Snare"},				-- Blizzard
-	{205708 , "Snare"},				-- Chilled
-	{212792 , "Snare"},				-- Cone of Cold
-	{205021 , "Snare"},				-- Ray of Frost
-	{135029 , "Snare"},				-- Water Jet
-	{59638  , "Snare"},				-- Frostbolt (Mirror Images)
-	{228354 , "Snare"},				-- Flurry
-	{2120   , "Snare"},				-- Flamestrike
-	{236299 , "Snare"},				-- Chrono Shift
 	{45438  , "Other"},			-- Ice Block
 	{198065 , "Other"},	-- Prismatic Cloak (pvp talent) (not immune}, 50% magic damage reduction)
 	{110959 , "Other"},				-- Greater Invisibility
@@ -1001,12 +948,7 @@ local spellsTable = {
 	-- Monk
 	----------------
 
-	{116095 , "Snare"},				-- Disable
-	{118585 , "Snare"},				-- Leer of the Ox
-	{123586 , "Snare"},				-- Flying Serpent Kick
-	{121253 , "Snare"},				-- Keg Smash
-	{196733 , "Snare"},				-- Special Delivery
-	{125174 , "Immune"},			-- Touch of Karma
+	{125174 , "Other"},			-- Touch of Karma
 	{122783 , "Other"},     	-- Diffuse Magic (not immune}, 60% magic damage reduction)
 	{115176 , "Other"},		  	-- Zen Meditation (60% damage reduction)
 	{202248 , "Other"},	      -- Guided Meditation (pvp honor talent) (redirect spells to monk)
@@ -1028,8 +970,6 @@ local spellsTable = {
 	-- Paladin
 	----------------
 
-	{204242 , "Snare"},				-- Consecration (talent Consecrated Ground)
-	{183218 , "Snare"},				-- Hand of Hindrance
 	{31821  , "Other"},				-- Aura Mastery
 	{210294 , "Other"},				-- Divine Favor
 	{105809 , "Other"},				-- Holy Avenger
@@ -1037,31 +977,20 @@ local spellsTable = {
 	{31884  , "Other"},				-- Avenging Wrath
 	{216331 , "Other"},				-- Avenging Crusader
 	{86659  , "Other"},				-- Guardian of Ancient Kings
-	{205273 , "Snare"},				-- Wake of Ashes (artifact trait) (snare)
-	{255937 , "Snare"},				-- Wake of Ashes (talent) (snare)
 
 	----------------
 	-- Priest
 	----------------
 
-	{15407  , "Snare"},				-- Mind Flay
 	{47788  , "Other"},				-- Guardian Spirit (prevent the target from dying)
 	{197268 , "Other"},				-- Ray of Hope
 	{33206  , "Other"},				-- Pain Suppression
 	{232707 , "Other"},		  	-- Ray of Hope (pvp honor talent - not immune}, only delay damage and heal)
-	{204263 , "Snare"},				-- Shining Force
-	{210979 , "Snare"},				-- Focus in the Light (artifact trait)
 
 	----------------
 	-- Rogue
 	----------------
 
-	{3409   , "Snare"},				-- Crippling Poison
-	{26679  , "Snare"},				-- Deadly Throw
-	{185763 , "Snare"},				-- Pistol Shot
-	{185778 , "Snare"},				-- Shellshocked
-	{206760 , "Snare"},				-- Night Terrors
-	{222775 , "Snare"},				-- Strike from the Shadows (daze effect)
 	{31224  , "Other"},	     	-- Cloak of Shadows
 	{51690  , "Other"},				-- Killing Spree
 	{13750  , "Other"},				-- Adrenaline Rush
@@ -1069,23 +998,13 @@ local spellsTable = {
 	{121471 , "Other"},				-- Shadow Blades
 	{45182  , "Other"},			  -- Cheating Death (-85% damage taken)
 	{5277   , "Other"},	      -- Evasion (dodge chance increased by 100%)
-	{185767 , "Snare"},				-- Cannonball Barrage
 	{212283 , "Other"},				-- Symbols of Death
 	{226364 , "Other"},				-- Evasion (Shadow Swiftness}, artifact trait)
-	{209786 , "Snare"},				-- Goremaw's Bite (artifact trait)
 
 	----------------
 	-- Shaman
 	----------------
 
-	{3600   , "Snare"},				-- Earthbind (Earthbind Totem)
-	{116947 , "Snare"},				-- Earthbind (Earthgrab Totem)
-	{77478  , "Snare"},				-- Earthquake (Glyph of Unstable Earth)
-	{8056   , "Snare"},				-- Frost Shock
-	{196840 , "Snare"},				-- Frost Shock
-	{51490  , "Snare"},				-- Thunderstorm
-	{147732 , "Snare"},				-- Frostbrand Attack
-	{197385 , "Snare"},				-- Fury of Air
 	{207498 , "Other"},				-- Ancestral Protection (prevent the target from dying)
 	{290641 , "Other"},				-- Ancestral Gift (PvP Talent) (immune to Silence and Interrupt effects)
 	{108271 , "Other"},				-- Astral Shift
@@ -1093,7 +1012,6 @@ local spellsTable = {
 	{114051 , "Other"},				-- Ascendance (Enhancement)
 	{114052 , "Other"},				-- Ascendance (Restoration)
   {210918 , "Other"},	      -- Ethereal Form
-	{224126 , "Snare"},				-- Frozen Bite (Doom Wolves}, artifact trait)
 
 	----------------
 	-- Warlock
@@ -1105,24 +1023,10 @@ local spellsTable = {
 	{113858 , "Other"},				-- Dark Soul: Instability
 	{212295 , "Other"},	     	-- Netherward (reflects spells)
 
-	  ----------------
-	  -- Warlock Pets
-	  ----------------
-
-	  {170996 , "Snare"},			-- Debilitate (Terrorguard)
-	  {170995 , "Snare"},			-- Cripple (Doomguard)
-	  {6360   , "Snare"},			-- Whiplash (Succubus)
-
 	----------------
 	-- Warrior
 	----------------
 
-	{236027 , "Snare"},				-- Charge (snare)
-	{118000 , "Snare"},				-- Dragon Roar
-	{147531 , "Snare"},				-- Bloodbath
-	{1715   , "Snare"},				-- Hamstring
-	{12323  , "Snare"},				-- Piercing Howl
-	{6343   , "Snare"},				-- Thunder Clap
 	{46924  , "Other"},		    -- Bladestorm (not immune to dmg}, only to LoC)
 	{227847 , "Other"},			  -- Bladestorm (not immune to dmg}, only to LoC)
 	{199038 , "Other"},			  -- Leave No Man Behind (not immune}, 90% damage reduction)
