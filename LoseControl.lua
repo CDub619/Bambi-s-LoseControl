@@ -1288,7 +1288,6 @@ local spellsTable = {
 	{8510   , "CC"},				-- Large Seaforium Backfire
 	{7144   , "ImmunePhysical"},	-- Stone Slumber
 	{12843  , "Immune"},			-- Mordresh's Shield
-	{25282  , "Immune"},			-- Shield of Rajaxx
 	{27619  , "Immune"},			-- Ice Block
 	{21892  , "Immune"},			-- Arcane Protection
 	{13237  , "CC"},				-- Goblin Mortar
@@ -5435,10 +5434,10 @@ function LoseControl:CompileArenaSpells()
 						if type(spellID) == "number" then
 							if GetSpellInfo(spellID) then
 								local name = GetSpellInfo(spellID)
-								print("|cff00ccffLoseControl|r : "..CspellID.." : "..Cprio.." ("..name..") Modified Arena Spell ".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
+								--print("|cff00ccffLoseControl|r : "..CspellID.." : "..Cprio.." ("..name..") Modified Arena Spell ".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
 							end
 						else
-								print("|cff00ccffLoseControl|r : "..CspellID.." : "..Cprio.." (not spellId) Modified Arena Spell ".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
+								--print("|cff00ccffLoseControl|r : "..CspellID.." : "..Cprio.." (not spellId) Modified Arena Spell ".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
 						end
 						tblinsert(toremove, {i , l, removed, spellID})
 						removed = removed + 1
@@ -5447,9 +5446,9 @@ function LoseControl:CompileArenaSpells()
 					local HspellID, Hprio = unpack(hash[spellID])
 					if type(spellID) == "number" then
 							local name = GetSpellInfo(spellID)
-							print("|cff00ccffLoseControl|r : "..HspellID.." : "..Hprio.." ("..name..") ".."|cffff0000Duplicate Arena Spell in Lua |r".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
+							--print("|cff00ccffLoseControl|r : "..HspellID.." : "..Hprio.." ("..name..") ".."|cffff0000Duplicate Arena Spell in Lua |r".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
 					else
-							print("|cff00ccffLoseControl|r : "..HspellID.." : "..Hprio.." (not spellId) ".."|cff009900Duplicate Arena Spell in Lua |r".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
+							--print("|cff00ccffLoseControl|r : "..HspellID.." : "..Hprio.." (not spellId) ".."|cff009900Duplicate Arena Spell in Lua |r".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
 					end
 					tblinsert(toremove, {i , l, removed, spellID})
 					removed = removed + 1
@@ -5566,10 +5565,10 @@ function LoseControl:CompileSpells(typeUpdate)
 								if type(spellID) == "number" then
 									if GetSpellInfo(spellID) then
 										local name = GetSpellInfo(spellID)
-										print("|cff00ccffLoseControl|r : "..CspellID.." : "..Cprio.." ("..name..") Modified Spell ".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
+										--print("|cff00ccffLoseControl|r : "..CspellID.." : "..Cprio.." ("..name..") Modified Spell ".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
 									end
 								else
-										print("|cff00ccffLoseControl|r : "..CspellID.." : "..Cprio.." (not spellId) Modified Spell ".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
+										--print("|cff00ccffLoseControl|r : "..CspellID.." : "..Cprio.." (not spellId) Modified Spell ".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
 								end
 								tblinsert(toremove, {i , l, x, removed, spellID})
 								removed = removed + 1
@@ -5578,9 +5577,9 @@ function LoseControl:CompileSpells(typeUpdate)
 							local HspellID, Hprio = unpack(hash[spellID])
 							if type(spellID) == "number" then
 									local name = GetSpellInfo(spellID)
-									print("|cff00ccffLoseControl|r : "..HspellID.." : "..Hprio.." ("..name..") ".."|cffff0000Duplicate Spell in Lua |r".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
+									--print("|cff00ccffLoseControl|r : "..HspellID.." : "..Hprio.." ("..name..") ".."|cffff0000Duplicate Spell in Lua |r".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
 							else
-									print("|cff00ccffLoseControl|r : "..HspellID.." : "..Hprio.." (not spellId) ".."|cff009900Duplicate Spell in Lua |r".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
+									--print("|cff00ccffLoseControl|r : "..HspellID.." : "..Hprio.." (not spellId) ".."|cff009900Duplicate Spell in Lua |r".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
 							end
 							tblinsert(toremove, {i , l, x, removed, spellID})
 							removed = removed + 1
@@ -5601,10 +5600,11 @@ function LoseControl:CompileSpells(typeUpdate)
 					if duration then
 							interruptsIds[spellID] = duration
 					end
+          if customname == "Discovered" then row = #spells end
 					if position then
-						tblinsert(spells[row][position], 1, v)
+          	tblinsert(spells[row][position], 1, v)
 					else
-						tblinsert(spells[row][tabsIndex[prio]], 1, v) --v[7]: Category to enter spell / v[8]: Tab to update / v[9]: Table
+            tblinsert(spells[row][tabsIndex[prio]], 1, v) --v[7]: Category to enter spell / v[8]: Tab to update / v[9]: Table
 					end
 				end
 			end
