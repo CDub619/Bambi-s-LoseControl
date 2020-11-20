@@ -546,6 +546,30 @@ local spellsArenaTable = {
 	{199085 , "CC_Arena"}, --Warpath
 	{132168 , "CC_Arena"}, --Shockwave
 	{5246 , "CC_Arena"}, --Intimidating Shout
+  {236273 , "Special_High"}, -- Duel
+  {23920 , "Special_High"}, -- Spell Reflection
+  {105771 , "Roots_90_Snares"}, --Charge
+  {199042 , "Roots_90_Snares"}, --Thunderstruck
+  {236236 , "Disarms"}, --Disarm
+  {236077 , "Disarms"}, --Disarm
+  {107574 , "Melee_Major_OffenisiveCDs"}, -- Avatar
+  {1719 , "Melee_Major_OffenisiveCDs"}, -- Recklessness
+  {18499 , "Big_Defensive_CDs"}, -- Berserker Rage
+  {118038 , "Big_Defensive_CDs"}, -- Die by the Sword
+  {184364 , "Big_Defensive_CDs"}, -- Enraged Regeneration
+  {236321 , "Big_Defensive_CDs"}, -- War Banner
+  {147833 , "Big_Defensive_CDs"}, -- Intervene
+  {12975 , "Big_Defensive_CDs"}, -- Last Stand
+  {871 , "Big_Defensive_CDs"}, -- Shield Wall
+  {213871 , "Big_Defensive_CDs"}, -- Bodyguard
+  {198819, "Player_Party_OffensiveCDs"}, -- Mortal Strike
+  {227744 , "Small_Offenisive_CDs"}, -- Ravager
+  {260708 , "Small_Offenisive_CDs"}, -- Sweeping Strikes
+  {132404 , "Small_Defensive_CDs"}, -- Shield Block
+  {97463 , "Small_Defensive_CDs"}, -- Rallying Cry
+  {12323 , "Snares_WithCDs"}, -- Piercing Howl
+  {197690 , "Special_Low"}, -- Defensive Stance
+  {199261, "Special_Low"}, -- Death Wish
 
 	----------------
 	-- Demon Hunter
@@ -559,6 +583,18 @@ local spellsArenaTable = {
 	{207685 , "CC_Arena"}, --Sigil of Misery
 	{213491 , "CC_Arena"}, --Demonic Trample
 	{47476 , "Silence_Arena"}, --Sigil of Silence_Arena
+  {188501, "Special_High"}, -- Spectral Sight
+  {206649 , "Special_High"}, -- Eye of Leotheras
+  {162264 , "Melee_Major_OffenisiveCDs"}, -- Metamorphosis
+  {187827 , "Melee_Major_OffenisiveCDs"}, -- Metamorphosis
+  {212800, "Big_Defensive_CDs"}, -- Blur
+  {196555 , "Big_Defensive_CDs"}, -- Netherwalk
+  {209426 , "Big_Defensive_CDs"}, -- Darkness
+  {206804 , "Big_Defensive_CDs"}, -- Rain From Above
+  {203819, "Small_Defensive_CDs"}, -- Demon Spikes
+  {208796, "Small_Defensive_CDs"}, -- Jagged Spikes
+  {205629, "Freedoms_Speed"}, -- Demonic Trample
+  {213405 , "Snares_Ranged_Spamable"}, --Master of the Glaive
 
 	----------------
 	-- Misc.
@@ -570,7 +606,12 @@ local spellsArenaTable = {
 	{20549 , "CC_Arena"}, --War Stomp
 	{255654 , "CC_Arena"}, --Bull Rush
 	{287712 , "CC_Arena"}, --Haymaker
-
+  {58984, "Special_High"}, -- Shadowmeld
+  {291944 , "Big_Defensive_CDs"}, -- Regeneratin'
+  {59543, "Small_Defensive_CDs"}, -- Gift of the Naaru
+  {277187, "Small_Defensive_CDs"}, -- Gladiator's Emblem
+  {286342, "Small_Defensive_CDs"}, -- Gladiator's Safegaurd
+  {68992, "Freedoms_Speed"}, -- Darkflight
 
 	}
 
@@ -856,6 +897,7 @@ local spellsTable = {
   {273977, "SnarePhysical70"},		-- Grip of the Dead
   {157981, "SnarePhysical70"},		-- Blast Wave
   {248744, "SnarePhysical70"},		-- Shiv
+  {12323 , "SnarePhysical70"},		-- Piercing Howl
   {198813, "SnarePhysical70"},		-- Vengeful Retreat
   {247121, "SnarePhysical70"},		-- Metamorphosis
 
@@ -886,7 +928,6 @@ local spellsTable = {
   {193473, "SnarePhysical50"},		-- Mind Flay
   {185763, "SnarePhysical50"},		-- Pistol Shot
   {1715, "SnarePhysical50"},		-- Hamstring
-  {12323, "SnarePhysical50"},		-- Piercing Howl
   {213405, "SnarePhysical50"},		-- Master of the Glaive
 
   {3409, "SnarePosion50"},		-- Crippling Poison
@@ -2461,10 +2502,11 @@ local spellsTable = {
 	{236602 , "CC"},				-- Soul Anguish (Kil'jaeden)
 	{236555 , "CC"},				-- Deceiver's Veil (Kil'jaeden)
 },
---[[
+
 	------------------------
 	-- Antorus Raid
 	-- -- Trash
+{" Antorus Raid",
 	{246209 , "CC"},				-- Punishing Flame
 	{254502 , "CC"},				-- Fearsome Leap
 	{254125 , "CC"},				-- Cloud of Confusion
@@ -2497,8 +2539,10 @@ local spellsTable = {
 	{244894 , "Immune"},			-- Corrupt Aegis
 	{246014 , "CC"},				-- Searing Tempest
 	{255062 , "CC"},				-- Empowered Searing Tempest
+},
 	------------------------
 	-- The Deaths of Chromie Scenario
+{"The Deaths of Chromie Scenario",
 	{246941 , "CC"},				-- Looming Shadows
 	{245167 , "CC"},				-- Ignite
 	{248839 , "CC"},				-- Charge
@@ -2512,14 +2556,20 @@ local spellsTable = {
 	{247730 , "Root"},				-- Faith's Fetters
 	{245822 , "CC"},				-- Inescapable Nightmare
 	{245126 , "Silence"},			-- Soul Burn
+},
+
+
 	------------------------
 	-- Legion Mythics
 	-- -- The Arcway
+{"he Arcway",
 	{195804 , "CC"},				-- Quarantine
 	{203649 , "CC"},				-- Exterminate
 	{203957 , "CC"},				-- Time Lock
 	{211543 , "Root"},				-- Devour
+},
 	-- -- Black Rook Hold
+{"Black Rook Hold",
 	{194960 , "CC"},				-- Soul Echoes
 	{197974 , "CC"},				-- Bonecrushing Strike
 	{199168 , "CC"},				-- Itchy!
@@ -2532,7 +2582,9 @@ local spellsTable = {
 	{221117 , "CC"},				-- Ghastly Wail
 	{222417 , "CC"},				-- Boulder Crush
 	{221838 , "CC"},				-- Disorienting Gas
+},
 	-- -- Court of Stars
+{"- Court of Stars",
 	{207278 , "Snare"},				-- Arcane Lockdown
 	{207261 , "CC"},				-- Resonant Slash
 	{215204 , "CC"},				-- Hinder
@@ -2544,7 +2596,9 @@ local spellsTable = {
 	{212773 , "CC"},				-- Subdue
 	{216000 , "CC"},				-- Mighty Stomp
 	{213233 , "CC"},				-- Uninvited Guest
+},
 	-- -- Return to Karazhan
+{"Return to Karazhan",
 	{227567 , "CC"},				-- Knocked Down
 	{228215 , "CC"},				-- Severe Dusting
 	{227508 , "CC"},				-- Mass Repentance
@@ -2562,7 +2616,9 @@ local spellsTable = {
 	{227917 , "CC"},				-- Poetry Slam
 	{230083 , "CC"},				-- Nullification
 	{229489 , "Immune"},			-- Royalty (90% dmg reduction)
+},
 	-- -- Maw of Souls
+{" Maw of Souls",
 	{193364 , "CC"},				-- Screams of the Dead
 	{198551 , "CC"},				-- Fragment
 	{197653 , "CC"},				-- Knockdown
@@ -2572,7 +2628,9 @@ local spellsTable = {
 	{204058 , "CC"},				-- Kvaldir Cage
 	{204059 , "CC"},				-- Kvaldir Cage
 	{204060 , "CC"},				-- Kvaldir Cage
+},
 	-- -- Vault of the Wardens
+{" Vault of the Wardens",
 	{202455 , "Immune"},			-- Void Shield
 	{212565 , "CC"},				-- Inquisitive Stare
 	{225416 , "CC"},				-- Intercept
@@ -2591,7 +2649,9 @@ local spellsTable = {
 	{202658 , "CC"},				-- Drain
 	{193969 , "Root"},				-- Razors
 	{204282 , "CC"},				-- Dark Trap
+},
 	-- -- Eye of Azshara
+{"Eye of Azshara",
 	{191975 , "CC"},				-- Impaling Spear
 	{191977 , "CC"},				-- Impaling Spear
 	{193597 , "CC"},				-- Static Nova
@@ -2602,24 +2662,32 @@ local spellsTable = {
 	{197144 , "Root"},				-- Hooked Net
 	{197105 , "CC"},				-- Polymorph: Fish
 	{195944 , "CC"},				-- Rising Fury
+},
 	-- -- Darkheart Thicket
+{" Darkheart Thicket",
 	{200329 , "CC"},				-- Overwhelming Terror
 	{200273 , "CC"},				-- Cowardice
 	{204246 , "CC"},				-- Tormenting Fear
 	{200631 , "CC"},				-- Unnerving Screech
 	{200771 , "CC"},				-- Propelling Charge
 	{199063 , "Root"},				-- Strangling Roots
+},
 	-- -- Halls of Valor
+{"Halls of Valor",
 	{198088 , "CC"},				-- Glowing Fragment
 	{215429 , "CC"},				-- Thunderstrike
 	{199340 , "CC"},				-- Bear Trap
 	{210749 , "CC"},				-- Static Storm
+},
 	-- -- Neltharion's Lair
+{"Neltharion's Lair",
 	{200672 , "CC"},				-- Crystal Cracked
 	{202181 , "CC"},				-- Stone Gaze
 	{193585 , "CC"},				-- Bound
 	{186616 , "CC"},				-- Petrified
+},
 	-- -- Cathedral of Eternal Night
+{"Cathedral of Eternal Night",
 	{238678 , "Silence"},			-- Stifling Satire
 	{238484 , "CC"},				-- Beguiling Biography
 	{242724 , "CC"},				-- Dread Scream
@@ -2628,7 +2696,9 @@ local spellsTable = {
 	{239156 , "CC"},				-- Book of Eternal Winter
 	{240556 , "Silence"},			-- Tome of Everlasting Silence
 	{242792 , "CC"},				-- Vile Roots
+},
 	-- -- The Seat of the Triumvirate
+{"The Seat of the Triumvirate",
 	{246913 , "Immune"},			-- Void Phased
 	{244621 , "CC"},				-- Void Tear
 	{248831 , "CC"},				-- Dread Screech
@@ -2642,11 +2712,13 @@ local spellsTable = {
 	{248298 , "Silence"},			-- Screech
 	{245706 , "CC"},				-- Ruinous Strike
 	{248133 , "CC"},				-- Stygian Blast
+},
 	------------------------
 	---- PVE CLASSIC
 	------------------------
 	-- Molten Core Raid
 	-- -- Trash
+{"Molten Core Raid",
 	{19364  , "CC"},				-- Ground Stomp
 	{19369  , "CC"},				-- Ancient Despair
 	{19641  , "CC"},				-- Pyroclast Barrage
@@ -2676,8 +2748,10 @@ local spellsTable = {
 	-- Onyxia's Lair Raid
 	-- -- Onyxia
 	{18431  , "CC"},				-- Bellowing Roar
+},
 	------------------------
 	-- Blackwing Lair Raid
+{"Blackwing Lair Raid",
 	-- -- Trash
 	{24375  , "CC"},				-- War Stomp
 	{22289  , "CC"},				-- Brood Power: Green
@@ -2719,8 +2793,10 @@ local spellsTable = {
 	{23415  , "ImmunePhysical"},	-- Improved Blessing of Protection
 	{23414  , "Root"},				-- Paralyze
 	{22687  , "Other"},				-- Veil of Shadow
+},
 	------------------------
 	-- Zul'Gurub Raid
+{"Zul'Gurub Raid",
 	-- -- Trash
 	{24619  , "Silence"},			-- Soul Tap
 	{24048  , "CC"},				-- Whirling Trip
@@ -2769,8 +2845,10 @@ local spellsTable = {
 	{24322  , "CC"},				-- Blood Siphon
 	{24323  , "CC"},				-- Blood Siphon
 	{24324  , "CC"},				-- Blood Siphon
+},
 	------------------------
 	-- Ruins of Ahn'Qiraj Raid
+{"Ruins of Ahn'Qiraj Raid",
 	-- -- Trash
 	{25371  , "CC"},				-- Consume
 	{25654  , "CC"},				-- Tail Lash
@@ -2793,8 +2871,10 @@ local spellsTable = {
 	{25725  , "CC"},				-- Paralyze
 	-- -- Ossirian the Unscarred
 	{25189  , "CC"},				-- Enveloping Winds
+},
 	------------------------
 	-- Temple of Ahn'Qiraj Raid
+{"Temple of Ahn'Qiraj Raid",
 	-- -- Trash
 	{18327  , "Silence"},			-- Silence
 	{26069  , "Silence"},			-- Silence
@@ -2835,8 +2915,10 @@ local spellsTable = {
 	{23953  , "Snare"},				-- Mind Flay
 	{26211  , "Snare"},				-- Hamstring
 	{26141  , "Snare"},				-- Hamstring
+},
 	------------------------
 	-- Classic World Bosses
+{"Classic World Bosses",
 	-- -- Azuregos
 	{23186  , "CC"},				-- Aura of Frost
 	{243901 , "CC"},				-- Mark of Frost
@@ -2857,11 +2939,15 @@ local spellsTable = {
 	{23207  , "Silence"},			-- Silence
 	{29943  , "Silence"},			-- Silence
 	{30225  , "Silence"},			-- Silence
+},
 	------------------------
 	-- Classic Dungeons
 	-- -- Ragefire Chasm
+{"Ragefire Chasm",
 	{8242   , "CC"},				-- Shield Slam
+},
 	-- -- The Deadmines
+{"The Deadmines",
 	{6304   , "CC"},				-- Rhahk'Zor Slam
 	{6713   , "Disarm"},			-- Disarm
 	{7399   , "CC"},				-- Terrify
@@ -2887,14 +2973,18 @@ local spellsTable = {
 	{135337 , "CC"},				-- Cannonball
 	{89769  , "CC"},				-- Explode
 	{55041  , "CC"},				-- Freezing Trap Effect
+},
 	-- -- Wailing Caverns
+{"Wailing Caverns",
 	{8040   , "CC"},				-- Druid's Slumber
 	{8147   , "Snare"},				-- Thunderclap
 	{8142   , "Root"},				-- Grasping Vines
 	{5164   , "CC"},				-- Knockdown
 	{7967   , "CC"},				-- Naralex's Nightmare
 	{8150   , "CC"},				-- Thundercrack
+},
 	-- -- Shadowfang Keep
+{"Shadowfang Keep",
 	{7295   , "Root"},				-- Soul Drain
 	{7139   , "CC"},				-- Fel Stomp
 	{13005  , "CC"},				-- Hammer of Justice
@@ -2917,7 +3007,9 @@ local spellsTable = {
 	{93930  , "CC"},				-- Spectral Ravaging
 	{93863  , "Root"},				-- Soul Drain
 	{29321  , "CC"},				-- Fear
+},
 	-- -- Blackfathom Deeps
+{" Blackfathom Deeps",
 	{246    , "Snare"},				-- Slow
 	{15531  , "Root"},				-- Frost Nova
 	{6533   , "Root"},				-- Net
@@ -2937,7 +3029,9 @@ local spellsTable = {
 	{5424   , "Root"},				-- Claw Grasp
 	{149910 , "Root"},				-- Catch of the Day
 	{302956 , "Root"},				-- Catch of the Day
+},
 	-- -- The Stockade
+{"The Stockade",
 	{3419   , "Other"},				-- Improved Blocking
 	--{19134  , "CC"},				-- Intimidating Shout
 	--{29544  , "CC"},				-- Intimidating Shout
@@ -2945,7 +3039,9 @@ local spellsTable = {
 	{204735 , "Snare"},				-- Frostbolt
 	{86740  , "CC"},				-- Dirty Blow
 	{86814  , "CC"},				-- Bash Head
+},
 	-- -- Gnomeregan
+{"Gnomeregan",
 	{10831  , "ImmuneSpell"},		-- Reflection Field
 	{11820  , "Root"},				-- Electrified Net
 	{10852  , "Root"},				-- Battle Net
@@ -2953,7 +3049,9 @@ local spellsTable = {
 	{11264  , "Root"},				-- Ice Blast
 	{10730  , "CC"},				-- Pacify
 	{74720  , "CC"},				-- Pound
+},
 	-- -- Razorfen Kraul
+{"Razorfen Kraul",
 	{8281   , "Silence"},			-- Sonic Burst
 	{39052  , "Silence"},			-- Sonic Burst
 	{8359   , "CC"},				-- Left for Dead
@@ -2971,7 +3069,9 @@ local spellsTable = {
 	{153214 , "CC"},				-- Sonic Charge
 	{150651 , "Root"},				-- Vine Line
 	{150304 , "Root"},				-- Vine Line
+},
 	-- -- Scarlet Monastery
+{"Scarlet Monastery",
 	{9438   , "Immune"},			-- Arcane Bubble
 	{13323  , "CC"},				-- Polymorph
 	{8988   , "Silence"},			-- Silence
@@ -2980,7 +3080,9 @@ local spellsTable = {
 	{9256   , "CC"},				-- Deep Sleep
 	{3639   , "Other"},				-- Improved Blocking
 	{6146   , "Snare"},				-- Slow
+},
 	-- -- Razorfen Downs
+{"Razorfen Downs",
 	{12252  , "Root"},				-- Web Spray
 	{15530  , "Snare"},				-- Frostbolt
 	{12946  , "Silence"},			-- Putrid Stench
@@ -2992,14 +3094,18 @@ local spellsTable = {
 	{150082 , "Snare"},				-- Plagued Bite
 	{150707 , "CC"},				-- Overwhelmed
 	{150485 , "Root"},				-- Web Wrap
+},
 	-- -- Uldaman
+{"Uldaman",
 	{11876  , "CC"},				-- War Stomp
 	{3636   , "CC"},				-- Crystalline Slumber
 	{9906   , "ImmuneSpell"},		-- Reflection
 	{10093  , "Snare"},				-- Harsh Winds
 	{25161  , "Silence"},			-- Harsh Winds
 	{55142  , "CC"},				-- Ground Tremor
+},
 	-- -- Maraudon
+{"Maraudon",
 	{12747  , "Root"},				-- Entangling Roots
 	{21331  , "Root"},				-- Entangling Roots
 	{21793  , "Snare"},				-- Twisted Tranquility
@@ -3010,7 +3116,9 @@ local spellsTable = {
 	{11428  , "CC"},				-- Knockdown
 	{16790  , "CC"},				-- Knockdown
 	{11922  , "Root"},				-- Entangling Roots
+},
 	-- -- Zul'Farrak
+{" Zul'Farrak",
 	{11020  , "CC"},				-- Petrify
 	{13704  , "CC"},				-- Psychic Scream
 	{11089  , "ImmunePhysical"},	-- Theka Transform (also immune to shadow damage)
@@ -3018,7 +3126,9 @@ local spellsTable = {
 	{11836  , "CC"},				-- Freeze Solid
 	{11131  , "Snare"},				-- Icicle
 	{11641  , "CC"},				-- Hex
+},
 	-- -- The Temple of Atal'Hakkar (Sunken Temple)
+{"The Temple of Atal'Hakkar (Sunken Temple)",
 	{12888  , "CC"},				-- Cause Insanity
 	{12480  , "CC"},				-- Hex of Jammal'an
 	{12890  , "CC"},				-- Deep Slumber
@@ -3028,7 +3138,9 @@ local spellsTable = {
 	{25774  , "CC"},				-- Mind Shatter
 	{33126  , "Disarm"},			-- Dropped Weapon
 	{34259  , "CC"},				-- Fear
+},
 	-- -- Blackrock Depths
+{"Blackrock Depths",
 	{8994   , "CC"},				-- Banish
 	{15588  , "Snare"},				-- Thunderclap
 	{12674  , "Root"},				-- Frost Nova
@@ -3055,7 +3167,9 @@ local spellsTable = {
 	{280494 , "CC"},				-- Conflagration
 	{47442  , "CC"},				-- Barreled!
 	{21401  , "Snare"},				-- Frost Shock
+},
 	-- -- Blackrock Spire
+{"Blackrock Spire",
 	{16097  , "CC"},				-- Hex
 	{22566  , "CC"},				-- Hex
 	{15618  , "CC"},				-- Snap Kick
@@ -3076,7 +3190,9 @@ local spellsTable = {
 	{16249  , "Snare"},				-- Frostbolt
 	{16469  , "Root"},				-- Web Explosion
 	{15532  , "Root"},				-- Frost Nova
+},
 	-- -- Stratholme
+{"Stratholme",
 	{17405  , "CC"},				-- Domination
 	{17246  , "CC"},				-- Possessed
 	{15655  , "CC"},				-- Shield Slam
@@ -3121,7 +3237,9 @@ local spellsTable = {
 	{16838  , "Silence"},			-- Banshee Shriek
 	{22519  , "CC"},				-- Ice Nova
 	{57825  , "Snare"},				-- Frostbolt
+},
 	-- -- Scholomance
+{"Scholomance",
 	{5708   , "CC"},				-- Swoop
 	{18144  , "CC"},				-- Swoop
 	{18103  , "CC"},				-- Backhand
@@ -3134,7 +3252,8 @@ local spellsTable = {
 	{17165  , "Snare"},				-- Mind Flay
 	{22643  , "Snare"},				-- Frostbolt Volley
 	{18101  , "Snare"},				-- Chilled (Frost Armor)
-]]
+},
+
 {"Discovered LC Spells"
 },
 }
