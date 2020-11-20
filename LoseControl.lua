@@ -144,7 +144,7 @@ local cleuPrioCastedSpells = {}
 -- Thanks to all the people on the Curse.com and WoWInterface forums who help keep this list up to date :)
 local cleuSpells = { -- nil = Do Not Show
  {198103, 60, "PvE",  "Small_Defensive_CDs", "Earth Ele", "Earth Ele"}, --Shaman Earth Ele
- {205636, 10, "PvE",  "Small_Defensive_CDs", "Trees", "Trees"}, --Shaman Earth Ele
+ {205636, 10, "PvE",  "Small_Defensive_CDs", "Trees", "Trees"}, --Druid Trees
  {288853, 25, nil,  "Melee_Major_OffenisiveCDs", "Abomination", "Abomination"}, --Dk Raise Abomination
  {123904, 24, nil,  "Small_Offenisive_CDs", "Xuen", "Xuen"}, --WW Xuen Pet Summmon
  {34433, 15, nil,  "Small_Offenisive_CDs", "Shadowfiend", "Shadowfiend"}, --Disc Pet Summmon
@@ -859,7 +859,62 @@ local spellsTable = {
   {198813, "SnarePhysical70"},		-- Vengeful Retreat
   {247121, "SnarePhysical70"},		-- Metamorphosis
 
+  {204206, "SnareMagic70"},		-- Chilled
+  {212792, "SnareMagic70"},		-- Cone of Cold
+  {228354, "SnareMagic70"},		-- Flurry
+  {123586, "SnareMagic70"},		-- Flying Serpent Kick
+  {183218, "SnareMagic70"},		-- Hand of Hindrance
+  {204263, "SnareMagic70"},		-- Shining Force
+  {204843, "SnareMagic70"},		-- Sigil of Chains
 
+  {195645, "SnarePhysical50"},		-- Wing Clip
+  {135299, "SnarePhysical50"},		-- Tar Trap
+  {5116, "SnarePhysical50"},		-- Concussive Shot
+  {186387, "SnarePhysical50"},		-- Bursting Shot
+  {51490, "SnarePhysical50"},		-- Thunderstorm
+  {288548, "SnarePhysical50"},		-- Frostbolt
+  {50259, "SnarePhysical50"},		-- Dazed
+  {232559, "SnarePhysical50"},		-- Thorns
+  {12486, "SnarePhysical50"},		-- Blizzard
+  {205021, "SnarePhysical50"},		-- Ray of Frost
+  {236299, "SnarePhysical50"},		-- Chrono Shift
+  {116095, "SnarePhysical50"},		-- Disable
+  {196733, "SnarePhysical50"},		-- Special Delivery
+  {204242, "SnarePhysical50"},		-- Consecration
+  {255937, "SnarePhysical50"},		-- Wake of Ashes
+  {15407, "SnarePhysical50"},		-- Mind Flay
+  {193473, "SnarePhysical50"},		-- Mind Flay
+  {185763, "SnarePhysical50"},		-- Pistol Shot
+  {1715, "SnarePhysical50"},		-- Hamstring
+  {12323, "SnarePhysical50"},		-- Piercing Howl
+  {213405, "SnarePhysical50"},		-- Master of the Glaive
+
+  {3409, "SnarePosion50"},		-- Crippling Poison
+
+  {147732, "SnareMagic50"},		-- Frostbrand
+  {3600, "SnareMagic50"},		-- Earthbind
+  {116947, "SnareMagic50"},		-- Earthbind
+  {196840, "SnareMagic50"},		-- Frostshock
+  {279303, "SnareMagic50"},		-- Frostwyrm's Fury
+  {61391, "SnareMagic50"},		-- Typhoon
+  {"Frostbolt", "SnareMagic50"},		-- Frostbolt
+  {205708, "SnareMagic50"},		-- Chilled
+  {31589, "SnareMagic50"},		-- Slow
+  {6360, "SnareMagic50"},		-- Whiplash
+  {260369, "SnareMagic50"},		-- Arcane Pulse
+
+  {162546, "SnarePhysical30"},		-- Frozen Ammo
+  {197385, "SnarePhysical30"},		-- Fury of Air
+  {211793, "SnarePhysical30"},		-- Remorseless Winter
+  {206930, "SnarePhysical30"},		-- Heart Strike
+  {2120, "SnarePhysical30"},		-- Flamestrike
+  {289308, "SnarePhysical30"},		-- Frozen Orb
+  {121253, "SnarePhysical30"},		-- Keg Smash
+  {6343, "SnarePhysical30"},		-- Thunder Clap
+  {210003, "SnarePhysical30"},		-- Razor Spikes
+
+	{58180, "SnareMagic30"}, -- Infected Wounds
+	{206760, "SnareMagic30"}, -- Shadow Grasp
 
 	----------------
 	-- Demonhunter
@@ -2279,11 +2334,12 @@ local spellsTable = {
 	{269406 , "CC"},				-- Purge Corruption
 	{258347 , "Silence"},			-- Sonic Screech
 },
---[[
+
 	------------------------
 	---- PVE LEGION
 	------------------------
 	-- EN Raid
+{"EN Raid",
 	-- -- Trash
 	{223914 , "CC"},				-- Intimidating Roar
 	{225249 , "CC"},				-- Devastating Stomp
@@ -2305,7 +2361,9 @@ local spellsTable = {
 	{210315 , "Root"},				-- Nightmare Brambles (Cenarius)
 	{214505 , "CC"},				-- Entangling Nightmares (Cenarius)
 	------------------------
+},
 	-- ToV Raid
+{" ToV Raid",
 	-- -- Trash
 	{228609 , "CC"},				-- Bone Chilling Scream
 	{228883 , "CC"},				-- Unholy Reckoning
@@ -2324,6 +2382,9 @@ local spellsTable = {
 	-- -- Helya
 	{232350 , "CC"},				-- Corrupted (Helya)
 	------------------------
+},
+
+{"NH Raid",
 	-- NH Raid
 	-- -- Trash
 	{225583 , "CC"},				-- Arcanic Release
@@ -2362,7 +2423,9 @@ local spellsTable = {
 	{227320 , "Immune"},			-- The Eye of Aman'Thul (Gul'dan)
 	{206516 , "Immune"},			-- The Eye of Aman'Thul (Gul'dan)
 	------------------------
+},
 	-- ToS Raid
+{"ToS Raid",
 	-- -- Trash
 	{243298 , "CC"},				-- Lash of Domination
 	{240706 , "CC"},				-- Arcane Ward
@@ -2397,6 +2460,8 @@ local spellsTable = {
 	{244834 , "Immune"},			-- Nether Gale (Kil'jaeden)
 	{236602 , "CC"},				-- Soul Anguish (Kil'jaeden)
 	{236555 , "CC"},				-- Deceiver's Veil (Kil'jaeden)
+},
+--[[
 	------------------------
 	-- Antorus Raid
 	-- -- Trash
@@ -5948,8 +6013,8 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 					end
 					local expirationTime = GetTime() + duration
 					if debug then print("interrupt", ")", destGUID, "|", GetSpellInfo(spellId), "|", duration, "|", expirationTime, "|", spellId) end
-						local priority = LoseControlDB.priority.Interrupt
-						local spellCategory = "Interrupt"
+					local priority = LoseControlDB.priority.Interrupt
+					local spellCategory = "Interrupt"
 						if (destGUID == UnitGUID("arena1")) or (destGUID == UnitGUID("arena2")) or (destGUID == UnitGUID("arena3")) then
 						priority = LoseControlDB.priorityArena.Interrupt
 					  end
@@ -5961,192 +6026,188 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 					UpdateUnitAuraByUnitGUID(destGUID, -20)
 				end
 			elseif (((event == "UNIT_DIED") or (event == "UNIT_DESTROYED") or (event == "UNIT_DISSIPATES")) and (select(2, GetPlayerInfoByGUID(destGUID)) ~= "HUNTER")) then --may need to use UNIT_AURA check for Fiegn Death here to make more accurate
-					if (InterruptAuras[destGUID] ~= nil) then --reset if the source of the kick dies
-					InterruptAuras[destGUID] = nil
-					UpdateUnitAuraByUnitGUID(destGUID, -21)
-			  	end
-					if (SmokeBombAuras[destGUID] ~= nil) then --reset if the source of the bomb dies
-					SmokeBombAuras[destGUID] = nil
-					UpdateUnitAuraByUnitGUID(destGUID, -21)
-				  end
+				if (InterruptAuras[destGUID] ~= nil) then --reset if the source of the kick dies
+				InterruptAuras[destGUID] = nil
+				UpdateUnitAuraByUnitGUID(destGUID, -21)
+		  	end
+				if (SmokeBombAuras[destGUID] ~= nil) then --reset if the source of the bomb dies
+				SmokeBombAuras[destGUID] = nil
+				UpdateUnitAuraByUnitGUID(destGUID, -21)
+			  end
 			end
 		end
    	-- Check Channel Interrupts for player
       if (event == "SPELL_CAST_SUCCESS") then
 		    if interruptsIds[spellId] then
-					     if (destGUID == UnitGUID("player")) and (select(7, UnitChannelInfo("player")) == false) then
-									local duration = interruptsIds[spellId]
-							  	if (duration ~= nil) then
-									local expirationTime = GetTime() + duration
-									local priority = LoseControlDB.priority.Interrupt
-									local spellCategory = "Interrupt"
-									local name, _, icon = GetSpellInfo(spellId)
-										if (InterruptAuras[destGUID] == nil) then
-											InterruptAuras[destGUID] = {}
-										end
-									tblinsert(InterruptAuras[destGUID], {  ["spellId"] = spellId, ["name"] = name, ["duration"] = duration, ["expirationTime"] = expirationTime, ["priority"] = priority, ["spellCategory"] = spellCategory, ["icon"] = icon, ["spellSchool"] = spellSchool, ["hue"] = hue })
-									UpdateUnitAuraByUnitGUID(destGUID, -20)
-						     end
-							 end
-	      end
-      end
+	        if (destGUID == UnitGUID("player")) and (select(7, UnitChannelInfo("player")) == false) then
+           local duration = interruptsIds[spellId]
+  			  	if (duration ~= nil) then
+  					local expirationTime = GetTime() + duration
+  					local priority = LoseControlDB.priority.Interrupt
+  					local spellCategory = "Interrupt"
+  					local name, _, icon = GetSpellInfo(spellId)
+  					if (InterruptAuras[destGUID] == nil) then
+  						InterruptAuras[destGUID] = {}
+  					end
+  					tblinsert(InterruptAuras[destGUID], {  ["spellId"] = spellId, ["name"] = name, ["duration"] = duration, ["expirationTime"] = expirationTime, ["priority"] = priority, ["spellCategory"] = spellCategory, ["icon"] = icon, ["spellSchool"] = spellSchool, ["hue"] = hue })
+  					UpdateUnitAuraByUnitGUID(destGUID, -20)
+  		     end
+         end
+       end
+     end
 			-- Check Channel Interrupts for arena
-				if (event == "SPELL_CAST_SUCCESS") then
-					if interruptsIds[spellId] then
-						for i = 1, GetNumArenaOpponents() do
-								 if (destGUID == UnitGUID("arena"..i)) and (select(7, UnitChannelInfo("arena"..i)) == false) then
-										local duration = interruptsIds[spellId]
-										if (duration ~= nil) then
-										local expirationTime = GetTime() + duration
-											local priority = LoseControlDB.priorityArena.Interrupt
-											local spellCategory = "Interrupt"
-											local name, _, icon = GetSpellInfo(spellId)
-											if (InterruptAuras[destGUID] == nil) then
-												InterruptAuras[destGUID] = {}
-											end
-										tblinsert(InterruptAuras[destGUID], {  ["spellId"] = spellId, ["name"] = name, ["duration"] = duration, ["expirationTime"] = expirationTime, ["priority"] = priority, ["spellCategory"] = spellCategory, ["icon"] = icon, ["spellSchool"] = spellSchool, ["hue"] = hue })
-										UpdateUnitAuraByUnitGUID(destGUID, -20)
-								   end
-								 end
-						end
+			if (event == "SPELL_CAST_SUCCESS") then
+				if interruptsIds[spellId] then
+					for i = 1, GetNumArenaOpponents() do
+					  if (destGUID == UnitGUID("arena"..i)) and (select(7, UnitChannelInfo("arena"..i)) == false) then
+		          local duration = interruptsIds[spellId]
+							if (duration ~= nil) then
+								local expirationTime = GetTime() + duration
+								local priority = LoseControlDB.priorityArena.Interrupt
+								local spellCategory = "Interrupt"
+								local name, _, icon = GetSpellInfo(spellId)
+								if (InterruptAuras[destGUID] == nil) then
+									InterruptAuras[destGUID] = {}
+								end
+								tblinsert(InterruptAuras[destGUID], {  ["spellId"] = spellId, ["name"] = name, ["duration"] = duration, ["expirationTime"] = expirationTime, ["priority"] = priority, ["spellCategory"] = spellCategory, ["icon"] = icon, ["spellSchool"] = spellSchool, ["hue"] = hue })
+								UpdateUnitAuraByUnitGUID(destGUID, -20)
+					    end
+					  end
 					end
 				end
-				-- Check Channel Interrupts for party
-					if (event == "SPELL_CAST_SUCCESS") then
-						if interruptsIds[spellId] then
-							for i = 1, GetNumGroupMembers() do
-									 if (destGUID == UnitGUID("party"..i)) and (select(7, UnitChannelInfo("party"..i)) == false) then
-											local duration = interruptsIds[spellId]
-											if (duration ~= nil) then
-											local expirationTime = GetTime() + duration
-											local priority = LoseControlDB.priority.Interrupt
-											local spellCategory = "Interrupt"
-											local name, _, icon = GetSpellInfo(spellId)
-												if (InterruptAuras[destGUID] == nil) then
-													InterruptAuras[destGUID] = {}
-												end
-											tblinsert(InterruptAuras[destGUID], { ["spellId"] = spellId, ["name"] = name, ["duration"] = duration, ["expirationTime"] = expirationTime, ["priority"] = priority, ["spellCategory"] = spellCategory, ["icon"] = icon, ["spellSchool"] = spellSchool, ["hue"] = hue })
-											UpdateUnitAuraByUnitGUID(destGUID, -20)
-									  end
-								 end
-							end
-						end
+			end
+			-- Check Channel Interrupts for party
+			if (event == "SPELL_CAST_SUCCESS") then
+				if interruptsIds[spellId] then
+					for i = 1, GetNumGroupMembers() do
+						 if (destGUID == UnitGUID("party"..i)) and (select(7, UnitChannelInfo("party"..i)) == false) then
+	            local duration = interruptsIds[spellId]
+							if (duration ~= nil) then
+								local expirationTime = GetTime() + duration
+								local priority = LoseControlDB.priority.Interrupt
+								local spellCategory = "Interrupt"
+								local name, _, icon = GetSpellInfo(spellId)
+								if (InterruptAuras[destGUID] == nil) then
+									InterruptAuras[destGUID] = {}
+								end
+								tblinsert(InterruptAuras[destGUID], { ["spellId"] = spellId, ["name"] = name, ["duration"] = duration, ["expirationTime"] = expirationTime, ["priority"] = priority, ["spellCategory"] = spellCategory, ["icon"] = icon, ["spellSchool"] = spellSchool, ["hue"] = hue })
+								UpdateUnitAuraByUnitGUID(destGUID, -20)
+	            end
+					  end
 					end
+				end
+			end
 
 			-----------------------------------------------------------------------------------------------------------------
 			--Reset Stealth Table if Unit Dies
 			-----------------------------------------------------------------------------------------------------------------
 			if ((event == "UNIT_DIED") or (event == "UNIT_DESTROYED") or (event == "UNIT_DISSIPATES")) and ((destGUID == UnitGUID("arena1")) or (destGUID == UnitGUID("arena2")) or (destGUID == UnitGUID("arena3"))) then
-					if (destGUID == UnitGUID("arena1")) then
-						Arenastealth["arena1"] = nil
-					elseif (destGUID == UnitGUID("arena2")) then
-						Arenastealth["arena2"] = nil
-					elseif (destGUID == UnitGUID("arena3")) then
-						Arenastealth["arena3"] = nil
-					end
-			end
-
-
-
-					-----------------------------------------------------------------------------------------------------------------
-					--SmokeBomb Check, do not need speperate prio for cleu + aura
-					-----------------------------------------------------------------------------------------------------------------
-					if ((event == "SPELL_CAST_SUCCESS") and (spellId == 212182)) then
-						if (sourceGUID ~= nil) then
-							local duration = 5
-							local expirationTime = GetTime() + duration
-							if (SmokeBombAuras[sourceGUID] == nil) then
-								SmokeBombAuras[sourceGUID] = {}
-							end
-					  	SmokeBombAuras[sourceGUID] = { ["duration"] = duration, ["expirationTime"] = expirationTime }
-							Ctimer(duration + 1, function()	-- execute in some close next frame to accurate use of UnitAura function
-							SmokeBombAuras[sourceGUID] = nil
-							end)
-					  end
-					end
-
-					-----------------------------------------------------------------------------------------------------------------
-					--Root Beam Check, do not need speperate prio for cleu + aura
-					-----------------------------------------------------------------------------------------------------------------
-					if ((event == "SPELL_CAST_SUCCESS") and (spellId == 78675)) then
-						if (sourceGUID ~= nil) then
-							local duration = 8
-							local expirationTime = GetTime() + duration
-							if (BeamAura[sourceGUID] == nil) then
-								BeamAura[sourceGUID] = {}
-							end
-							BeamAura[sourceGUID] = { ["duration"] = duration, ["expirationTime"] = expirationTime }
-							Ctimer(duration + 1, function()	-- execute in some close next frame to accurate use of UnitAura function
-							BeamAura[sourceGUID] = nil
-							end)
-						end
-					end
-
-					-----------------------------------------------------------------------------------------------------------------
-					--Duel Enemy Check, do not need speperate prio for cleu + aura
-					-----------------------------------------------------------------------------------------------------------------
-					if ((event == "SPELL_CAST_SUCCESS") and (spellId == 207736)) then
-						if sourceGUID and (bit_band(sourceFlags, COMBATLOG_OBJECT_REACTION_HOSTILE) == COMBATLOG_OBJECT_REACTION_HOSTILE) then
-							local duration = 6
-							local expirationTime = GetTime() + duration
-							if (DuelAura[sourceGUID] == nil) then
-								DuelAura[sourceGUID] = {}
-							end
-							if (DuelAura[destGUID] == nil) then
-								DuelAura[destGUID] = {}
-							end
-							DuelAura[sourceGUID] = { ["duration"] = duration, ["expirationTime"] = expirationTime, ["destGUID"] = destGUID }
-							DuelAura[destGUID] = { ["duration"] = duration, ["expirationTime"] = expirationTime, ["destGUID"] = destGUID }
-							print("cleu enemy Dueled Data Stored destGUID is"..destGUID)
-							print("cleu enemy Dueled Data Stored sourceGUID is"..sourceGUID)
-							Ctimer(duration + 1, function()	-- execute in some close next frame to accurate use of UnitAura function
-							DuelAura[sourceGUID] = nil
-							DuelAura[destGUID] = nil
-							end)
-						end
-					end
-
-
-
-			-----------------------------------------------------------------------------------------------------------------
-			--Trees Check (if Tress dies it will not update currently not sure how to track that)
-			-----------------------------------------------------------------------------------------------------------------
-			if ((event == "SPELL_CAST_SUCCESS") and (cleuPrioCastedSpells[spellId])) then
-					local priority, priorityArena, spellCategory, name
-					if cleuPrioCastedSpells[spellId].priority == nil then
-					priority = nil
-					else
-					priority = LoseControlDB.priority[cleuPrioCastedSpells[spellId].priority]
-					spellCategory = cleuPrioCastedSpells[spellId].priority
-					name = cleuPrioCastedSpells[spellId].name
-					end
-
-					------------------------------------------ARENA-------------------------------------------------------------------------------
-					if (sourceGUID == UnitGUID("arena1")) or (sourceGUID == UnitGUID("arena2")) or (sourceGUID == UnitGUID("arena3")) then
-					if cleuPrioCastedSpells[spellId].priorityArena == nil then
-					priority = nil
-					else
-					priority = LoseControlDB.priorityArena[cleuPrioCastedSpells[spellId].priorityArena]
-					spellCategory = cleuPrioCastedSpells[spellId].priorityArena
-					name = cleuPrioCastedSpells[spellId].nameArena
-					end
-			  	end
-					--------------------------------------------------------------------------------------------------------------------------------
-					if priority then
-						local duration = cleuPrioCastedSpells[spellId].duration
-						local expirationTime = GetTime() + duration
-						if not InterruptAuras[sourceGUID]  then
-								InterruptAuras[sourceGUID] = {}
-						end
-						local _, _, icon = GetSpellInfo(spellId)
-						tblinsert(InterruptAuras[sourceGUID], { ["spellId"] = nil, ["name"] = name, ["duration"] = duration, ["expirationTime"] = expirationTime, ["priority"] = priority, ["spellCategory"] = spellCategory, ["icon"] = icon, ["spellSchool"] = spellSchool, ["hue"] = hue })
-						UpdateUnitAuraByUnitGUID(sourceGUID, -20)
-					end
+				if (destGUID == UnitGUID("arena1")) then
+					Arenastealth["arena1"] = nil
+				elseif (destGUID == UnitGUID("arena2")) then
+					Arenastealth["arena2"] = nil
+				elseif (destGUID == UnitGUID("arena3")) then
+					Arenastealth["arena3"] = nil
+				end
 			end
 
 			-----------------------------------------------------------------------------------------------------------------
-			--Cold Snap Reset
+			--SmokeBomb Check
 			-----------------------------------------------------------------------------------------------------------------
+			if ((event == "SPELL_CAST_SUCCESS") and (spellId == 212182)) then
+				if (sourceGUID ~= nil) then
+				local duration = 5
+				local expirationTime = GetTime() + duration
+					if (SmokeBombAuras[sourceGUID] == nil) then
+						SmokeBombAuras[sourceGUID] = {}
+					end
+			  	SmokeBombAuras[sourceGUID] = { ["duration"] = duration, ["expirationTime"] = expirationTime }
+					Ctimer(duration + 1, function()	-- execute in some close next frame to accurate use of UnitAura function
+					SmokeBombAuras[sourceGUID] = nil
+					end)
+			  end
+			end
+
+			-----------------------------------------------------------------------------------------------------------------
+			--Root Beam Check
+			-----------------------------------------------------------------------------------------------------------------
+			if ((event == "SPELL_CAST_SUCCESS") and (spellId == 78675)) then
+				if (sourceGUID ~= nil) then
+					local duration = 8
+					local expirationTime = GetTime() + duration
+					if (BeamAura[sourceGUID] == nil) then
+						BeamAura[sourceGUID] = {}
+					end
+					BeamAura[sourceGUID] = { ["duration"] = duration, ["expirationTime"] = expirationTime }
+					Ctimer(duration + 1, function()	-- execute in some close next frame to accurate use of UnitAura function
+					BeamAura[sourceGUID] = nil
+					end)
+				end
+			end
+
+			-----------------------------------------------------------------------------------------------------------------
+			--Shaodwy Duel Enemy Check
+			-----------------------------------------------------------------------------------------------------------------
+			if ((event == "SPELL_CAST_SUCCESS") and (spellId == 207736)) then
+				if sourceGUID and (bit_band(sourceFlags, COMBATLOG_OBJECT_REACTION_HOSTILE) == COMBATLOG_OBJECT_REACTION_HOSTILE) then
+					local duration = 6
+					local expirationTime = GetTime() + duration
+					if (DuelAura[sourceGUID] == nil) then
+						DuelAura[sourceGUID] = {}
+					end
+					if (DuelAura[destGUID] == nil) then
+						DuelAura[destGUID] = {}
+					end
+					DuelAura[sourceGUID] = { ["duration"] = duration, ["expirationTime"] = expirationTime, ["destGUID"] = destGUID }
+					DuelAura[destGUID] = { ["duration"] = duration, ["expirationTime"] = expirationTime, ["destGUID"] = destGUID }
+					print("cleu enemy Dueled Data Stored destGUID is"..destGUID)
+					print("cleu enemy Dueled Data Stored sourceGUID is"..sourceGUID)
+					Ctimer(duration + 1, function()	-- execute in some close next frame to accurate use of UnitAura function
+					DuelAura[sourceGUID] = nil
+					DuelAura[destGUID] = nil
+					end)
+				end
+			end
+
+		-----------------------------------------------------------------------------------------------------------------
+		--CLEU Spell Cast Check (if Cast dies it will not update currently, not sure how to track that)
+		-----------------------------------------------------------------------------------------------------------------
+		if ((event == "SPELL_CAST_SUCCESS") and (cleuPrioCastedSpells[spellId])) then
+			local priority, priorityArena, spellCategory, name
+      ------------------------------------------Player/Party/Target/Etc-------------------------------------------------------------
+			if cleuPrioCastedSpells[spellId].priority == nil then
+			 priority = nil
+			else
+			 priority = LoseControlDB.priority[cleuPrioCastedSpells[spellId].priority]
+			 spellCategory = cleuPrioCastedSpells[spellId].priority
+			 name = cleuPrioCastedSpells[spellId].name
+			end
+			------------------------------------------Arena123-----------------------------------------------------------------------------
+			if (sourceGUID == UnitGUID("arena1")) or (sourceGUID == UnitGUID("arena2")) or (sourceGUID == UnitGUID("arena3")) then
+				if cleuPrioCastedSpells[spellId].priorityArena == nil then
+				 priority = nil
+				else
+				 priority = LoseControlDB.priorityArena[cleuPrioCastedSpells[spellId].priorityArena]
+				 spellCategory = cleuPrioCastedSpells[spellId].priorityArena
+				 name = cleuPrioCastedSpells[spellId].nameArena
+				end
+	  	end
+			--------------------------------------------------------------------------------------------------------------------------------
+			if priority then
+				local duration = cleuPrioCastedSpells[spellId].duration
+				local expirationTime = GetTime() + duration
+				if not InterruptAuras[sourceGUID]  then
+						InterruptAuras[sourceGUID] = {}
+				end
+				local _, _, icon = GetSpellInfo(spellId)
+				tblinsert(InterruptAuras[sourceGUID], { ["spellId"] = nil, ["name"] = name, ["duration"] = duration, ["expirationTime"] = expirationTime, ["priority"] = priority, ["spellCategory"] = spellCategory, ["icon"] = icon, ["spellSchool"] = spellSchool, ["hue"] = hue })
+				UpdateUnitAuraByUnitGUID(sourceGUID, -20)
+			end
+		end
+
+		-----------------------------------------------------------------------------------------------------------------
+		--Cold Snap Reset
+		-----------------------------------------------------------------------------------------------------------------
 		if ((sourceGUID ~= nil) and (event == "SPELL_CAST_SUCCESS") and (spellId == 235219)) then
 			local needUpdateUnitAura = false
 			if (InterruptAuras[sourceGUID] ~= nil) then
