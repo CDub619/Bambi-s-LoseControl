@@ -143,13 +143,13 @@ local cleuPrioCastedSpells = {}
 -------------------------------------------------------------------------------
 -- Thanks to all the people on the Curse.com and WoWInterface forums who help keep this list up to date :)
 local cleuSpells = { -- nil = Do Not Show
- {198103, 60, "PvE",  "Small_Defensive_CDs", "Earth Ele", "Earth Ele"}, --Shaman Earth Ele
- {205636, 10, "PvE",  "Small_Defensive_CDs", "Trees", "Trees"}, --Druid Trees
+ {188616, 60, "PvE",  "Small_Defensive_CDs", "Earth Ele", "Earth Ele"}, --Shaman Earth Ele
+ {248280, 10, "PvE",  nil, "Trees", "Trees"}, --Druid Trees
  {288853, 25, nil,  "Melee_Major_OffenisiveCDs", "Abomination", "Abomination"}, --Dk Raise Abomination
  {123904, 24, nil,  "Small_Offenisive_CDs", "Xuen", "Xuen"}, --WW Xuen Pet Summmon
  {34433, 15, nil,  "Small_Offenisive_CDs", "Shadowfiend", "Shadowfiend"}, --Disc Pet Summmon
  {123040, 15, nil,  "Small_Offenisive_CDs", "Mindbender", "Mindbender"}, --Disc Pet Summmon
- {1122, 30, nil,  "Ranged_Major_OffenisiveCDs", "Infernals", "Infernals"}, --Warlock Infernals
+ {111685, 30, nil,  "Ranged_Major_OffenisiveCDs", "Infernals", "Infernals"}, --Warlock Infernals
  --{spellId, duration. prio, prioArena, name, nameArena} --must have both names
 }
 
@@ -6100,12 +6100,29 @@ ArenaSeen:SetScript("OnEvent", function(self, event, ...)
 end
 end)
 
+local tip = CreateFrame('GameTooltip', 'GuardianOwnerTooltip', nil, 'GameTooltipTemplate')
+local function GetGuardianOwner(guid)
+  tip:SetOwner(WorldFrame, 'ANCHOR_NONE')
+  tip:SetHyperlink('unit:' .. guid or '')
+  local text = GuardianOwnerTooltipTextLeft2
+	local text1 = GuardianOwnerTooltipTextLeft3
+	if text1 and type(text1:GetText()) == "string" then
+		if strmatch(text1:GetText(), "Corpse") then
+			return "Corpse"
+		else
+			return strmatch(text and text:GetText() or '', "^([^%s']+)'")
+		end
+	else
+		return strmatch(text and text:GetText() or '', "^([^%s']+)'")
+	end
+end
+
 
 -- This event check pvp interrupts and targettarget/focustarget unit aura triggers
 function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 	if self.unitId == "target" then
 		-- Check Interrupts
-		local _, event, _, sourceGUID, _, sourceFlags, _, destGUID, _, _, _, spellId, _, _, _, _, spellSchool = CombatLogGetCurrentEventInfo()
+		local _, event, _, sourceGUID, sourceName, sourceFlags, _, destGUID, _, _, _, spellId, _, _, _, _, spellSchool = CombatLogGetCurrentEventInfo()
 		if (destGUID ~= nil) then --Diables Kicks for Player
 			if (event == "SPELL_INTERRUPT") then
 				local duration = interruptsIds[spellId]
@@ -6291,7 +6308,7 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 		-----------------------------------------------------------------------------------------------------------------
 		--CLEU Spell Cast Check (if Cast dies it will not update currently, not sure how to track that)
 		-----------------------------------------------------------------------------------------------------------------
-		if ((event == "SPELL_CAST_SUCCESS") and (cleuPrioCastedSpells[spellId])) then
+		if (((event == "SPELL_SUMMON") or (event == "SPELL_CREATE")) and (cleuPrioCastedSpells[spellId])) then
 			local priority, priorityArena, spellCategory, name
       ------------------------------------------Player/Party/Target/Etc-------------------------------------------------------------
 			if cleuPrioCastedSpells[spellId].priority == nil then
@@ -6319,8 +6336,26 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 						InterruptAuras[sourceGUID] = {}
 				end
 				local _, _, icon = GetSpellInfo(spellId)
-				tblinsert(InterruptAuras[sourceGUID], { ["spellId"] = nil, ["name"] = name, ["duration"] = duration, ["expirationTime"] = expirationTime, ["priority"] = priority, ["spellCategory"] = spellCategory, ["icon"] = icon, ["spellSchool"] = spellSchool, ["hue"] = hue })
+				tblinsert(InterruptAuras[sourceGUID], { ["spellId"] = nil, ["name"] = name, ["duration"] = duration, ["expirationTime"] = expirationTime, ["priority"] = priority, ["spellCategory"] = spellCategory, ["icon"] = icon, ["spellSchool"] = spellSchool, ["hue"] = hue, ["destGUID"] = destGUID })
 				UpdateUnitAuraByUnitGUID(sourceGUID, -20)
+
+        self.ticker = C_Timer.NewTicker(0.5, function()
+          local pet = destGUID
+          local owner = sourceName
+          if GetGuardianOwner(pet) == owner then
+            --print(GetGuardianOwner(pet).." "..pet.." "..expirationTime-GetTime())
+          else
+            --print(pet.." Died or Dismissed "..expirationTime-GetTime())
+            for k, v in pairs(InterruptAuras[sourceGUID]) do
+              if v.destGUID == pet then
+                InterruptAuras[sourceGUID][k] = nil
+                UpdateUnitAuraByUnitGUID(sourceGUID, -20)
+                self.ticker:Cancel()
+                break
+              end
+            end
+          end
+        end, duration * 2)
 			end
 		end
 
