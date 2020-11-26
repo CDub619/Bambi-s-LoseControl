@@ -287,7 +287,7 @@ local spellsArenaTable = {
 	{288977 , "Small_Defensive_CDs"}, --Transfusion
 	{48743 , "Small_Defensive_CDs"}, --Death Pact
 	{48265 , "Freedoms_Speed"}, -- Death's Advance
-	{212552 , "Freedoms_Speed"}, -- Wind Rush
+	{212552 , "Freedoms_Speed"}, -- Wraith Walk
 	{45524 , "Snares_Ranged_Spamable"}, --Chains of Ice
 
 	----------------
@@ -452,7 +452,9 @@ local spellsArenaTable = {
   {47788 , "Big_Defensive_CDs"}, --Guardian Spirit
   {232707 , "Big_Defensive_CDs"}, --Ray of Hope
 	{199845, "Player_Party_OffensiveCDs"}, --Psyflay (PvP Talent 50% MS)
+  {322461 , "Player_Party_OffensiveCDs"}, --Thoughtstolen
   {197871 , "Small_Offenisive_CDs"}, --Dark Archangel
+  {197874 , "Small_Offenisive_CDs"}, --Dark Archangel
   {194249 , "Small_Offenisive_CDs"}, --Voidform
   {247776 , "Small_Offenisive_CDs"}, --Mind Trauma
   {47536 , "Small_Defensive_CDs"}, --Rapture
@@ -468,6 +470,7 @@ local spellsArenaTable = {
   {123254 , "Special_Low"}, --Twist of Fate
   {65081 , "Special_Low"}, --Body and Soul
   {121557, "Special_Low"}, --Angelic Feather
+  {327710, "Special_Low"}, -- Benevolent Faerie (Night Fae Priest)
 
 	----------------
 	-- Rogue
@@ -613,6 +616,7 @@ local spellsArenaTable = {
   {277187, "Small_Defensive_CDs"}, -- Gladiator's Emblem
   {286342, "Small_Defensive_CDs"}, -- Gladiator's Safegaurd
   {68992, "Freedoms_Speed"}, -- Darkflight
+  {310143, "Special_Low"}, -- Soulshape
 
 	}
 
@@ -778,6 +782,7 @@ local spellsTable = {
 
 	{202797 , "Disarm_Warning"},   -- Viper Sting Healing Reduction
 	{77606  , "Disarm_Warning"},   -- Dark Simulacrum
+  {322461  , "Disarm_Warning"},   -- Thoughtstolen
 	{197091 , "Disarm_Warning"},   -- Neurotoxin
 	{206649 , "Disarm_Warning"},	 -- Eye of Leotheras (no silence}, 4% dmg and duration reset for spell casted)
 
@@ -835,6 +840,7 @@ local spellsTable = {
   {204362 , "AOE_DMG_Modifiers"},				-- Heroism (Shamanism pvp talent
   {208963 , "AOE_DMG_Modifiers"},				-- Skyfury Totem (Shamanism pvp talent
   {197871 , "AOE_DMG_Modifiers"},				-- Dark Archangel
+  {197874 , "AOE_DMG_Modifiers"},				-- Dark Archangel
   {57934  , "AOE_DMG_Modifiers"},				-- Tricks of the Trade
 
   {212183 , "Friendly_Smoke_Bomb"},			-- Smoke Bomb
@@ -842,12 +848,13 @@ local spellsTable = {
 	{8178   , "AOE_Spell_Refections"},		-- Grounding Totem Effect (Grounding Totem)
   {213915 , "AOE_Spell_Refections"},		-- Mass Spell Reflection
 
-  {212522 , "Speed_Freedoms"},		-- Wraith Walk
+  {212552 , "Speed_Freedoms"},		-- Wraith Walk
   {48265  , "Speed_Freedoms"},		-- Death's Advance
   {108843 , "Speed_Freedoms"},		-- Blazing Speed
   {269513 , "Speed_Freedoms"},		-- Death from Above
   {197003 , "Speed_Freedoms"},		-- Maneuverability
   {205629 , "Speed_Freedoms"},		-- Demonic Trample
+  {310143 , "Speed_Freedoms"},    -- Soulshape
 
   {54216 , "Freedoms"},		-- Master's Call
   {118922 , "Freedoms"},		-- Posthaste
@@ -885,6 +892,7 @@ local spellsTable = {
   {22812, "Peronsal_Defensives"},		-- Barkskin
 
   {108839, "Movable_Cast_Auras"},		-- Ice Floes
+  {10060, "Movable_Cast_Auras"},		-- Power Infusion
 
   --"Other", --
 	--"PvE", --PVE only
@@ -4545,7 +4553,7 @@ local DBdefaults = {
 						 CC_Reduction = true,
 						 Personal_Offensives = false,
 						 Peronsal_Defensives = false,
-						 Movable_Cast_Auras = false,
+						 Movable_Cast_Auras = true,
 					   SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 						 PvE = true,
 						 Other = false,
@@ -4582,7 +4590,7 @@ local DBdefaults = {
 							CC_Reduction = true,
 							Personal_Offensives = false,
 							Peronsal_Defensives = false,
-							Movable_Cast_Auras = false,
+							Movable_Cast_Auras = true,
 							SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 							PvE = true,
 							Other = false,
@@ -4630,7 +4638,7 @@ local DBdefaults = {
 						 CC_Reduction = true,
 						 Personal_Offensives = false,
 						 Peronsal_Defensives = false,
-						 Movable_Cast_Auras = false,
+						 Movable_Cast_Auras = true,
 					   SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 						 PvE = true,
 						 Other = false,
@@ -4667,7 +4675,7 @@ local DBdefaults = {
 							CC_Reduction = true,
 							Personal_Offensives = false,
 							Peronsal_Defensives = false,
-							Movable_Cast_Auras = false,
+							Movable_Cast_Auras = true,
 							SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 							PvE = true,
 							Other = false,
@@ -4715,7 +4723,7 @@ local DBdefaults = {
 						 CC_Reduction = true,
 						 Personal_Offensives = false,
 						 Peronsal_Defensives = false,
-						 Movable_Cast_Auras = false,
+						 Movable_Cast_Auras = true,
 					   SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 						 PvE = true,
 						 Other = false,
@@ -4752,7 +4760,7 @@ local DBdefaults = {
 							CC_Reduction = true,
 							Personal_Offensives = false,
 							Peronsal_Defensives = false,
-							Movable_Cast_Auras = false,
+							Movable_Cast_Auras = true,
 							SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 							PvE = true,
 							Other = false,
@@ -4800,7 +4808,7 @@ local DBdefaults = {
 						 CC_Reduction = true,
 						 Personal_Offensives = false,
 						 Peronsal_Defensives = false,
-						 Movable_Cast_Auras = false,
+						 Movable_Cast_Auras = true,
 					   SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 						 PvE = true,
 						 Other = false,
@@ -4837,7 +4845,7 @@ local DBdefaults = {
 							CC_Reduction = true,
 							Personal_Offensives = false,
 							Peronsal_Defensives = false,
-							Movable_Cast_Auras = false,
+							Movable_Cast_Auras = true,
 							SnareSpecial = true, SnarePhysical70 = true, SnareMagic70 = true, SnarePhysical50 = true, SnarePosion50 = true, SnareMagic50 = true, SnarePhysical30 = true, SnareMagic30  = true, Snare = true,
 							PvE = true,
 							Other = false,
@@ -6347,12 +6355,15 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
             --print(GetGuardianOwner(pet).." "..pet.." "..expirationTime-GetTime())
           else
             --print(pet.." Died or Dismissed "..expirationTime-GetTime())
-            for k, v in pairs(InterruptAuras[sourceGUID]) do
-              if v.destGUID == pet then
-                InterruptAuras[sourceGUID][k] = nil
-                UpdateUnitAuraByUnitGUID(sourceGUID, -20)
-                self.ticker:Cancel()
-                break
+            if InterruptAuras[sourceGUID] then
+              for k, v in pairs(InterruptAuras[sourceGUID]) do
+                if v.destGUID == pet then
+                  InterruptAuras[sourceGUID][k] = nil
+                  print(pet.." Died or Dismissed Updating LC for "..sourceGUID.." w/ "..expirationTime-GetTime().. " left")
+                  UpdateUnitAuraByUnitGUID(sourceGUID, -20)
+                  self.ticker:Cancel()
+                  break
+                end
               end
             end
           end

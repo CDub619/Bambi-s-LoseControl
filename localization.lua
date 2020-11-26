@@ -552,7 +552,7 @@ else -- default English
 	L["CC_Reduction"]   = "CC: Reduction"
 	L["Personal_Offensives"]   = "Offensives: Personal"
 	L["Peronsal_Defensives"]   = "Defensives: Personal"
-	L["Movable_Cast_Auras"]   = "Cast: Moving"
+	L["Movable_Cast_Auras"]   = "Cast: Speed/Moving"
 
 	L["Other"]       = "Other"
 	L["PvE"]         = "PvE (Not Arena)"
