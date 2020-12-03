@@ -97,6 +97,7 @@ local mathabs = math.abs
 local bit_band = bit.band
 local tblsort = table.sort
 local Ctimer = C_Timer.After
+local substring = string.sub
 local CLocData = C_LossOfControl.GetActiveLossOfControlData
 local unpack = unpack
 local SetScript = SetScript
@@ -143,12 +144,13 @@ local cleuPrioCastedSpells = {}
 -------------------------------------------------------------------------------
 -- Thanks to all the people on the Curse.com and WoWInterface forums who help keep this list up to date :)
 local cleuSpells = { -- nil = Do Not Show
- {188616, 60, "PvE",  "Small_Defensive_CDs", "Earth Ele", "Earth Ele"}, --Shaman Earth Ele
+ {188616, 60, "PvE",  "Special_Low", "Earth Ele", "Earth Ele"}, --Shaman Earth Ele
+ {118323, 60, "PvE",  "Special_Low", "Primal Earth Ele", "Primal Earth Ele"}, --Shaman Primal  Earth Ele
  {248280, 10, "PvE",  nil, "Trees", "Trees"}, --Druid Trees
  {288853, 25, nil,  "Melee_Major_OffenisiveCDs", "Abomination", "Abomination"}, --Dk Raise Abomination
  {123904, 24, nil,  "Small_Offenisive_CDs", "Xuen", "Xuen"}, --WW Xuen Pet Summmon
  {34433, 15, nil,  "Small_Offenisive_CDs", "Shadowfiend", "Shadowfiend"}, --Disc Pet Summmon
- {123040, 15, nil,  "Small_Offenisive_CDs", "Mindbender", "Mindbender"}, --Disc Pet Summmon
+ {123040, 12, nil,  "Small_Offenisive_CDs", "Mindbender", "Mindbender"}, --Disc Pet Summmon
  {111685, 30, nil,  "Ranged_Major_OffenisiveCDs", "Infernals", "Infernals"}, --Warlock Infernals
  {8143, 10, "CC_Reduction",  "Special_High", "Tremor", "Tremor"}, --Shaman Tremor Totem
  --{spellId, duration. prio, prioArena, name, nameArena} --must have both names
@@ -270,6 +272,7 @@ local spellsArenaTable = {
 	{207167 , "CC_Arena"}, --Blinding Sleet
 	{204490 , "Silence_Arena"}, --Strangulate
 	{77606 , "Special_High"}, --Dark Simulacrum
+	{315443 , "Ranged_Major_OffenisiveCDs"}, --Abomination Limb
 	{91807 , "Roots_90_Snares"}, --Shambling Rush
 	{204085 , "Roots_90_Snares"}, --Deathchill
 	{233395 , "Roots_90_Snares"}, --Deathchill
@@ -616,7 +619,7 @@ local spellsArenaTable = {
   {277187, "Small_Defensive_CDs"}, -- Gladiator's Emblem
   {286342, "Small_Defensive_CDs"}, -- Gladiator's Safegaurd
   {68992, "Freedoms_Speed"}, -- Darkflight
-  {310143, "Special_Low"}, -- Soulshape
+  {310143, "Freedoms_Speed"}, -- Soulshape
 
 	}
 
@@ -893,6 +896,7 @@ local spellsTable = {
 
   {108839, "Movable_Cast_Auras"},		-- Ice Floes
   {10060, "Movable_Cast_Auras"},		-- Power Infusion
+  {315443, "Movable_Cast_Auras"},		-- Abomination Limb
 
   --"Other", --
 	--"PvE", --PVE only
@@ -6110,7 +6114,7 @@ end
 end)
 
 local tip = CreateFrame('GameTooltip', 'GuardianOwnerTooltip', nil, 'GameTooltipTemplate')
-local function GetGuardianOwner(guid)
+local function GetGuardianOwner(guid) --Used for Infrnals and Ele
   tip:SetOwner(WorldFrame, 'ANCHOR_NONE')
   tip:SetHyperlink('unit:' .. guid or '')
   local text = GuardianOwnerTooltipTextLeft2
@@ -6119,13 +6123,12 @@ local function GetGuardianOwner(guid)
 		if strmatch(text1:GetText(), "Corpse") then
 			return "Corpse"
 		else
-			return strmatch(text and text:GetText() or '', "^([^%s']+)'")
+			return strmatch(text and text:GetText() or '', "^([^%s-]+)")
 		end
 	else
-		return strmatch(text and text:GetText() or '', "^([^%s']+)'")
+		return strmatch(text and text:GetText() or '', "^([^%s-]+)")
 	end
 end
-
 
 -- This event check pvp interrupts and targettarget/focustarget unit aura triggers
 function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
@@ -6344,22 +6347,19 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 				if not InterruptAuras[sourceGUID]  then
 						InterruptAuras[sourceGUID] = {}
 				end
-				local _, _, icon = GetSpellInfo(spellId)
+				local namePrint, _, icon = GetSpellInfo(spellId)
 				tblinsert(InterruptAuras[sourceGUID], { ["spellId"] = nil, ["name"] = name, ["duration"] = duration, ["expirationTime"] = expirationTime, ["priority"] = priority, ["spellCategory"] = spellCategory, ["icon"] = icon, ["spellSchool"] = spellSchool, ["hue"] = hue, ["destGUID"] = destGUID })
 				UpdateUnitAuraByUnitGUID(sourceGUID, -20)
-
         self.ticker = C_Timer.NewTicker(0.5, function()
-          local pet = destGUID
-          local owner = sourceName
-          if GetGuardianOwner(pet) == owner then
-            --print(GetGuardianOwner(pet).." "..pet.." "..expirationTime-GetTime())
+		      if GetGuardianOwner(destGUID) and GetGuardianOwner(destGUID) ~= "Corpse" and GetGuardianOwner(destGUID) ~= "Level" then
+            print(GetGuardianOwner(destGUID).." "..namePrint.." :LC "..expirationTime-GetTime())
           else
-            --print(pet.." Died or Dismissed "..expirationTime-GetTime())
+            print(GetGuardianOwner(destGUID).." "..namePrint.." Died or Dismissed :LC "..expirationTime-GetTime())
             if InterruptAuras[sourceGUID] then
               for k, v in pairs(InterruptAuras[sourceGUID]) do
-                if v.destGUID == pet then
+                if v.destGUID == destGUID then
                   InterruptAuras[sourceGUID][k] = nil
-                  print(pet.." Died or Dismissed Updating LC for "..sourceGUID.." w/ "..expirationTime-GetTime().. " left")
+                  print(GetGuardianOwner(destGUID).." "..namePrint.." Pet CANCELLED Updating for :LC "..sourceName.." w/ "..expirationTime-GetTime().. " left")
                   UpdateUnitAuraByUnitGUID(sourceGUID, -20)
                   self.ticker:Cancel()
                   break
@@ -6440,7 +6440,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 	local maxExpirationTime = 0
 	local newExpirationTime = 0
 	local maxPriorityIsInterrupt = false
-	local Icon, Duration, Hue, Name, Spell
+	local Icon, Duration, Hue, Name, Spell, Count
 	local LayeredHue = nil
 	local forceEventUnitAuraAtEnd = false
 	local buffs= {}
@@ -6451,7 +6451,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 		-- Check debuffs
 		for i = 1, 40 do
 			local localForceEventUnitAuraAtEnd = false
-			local name, icon, _, _, duration, expirationTime, source, _, _, spellId = UnitAura(unitId, i, "HARMFUL")
+			local name, icon, count, _, duration, expirationTime, source, _, _, spellId = UnitAura(unitId, i, "HARMFUL")
 			local hue
 			if not spellId then break end -- no more debuffs, terminate the loop
 			if (self.unitId == "targettarget") or (self.unitId == "focustarget") then
@@ -6610,6 +6610,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 							forceEventUnitAuraAtEnd = localForceEventUnitAuraAtEnd
 							Hue = hue
 							Name = name
+              Count = count
 						elseif Priority > maxPriority then
 							maxPriority = Priority
 							maxExpirationTime = expirationTime
@@ -6619,6 +6620,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 							forceEventUnitAuraAtEnd = localForceEventUnitAuraAtEnd
 							Hue = hue
 							Name = name
+              Count = count
 						end
 					elseif durationType[spellCategory] then
 						if Priority == maxPriority and expirationTime > maxExpirationTime then
@@ -6629,6 +6631,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 							forceEventUnitAuraAtEnd = localForceEventUnitAuraAtEnd
 							Hue = hue
 							Name = name
+              Count = count
 						elseif Priority > maxPriority then
 							maxPriority = Priority
 							maxExpirationTime = expirationTime
@@ -6638,6 +6641,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 							forceEventUnitAuraAtEnd = localForceEventUnitAuraAtEnd
 							Hue = hue
 							Name = name
+              Count = count
 						end
 					end
 				end
@@ -6647,7 +6651,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 		-- Check buffs
 		for i = 1, 40 do
 			local localForceEventUnitAuraAtEnd = false
-			local name, icon, _, _, duration, expirationTime, _, _, _, spellId = UnitAura(unitId, i)
+			local name, icon, count, _, duration, expirationTime, _, _, _, spellId = UnitAura(unitId, i)
 			local hue
 			if not spellId then break end -- no more debuffs, terminate the loop
 			if (not enabled[spellId]) and (not enabled[name]) then spellId = nil; name = nil end
@@ -6721,6 +6725,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 							forceEventUnitAuraAtEnd = localForceEventUnitAuraAtEnd
 							Hue = hue
 							Name = name
+              Count = count
 						elseif Priority > maxPriority then
 							maxPriority = Priority
 							maxExpirationTime = expirationTime
@@ -6730,6 +6735,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 							forceEventUnitAuraAtEnd = localForceEventUnitAuraAtEnd
 							Hue = hue
 							Name = name
+              Count = count
 						end
 					elseif durationType[spellCategory] then
 						if Priority == maxPriority and expirationTime > maxExpirationTime then
@@ -6740,6 +6746,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 							forceEventUnitAuraAtEnd = localForceEventUnitAuraAtEnd
 							Hue = hue
 							Name = name
+              Count = count
 						elseif Priority > maxPriority then
 							maxPriority = Priority
 							maxExpirationTime = expirationTime
@@ -6749,6 +6756,7 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 							forceEventUnitAuraAtEnd = localForceEventUnitAuraAtEnd
 							Hue = hue
 							Name = name
+              Count = count
 						end
 					end
 				end
@@ -7067,6 +7075,7 @@ end
 		end
 
 
+
 	if (maxExpirationTime == 0) then -- no (de)buffs found
 		self.maxExpirationTime = 0
 		if self.anchor ~= UIParent and self.drawlayer then
@@ -7078,6 +7087,9 @@ end
 		if self.gloss:IsShown() then
 			self.gloss:Hide()
 		end
+    if self.count:IsShown() then
+    self.count:Hide()
+    end
 		self:Hide()
 		self:GetParent():Hide()
 	elseif maxExpirationTime ~= self.maxExpirationTime or ((LayeredHue) or (typeUpdate == -55) or (not UnitExists(unitId)))  then -- this is a different (de)buff, so initialize the cooldown
@@ -7111,6 +7123,31 @@ end
 				self.gloss:Hide()
 			end
 		end
+
+    if Count then
+      if (unitId == "player" or unitId == "party1" or unitId == "party2" or unitId == "party3" or unitId == "party4") and not ((unitId == "player") and (self.frame.anchor == "Blizzard")) then
+        if ( Count > 1 ) then
+          local countText = Count
+          if ( Count >= 100 ) then
+           countText = BUFF_STACKS_OVERFLOW
+          end
+          self.count:ClearAllPoints()
+          self.count:SetFont("Fonts\\FRIZQT__.TTF", 22, "OUTLINE, MONOCHROME")
+          self.count:SetPoint("TOPRIGHT", -1, 8);
+          self.count:SetJustifyH("RIGHT");
+          self.count:Show();
+          self.count:SetText(countText)
+      else
+        if self.count:IsShown() then
+          self.count:Hide()
+        end
+      end
+    end
+    else
+      if self.count:IsShown() then
+        self.count:Hide()
+      end
+    end
 
 		if maxPriorityIsInterrupt then
 			if self.frame.anchor == "Blizzard" then
@@ -7379,6 +7416,9 @@ function LoseControl:new(unitId)
 	o.text:SetPoint("BOTTOM", o, "BOTTOM")
 	o.text:Hide()
 
+  o.count = o.CreateFontString(o, "OVERLAY", "GameFontWhite");
+  o.count:Hide()
+
 
 -----------------------------------------------------------------------------------
 
@@ -7390,6 +7430,7 @@ function LoseControl:new(unitId)
 --	o.gloss.normalTexture = _G[o.gloss:GetName().."NormalTexture"]
 --	o.gloss.normalTexture:SetVertexColor(1, 1, 1, 0.4)
 	o.gloss:Hide()
+
 	-- Create and initialize Interrupt Mini Icons
 	o.iconInterruptBackground = o:CreateTexture(addonName .. unitId .. "InterruptIconBackground", "ARTWORK", nil, -2)
 	--o.iconInterruptBackground:SetTexture("Interface\\AddOns\\LoseControl\\Textures\\lc_interrupt_background")
