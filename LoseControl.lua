@@ -200,6 +200,7 @@ local spellsArenaTable = {
 	{193530 , "Ranged_Major_OffenisiveCDs"}, --Aspect of the Wild
 	{266779 , "Ranged_Major_OffenisiveCDs"}, --Coordinated Assault
 	{186289 , "Ranged_Major_OffenisiveCDs"}, --Aspect of the Eagle
+	{260402 , "Ranged_Major_OffenisiveCDs"}, --Double Tap
 	{288613 , "Ranged_Major_OffenisiveCDs"}, --Trueshot
 	{117526 , "Roots_90_Snares"}, --Binding Shot
 	{117405 , "Roots_90_Snares"}, --Binding Shot
@@ -279,7 +280,7 @@ local spellsArenaTable = {
 	{47568 , "Melee_Major_OffenisiveCDs"}, --Empower Rune Weapon
 	{207256 , "Melee_Major_OffenisiveCDs"}, --Obliteration
 	{51271 , "Melee_Major_OffenisiveCDs"}, --Pillar of Frost
-	{215711 , "Melee_Major_OffenisiveCDs"}, --Soul Reaper
+	--{215711 , "Melee_Major_OffenisiveCDs"}, --Soul Reaper
 	{207289 , "Melee_Major_OffenisiveCDs"}, --Unholy Frenzy
 	{48792 , "Big_Defensive_CDs"}, --Icebound Fortitude
 	{49039 , "Big_Defensive_CDs"}, --Lichborne
@@ -330,7 +331,7 @@ local spellsArenaTable = {
 	{22842 , "Small_Defensive_CDs"}, --Frenzied Regeneration
 	{192081 , "Small_Defensive_CDs"}, --Ironfur
 	{200947 , "Small_Defensive_CDs"}, --Encroaching Vines
-	{236696 , "Small_Defensive_CDs"}, --Thorns
+	{305497 , "Small_Defensive_CDs"}, --Thorns
 	{1850 , "Freedoms_Speed"}, --Dash
 	{77764 , "Freedoms_Speed"}, --Stampeding Roar
 	{252216 , "Freedoms_Speed"}, --Tiger's Dash
@@ -361,6 +362,8 @@ local spellsArenaTable = {
   {33395 , "Roots_90_Snares"}, --Freeze
   {157997 , "Roots_90_Snares"}, --Ice Nova
   {228600 , "Roots_90_Snares"}, --Glacial Spike
+  {110909  , "Big_Defensive_CDs"}, --Alter Time
+  {342246 , "Big_Defensive_CDs"}, --Alter Time
   {198111 , "Big_Defensive_CDs"}, --Temporal Shield
   {113862 , "Big_Defensive_CDs"}, --Greater Invisibility
   {87023 , "Big_Defensive_CDs"}, --Cauterilze
@@ -454,8 +457,17 @@ local spellsArenaTable = {
   {213602 , "Big_Defensive_CDs"}, --Greater Fade
   {47788 , "Big_Defensive_CDs"}, --Guardian Spirit
   {232707 , "Big_Defensive_CDs"}, --Ray of Hope
+  {10060, "Big_Defensive_CDs"}, --Power Infusion
 	{199845, "Player_Party_OffensiveCDs"}, --Psyflay (PvP Talent 50% MS)
+  {322442 , "Player_Party_OffensiveCDs"}, --Thoughtstolen
+  {322464 , "Player_Party_OffensiveCDs"}, --Thoughtstolen
+  {322463 , "Player_Party_OffensiveCDs"}, --Thoughtstolen
+  {322462 , "Player_Party_OffensiveCDs"}, --Thoughtstolen
   {322461 , "Player_Party_OffensiveCDs"}, --Thoughtstolen
+  {322460 , "Player_Party_OffensiveCDs"}, --Thoughtstolen
+  {322459 , "Player_Party_OffensiveCDs"}, --Thoughtstolen
+  {322458 , "Player_Party_OffensiveCDs"}, --Thoughtstolen
+  {322457 , "Player_Party_OffensiveCDs"}, --Thoughtstolen
   {197871 , "Small_Offenisive_CDs"}, --Dark Archangel
   {197874 , "Small_Offenisive_CDs"}, --Dark Archangel
   {194249 , "Small_Offenisive_CDs"}, --Voidform
@@ -556,6 +568,7 @@ local spellsArenaTable = {
 	{5246 , "CC_Arena"}, --Intimidating Shout
   {236273 , "Special_High"}, -- Duel
   {23920 , "Special_High"}, -- Spell Reflection
+  {330279 , "Special_High"}, -- Overwatch Spell Reflection
   {105771 , "Roots_90_Snares"}, --Charge
   {199042 , "Roots_90_Snares"}, --Thunderstruck
   {236236 , "Disarms"}, --Disarm
@@ -787,7 +800,15 @@ local spellsTable = {
 
 	{202797 , "Disarm_Warning"},   -- Viper Sting Healing Reduction
 	{77606  , "Disarm_Warning"},   -- Dark Simulacrum
-  {322461  , "Disarm_Warning"},   -- Thoughtstolen
+  {322442 , "Disarm_Warning"}, --Thoughtstolen
+  {322464 , "Disarm_Warning"}, --Thoughtstolen
+  {322463 , "Disarm_Warning"}, --Thoughtstolen
+  {322462 , "Disarm_Warning"}, --Thoughtstolen
+  {322461 , "Disarm_Warning"}, --Thoughtstolen
+  {322460 , "Disarm_Warning"}, --Thoughtstolen
+  {322459 , "Disarm_Warning"}, --Thoughtstolen
+  {322458 , "Disarm_Warning"}, --Thoughtstolen
+  {322457 , "Disarm_Warning"}, --Thoughtstolen
 	{197091 , "Disarm_Warning"},   -- Neurotoxin
 	{206649 , "Disarm_Warning"},	 -- Eye of Leotheras (no silence}, 4% dmg and duration reset for spell casted)
 
@@ -852,6 +873,7 @@ local spellsTable = {
 
 	{8178   , "AOE_Spell_Refections"},		-- Grounding Totem Effect (Grounding Totem)
   {213915 , "AOE_Spell_Refections"},		-- Mass Spell Reflection
+  {330279 , "AOE_Spell_Refections"},		-- Overwatch
 
   {212552 , "Speed_Freedoms"},		-- Wraith Walk
   {48265  , "Speed_Freedoms"},		-- Death's Advance
@@ -3532,12 +3554,12 @@ local DBdefaults = {
 			CC_Reduction = 18,
 			Personal_Offensives = 16,
 			Peronsal_Defensives = 14,
-			Movable_Cast_Auras = 12,
+			Movable_Cast_Auras = 10,
 
 			Other = 10, --PVE only
 			PvE = 10, --PVE only
 
-			SnareSpecial = 9,
+			SnareSpecial = 12,
 			SnarePhysical70 = 8,
 			SnareMagic70 = 7,
 			SnarePhysical50 = 6,
@@ -6563,28 +6585,34 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 			--Two debuff conidtions like Root Beam
 			-----------------------------------------------------------------------------------------------------------------
 			if spellId == 81261 then
-					local root = {}
-						for i = 1, 40 do
-			      local _, _, _, _, d, e, _, _, _, s = UnitAura(unitId, i, "HARMFUL")
-						if not s then break end
-								if (spellIds[s] == "RootPhyiscal_Special") or (spellIds[s] == "RootMagic_Special") or (spellIds[s] == "Root") or (spellIds[s] == "Roots_90_Snares") then
-									tblinsert(root, {["col1"] = e, ["col2"]  = d})
-								end
-						end
-						if #root then
-							tblsort(root, cmp_col1)
-						end
-						if root[1] then
-						expirationTime = root[1].col1 + .01
-						duration = root[1].col2
-							if source and BeamAura[UnitGUID(source)] then
-								if (expirationTime - GetTime()) >  (BeamAura[UnitGUID(source)].expirationTime - GetTime()) then
-									duration = BeamAura[UnitGUID(source)].duration
-									expirationTime =BeamAura[UnitGUID(source)].expirationTime + .01
-								end
+				local root = {}
+					for i = 1, 40 do
+		      local _, _, _, _, d, e, _, _, _, s = UnitAura(unitId, i, "HARMFUL")
+					if not s then break end
+							if (spellIds[s] == "RootPhyiscal_Special") or (spellIds[s] == "RootMagic_Special") or (spellIds[s] == "Root") or (spellIds[s] == "Roots_90_Snares") then
+								tblinsert(root, {["col1"] = e, ["col2"]  = d})
+							end
+					end
+					if #root then
+						tblsort(root, cmp_col1)
+					end
+					if root[1] then
+					expirationTime = root[1].col1 + .01
+					duration = root[1].col2
+						if source and BeamAura[UnitGUID(source)] then
+							if (expirationTime - GetTime()) >  (BeamAura[UnitGUID(source)].expirationTime - GetTime()) then
+								duration = BeamAura[UnitGUID(source)].duration
+								expirationTime =BeamAura[UnitGUID(source)].expirationTime + .01
 							end
 						end
+					end
 				end
+        -----------------------------------------------------------------------------------------------------------------
+        --Icon Changes
+        -----------------------------------------------------------------------------------------------------------------
+        if spellId == 45524 then
+          icon = 463560
+        end
 
 			local spellCategory = spellIds[spellId] or spellIds[name]
 			local Priority = priority[spellCategory]
