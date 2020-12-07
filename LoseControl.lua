@@ -533,6 +533,7 @@ local spellsArenaTable = {
 	{196364 , "Silence_Arena"}, --Unstable Affliction
   {221705 , "Special_High"}, --Casting Circle
   {104773, "Special_High"}, --Unending Resolve
+  {307871, "Roots_90_Snares"}, --Spear of Bastion
   {113860, "Ranged_Major_OffenisiveCDs"}, --Dark Soul: Instability
   {113858, "Ranged_Major_OffenisiveCDs"}, --Dark Soul: Misery
   {212295 , "Big_Defensive_CDs"}, --Nether Ward
@@ -754,6 +755,7 @@ local spellsTable = {
 	{204490 , "Silence"},			-- Sigil of Silence
 
   {212638 , "RootPhyiscal_Special"},				-- Tracker's Net (pvp honor talent) -- Also -80% hit chance melee & range physical (CC and Root category)
+  {307871 , "RootPhyiscal_Special"},				-- Spear of Bastion
 
 	{117526 , "Root"},				-- Binding Shot
   {190927 , "Root"},				-- Harpoon
@@ -905,6 +907,7 @@ local spellsTable = {
   {199845, "SnareSpecial"},		-- Psyflay (pvp honor talent)
   {198222, "SnareSpecial"},		-- System Shock (pvp honor talent) (90% slow)
   {200587, "SnareSpecial"},		-- Fel Fissure
+  {308498, "SnareSpecial"},   -- Resonating Arrow (Hunter Kyrain Special)
 
   {45524,  "SnarePhysical70"},		-- Chains of Ice
   {273977, "SnarePhysical70"},		-- Grip of the Dead
@@ -6351,18 +6354,20 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 				tblinsert(InterruptAuras[sourceGUID], { ["spellId"] = nil, ["name"] = name, ["duration"] = duration, ["expirationTime"] = expirationTime, ["priority"] = priority, ["spellCategory"] = spellCategory, ["icon"] = icon, ["spellSchool"] = spellSchool, ["hue"] = hue, ["destGUID"] = destGUID })
 				UpdateUnitAuraByUnitGUID(sourceGUID, -20)
         self.ticker = C_Timer.NewTicker(0.5, function()
-		      if GetGuardianOwner(destGUID) and GetGuardianOwner(destGUID) ~= "Corpse" and GetGuardianOwner(destGUID) ~= "Level" then
-            print(GetGuardianOwner(destGUID).." "..namePrint.." :LC "..expirationTime-GetTime())
-          else
-            print(GetGuardianOwner(destGUID).." "..namePrint.." Died or Dismissed :LC "..expirationTime-GetTime())
-            if InterruptAuras[sourceGUID] then
-              for k, v in pairs(InterruptAuras[sourceGUID]) do
-                if v.destGUID == destGUID then
-                  InterruptAuras[sourceGUID][k] = nil
-                  print(GetGuardianOwner(destGUID).." "..namePrint.." Pet CANCELLED Updating for :LC "..sourceName.." w/ "..expirationTime-GetTime().. " left")
-                  UpdateUnitAuraByUnitGUID(sourceGUID, -20)
-                  self.ticker:Cancel()
-                  break
+		      if GetGuardianOwner(destGUID) then
+            if not strmatch(GetGuardianOwner(destGUID), 'Corpse') and not strmatch(GetGuardianOwner(destGUID), 'Level') then
+              --print(GetGuardianOwner(destGUID).." "..namePrint.." Up LC "..expirationTime-GetTime())
+            else
+              --print(GetGuardianOwner(destGUID).." "..namePrint.." Down LC "..expirationTime-GetTime())
+              if InterruptAuras[sourceGUID] then
+                for k, v in pairs(InterruptAuras[sourceGUID]) do
+                  if v.destGUID == destGUID then
+                    InterruptAuras[sourceGUID][k] = nil
+                    print(GetGuardianOwner(destGUID).." "..namePrint.." Cancelled LC "..sourceName.." w/ "..expirationTime-GetTime().. " left")
+                    UpdateUnitAuraByUnitGUID(sourceGUID, -20)
+                    self.ticker:Cancel()
+                    break
+                  end
                 end
               end
             end
@@ -7043,7 +7048,7 @@ end
 							Name = Name
 							--print(unitId, "No Stealth Buff Found")
 							if unitId == "arena1" and GladiusClassIconFramearena1 and GladiusHealthBararena1 then
-								GladiusClassIconFramearena1:SetAlpha(GladiusHealthBararen1:GetAlpha())
+								GladiusClassIconFramearena1:SetAlpha(GladiusHealthBararena1:GetAlpha())
 							end
 							if unitId == "arena2" and GladiusClassIconFramearena2 and GladiusHealthBararena2 then
 								GladiusClassIconFramearena2:SetAlpha(GladiusHealthBararena2:GetAlpha())
