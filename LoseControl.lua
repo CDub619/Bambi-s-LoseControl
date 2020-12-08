@@ -569,6 +569,7 @@ local spellsArenaTable = {
   {236273 , "Special_High"}, -- Duel
   {23920 , "Special_High"}, -- Spell Reflection
   {330279 , "Special_High"}, -- Overwatch Spell Reflection
+  {147833 , "Special_High"}, -- Intervene
   {105771 , "Roots_90_Snares"}, --Charge
   {199042 , "Roots_90_Snares"}, --Thunderstruck
   {236236 , "Disarms"}, --Disarm
@@ -579,7 +580,6 @@ local spellsArenaTable = {
   {118038 , "Big_Defensive_CDs"}, -- Die by the Sword
   {184364 , "Big_Defensive_CDs"}, -- Enraged Regeneration
   {236321 , "Big_Defensive_CDs"}, -- War Banner
-  {147833 , "Big_Defensive_CDs"}, -- Intervene
   {12975 , "Big_Defensive_CDs"}, -- Last Stand
   {871 , "Big_Defensive_CDs"}, -- Shield Wall
   {213871 , "Big_Defensive_CDs"}, -- Bodyguard
@@ -873,7 +873,6 @@ local spellsTable = {
 
 	{8178   , "AOE_Spell_Refections"},		-- Grounding Totem Effect (Grounding Totem)
   {213915 , "AOE_Spell_Refections"},		-- Mass Spell Reflection
-  {330279 , "AOE_Spell_Refections"},		-- Overwatch
 
   {212552 , "Speed_Freedoms"},		-- Wraith Walk
   {48265  , "Speed_Freedoms"},		-- Death's Advance
@@ -901,6 +900,7 @@ local spellsTable = {
 
   {6940 , "Friendly_Defensives"},		-- Blessing of Sacrifice
   {147833 , "Friendly_Defensives"},		-- Intervene
+  {330279 , "Friendly_Defensives"},		-- Overwatch
   {213871 , "Friendly_Defensives"},		-- Bodyguard
 
   {26166, "Mana_Regen"},		-- Innervate
@@ -7210,7 +7210,7 @@ end
 				SetPortraitToTexture(self.texture, Icon) -- Sets the texture to be displayed from a file applying a circular opacity mask making it look round like portraits
 				self:SetSwipeTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMaskSmall")   --Set Smoke Bomb Icon
 				self.texture:SetDesaturated(1) --Destaurate Smoke Bomb Icon
-				self.texture:SetVertexColor(1, .2, .1); --Red Hue Set For Smoke Bomb Icon
+				self.texture:SetVertexColor(1, .25, 0); --Red Hue Set For Smoke Bomb Icon
 				self:SetSwipeColor(0, 0, 0, LoseControlDB.DrawSwipeSetting)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
 			elseif Hue == "Red_No_Desaturate" then -- Changes Hue to Red and any Icon Greater , could indicate in a barrier or smoke bomb etc..
 				SetPortraitToTexture(self.texture, Icon) -- Sets the texture to be displayed from a file applying a circular opacity mask making it look round like portraits
@@ -7235,7 +7235,7 @@ end
 			if Hue == "Red" then -- Changes Icon Hue to Red
 				self.texture:SetTexture(Icon)   --Set Smoke Bomb Icon
 				self.texture:SetDesaturated(1) --Destaurate Smoke Bomb Icon
-				self.texture:SetVertexColor(1, .2, .1); --Red Hue Set For Smoke Bomb Icon
+				self.texture:SetVertexColor(1, .25, 0); --Red Hue Set For Smoke Bomb Icon
 				self:SetSwipeColor(0, 0, 0, LoseControlDB.DrawSwipeSetting)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
 			elseif Hue == "Red_No_Desaturate" then -- Changes Hue to Red and any Icon Greater , could indicate in a barrier or smoke bomb etc..
 			 self.texture:SetTexture(Icon)   --Set Smoke Bomb Icon
