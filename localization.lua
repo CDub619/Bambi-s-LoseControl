@@ -561,7 +561,7 @@ else -- default English
 	L["SnarePhysical70"]       = "Snare 70%: Physical"
 	L["SnareMagic70"]       = "Snare 70%: Magic"
 	L["SnarePhysical50"]       = "Snare 50% :Physical"
-	L["SnarePosion50"]       = "Snare 50%: Posion"
+	L["SnarePosion50"]       = "Snare 50%: Posion/Curse"
 	L["SnareMagic50"]       = "Snare 50%: Magic"
 	L["SnarePhysical30"]       = "Snare 30%: Physical"
 	L["SnareMagic30"]       = "Snare 30%: Magic"
@@ -585,7 +585,7 @@ else -- default English
 	L["Snares_WithCDs"] = "Snares: Major"
 	L["Special_Low"] = "Low Priority"
 	L["Snares_Ranged_Spamable"] = "Snares: Ranged"
-	L["Snares_Casted_Melee"] = "Snares: Melee"
+	L["Snares_Casted_Melee"] = "Lowest/Snares: Melee"
 
 	L["EnableGladiusGloss"] = "Enable Gladius Gloss on Class Icon"
 	L["lossOfControl"] = "Blizzard Loss of Control"

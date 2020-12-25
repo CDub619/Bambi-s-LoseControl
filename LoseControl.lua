@@ -56,6 +56,29 @@ And of course, Blizzard
 Thanks! :)
 ]]
 
+--Anchor to Gladius and Stealth/Alpha w/Gloss Option  Added
+--Player LOCBliz Add All New CC  Added
+----Add CC/Silence/Disarm/Root/Interrupt/Other Added
+----Add Snare from string check “Movement”  Added
+--Selected Priorities Show Newest Duration Remaining Aura Added
+--Selected Priorities Show Highest Duration Remaining Aura Added
+--Target/Focus/ToT/ToF Will Obey/Show Icons for Arena 123 Priorities if Arena 123 Added
+--Arena Priorities vs Player, Party Priorities  Added
+--Interupts Penance or Channel Casts Added
+--Stealth Module  Added
+--Mass Invis (Hack) Added
+--Add stealth check and aura filters
+--[[Duel (2 icons Red Layered Hue) test
+Ours White w/Different Prio for Us and EnemyArenaTeam  Added
+Enemy Red w/Different Prio for Us and EnemyArenaTeam  Added]]
+--[[SmokeBomb (2 icons Red Layered Hue)
+Ours White w/Different Prio for Us and EnemyArenaTeam  Added
+Enemy Red w/Different Prio for Us and EnemyArenaTeam  Added]]
+--cleu SpellCastSucess Timer (treated as buff in options for categoriesEnabled)
+--2 Aura check Root Beam test
+--Prio Change on Same SpellId per Spec : Ret/Holy Avenging Wrath test
+--Stacks Only Icon: Tiger Eye Brew Inevitable Demise
+
 local addonName, L = ...
 local UIParent = UIParent -- it's faster to keep local references to frequently used global vars
 local UnitAura = UnitAura
@@ -144,8 +167,8 @@ local cleuPrioCastedSpells = {}
 -------------------------------------------------------------------------------
 -- Thanks to all the people on the Curse.com and WoWInterface forums who help keep this list up to date :)
 local cleuSpells = { -- nil = Do Not Show
- {188616, 60, "PvE",  "Special_Low", "Earth Ele", "Earth Ele"}, --Shaman Earth Ele
- {118323, 60, "PvE",  "Special_Low", "Primal Earth Ele", "Primal Earth Ele"}, --Shaman Primal  Earth Ele
+ {188616, 60, "PvE",  "Snares_Casted_Melee", "Earth Ele", "Earth Ele"}, --Shaman Earth Ele
+ {118323, 60, "PvE",  "Snares_Casted_Melee", "Primal Earth Ele", "Primal Earth Ele"}, --Shaman Primal  Earth Ele
  {248280, 10, "PvE",  nil, "Trees", "Trees"}, --Druid Trees
  {288853, 25, nil,  "Melee_Major_OffenisiveCDs", "Abomination", "Abomination"}, --Dk Raise Abomination
  {123904, 24, nil,  "Small_Offenisive_CDs", "Xuen", "Xuen"}, --WW Xuen Pet Summmon
@@ -206,6 +229,7 @@ local spellsArenaTable = {
 	{117405 , "Roots_90_Snares"}, --Binding Shot
 	{162480 , "Roots_90_Snares"}, --Steel Trap
 	{190927 , "Roots_90_Snares"}, --Harpoon
+	{190925 , "Roots_90_Snares"}, --Harpoon
 	{212638 , "Roots_90_Snares"}, --Tracker's Net
 	{53148 , "Roots_90_Snares"}, --Charge (pet)
 	{248519 , "Big_Defensive_CDs"}, --Interlope
@@ -221,9 +245,8 @@ local spellsArenaTable = {
 	{118922 , "Freedoms_Speed"}, --Posthaste
 	{186257 , "Freedoms_Speed"}, --Aspect of the Cheetah
 	{5116 , "Snares_WithCDs"}, --Concussive Shot
-	{204205 , "Special_Low"}, --Wild Protector
 	{135299 , "Snares_Ranged_Spamable"}, --Tar Trap
-
+  {204205 , "Snares_Casted_Melee"}, --Wild Protector
 	----------------
 	-- Shaman
 	----------------
@@ -250,14 +273,17 @@ local spellsArenaTable = {
 	{201633 , "Big_Defensive_CDs"}, --Earthen Wall
 	{325174 , "Big_Defensive_CDs"}, --Spirit Link Totem
 	{201846 , "Small_Offenisive_CDs"}, --Stormbringer
+	{327942 , "Small_Offenisive_CDs"}, --Windfury Totem
+	{208963 , "Small_Offenisive_CDs"}, --Skyfury Totem
 	{79206 , "Small_Defensive_CDs"}, --Spiritwalker's Grace
 	{58875 , "Freedoms_Speed"}, --Spirit Walk
 	{192082 , "Freedoms_Speed"}, -- Wind Rush
 	{182387 , "Snares_WithCDs"}, --Earthquake
 	{51490 , "Snares_WithCDs"}, --Thunderstorm
 	{204293 , "Special_Low"}, --Spirit Link
-	{260881 , "Special_Low"}, --Spirit Wolf
-	{2645 , "Special_Low"}, --Ghost Wolf
+	{260881 , "Freedoms_Speed"}, --Spirit Wolf
+	{204262 , "Freedoms_Speed"}, --Spectral Recovery
+	{2645 , "Freedoms_Speed"}, --Ghost Wolf
 	{196840 , "Snares_Ranged_Spamable"}, --Frost Shock
 
 	----------------
@@ -271,6 +297,7 @@ local spellsArenaTable = {
 	{91797 , "CC_Arena"}, --Monstrous Blow
 	{287254 , "CC_Arena"}, --Dead of Winter
 	{207167 , "CC_Arena"}, --Blinding Sleet
+  {334693 , "CC_Arena"}, -- Absolute Zero (Shadowlands Legendary Stun)
 	{204490 , "Silence_Arena"}, --Strangulate
 	{77606 , "Special_High"}, --Dark Simulacrum
 	{315443 , "Ranged_Major_OffenisiveCDs"}, --Abomination Limb
@@ -286,7 +313,7 @@ local spellsArenaTable = {
 	{49039 , "Big_Defensive_CDs"}, --Lichborne
 	{145629 , "Big_Defensive_CDs"}, --Anti-Magic Zone
 	{114556 , "Big_Defensive_CDs"}, --Purgatory
-	{204206, "Player_Party_OffensiveCDs"}, --Chill Streak
+	{204206, "Small_Offenisive_CDs"}, --Chill Streak
 	{77616 , "Small_Offenisive_CDs"}, --Dark Simulacrum
 	{288977 , "Small_Defensive_CDs"}, --Transfusion
 	{48743 , "Small_Defensive_CDs"}, --Death Pact
@@ -314,6 +341,7 @@ local spellsArenaTable = {
 	{50334 , "Ranged_Major_OffenisiveCDs"}, --Berserk (Guardian)
 	{102558 , "Ranged_Major_OffenisiveCDs"}, --Incarnation: Guardian of Ursoc
 	{339 , "Roots_90_Snares"}, --Entangling Roots
+	{170855 , "Roots_90_Snares"}, --Entangling Roots (Nature's Grasp)
 	{102359 , "Roots_90_Snares"}, --Mass Entanglement
 	{45334 , "Roots_90_Snares"}, --Immobilized
 	{127797 , "Roots_90_Snares"}, --Ursol's Vortex
@@ -327,6 +355,9 @@ local spellsArenaTable = {
 	--{33891 , "Big_Defensive_CDs"}, --Tree of life
 	{61336 , "Big_Defensive_CDs"}, --Survival Instincts
 	{202461 , "Small_Offenisive_CDs"}, --Stellar Drift
+	{108292 , "Small_Offenisive_CDs"}, --Heart of the Wild (Feral)
+	{108293 , "Small_Offenisive_CDs"}, --Heart of the Wild (Guardian)
+  {108294 , "Small_Offenisive_CDs"}, --Heart of the Wild (Resto)
 	{5217 , "Small_Offenisive_CDs"}, --Tiger's Fury
 	{22842 , "Small_Defensive_CDs"}, --Frenzied Regeneration
 	{192081 , "Small_Defensive_CDs"}, --Ironfur
@@ -349,6 +380,7 @@ local spellsArenaTable = {
 	{"Polymorph" , "CC_Arena"},
 	{82691 , "CC_Arena"}, --Ring of Frost
 	{31661 , "CC_Arena"}, --Dragon's Breath
+	{317589 , "Silence_Arena"}, --Tormenting Backlash (Venthyr Mage)
 	{66 , "Special_High"}, --Invisibility
 	{32612 , "Special_High"}, --Invisibility
 	{110960 , "Special_High"}, --Greater Invisibility
@@ -370,6 +402,8 @@ local spellsArenaTable = {
   {108839 , "Small_Offenisive_CDs"}, --Ice Floes
   {198065 , "Small_Offenisive_CDs"}, --Prismatic Cloak
   {116014 , "Small_Offenisive_CDs"}, --Rune of Power
+  {116014 , "Small_Offenisive_CDs"}, --Rune of Power
+  {314793 , "Small_Offenisive_CDs"}, --Mirrors of Torment
   {108843 , "Small_Defensive_CDs"}, --Blazing Speed
   {120 , "Snares_WithCDs"}, --Cone of Cold
   {11426 , "Special_Low"}, --Ice Barrier
@@ -400,6 +434,7 @@ local spellsArenaTable = {
   {122278 , "Big_Defensive_CDs"}, --Damoen Harm
   {115176 , "Big_Defensive_CDs"}, --Zen Meditation
   {247483 , "Small_Offenisive_CDs"}, --Tigereye Brew
+  {310454 , "Small_Offenisive_CDs"}, --Weapons of Order
   {201447 , "Freedoms_Speed"}, --Ride the Wind
   {116841 , "Freedoms_Speed"}, --Tiger's Lust
   {248646 , "Special_Low"}, --Tigereye Brew
@@ -430,8 +465,10 @@ local spellsArenaTable = {
   {86659 , "Big_Defensive_CDs"}, --Guardian of Ancient Kings
   {318501 , "Big_Defensive_CDs"}, --Ardent Defender
   {204150 , "Big_Defensive_CDs"}, --Aegis of Light
+  {152262 , "Small_Offenisive_CDs"}, --Seraphim
   {105809 , "Small_Defensive_CDs"}, --Holy Avenger
-  {1044 , "Freedoms_Speed"}, --Blessing of Freedom
+  {1044 , "Freedoms_Speed"}, --Blessing of Freedom (Not Purgeable)
+  {305395 , "Freedoms_Speed"}, --Blessing of Freedom
   {221886 , "Freedoms_Speed"}, --Tiger's Lust
   {183218 , "Snares_WithCDs"}, --Hand of Hinderance
   {25771 , "Special_Low"}, --Forbearance
@@ -441,6 +478,7 @@ local spellsArenaTable = {
 	----------------
 	{47585 , "Immune_Arena"}, --Dispersion
 	{215769 , "Immune_Arena"}, --Spirit of Redemption
+  {27827 , "Immune_Arena"}, --Spirit of Redemption
 	{64044 , "CC_Arena"}, --Psychic Horror
 	{200200 , "CC_Arena"}, --Holy Word: Chastise
 	{200196 , "CC_Arena"}, --Holy Word: Chastise
@@ -468,6 +506,7 @@ local spellsArenaTable = {
   {322459 , "Player_Party_OffensiveCDs"}, --Thoughtstolen
   {322458 , "Player_Party_OffensiveCDs"}, --Thoughtstolen
   {322457 , "Player_Party_OffensiveCDs"}, --Thoughtstolen
+  {323673 , "Player_Party_OffensiveCDs"}, --Mindgames
   {197871 , "Small_Offenisive_CDs"}, --Dark Archangel
   {197874 , "Small_Offenisive_CDs"}, --Dark Archangel
   {194249 , "Small_Offenisive_CDs"}, --Voidform
@@ -483,10 +522,9 @@ local spellsArenaTable = {
   {193065, "Special_Low"}, --Masochism
   {265258 , "Special_Low"}, --Twist of Fate
   {123254 , "Special_Low"}, --Twist of Fate
-  {65081 , "Special_Low"}, --Body and Soul
-  {121557, "Special_Low"}, --Angelic Feather
   {327710, "Special_Low"}, -- Benevolent Faerie (Night Fae Priest)
-
+  {65081 , "Snares_Casted_Melee"}, --Body and Soul
+  {121557, "Snares_Casted_Melee"}, --Angelic Feather
 	----------------
 	-- Rogue
 	----------------
@@ -520,12 +558,14 @@ local spellsArenaTable = {
   {193359 , "Small_Offenisive_CDs"}, --True Bearing
   {13877 , "Small_Offenisive_CDs"}, --Blade Flurry
   {115192 , "Small_Offenisive_CDs"}, --Subterfuge
+  {212283 , "Small_Offenisive_CDs"}, --Symbols of Death
   {185311, "Small_Defensive_CDs"}, --Crimson Vial
   {1966, "Small_Defensive_CDs"}, --Fient
   {197003 , "Freedoms_Speed"}, --Maneuverability
   {2983 , "Freedoms_Speed"}, --Sprint
   {36554 , "Freedoms_Speed"}, --Shadowstep
   {269513 , "Freedoms_Speed"}, --Death from Above
+  {115196 , "Snares_WithCDs"}, -- Shiv
   {185763 , "Snares_Ranged_Spamable"}, --Pistol Shot
   {3409 , "Snares_Ranged_Spamable"}, --Crippling Poison
 
@@ -537,6 +577,7 @@ local spellsArenaTable = {
 	{89766 , "CC_Arena"}, --Axe Toss
 	{213688 , "CC_Arena"}, --Fel Cleave
 	{118699 , "CC_Arena"}, --Fear
+  {5484 , "CC_Arena"}, --Howl of Terror
 	{6789 , "CC_Arena"}, --Mortal Coil
 	{6358 , "CC_Arena"}, --Seduction
 	{261589 , "CC_Arena"}, --Seduction
@@ -550,12 +591,16 @@ local spellsArenaTable = {
   {113858, "Ranged_Major_OffenisiveCDs"}, --Dark Soul: Misery
   {212295 , "Big_Defensive_CDs"}, --Nether Ward
   {200587, "Player_Party_OffensiveCDs"}, --Fel Fissure (PvP Talent 50% MS)
+  {344566 , "Small_Offenisive_CDs"}, --Rapid Contagion
   {1714 , "Small_Offenisive_CDs"}, --Curse of Tongues
-  {702 , "Small_Offenisive_CDs"}, --Curse of Weakness
   {199954 , "Small_Offenisive_CDs"}, --Curse of Fragility
   {80240 , "Small_Offenisive_CDs"}, --Havoc
-  {196099, "Special_Low"}, --Grimoire of Sacrifice
-  {285933, "Special_Low"}, --Demon Armor
+  {108416 , "Small_Defensive_CDs"}, --Dark Pact
+  {702 , "Special_Low"}, --Curse of Weakness
+  {196099, "Snares_Casted_Melee"}, --Grimoire of Sacrifice
+  {285933, "Snares_Casted_Melee"}, --Demon Armor
+  {334320, "Snares_Casted_Melee"}, --Inevitable Demise
+
 
 	----------------
 	-- Warrior
@@ -568,8 +613,7 @@ local spellsArenaTable = {
 	{5246 , "CC_Arena"}, --Intimidating Shout
   {236273 , "Special_High"}, -- Duel
   {23920 , "Special_High"}, -- Spell Reflection
-  {330279 , "Special_High"}, -- Overwatch Spell Reflection
-  {147833 , "Special_High"}, -- Intervene
+  {330279 , "Special_High"}, -- Overwatch
   {105771 , "Roots_90_Snares"}, --Charge
   {199042 , "Roots_90_Snares"}, --Thunderstruck
   {236236 , "Disarms"}, --Disarm
@@ -580,6 +624,7 @@ local spellsArenaTable = {
   {118038 , "Big_Defensive_CDs"}, -- Die by the Sword
   {184364 , "Big_Defensive_CDs"}, -- Enraged Regeneration
   {236321 , "Big_Defensive_CDs"}, -- War Banner
+  {147833 , "Big_Defensive_CDs"}, -- Intervene
   {12975 , "Big_Defensive_CDs"}, -- Last Stand
   {871 , "Big_Defensive_CDs"}, -- Shield Wall
   {213871 , "Big_Defensive_CDs"}, -- Bodyguard
@@ -623,17 +668,22 @@ local spellsArenaTable = {
 
 	{"Drink" , "Drink_Purge"},
 	{"Refreshment" , "Drink_Purge"},
+  {320224 , "Immune_Arena"}, --Podtender (NightFae Soulbind Tree)
+  {331866 , "CC_Arena"}, --Door of Shadows Fear
 	{107079 , "CC_Arena"}, --Quaking Palm
 	{20549 , "CC_Arena"}, --War Stomp
 	{255654 , "CC_Arena"}, --Bull Rush
 	{287712 , "CC_Arena"}, --Haymaker
   {58984, "Special_High"}, -- Shadowmeld
+  {320267, "Roots_90_Snares"},		-- Soothing Voice (Nightfae)
   {291944 , "Big_Defensive_CDs"}, -- Regeneratin'
   {59543, "Small_Defensive_CDs"}, -- Gift of the Naaru
   {277187, "Small_Defensive_CDs"}, -- Gladiator's Emblem
+  {"Gladiator's Emblem", "Small_Defensive_CDs"}, -- Gladiator's Emblem
   {286342, "Small_Defensive_CDs"}, -- Gladiator's Safegaurd
   {68992, "Freedoms_Speed"}, -- Darkflight
   {310143, "Freedoms_Speed"}, -- Soulshape
+  {324867, "Snares_Casted_Melee"}, --Flesh Craft
 
 	}
 
@@ -669,6 +719,7 @@ local spellsTable = {
   {210141 , "CC"},				-- Zombie Explosion (Reanimation PvP Talent)
   {91800  , "CC"},				-- Gnaw
   {91797  , "CC"},				-- Monstrous Blow (Dark Transformation)
+  {334693 , "CC"},        -- Absolute Zero (Shadowlands Legendary Stun)
 
   {33786  , "CC"},				-- Cyclone
   {5211   , "CC"},				-- Mighty Bash
@@ -725,6 +776,7 @@ local spellsTable = {
   {199804 , "CC"},				-- Between the eyes
 
 	{118699 , "CC"},				-- Fear
+  {5484   , "CC"},		    -- Howl of Terror
 	{6789   , "CC"},				-- Mortal Coil
 	{30283  , "CC"},				-- Shadowfury
   {710    , "CC"},				-- Banish
@@ -752,6 +804,7 @@ local spellsTable = {
   {208618 , "CC"},				-- Illidan's Grasp (throw stun)
 	{213491 , "CC"},				-- Demonic Trample Stun
 
+  {331866 , "CC"},        -- Door of Shadows Fear
   {20549  , "CC"},				-- War Stomp (tauren racial)
   {107079 , "CC"},				-- Quaking Palm (pandaren racial)
   {255723 , "CC"},				-- Bull Rush (highmountain tauren racial)
@@ -760,6 +813,7 @@ local spellsTable = {
   {202914 , "Silence"},			-- Spider Sting (pvp honor talent) --no silence}, this its the previous effect
   {202933 , "Silence"},			-- Spider Sting	(pvp honor talent) --this its the silence effect
 	{47476  , "Silence"},			-- Strangulate
+	{317589 , "Silence"},			-- Tormenting Backlash (Venthyr Mage)
 	{81261  , "Silence"},			-- Solar Beam
 	{217824 , "Silence"},			-- Shield of Virtue (pvp honor talent)
 	{15487  , "Silence"},			-- Silence
@@ -772,6 +826,7 @@ local spellsTable = {
 
 	{117526 , "Root"},				-- Binding Shot
   {190927 , "Root"},				-- Harpoon
+  {190925 , "Root"},				-- Harpoon
 	{162480 , "Root"},				-- Steel Trap
   {53148  , "Root"},				-- Charge (tenacity ability)
   {64695  , "Root"},				-- Earthgrab (Earthgrab Totem)
@@ -780,6 +835,7 @@ local spellsTable = {
   {204085 , "Root"},				-- Deathchill (pvp talent)
   {91807  , "Root"},				-- Shambling Rush (Dark Transformation)
   {339    , "Root"},				-- Entangling Roots
+  {170855 , "Root"},				-- Entangling Roots (Nature's Grasp)
   {45334  , "Root"},				-- Immobilized (Wild Charge - Bear)
   {102359 , "Root"},				-- Mass Entanglement
   {122    , "Root"},				-- Frost Nova
@@ -790,6 +846,7 @@ local spellsTable = {
 	{116706 , "Root"},				-- Disable
 	{105771 , "Root"},				-- Charge (root)
 	{199042 , "Root"},				-- Thunderstruck
+  {323996 , "Root"},				-- The Hunt
 
   {642    , "ImmunePlayer"},			-- Divine Shield
 	{47585  , "ImmunePlayer"},			-- Dispersion
@@ -797,9 +854,11 @@ local spellsTable = {
   {290114 , "ImmunePlayer"},			-- Spirit of Redemption	(pvp honor talent)
   {215769 , "ImmunePlayer"},			-- Spirit of Redemption	(pvp honor talent)
   {213602 , "ImmunePlayer"},			-- Greater Fade (pvp honor talent - protects vs spells. melee}, ranged attacks + 50% speed)
+  {320224 , "ImmunePlayer"},			--Podtender (NightFae: Dreamweaver Tree)
 
 	{202797 , "Disarm_Warning"},   -- Viper Sting Healing Reduction
 	{77606  , "Disarm_Warning"},   -- Dark Simulacrum
+  {314793 , "Disarm_Warning"},   -- Mirrors of Torment
   {322442 , "Disarm_Warning"}, --Thoughtstolen
   {322464 , "Disarm_Warning"}, --Thoughtstolen
   {322463 , "Disarm_Warning"}, --Thoughtstolen
@@ -850,8 +909,10 @@ local spellsTable = {
   {236236 , "Disarm"},			-- Disarm (pvp honor talent - protection)
   {236077 , "Disarm"},			-- Disarm (pvp honor talent)S
 
+  {320035 , "Haste_Reduction"},			-- Mirrors of Torment
   {247777 , "Haste_Reduction"},			-- Mind Trauma
   {199890 , "Haste_Reduction"},			-- Curse of Tongues
+
 
 	{236273 , "Dmg_Hit_Reduction"},		-- Duel
   {199892 , "Dmg_Hit_Reduction"},   -- Curse of Weakness
@@ -887,12 +948,16 @@ local spellsTable = {
   {186257 , "Freedoms"},		-- Aspect of the Cheetah
   {192082 , "Freedoms"},		-- Wind Rush
   {58875 , "Freedoms"},		-- Spirit Walk
+  {260881 , "Freedoms"}, --Spirit Wolf
+  {204262 , "Freedoms"}, --Spectral Recovery
+  {2645 , "Freedoms"}, --Ghost Wolf
   {77764 , "Freedoms"},		-- Stampeding Roar
   {1850 , "Freedoms"},		-- Dash
   {252216 , "Freedoms"},		-- Tiger Dash
   {201447 , "Freedoms"},		-- Ride the Wind
   {116841 , "Freedoms"},		-- Tiger's Lust
   {1044 , "Freedoms"},		-- Blessing of Freedom
+  {305395 , "Freedoms"}, --Blessing of Freedom (Not Purgeable)
   {221886 , "Freedoms"},		-- Divine Steed
   {36554 , "Freedoms"},		-- Shadowstep
   {2983 , "Freedoms"},		-- Sprint
@@ -930,18 +995,21 @@ local spellsTable = {
   {198222, "SnareSpecial"},		-- System Shock (pvp honor talent) (90% slow)
   {200587, "SnareSpecial"},		-- Fel Fissure
   {308498, "SnareSpecial"},   -- Resonating Arrow (Hunter Kyrain Special)
+  {320267, "SnareSpecial"},		-- Soothing Voice
+  {204206, "SnareSpecial"},		-- Chilled (Chill Streak)
 
   {45524,  "SnarePhysical70"},		-- Chains of Ice
   {273977, "SnarePhysical70"},		-- Grip of the Dead
   {157981, "SnarePhysical70"},		-- Blast Wave
   {248744, "SnarePhysical70"},		-- Shiv
+  {115196, "SnarePhysical70"},		-- Crippling Posion
   {12323 , "SnarePhysical70"},		-- Piercing Howl
   {198813, "SnarePhysical70"},		-- Vengeful Retreat
   {247121, "SnarePhysical70"},		-- Metamorphosis
 
-  {204206, "SnareMagic70"},		-- Chilled
   {212792, "SnareMagic70"},		-- Cone of Cold
   {228354, "SnareMagic70"},		-- Flurry
+  {321329, "SnareMagic70"},		-- Ring of Frost
   {123586, "SnareMagic70"},		-- Flying Serpent Kick
   {183218, "SnareMagic70"},		-- Hand of Hindrance
   {204263, "SnareMagic70"},		-- Shining Force
@@ -958,6 +1026,7 @@ local spellsTable = {
   {12486, "SnarePhysical50"},		-- Blizzard
   {205021, "SnarePhysical50"},		-- Ray of Frost
   {236299, "SnarePhysical50"},		-- Chrono Shift
+  {317792, "SnarePhysical50"},		-- Frostbolt
   {116095, "SnarePhysical50"},		-- Disable
   {196733, "SnarePhysical50"},		-- Special Delivery
   {204242, "SnarePhysical50"},		-- Consecration
@@ -969,6 +1038,7 @@ local spellsTable = {
   {213405, "SnarePhysical50"},		-- Master of the Glaive
 
   {3409, "SnarePosion50"},		-- Crippling Poison
+  {334275, "SnarePosion50"},		-- Curse of Exhaustion
 
   {147732, "SnareMagic50"},		-- Frostbrand
   {3600, "SnareMagic50"},		-- Earthbind
@@ -979,7 +1049,10 @@ local spellsTable = {
   {"Frostbolt", "SnareMagic50"},		-- Frostbolt
   {205708, "SnareMagic50"},		-- Chilled
   {31589, "SnareMagic50"},		-- Slow
+  {336887, "SnareMagic50"},		-- Lingering Numbness
+  {337956, "SnareMagic50"},		-- Mental Recovery
   {6360, "SnareMagic50"},		-- Whiplash
+  {337113, "SnareMagic50"},		-- Sacrolash's Dark Strike
   {260369, "SnareMagic50"},		-- Arcane Pulse
 
   {162546, "SnarePhysical30"},		-- Frozen Ammo
@@ -1172,8 +1245,8 @@ local spellsTable = {
 	{18499  , "Other"},				-- Berserker Rage
 	{107574 , "Other"},				-- Avatar
 	{262228 , "Other"},				-- Deadly Calm
-	{198817 , "Other"},				-- Sharpen Blade (pvp honor talent)
-	{198819 , "Other"},				-- Mortal Strike (Sharpen Blade pvp honor talent))
+	{198817 , "Other"},				-- Sharpen Blade (pvp honor talent)(Buff on Warrior)
+	{198819 , "Other"},				-- Mortal Strike (Sharpen Blade pvp honor talent))(Debuff on Target)
 	{184364 , "Other"},				-- Enraged Regeneration
 	{118038 , "Other"},	      -- Die by the Sword (parry chance increased by 100%}, damage taken reduced by 30%)
 	{198760 , "Other"},	      -- Intercept (pvp honor talent) (intercept the next ranged or melee hit)
@@ -5599,14 +5672,17 @@ function LoseControl:CompileSpells(typeUpdate)
 							if CspellID == spellID and Cprio == prio and CtabId == i then
 							tblremove(_G.LoseControlDB.customSpellIds, Ck)
 							print("|cff00ccffLoseControl|r : "..spellID.." : "..prio.." |cff009900Restored to Orginal Value|r")
+              elseif CspellID == spellID and CtabId == #spells then
+              tblremove(_G.LoseControlDB.customSpellIds, Ck)
+              print("|cff00ccffLoseControl|r : "..spellID.." : "..prio.." |cff009900Added from Discovered Spells to LC Database (Reconfigure if Needed)|r")
 							else
 								if type(spellID) == "number" then
 									if GetSpellInfo(spellID) then
 										local name = GetSpellInfo(spellID)
-										--print("|cff00ccffLoseControl|r : "..CspellID.." : "..Cprio.." ("..name..") Modified Spell ".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
+										print("|cff00ccffLoseControl|r : "..CspellID.." : "..Cprio.." ("..name..") Modified Spell ".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
 									end
 								else
-										--print("|cff00ccffLoseControl|r : "..CspellID.." : "..Cprio.." (not spellId) Modified Spell ".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
+										print("|cff00ccffLoseControl|r : "..CspellID.." : "..Cprio.." (not spellId) Modified Spell ".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
 								end
 								tblinsert(toremove, {i , l, x, removed, spellID})
 								removed = removed + 1
@@ -5615,9 +5691,9 @@ function LoseControl:CompileSpells(typeUpdate)
 							local HspellID, Hprio = unpack(hash[spellID])
 							if type(spellID) == "number" then
 									local name = GetSpellInfo(spellID)
-									--print("|cff00ccffLoseControl|r : "..HspellID.." : "..Hprio.." ("..name..") ".."|cffff0000Duplicate Spell in Lua |r".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
+									print("|cff00ccffLoseControl|r : "..HspellID.." : "..Hprio.." ("..name..") ".."|cffff0000Duplicate Spell in Lua |r".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
 							else
-									--print("|cff00ccffLoseControl|r : "..HspellID.." : "..Hprio.." (not spellId) ".."|cff009900Duplicate Spell in Lua |r".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
+									print("|cff00ccffLoseControl|r : "..HspellID.." : "..Hprio.." (not spellId) ".."|cff009900Duplicate Spell in Lua |r".."|cff009900Removed |r"  ..spellID.." |cff009900: |r"..prio)
 							end
 							tblinsert(toremove, {i , l, x, removed, spellID})
 							removed = removed + 1
@@ -6607,11 +6683,37 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 						end
 					end
 				end
+
         -----------------------------------------------------------------------------------------------------------------
         --Icon Changes
         -----------------------------------------------------------------------------------------------------------------
-        if spellId == 45524 then
-          icon = 463560
+        if spellId == 45524 then --Chains of Ice Dk
+          --icon = 463560
+          --icon = 236922
+          icon = 236925
+        end
+
+        if spellId == 317589 then --Mirros of Toremnt, Tormenting Backlash (Venthyr Mage) to Frost Jaw
+          icon = 538562
+        end
+
+        if spellId == 334693 then --Abosolute Zero Frost Dk Legendary Stun to Cube
+          icon = 517161
+        end
+
+        if spellId == 115196 then --Shiv
+          icon = 135428
+        end
+
+      	if spellId == 199845 then --Psyflay
+      		icon = 537021
+      	end
+
+        -----------------------------------------------------------------------------------------------------------------
+        --Hue Change
+        -----------------------------------------------------------------------------------------------------------------
+        if spellId == 320035 then -- Mirros of Torment Haste Reduction
+          hue = "Purple"
         end
 
 			local spellCategory = spellIds[spellId] or spellIds[name]
@@ -6696,10 +6798,46 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 				localForceEventUnitAuraAtEnd = (self.unitId == "targettarget")
 			end
 
+      if spellId == 2645 then
+          local ghostwolf = {}
+          for i = 1, 40 do
+          local _, _, c, _, d, e, _, _, _, s = UnitAura(unitId, i, "HELPFUL")
+          if not s then break end
+              if s == 204262 or s == 260881 then
+                tblinsert(ghostwolf, {["col1"] = e, ["col2"]  = d, ["col3"]  = c, ["col4"]  = s})
+              end
+          end
+          if #ghostwolf == 2 then
+            if (ghostwolf[1].col4 == 204262 or ghostwolf[1].col4 == 260881) and  (ghostwolf[2].col4 == 204262 or ghostwolf[2].col4 == 260881) then
+              if ghostwolf[1].col4 == 260881 then
+                expirationTime = ghostwolf[1].col1
+                duration = ghostwolf[1].col2
+                count = ghostwolf[1].col3
+              elseif ghostwolf[2].col4 == 260881  then
+                expirationTime = ghostwolf[2].col1
+                duration = ghostwolf[2].col2
+                count = ghostwolf[2].col3
+              end
+            end
+          elseif #ghostwolf == 1 then
+            if (ghostwolf[1].col4 == 204262 or ghostwolf[1].col4 == 260881) then
+              if ghostwolf[1].col4 == 260881 then
+                expirationTime = ghostwolf[1].col1
+                duration = ghostwolf[1].col2
+                count = ghostwolf[1].col3
+              elseif ghostwolf[1].col4 == 204262 then
+                expirationTime = ghostwolf[1].col1
+                duration = ghostwolf[1].col2
+                count = ghostwolf[1].col3
+              end
+            end
+          end
+        end
+
 			-----------------------------------------------------------------------------w
 			--Mass Invis
 			------------------------------------------------------------------------------
-			if (spellId == 198158) then --Mass Invis
+			if (spellId == 198158) then --Mass Invis Hack
 				if source then
 					if (UnitGUID(source) ~= UnitGUID(unitId)) then
 						duration = 5
@@ -6725,6 +6863,16 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
             spellIds[spellId] = "Big_Defensive_CDs" --Sets Prio to Holy Wings to Defensive
           end
         end
+      end
+
+      if spellId == 248646 then -- WW Tiger Eye Stacks, Removes Timer
+        duration = 0
+        expirationTime = GetTime() + 1
+      end
+
+      if spellId == 334320 then -- Lock Drain LIfe Stacks, Removes Timer
+        duration = 0
+        expirationTime = GetTime() + 1
       end
 
 
@@ -7158,8 +7306,8 @@ end
 		end
 
     if Count then
-      if (unitId == "player" or unitId == "party1" or unitId == "party2" or unitId == "party3" or unitId == "party4") and not ((unitId == "player") and (self.frame.anchor == "Blizzard")) then
-        if ( Count > 1 ) then
+        if (unitId == "player" or unitId == "party1" or unitId == "party2" or unitId == "party3" or unitId == "party4") and not ((unitId == "player") and (self.frame.anchor == "Blizzard")) then
+         if ( Count > 1 ) then
           local countText = Count
           if ( Count >= 100 ) then
            countText = BUFF_STACKS_OVERFLOW
@@ -7170,12 +7318,29 @@ end
           self.count:SetJustifyH("RIGHT");
           self.count:Show();
           self.count:SetText(countText)
-      else
-        if self.count:IsShown() then
-          self.count:Hide()
+         else
+          if self.count:IsShown() then
+            self.count:Hide()
+          end
+         end
+      elseif (unitId == "arena1" or unitId == "arena2" or unitId == "arena3") and (self.frame.anchor == "Gladius") then
+        if ( Count > 1 ) then
+         local countText = Count
+         if ( Count >= 100 ) then
+          countText = BUFF_STACKS_OVERFLOW
+         end
+         self.count:ClearAllPoints()
+         self.count:SetFont("Fonts\\FRIZQT__.TTF", 14, "OUTLINE, MONOCHROME")
+         self.count:SetPoint("BOTTOMRIGHT", 0, 0);
+         self.count:SetJustifyH("RIGHT");
+         self.count:Show();
+         self.count:SetText(countText)
+        else
+         if self.count:IsShown() then
+           self.count:Hide()
+         end
         end
-      end
-    end
+       end
     else
       if self.count:IsShown() then
         self.count:Hide()
@@ -7208,22 +7373,27 @@ end
 			if self.frame.anchor == "Blizzard" then  --CHRIS DISABLE SQ
 				if Hue == "Red" then -- Changes Icon Hue to Red
 				SetPortraitToTexture(self.texture, Icon) -- Sets the texture to be displayed from a file applying a circular opacity mask making it look round like portraits
-				self:SetSwipeTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMaskSmall")   --Set Smoke Bomb Icon
-				self.texture:SetDesaturated(1) --Destaurate Smoke Bomb Icon
-				self.texture:SetVertexColor(1, .25, 0); --Red Hue Set For Smoke Bomb Icon
+				self:SetSwipeTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMaskSmall")   --Set Icon
+				self.texture:SetDesaturated(1) --Destaurate Icon
+				self.texture:SetVertexColor(1, .25, 0); --Red Hue Set For Icon
 				self:SetSwipeColor(0, 0, 0, LoseControlDB.DrawSwipeSetting)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
-			elseif Hue == "Red_No_Desaturate" then -- Changes Hue to Red and any Icon Greater , could indicate in a barrier or smoke bomb etc..
+			elseif Hue == "Red_No_Desaturate" then -- Changes Hue to Red and any Icon Greater
 				SetPortraitToTexture(self.texture, Icon) -- Sets the texture to be displayed from a file applying a circular opacity mask making it look round like portraits
-  			self:SetSwipeTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMaskSmall")   --Set Smoke Bomb Icon
-			  self.texture:SetDesaturated(nil) --Destaurate Smoke Bomb Icon
-		  	self.texture:SetVertexColor(1, 0, 0); --Red Hue Set For Smoke Bomb Icon
+  			self:SetSwipeTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMaskSmall")   --Set Icon
+			  self.texture:SetDesaturated(nil) --Destaurate  Icon
+		  	self.texture:SetVertexColor(1, 0, 0); --Red Hue Set For Icon
 			  self:SetSwipeColor(0, 0, 0, LoseControlDB.DrawSwipeSetting)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
-		  elseif Hue == "Yellow" then -- Changes Hue to Red and any Icon Greater , could indicate in a barrier or smoke bomb etc..
+		  elseif Hue == "Yellow" then -- Changes Hue to Yellow and any Icon Greater
 				SetPortraitToTexture(self.texture, Icon) -- Sets the texture to be displayed from a file applying a circular opacity mask making it look round like portraits
-				self:SetSwipeTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMaskSmall")   --Set Smoke Bomb Icon
-				self.texture:SetDesaturated(1) --Destaurate Smoke Bomb Icon
-				self.texture:SetVertexColor(1, 1, 0); --Red Hue Set For Smoke Bomb Icon
+				self:SetSwipeTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMaskSmall")   --Set Icon
+				self.texture:SetDesaturated(1) --Destaurate  Icon
+				self.texture:SetVertexColor(1, 1, 0); --Yellow Hue Set For Icon
 				self:SetSwipeColor(0, 0, 0, LoseControlDB.DrawSwipeSetting)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
+      elseif Hue == "Purple" then -- Changes Hue to Purple and any Icon Greater
+         self.texture:SetTexture(Icon)   --SetIcon
+         self.texture:SetDesaturated(1) --Destaurate Smoke Bomb Icon
+         self.texture:SetVertexColor(1, 0, 1); --Purple Hue Set For Smoke Bomb Icon
+         self:SetSwipeColor(0, 0, 0, LoseControlDB.DrawSwipeSetting)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
 			else
 				SetPortraitToTexture(self.texture, Icon) -- Sets the texture to be displayed from a file applying a circular opacity mask making it look round like portraits
 				self:SetSwipeTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMaskSmall")
@@ -7233,23 +7403,28 @@ end
 			end
 		else
 			if Hue == "Red" then -- Changes Icon Hue to Red
-				self.texture:SetTexture(Icon)   --Set Smoke Bomb Icon
-				self.texture:SetDesaturated(1) --Destaurate Smoke Bomb Icon
-				self.texture:SetVertexColor(1, .25, 0); --Red Hue Set For Smoke Bomb Icon
+				self.texture:SetTexture(Icon)   --Set Icon
+				self.texture:SetDesaturated(1) --Destaurate Icon
+				self.texture:SetVertexColor(1, .25, 0); --Red Hue Set For Icon
 				self:SetSwipeColor(0, 0, 0, LoseControlDB.DrawSwipeSetting)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
-			elseif Hue == "Red_No_Desaturate" then -- Changes Hue to Red and any Icon Greater , could indicate in a barrier or smoke bomb etc..
-			 self.texture:SetTexture(Icon)   --Set Smoke Bomb Icon
-			 self.texture:SetDesaturated(nil) --Destaurate Smoke Bomb Icon
-			 self.texture:SetVertexColor(1, 0, 0); --Red Hue Set For Smoke Bomb Icon
+			elseif Hue == "Red_No_Desaturate" then -- Changes Hue to Red and any Icon Greater
+			 self.texture:SetTexture(Icon)   --SetIcon
+			 self.texture:SetDesaturated(nil) --Destaurate Icon
+			 self.texture:SetVertexColor(1, 0, 0); --Red Hue Set For Icon
 			 self:SetSwipeColor(0, 0, 0, LoseControlDB.DrawSwipeSetting)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
-		 elseif Hue == "Yellow" then -- Changes Hue to Red and any Icon Greater , could indicate in a barrier or smoke bomb etc..
-				self.texture:SetTexture(Icon)   --Set Smoke Bomb Icon
-				self.texture:SetDesaturated(1) --Destaurate Smoke Bomb Icon
-				self.texture:SetVertexColor(1, 1, 0); --Red Hue Set For Smoke Bomb Icon
+		 elseif Hue == "Yellow" then -- Changes Hue to Yellow and any Icon Greater
+				self.texture:SetTexture(Icon)   --Set Icon
+				self.texture:SetDesaturated(1) --Destaurate Icon
+				self.texture:SetVertexColor(1, 1, 0); --Yellow Hue Set For Icon
 				self:SetSwipeColor(0, 0, 0, LoseControlDB.DrawSwipeSetting)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
+    elseif Hue == "Purple" then -- Changes Hue to Purple and any Icon Greater
+       self.texture:SetTexture(Icon)   --Set Icon
+       self.texture:SetDesaturated(1) --Destaurate Icon
+       self.texture:SetVertexColor(1, 0, 1); --Purple Hue Set For Icon
+       self:SetSwipeColor(0, 0, 0, LoseControlDB.DrawSwipeSetting)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
 			else
 				self.texture:SetTexture(Icon)
-				self.texture:SetDesaturated(nil) --Destaurate Smoke Bomb Icon
+				self.texture:SetDesaturated(nil) --Destaurate Icon
 				self.texture:SetVertexColor(1, 1, 1)
 				self:SetSwipeColor(0, 0, 0, LoseControlDB.DrawSwipeSetting) ---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
 			end
