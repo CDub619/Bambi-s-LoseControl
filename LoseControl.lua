@@ -281,8 +281,8 @@ local spellsArenaTable = {
 	{182387 , "Snares_WithCDs"}, --Earthquake
 	{51490 , "Snares_WithCDs"}, --Thunderstorm
 	{204293 , "Special_Low"}, --Spirit Link
-	{260881 , "Freedoms_Speed"}, --Spirit Wolf
-	{204262 , "Freedoms_Speed"}, --Spectral Recovery
+	--{260881 , "Freedoms_Speed"}, --Spirit Wolf
+	--{204262 , "Freedoms_Speed"}, --Spectral Recovery
 	{2645 , "Freedoms_Speed"}, --Ghost Wolf
 	{196840 , "Snares_Ranged_Spamable"}, --Frost Shock
 
@@ -948,8 +948,8 @@ local spellsTable = {
   {186257 , "Freedoms"},		-- Aspect of the Cheetah
   {192082 , "Freedoms"},		-- Wind Rush
   {58875 , "Freedoms"},		-- Spirit Walk
-  {260881 , "Freedoms"}, --Spirit Wolf
-  {204262 , "Freedoms"}, --Spectral Recovery
+  --{260881 , "Freedoms"}, --Spirit Wolf
+  --{204262 , "Freedoms"}, --Spectral Recovery
   {2645 , "Freedoms"}, --Ghost Wolf
   {77764 , "Freedoms"},		-- Stampeding Roar
   {1850 , "Freedoms"},		-- Dash
@@ -6797,41 +6797,52 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 			elseif expirationTime > 0 then
 				localForceEventUnitAuraAtEnd = (self.unitId == "targettarget")
 			end
-
+      -----------------------------------------------------------------------------w
+			--Ghost Wolf hack for Spectral Recovery and Spirit Wolf
+			------------------------------------------------------------------------------
       if spellId == 2645 then
           local ghostwolf = {}
           for i = 1, 40 do
-          local _, _, c, _, d, e, _, _, _, s = UnitAura(unitId, i, "HELPFUL")
+          local _, i, c, _, d, e, _, _, _, s = UnitAura(unitId, i, "HELPFUL")
           if not s then break end
-              if s == 204262 or s == 260881 then
-                tblinsert(ghostwolf, {["col1"] = e, ["col2"]  = d, ["col3"]  = c, ["col4"]  = s})
-              end
+            if s == 204262 or s == 260881 then
+              tblinsert(ghostwolf, {s, e, d, c, i})
+            end
           end
           if #ghostwolf == 2 then
-            if (ghostwolf[1].col4 == 204262 or ghostwolf[1].col4 == 260881) and  (ghostwolf[2].col4 == 204262 or ghostwolf[2].col4 == 260881) then
-              if ghostwolf[1].col4 == 260881 then
-                expirationTime = ghostwolf[1].col1
-                duration = ghostwolf[1].col2
-                count = ghostwolf[1].col3
-              elseif ghostwolf[2].col4 == 260881  then
-                expirationTime = ghostwolf[2].col1
-                duration = ghostwolf[2].col2
-                count = ghostwolf[2].col3
+            if (ghostwolf[1][1]  == 204262 or ghostwolf[1][1]  == 260881) and  (ghostwolf[2][1]  == 204262 or ghostwolf[2][1]  == 260881) then --Both Spectral Recovery and Spirit Wolf
+              if ghostwolf[1][1] == 260881 then
+                expirationTime = ghostwolf[1][2]
+                duration = ghostwolf[1][3]
+                count = ghostwolf[1][4]  or ghostwolf[2][4]
+                icon = ghostwolf[1][5] --change to whateveer icon when both
+              elseif ghostwolf[2][1] == 260881  then
+                expirationTime = ghostwolf[2][2]
+                duration = ghostwolf[2][3]
+                count = ghostwolf[2][4]  or ghostwolf[1][4]
+                icon = ghostwolf[2][5] --change to whateveer icon when both
               end
             end
           elseif #ghostwolf == 1 then
-            if (ghostwolf[1].col4 == 204262 or ghostwolf[1].col4 == 260881) then
-              if ghostwolf[1].col4 == 260881 then
-                expirationTime = ghostwolf[1].col1
-                duration = ghostwolf[1].col2
-                count = ghostwolf[1].col3
-              elseif ghostwolf[1].col4 == 204262 then
-                expirationTime = ghostwolf[1].col1
-                duration = ghostwolf[1].col2
-                count = ghostwolf[1].col3
+            if (ghostwolf[1][1] == 204262 or ghostwolf[1][1] == 260881) then
+              if ghostwolf[1][1] == 260881 then --Just Spirit Wolf
+                expirationTime = ghostwolf[1][2]
+                duration = ghostwolf[1][3]
+                count = ghostwolf[1][4]
+                icon = ghostwolf[1][5]
+              elseif ghostwolf[1][1] == 204262 then -- Just Spectral Recovery
+                expirationTime = ghostwolf[1][2]
+                duration = ghostwolf[1][3]
+                count = ghostwolf[1][4]
+                icon = ghostwolf[1][5]
               end
             end
           end
+          if duration == 0 and expirationTime == 0 then
+    				expirationTime = GetTime() + 1 -- normal expirationTime = 0
+    			elseif expirationTime > 0 then
+    				localForceEventUnitAuraAtEnd = (self.unitId == "targettarget")
+    			end
         end
 
 			-----------------------------------------------------------------------------w
