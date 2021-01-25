@@ -188,6 +188,7 @@ local interrupts = {
 	{212619 , 6},		-- Call Felhunter (Warlock)
 	{132409 , 6},		-- Spell Lock (command demon) (Warlock)
 	{19647  , 6},		-- Spell Lock (felhunter) (Warlock)
+	{347008 , 4},		-- Axe Toss(felguard) (Warlock)
 	{1766   , 5},		-- Kick (Rogue)
 	{231665 , 3},		-- Avengers Shield (Paladin)
 	{217824 , 4},		-- Shield of Virtue (Protec Paladin)
@@ -257,6 +258,7 @@ local spellsArenaTable = {
 	{197214 , "CC_Arena"}, --Sundering
 	{290641 , "Special_High"}, --Ancestral Gift
 	{8178 , "Special_High"}, --Grounding Totem Effect
+	{335903 , "Ranged_Major_OffenisiveCDs"}, --Doomwinds (Shadowlands Legendary)
 	{114051 , "Ranged_Major_OffenisiveCDs"}, --Ascendance Enhancement
 	{114050 , "Ranged_Major_OffenisiveCDs"}, --Ascendance
 	{191634 , "Ranged_Major_OffenisiveCDs"}, --Stormkeeper
@@ -283,7 +285,7 @@ local spellsArenaTable = {
 	{204293 , "Special_Low"}, --Spirit Link
 	--{260881 , "Freedoms_Speed"}, --Spirit Wolf
 	--{204262 , "Freedoms_Speed"}, --Spectral Recovery
-	--{2645 , "Freedoms_Speed"}, --Ghost Wolf
+	{2645 , "Freedoms_Speed"}, --Ghost Wolf
 	{196840 , "Snares_Ranged_Spamable"}, --Frost Shock
 
 	----------------
@@ -575,6 +577,7 @@ local spellsArenaTable = {
 	{30283 , "CC_Arena"}, --Shadowfury
 	{22703 , "CC_Arena"}, --Infernal Awakening
 	{89766 , "CC_Arena"}, --Axe Toss
+	--{347008 , "CC_Arena"}, --Axe Toss
 	{213688 , "CC_Arena"}, --Fel Cleave
 	{118699 , "CC_Arena"}, --Fear
   {5484 , "CC_Arena"}, --Howl of Terror
@@ -613,6 +616,7 @@ local spellsArenaTable = {
 	{5246 , "CC_Arena"}, --Intimidating Shout
   {236273 , "Special_High"}, -- Duel
   {23920 , "Special_High"}, -- Spell Reflection
+  {335255 , "Special_High"}, -- Mass Spell Reflection
   {330279 , "Special_High"}, -- Overwatch
   {105771 , "Roots_90_Snares"}, --Charge
   {199042 , "Roots_90_Snares"}, --Thunderstruck
@@ -783,6 +787,7 @@ local spellsTable = {
 	{22703  , "CC"},				-- Infernal Awakening
   {213688 , "CC"},		  	-- Fel Cleave (Fel Lord - PvP Talent)
   {89766  , "CC"},		  	-- Axe Toss (Felguard/Wrathguard)
+  --{347008  , "CC"},		  	-- Axe Toss (Felguard/Wrathguard)
   {115268 , "CC"},			  -- Mesmerize (Shivarra)
   {6358   , "CC"},		  	-- Seduction (Succubus)
   {261589  , "CC"},			  -- Seduction (Succubus)
@@ -935,6 +940,9 @@ local spellsTable = {
 	{8178   , "AOE_Spell_Refections"},		-- Grounding Totem Effect (Grounding Totem)
   {213915 , "AOE_Spell_Refections"},		-- Mass Spell Reflection
 
+  --{260881 , "Speed_Freedoms"}, --Spirit Wolf
+  --{204262 , "Speed_Freedoms"}, --Spectral Recovery
+  --{2645 , "Speed_Freedoms"}, --Ghost Wolf
   {212552 , "Speed_Freedoms"},		-- Wraith Walk
   {48265  , "Speed_Freedoms"},		-- Death's Advance
   {108843 , "Speed_Freedoms"},		-- Blazing Speed
@@ -948,9 +956,6 @@ local spellsTable = {
   {186257 , "Freedoms"},		-- Aspect of the Cheetah
   {192082 , "Freedoms"},		-- Wind Rush
   {58875 , "Freedoms"},		-- Spirit Walk
-  --{260881 , "Freedoms"}, --Spirit Wolf
-  --{204262 , "Freedoms"}, --Spectral Recovery
-  {2645 , "Freedoms"}, --Ghost Wolf
   {77764 , "Freedoms"},		-- Stampeding Roar
   {1850 , "Freedoms"},		-- Dash
   {252216 , "Freedoms"},		-- Tiger Dash
@@ -1155,7 +1160,9 @@ local spellsTable = {
 	-- Monk
 	----------------
 
-	{125174 , "Other"},			-- Touch of Karma
+	{125174 , "Other"},		  	-- Touch of Karma
+  {115080 , "Other"},       -- Touch of Death
+  {122470 , "Other"},       -- Touch of Karma
 	{122783 , "Other"},     	-- Diffuse Magic (not immune}, 60% magic damage reduction)
 	{115176 , "Other"},		  	-- Zen Meditation (60% damage reduction)
 	{202248 , "Other"},	      -- Guided Meditation (pvp honor talent) (redirect spells to monk)
@@ -6797,54 +6804,33 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 			elseif expirationTime > 0 then
 				localForceEventUnitAuraAtEnd = (self.unitId == "targettarget")
 			end
+
       -----------------------------------------------------------------------------w
 			--Ghost Wolf hack for Spectral Recovery and Spirit Wolf
 			------------------------------------------------------------------------------
       if spellId == 2645 then
         local ghostwolf = {}
         for i = 1, 40 do
-          local _, i, c, _, d, e, _, _, _, s = UnitAura(unitId, i, "HELPFUL")
-          if not s then break end
+        local _, _, c, _, _, _, _, _, _, s = UnitAura(unitId, i, "HELPFUL")
+        if not s then break end
           if s == 204262 or s == 260881 then
-            tblinsert(ghostwolf, {s, e, d, c, i})
+            tblinsert(ghostwolf, {s, c})
           end
         end
         if #ghostwolf == 2 then
-          if (ghostwolf[1][1]  == 204262 or ghostwolf[1][1]  == 260881) and  (ghostwolf[2][1]  == 204262 or ghostwolf[2][1]  == 260881) then --Both Spectral Recovery and Spirit Wolf
-            if ghostwolf[1][1] == 260881 then
-              expirationTime = ghostwolf[1][2]
-              duration = ghostwolf[1][3]
-              count = ghostwolf[1][4]  or ghostwolf[2][4]
-              icon = ghostwolf[1][5] --change to whateveer icon when both
-              hue = "GhostPurple"
-            elseif ghostwolf[2][1] == 260881  then
-              expirationTime = ghostwolf[2][2]
-              duration = ghostwolf[2][3]
-              count = ghostwolf[2][4]  or ghostwolf[1][4]
-              icon = ghostwolf[2][5] --change to whateveer icon when both
-              hue = "GhostPurple"
-            end
+          if ghostwolf[1][1] == 260881 then
+            count = ghostwolf[1][2]
+          else
+            count = ghostwolf[2][2]
           end
+          hue = "GhostPurple"
         elseif #ghostwolf == 1 then
-          if (ghostwolf[1][1] == 204262 or ghostwolf[1][1] == 260881) then
-            if ghostwolf[1][1] == 260881 then --Just Spirit Wolf
-              expirationTime = ghostwolf[1][2]
-              duration = ghostwolf[1][3]
-              count = ghostwolf[1][4]
-              icon = ghostwolf[1][5]
-            elseif ghostwolf[1][1] == 204262 then -- Just Spectral Recovery
-              expirationTime = ghostwolf[1][2]
-              duration = ghostwolf[1][3]
-              count = ghostwolf[1][4]
-              icon = ghostwolf[1][5]
-            end
+          if ghostwolf[1][1] == 260881 then --Just Spirit Wolf
+            count = ghostwolf[1][2]
+          elseif ghostwolf[1][1] == 204262 then -- Just Spectral Recovery
+            hue = "GhostPurple"
           end
         end
-        if duration == 0 and expirationTime == 0 then
-  				expirationTime = GetTime() + 1 -- normal expirationTime = 0
-  			elseif expirationTime > 0 then
-  				localForceEventUnitAuraAtEnd = (self.unitId == "targettarget")
-  			end
       end
 
 			-----------------------------------------------------------------------------w
@@ -7384,36 +7370,38 @@ end
 			end
 		end
 		if self.frame.anchor == "Blizzard" then  --CHRIS DISABLE SQ
-      if Hue == "Red" then -- Changes Icon Hue to Red
-        SetPortraitToTexture(self.texture, Icon) -- Sets the texture to be displayed from a file applying a circular opacity mask making it look round like portraits
-        self:SetSwipeTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMaskSmall")   --Set Icon
-        self.texture:SetDesaturated(1) --Destaurate Icon
-        self.texture:SetVertexColor(1, .25, 0); --Red Hue Set For Icon
-        self:SetSwipeColor(0, 0, 0, LoseControlDB.DrawSwipeSetting)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
-      elseif Hue == "Red_No_Desaturate" then -- Changes Hue to Red and any Icon Greater
-        SetPortraitToTexture(self.texture, Icon) -- Sets the texture to be displayed from a file applying a circular opacity mask making it look round like portraits
-        self:SetSwipeTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMaskSmall")   --Set Icon
-        self.texture:SetDesaturated(nil) --Destaurate  Icon
-        self.texture:SetVertexColor(1, 0, 0); --Red Hue Set For Icon
-        self:SetSwipeColor(0, 0, 0, LoseControlDB.DrawSwipeSetting)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
-      elseif Hue == "Yellow" then -- Changes Hue to Yellow and any Icon Greater
-        SetPortraitToTexture(self.texture, Icon) -- Sets the texture to be displayed from a file applying a circular opacity mask making it look round like portraits
-        self:SetSwipeTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMaskSmall")   --Set Icon
-        self.texture:SetDesaturated(1) --Destaurate  Icon
-        self.texture:SetVertexColor(1, 1, 0); --Yellow Hue Set For Icon
-        self:SetSwipeColor(0, 0, 0, LoseControlDB.DrawSwipeSetting)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
-      elseif Hue == "Purple" then -- Changes Hue to Purple and any Icon Greater
-        SetPortraitToTexture(self.texture, Icon) -- Sets the texture to be displayed from a file applying a circular opacity mask making it look round like portraits
-        self:SetSwipeTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMaskSmall")   --Set Icon
-        self.texture:SetDesaturated(1) --Destaurate Icon
-        self.texture:SetVertexColor(1, 0, 1); --Purple Hue Set For Smoke Bomb Icon
-        self:SetSwipeColor(0, 0, 0, LoseControlDB.DrawSwipeSetting)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
-      elseif Hue == "GhostPurple" then -- Changes Hue to Purple and any Icon Greater
-        SetPortraitToTexture(self.texture, Icon) -- Sets the texture to be displayed from a file applying a circular opacity mask making it look round like portraits
-        self:SetSwipeTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMaskSmall")   --Set Icon
-        self.texture:SetDesaturated(1) --Destaurate Icon
-        self.texture:SetVertexColor(.65, .5, .9);  --Purple Hue Set For Icon
-        self:SetSwipeColor(0, 0, 0, LoseControlDB.DrawSwipeSetting)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
+      if Hue then
+        if Hue == "Red" then -- Changes Icon Hue to Red
+          SetPortraitToTexture(self.texture, Icon) -- Sets the texture to be displayed from a file applying a circular opacity mask making it look round like portraits
+          self:SetSwipeTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMaskSmall")   --Set Icon
+          self.texture:SetDesaturated(1) --Destaurate Icon
+          self.texture:SetVertexColor(1, .25, 0); --Red Hue Set For Icon
+          self:SetSwipeColor(0, 0, 0, LoseControlDB.DrawSwipeSetting)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
+        elseif Hue == "Red_No_Desaturate" then -- Changes Hue to Red and any Icon Greater
+          SetPortraitToTexture(self.texture, Icon) -- Sets the texture to be displayed from a file applying a circular opacity mask making it look round like portraits
+          self:SetSwipeTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMaskSmall")   --Set Icon
+          self.texture:SetDesaturated(nil) --Destaurate  Icon
+          self.texture:SetVertexColor(1, 0, 0); --Red Hue Set For Icon
+          self:SetSwipeColor(0, 0, 0, LoseControlDB.DrawSwipeSetting)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
+        elseif Hue == "Yellow" then -- Changes Hue to Yellow and any Icon Greater
+          SetPortraitToTexture(self.texture, Icon) -- Sets the texture to be displayed from a file applying a circular opacity mask making it look round like portraits
+          self:SetSwipeTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMaskSmall")   --Set Icon
+          self.texture:SetDesaturated(1) --Destaurate  Icon
+          self.texture:SetVertexColor(1, 1, 0); --Yellow Hue Set For Icon
+          self:SetSwipeColor(0, 0, 0, LoseControlDB.DrawSwipeSetting)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
+        elseif Hue == "Purple" then -- Changes Hue to Purple and any Icon Greater
+          SetPortraitToTexture(self.texture, Icon) -- Sets the texture to be displayed from a file applying a circular opacity mask making it look round like portraits
+          self:SetSwipeTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMaskSmall")   --Set Icon
+          self.texture:SetDesaturated(1) --Destaurate Icon
+          self.texture:SetVertexColor(1, 0, 1); --Purple Hue Set For Smoke Bomb Icon
+          self:SetSwipeColor(0, 0, 0, LoseControlDB.DrawSwipeSetting)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
+        elseif Hue == "GhostPurple" then -- Changes Hue to Purple and any Icon Greater
+          SetPortraitToTexture(self.texture, Icon) -- Sets the texture to be displayed from a file applying a circular opacity mask making it look round like portraits
+          self:SetSwipeTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMaskSmall")   --Set Icon
+          self.texture:SetDesaturated(1) --Destaurate Icon
+          self.texture:SetVertexColor(.65, .5, .9);  --Purple Hue Set For Icon
+          self:SetSwipeColor(0, 0, 0, LoseControlDB.DrawSwipeSetting)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
+        end
       else
         SetPortraitToTexture(self.texture, Icon) -- Sets the texture to be displayed from a file applying a circular opacity mask making it look round like portraits
         self:SetSwipeTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMaskSmall")
@@ -7422,31 +7410,33 @@ end
         self:SetSwipeColor(0, 0, 0, LoseControlDB.DrawSwipeSetting) ---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
       end
 		else
-      if Hue == "Red" then -- Changes Icon Hue to Red
-        self.texture:SetTexture(Icon)   --Set Icon
-        self.texture:SetDesaturated(1) --Destaurate Icon
-        self.texture:SetVertexColor(1, .25, 0); --Red Hue Set For Icon
-        self:SetSwipeColor(0, 0, 0, LoseControlDB.DrawSwipeSetting)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
-      elseif Hue == "Red_No_Desaturate" then -- Changes Hue to Red and any Icon Greater
-        self.texture:SetTexture(Icon)   --SetIcon
-        self.texture:SetDesaturated(nil) --Destaurate Icon
-        self.texture:SetVertexColor(1, 0, 0); --Red Hue Set For Icon
-        self:SetSwipeColor(0, 0, 0, LoseControlDB.DrawSwipeSetting)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
-      elseif Hue == "Yellow" then -- Changes Hue to Yellow and any Icon Greater
-        self.texture:SetTexture(Icon)   --Set Icon
-        self.texture:SetDesaturated(1) --Destaurate Icon
-        self.texture:SetVertexColor(1, 1, 0); --Yellow Hue Set For Icon
-        self:SetSwipeColor(0, 0, 0, LoseControlDB.DrawSwipeSetting)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
-      elseif Hue == "Purple" then -- Changes Hue to Purple and any Icon Greater
-        self.texture:SetTexture(Icon)   --Set Icon
-        self.texture:SetDesaturated(1) --Destaurate Icon
-        self.texture:SetVertexColor(1, 0, 1); --Purple Hue Set For Icon
-        self:SetSwipeColor(0, 0, 0, LoseControlDB.DrawSwipeSetting)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
-      elseif Hue == "GhostPurple" then -- Changes Hue to Purple and any Icon Greater
-        self.texture:SetTexture(Icon)   --Set Icon
-        self.texture:SetDesaturated(1) --Destaurate Icon
-        self.texture:SetVertexColor(.65, .5, .9); --Purple Hue Set For Icon
-        self:SetSwipeColor(0, 0, 0, LoseControlDB.DrawSwipeSetting)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
+      if Hue then
+        if Hue == "Red" then -- Changes Icon Hue to Red
+          self.texture:SetTexture(Icon)   --Set Icon
+          self.texture:SetDesaturated(1) --Destaurate Icon
+          self.texture:SetVertexColor(1, .25, 0); --Red Hue Set For Icon
+          self:SetSwipeColor(0, 0, 0, LoseControlDB.DrawSwipeSetting)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
+        elseif Hue == "Red_No_Desaturate" then -- Changes Hue to Red and any Icon Greater
+          self.texture:SetTexture(Icon)   --SetIcon
+          self.texture:SetDesaturated(nil) --Destaurate Icon
+          self.texture:SetVertexColor(1, 0, 0); --Red Hue Set For Icon
+          self:SetSwipeColor(0, 0, 0, LoseControlDB.DrawSwipeSetting)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
+        elseif Hue == "Yellow" then -- Changes Hue to Yellow and any Icon Greater
+          self.texture:SetTexture(Icon)   --Set Icon
+          self.texture:SetDesaturated(1) --Destaurate Icon
+          self.texture:SetVertexColor(1, 1, 0); --Yellow Hue Set For Icon
+          self:SetSwipeColor(0, 0, 0, LoseControlDB.DrawSwipeSetting)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
+        elseif Hue == "Purple" then -- Changes Hue to Purple and any Icon Greater
+          self.texture:SetTexture(Icon)   --Set Icon
+          self.texture:SetDesaturated(1) --Destaurate Icon
+          self.texture:SetVertexColor(1, 0, 1); --Purple Hue Set For Icon
+          self:SetSwipeColor(0, 0, 0, LoseControlDB.DrawSwipeSetting)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
+        elseif Hue == "GhostPurple" then -- Changes Hue to Purple and any Icon Greater
+          self.texture:SetTexture(Icon)   --Set Icon
+          self.texture:SetDesaturated(1) --Destaurate Icon
+          self.texture:SetVertexColor(.65, .5, .9); --Purple Hue Set For Icon
+          self:SetSwipeColor(0, 0, 0, LoseControlDB.DrawSwipeSetting)	---- Orginally 0.8 This is the default alpha of the normal swipe cooldown texture ADD OPTION FOR THIS
+        end
       else
         self.texture:SetTexture(Icon)
         self.texture:SetDesaturated(nil) --Destaurate Icon
