@@ -1161,7 +1161,7 @@ local spellsTable = {
 	----------------
 
 	{125174 , "Other"},		  	-- Touch of Karma
-  {115080 , "Other"},       -- Touch of Death
+  {124280 , "Other"},       -- Touch of Karma Dot
   {122470 , "Other"},       -- Touch of Karma
 	{122783 , "Other"},     	-- Diffuse Magic (not immune}, 60% magic damage reduction)
 	{115176 , "Other"},		  	-- Zen Meditation (60% damage reduction)
