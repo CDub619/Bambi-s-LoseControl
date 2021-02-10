@@ -674,6 +674,7 @@ local spellsArenaTable = {
 	{"Refreshment" , "Drink_Purge"},
   {320224 , "Immune_Arena"}, --Podtender (NightFae Soulbind Tree)
   {331866 , "CC_Arena"}, --Door of Shadows Fear
+  {332423 , "CC_Arena"}, -- Sparkling Driftglobe Core 35% Stun (Kyrian)
 	{107079 , "CC_Arena"}, --Quaking Palm
 	{20549 , "CC_Arena"}, --War Stomp
 	{255654 , "CC_Arena"}, --Bull Rush
@@ -685,6 +686,8 @@ local spellsArenaTable = {
   {277187, "Small_Defensive_CDs"}, -- Gladiator's Emblem
   {"Gladiator's Emblem", "Small_Defensive_CDs"}, -- Gladiator's Emblem
   {286342, "Small_Defensive_CDs"}, -- Gladiator's Safegaurd
+  {332505, "Small_Defensive_CDs"}, -- Soulsteel Clamps
+  {332506, "Small_Defensive_CDs"}, -- Soulsteel Clamps
   {68992, "Freedoms_Speed"}, -- Darkflight
   {310143, "Freedoms_Speed"}, -- Soulshape
   {324867, "Snares_Casted_Melee"}, --Flesh Craft
@@ -809,7 +812,8 @@ local spellsTable = {
   {208618 , "CC"},				-- Illidan's Grasp (throw stun)
 	{213491 , "CC"},				-- Demonic Trample Stun
 
-  {331866 , "CC"},        -- Door of Shadows Fear
+  {331866 , "CC"},        -- Door of Shadows Fear (Venthyr)
+  {332423 , "CC"},        -- Sparkling Driftglobe Core 35% Stun (Kyrian)
   {20549  , "CC"},				-- War Stomp (tauren racial)
   {107079 , "CC"},				-- Quaking Palm (pandaren racial)
   {255723 , "CC"},				-- Bull Rush (highmountain tauren racial)
