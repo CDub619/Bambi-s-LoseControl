@@ -994,6 +994,7 @@ local spellsTable = {
 
   {108839, "Movable_Cast_Auras"},		-- Ice Floes
   {10060, "Movable_Cast_Auras"},		-- Power Infusion
+  {331937, "Movable_Cast_Auras"},		-- Euphoria
   {315443, "Movable_Cast_Auras"},		-- Abomination Limb
 
   --"Other", --
