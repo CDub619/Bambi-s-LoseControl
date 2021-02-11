@@ -251,13 +251,13 @@ local spellsArenaTable = {
 	----------------
 	-- Shaman
 	----------------
+	{8178 ,  "Immune_Arena"}, --Grounding Totem Effect
 	{"Hex" , "CC_Arena"},
 	{305485 , "CC_Arena"}, --Lightning Lasso
 	{118345 , "CC_Arena"}, --Pulverize
 	{77505 , "CC_Arena"}, --Earthquake
 	{197214 , "CC_Arena"}, --Sundering
 	{290641 , "Special_High"}, --Ancestral Gift
-	{8178 , "Special_High"}, --Grounding Totem Effect
 	{335903 , "Ranged_Major_OffenisiveCDs"}, --Doomwinds (Shadowlands Legendary)
 	{114051 , "Ranged_Major_OffenisiveCDs"}, --Ascendance Enhancement
 	{114050 , "Ranged_Major_OffenisiveCDs"}, --Ascendance
@@ -610,14 +610,15 @@ local spellsArenaTable = {
 	----------------
 	{46924  , "Immune_Arena"}, -- Bladestorm (not immune to dmg}, only to LoC)
 	{227847 , "Immune_Arena"}, -- Bladestorm (not immune to dmg}, only to LoC)
+  {147833 , "Immune_Arena"}, -- Intervene
+  {330279 , "Immune_Arena"}, -- Overwatch
+  {335255 , "Immune_Arena"}, -- Mass Spell Reflection Legendary
 	{132169 , "CC_Arena"}, --Storm Bolt
 	{199085 , "CC_Arena"}, --Warpath
 	{132168 , "CC_Arena"}, --Shockwave
 	{5246 , "CC_Arena"}, --Intimidating Shout
   {236273 , "Special_High"}, -- Duel
   {23920 , "Special_High"}, -- Spell Reflection
-  {335255 , "Special_High"}, -- Mass Spell Reflection
-  {330279 , "Special_High"}, -- Overwatch
   {105771 , "Roots_90_Snares"}, --Charge
   {199042 , "Roots_90_Snares"}, --Thunderstruck
   {236236 , "Disarms"}, --Disarm
@@ -628,7 +629,6 @@ local spellsArenaTable = {
   {118038 , "Big_Defensive_CDs"}, -- Die by the Sword
   {184364 , "Big_Defensive_CDs"}, -- Enraged Regeneration
   {236321 , "Big_Defensive_CDs"}, -- War Banner
-  {147833 , "Big_Defensive_CDs"}, -- Intervene
   {12975 , "Big_Defensive_CDs"}, -- Last Stand
   {871 , "Big_Defensive_CDs"}, -- Shield Wall
   {213871 , "Big_Defensive_CDs"}, -- Bodyguard
@@ -6849,6 +6849,15 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 					end
 				end
 			end
+
+      if (spellId == 331937) then --Euphoria Venthyr Haste Buff Hack
+				if unitId ~= "player" then
+          spellIds[spellId] = "None"
+        else
+          spellIds[spellId] = "Movable_Cast_Auras"
+				end
+			end
+
 
       if (spellId == 31884) then --Avenging Wrath
         local i, specID
