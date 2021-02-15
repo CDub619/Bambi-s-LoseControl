@@ -169,11 +169,15 @@ local cleuPrioCastedSpells = {}
 local cleuSpells = { -- nil = Do Not Show
  {188616, 60, "PvE",  "Snares_Casted_Melee", "Earth Ele", "Earth Ele"}, --Shaman Earth Ele
  {118323, 60, "PvE",  "Snares_Casted_Melee", "Primal Earth Ele", "Primal Earth Ele"}, --Shaman Primal  Earth Ele
+ {188592, 60, "PvE",  "Snares_Casted_Melee", "Fire Ele", "Fire Ele"}, --Shaman Earth Ele
+ {118291, 60, "PvE",  "Snares_Casted_Melee", "Primal Fire Ele", "Primal Fire Ele"}, --Shaman Primal  Earth Ele
+ {157299, 30, "PvE",  "Snares_Casted_Melee", "Storm Ele", "Storm Ele"}, --Shaman Primal  Earth Ele
  {248280, 10, "PvE",  nil, "Trees", "Trees"}, --Druid Trees
  {288853, 25, nil,  "Melee_Major_OffenisiveCDs", "Abomination", "Abomination"}, --Dk Raise Abomination
  {123904, 24, nil,  "Small_Offenisive_CDs", "Xuen", "Xuen"}, --WW Xuen Pet Summmon
  {34433, 15, nil,  "Small_Offenisive_CDs", "Shadowfiend", "Shadowfiend"}, --Disc Pet Summmon
  {123040, 12, nil,  "Small_Offenisive_CDs", "Mindbender", "Mindbender"}, --Disc Pet Summmon
+ {321686, 40, "PvE",  "Small_Defensive_CDs", "Mirror Image", "Mirror Image"}, --Mirror Images
  {111685, 30, nil,  "Ranged_Major_OffenisiveCDs", "Infernals", "Infernals"}, --Warlock Infernals
  {8143, 10, "CC_Reduction",  "Special_High", "Tremor", "Tremor"}, --Shaman Tremor Totem
  --{spellId, duration. prio, prioArena, name, nameArena} --must have both names
@@ -248,6 +252,7 @@ local spellsArenaTable = {
 	{5116 , "Snares_WithCDs"}, --Concussive Shot
 	{135299 , "Snares_Ranged_Spamable"}, --Tar Trap
   {204205 , "Snares_Casted_Melee"}, --Wild Protector
+
 	----------------
 	-- Shaman
 	----------------
@@ -277,6 +282,7 @@ local spellsArenaTable = {
 	{201846 , "Small_Offenisive_CDs"}, --Stormbringer
 	{327942 , "Small_Offenisive_CDs"}, --Windfury Totem
 	{208963 , "Small_Offenisive_CDs"}, --Skyfury Totem
+	{320125 , "Small_Offenisive_CDs"}, --Echoing Shock
 	{79206 , "Small_Defensive_CDs"}, --Spiritwalker's Grace
 	{58875 , "Freedoms_Speed"}, --Spirit Walk
 	{192082 , "Freedoms_Speed"}, -- Wind Rush
@@ -452,6 +458,8 @@ local spellsArenaTable = {
 	{20066 , "CC_Arena"}, --Repentance
 	{105421 , "CC_Arena"}, --Blinding Light
 	{217824 , "Silence_Arena"}, --Shield of Virtue
+  {199545 , "Special_High"},			-- Steed of Glory
+  {317929 , "Special_High"},			-- Aura Mastery
   {31884, "Ranged_Major_OffenisiveCDs"}, --Avenging Wrath
   {231895, "Ranged_Major_OffenisiveCDs"}, --Crusade
 	{1022 , "Big_Defensive_CDs"}, --Blessing of Protection
@@ -655,12 +663,14 @@ local spellsArenaTable = {
 	{47476 , "Silence_Arena"}, --Sigil of Silence_Arena
   {188501, "Special_High"}, -- Spectral Sight
   {206649 , "Special_High"}, -- Eye of Leotheras
+  {323996 , "Roots_90_Snares"}, --The Hunt NightFae Root
   {162264 , "Melee_Major_OffenisiveCDs"}, -- Metamorphosis
   {187827 , "Melee_Major_OffenisiveCDs"}, -- Metamorphosis
   {212800, "Big_Defensive_CDs"}, -- Blur
   {196555 , "Big_Defensive_CDs"}, -- Netherwalk
   {209426 , "Big_Defensive_CDs"}, -- Darkness
   {206804 , "Big_Defensive_CDs"}, -- Rain From Above
+  {323802 , "Small_Offenisive_CDs"}, -- The Hunt
   {203819, "Small_Defensive_CDs"}, -- Demon Spikes
   {208796, "Small_Defensive_CDs"}, -- Jagged Spikes
   {205629, "Freedoms_Speed"}, -- Demonic Trample
@@ -673,6 +683,7 @@ local spellsArenaTable = {
 	{"Drink" , "Drink_Purge"},
 	{"Refreshment" , "Drink_Purge"},
   {320224 , "Immune_Arena"}, --Podtender (NightFae Soulbind Tree)
+  {323524 , "Immune_Arena"}, --Ultimate Form (Necro Soulbind Tree)
   {331866 , "CC_Arena"}, --Door of Shadows Fear
   {332423 , "CC_Arena"}, -- Sparkling Driftglobe Core 35% Stun (Kyrian)
 	{107079 , "CC_Arena"}, --Quaking Palm
@@ -907,6 +918,7 @@ local spellsTable = {
 --	"ImmunePhysical",
 
   {289655 , "AuraMastery_Cast_Auras"},			-- Holy Word: Concentration
+  {317929 , "AuraMastery_Cast_Auras"},			-- Aura Mastery
 
 	{127797 , "ROP_Vortex"},				-- Ursol's Vortex
 	{102793 , "ROP_Vortex"},				-- Ursol's Vortex
@@ -995,6 +1007,8 @@ local spellsTable = {
   {108839, "Movable_Cast_Auras"},		-- Ice Floes
   {10060, "Movable_Cast_Auras"},		-- Power Infusion
   {331937, "Movable_Cast_Auras"},		-- Euphoria
+  {332506, "Movable_Cast_Auras"},		-- Soulsteel Clamps
+  {332505, "Movable_Cast_Auras"},		-- Soulsteel Clamps
   {315443, "Movable_Cast_Auras"},		-- Abomination Limb
 
   --"Other", --
@@ -6461,6 +6475,11 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 						InterruptAuras[sourceGUID] = {}
 				end
 				local namePrint, _, icon = GetSpellInfo(spellId)
+
+        if spellId == 321686 then
+          icon = 135994
+        end
+
 				tblinsert(InterruptAuras[sourceGUID], { ["spellId"] = nil, ["name"] = name, ["duration"] = duration, ["expirationTime"] = expirationTime, ["priority"] = priority, ["spellCategory"] = spellCategory, ["icon"] = icon, ["spellSchool"] = spellSchool, ["hue"] = hue, ["destGUID"] = destGUID })
 				UpdateUnitAuraByUnitGUID(sourceGUID, -20)
         self.ticker = C_Timer.NewTicker(0.5, function()
@@ -6838,7 +6857,18 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
         end
       end
 
-			-----------------------------------------------------------------------------w
+      -----------------------------------------------------------------------------------------------------------------
+      --Icon Changes
+      -----------------------------------------------------------------------------------------------------------------
+      if spellId == 317929 then --Aura Mastery Cast Immune Pally
+        icon = 135863
+      end
+
+      if spellId == 199545 then --Steed of Glory Hack
+    		icon = 135890
+    	end
+
+			-----------------------------------------------------------------------------
 			--Mass Invis
 			------------------------------------------------------------------------------
 			if (spellId == 198158) then --Mass Invis Hack
@@ -6849,6 +6879,9 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 					end
 				end
 			end
+      -----------------------------------------------------------------------------
+      --Player Only Hacks
+      ------------------------------------------------------------------------------
 
       if (spellId == 331937) then --Euphoria Venthyr Haste Buff Hack
 				if unitId ~= "player" then
@@ -6858,6 +6891,24 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 				end
 			end
 
+      if (spellId == 332505) then --Soulsteel Clamps Hack player Only
+				if unitId ~= "player" then
+          spellIds[spellId] = "None"
+        else
+          spellIds[spellId] = "Movable_Cast_Auras"
+				end
+			end
+
+      if (spellId == 332506) then --Soulsteel Clamps Hack player Only
+				if unitId ~= "player" then
+          spellIds[spellId] = "None"
+        else
+          spellIds[spellId] = "Movable_Cast_Auras"
+				end
+			end
+      -----------------------------------------------------------------------------
+      --Same Spell Id , Differnt Spec , Change Prio
+      ------------------------------------------------------------------------------
 
       if (spellId == 31884) then --Avenging Wrath
         local i, specID
