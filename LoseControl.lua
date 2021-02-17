@@ -169,9 +169,9 @@ local cleuPrioCastedSpells = {}
 local cleuSpells = { -- nil = Do Not Show
  {188616, 60, "PvE",  "Snares_Casted_Melee", "Earth Ele", "Earth Ele"}, --Shaman Earth Ele
  {118323, 60, "PvE",  "Snares_Casted_Melee", "Primal Earth Ele", "Primal Earth Ele"}, --Shaman Primal  Earth Ele
- {188592, 60, "PvE",  "Snares_Casted_Melee", "Fire Ele", "Fire Ele"}, --Shaman Earth Ele
- {118291, 60, "PvE",  "Snares_Casted_Melee", "Primal Fire Ele", "Primal Fire Ele"}, --Shaman Primal  Earth Ele
- {157299, 30, "PvE",  "Snares_Casted_Melee", "Storm Ele", "Storm Ele"}, --Shaman Primal  Earth Ele
+ {188592, 60, nil,  "Snares_Casted_Melee", "Fire Ele", "Fire Ele"}, --Shaman Earth Ele
+ {118291, 60, nil,  "Snares_Casted_Melee", "Primal Fire Ele", "Primal Fire Ele"}, --Shaman Primal  Earth Ele
+ {157299, 30, nil,  "Snares_Casted_Melee", "Storm Ele", "Storm Ele"}, --Shaman Primal  Earth Ele
  {248280, 10, "PvE",  nil, "Trees", "Trees"}, --Druid Trees
  {288853, 25, nil,  "Melee_Major_OffenisiveCDs", "Abomination", "Abomination"}, --Dk Raise Abomination
  {123904, 24, nil,  "Small_Offenisive_CDs", "Xuen", "Xuen"}, --WW Xuen Pet Summmon
@@ -316,7 +316,8 @@ local spellsArenaTable = {
 	{207256 , "Melee_Major_OffenisiveCDs"}, --Obliteration
 	{51271 , "Melee_Major_OffenisiveCDs"}, --Pillar of Frost
 	--{215711 , "Melee_Major_OffenisiveCDs"}, --Soul Reaper
-	{207289 , "Melee_Major_OffenisiveCDs"}, --Unholy Frenzy
+	--{207289 , "Melee_Major_OffenisiveCDs"}, --Unholy Frenzy
+	{207289 , "Melee_Major_OffenisiveCDs"}, --Unholy Assault
 	{48792 , "Big_Defensive_CDs"}, --Icebound Fortitude
 	{49039 , "Big_Defensive_CDs"}, --Lichborne
 	{145629 , "Big_Defensive_CDs"}, --Anti-Magic Zone
@@ -435,6 +436,7 @@ local spellsArenaTable = {
   {233759 , "Disarms"}, --Grapple Weapon
   {152173 , "Melee_Major_OffenisiveCDs"}, --Serenity
   {137639 , "Melee_Major_OffenisiveCDs"}, --Storm, Earth, and Fire
+  {310454 , "Melee_Major_OffenisiveCDs"}, --Weapons of Order
 	{125174 , "Big_Defensive_CDs"}, --Touch of Karma
   {116849 , "Big_Defensive_CDs"}, --Life Cacoon
   {122783 , "Big_Defensive_CDs"}, --Diffuse Magic
@@ -442,7 +444,6 @@ local spellsArenaTable = {
   {122278 , "Big_Defensive_CDs"}, --Damoen Harm
   {115176 , "Big_Defensive_CDs"}, --Zen Meditation
   {247483 , "Small_Offenisive_CDs"}, --Tigereye Brew
-  {310454 , "Small_Offenisive_CDs"}, --Weapons of Order
   {201447 , "Freedoms_Speed"}, --Ride the Wind
   {116841 , "Freedoms_Speed"}, --Tiger's Lust
   {248646 , "Special_Low"}, --Tigereye Brew
@@ -460,8 +461,8 @@ local spellsArenaTable = {
 	{217824 , "Silence_Arena"}, --Shield of Virtue
   {199545 , "Special_High"},			-- Steed of Glory
   {317929 , "Special_High"},			-- Aura Mastery
-  {31884, "Ranged_Major_OffenisiveCDs"}, --Avenging Wrath
-  {231895, "Ranged_Major_OffenisiveCDs"}, --Crusade
+  {31884, "Big_Defensive_CDs"}, --Avenging Wrath
+  {231895, "Big_Defensive_CDs"}, --Crusade
 	{1022 , "Big_Defensive_CDs"}, --Blessing of Protection
   {6940 , "Big_Defensive_CDs"}, --Blessing of Sacrifice
   {199448 , "Big_Defensive_CDs"}, --Blessing of Sacrifice
@@ -6480,22 +6481,26 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
           icon = 135994
         end
 
+        print(sourceName.." Summoned "..namePrint.." "..substring(destGUID, -7).." for "..duration.." LC")
+
 				tblinsert(InterruptAuras[sourceGUID], { ["spellId"] = nil, ["name"] = name, ["duration"] = duration, ["expirationTime"] = expirationTime, ["priority"] = priority, ["spellCategory"] = spellCategory, ["icon"] = icon, ["spellSchool"] = spellSchool, ["hue"] = hue, ["destGUID"] = destGUID })
 				UpdateUnitAuraByUnitGUID(sourceGUID, -20)
         self.ticker = C_Timer.NewTicker(0.5, function()
 		      if GetGuardianOwner(destGUID) then
             if not strmatch(GetGuardianOwner(destGUID), 'Corpse') and not strmatch(GetGuardianOwner(destGUID), 'Level') then
-              --print(GetGuardianOwner(destGUID).." "..namePrint.." Up LC "..expirationTime-GetTime())
+              --print(GetGuardianOwner(destGUID).." "..destGUID.." "..namePrint.." Up LC "..expirationTime-GetTime())
             else
-              --print(GetGuardianOwner(destGUID).." "..namePrint.." Down LC "..expirationTime-GetTime())
               if InterruptAuras[sourceGUID] then
                 for k, v in pairs(InterruptAuras[sourceGUID]) do
-                  if v.destGUID == destGUID then
-                    InterruptAuras[sourceGUID][k] = nil
-                    print(GetGuardianOwner(destGUID).." "..namePrint.." Cancelled LC "..sourceName.." w/ "..expirationTime-GetTime().. " left")
-                    UpdateUnitAuraByUnitGUID(sourceGUID, -20)
-                    self.ticker:Cancel()
-                    break
+                  if substring(v.destGUID, -5) == substring(destGUID, -5) then --string.sub is to help witj Mirror Images bug
+                    if strmatch(GetGuardianOwner(v.destGUID), 'Corpse') or strmatch(GetGuardianOwner(v.destGUID), 'Level') then
+                      InterruptAuras[sourceGUID][k] = nil
+											tremove(InterruptAuras[sourceGUID], k)
+                      print(sourceName.." "..GetGuardianOwner(destGUID).." "..namePrint.." "..substring(v.destGUID, -7).." left w/ "..string.format("%.2f", expirationTime-GetTime()).." LC")
+                      UpdateUnitAuraByUnitGUID(sourceGUID, -20)
+                      self.ticker:Cancel()
+                      break
+                    end
                   end
                 end
               end
@@ -6920,11 +6925,30 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
         end
         if specID then
           if (specID == 70) or (specID == 66) then
-            print("Ret Wings Active "..unitId)
-            spellIds[spellId] = "Ranged_Major_OffenisiveCDs" --Sets Prio to Ret/Prot Wings to DMG
+            --print("Ret Wings Active "..unitId)
+            spellIds[spellId] = "Big_Defensive_CDs" --Ranged_Major_OffenisiveCDs Sets Prio to Ret/Prot Wings to DMG
           else
-            print("Holy Wings Active "..unitId)
+            --print("Holy Wings Active "..unitId)
             spellIds[spellId] = "Big_Defensive_CDs" --Sets Prio to Holy Wings to Defensive
+          end
+        end
+      end
+
+      if (spellId == 310454) then --Weapons of Order
+        local i, specID
+        if (unitId == "arena1") or (unitId == "arena2") or (unitId == "arena3") then
+          if strfind(unitId, "1") then i = 1 elseif strfind(unitId, "2") then i = 2 elseif strfind(unitId, "3") then i = 3 end
+          specID = GetArenaOpponentSpec(i);
+        elseif (UnitGUID(unitId) == UnitGUID("arena1")) or (UnitGUID(unitId) == UnitGUID("arena2")) or (UnitGUID(unitId) == UnitGUID("arena3")) then
+          specID = GetInspectSpecialization(unitId)
+        end
+        if specID then
+          if (specID == 269) or (specID == 268) then
+            --print("WW Weapons Active "..unitId)
+            spellIds[spellId] = "Melee_Major_OffenisiveCDs" --Ranged_Major_OffenisiveCDs Sets Prio to Ret/Prot Wings to DMG
+          else
+            --print("MW Weapons Active "..unitId)
+            spellIds[spellId] = "None" --Sets Prio to Holy Wings to Defensive
           end
         end
       end
