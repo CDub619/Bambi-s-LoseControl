@@ -619,15 +619,15 @@ local spellsArenaTable = {
 	----------------
 	{46924  , "Immune_Arena"}, -- Bladestorm (not immune to dmg}, only to LoC)
 	{227847 , "Immune_Arena"}, -- Bladestorm (not immune to dmg}, only to LoC)
-  {147833 , "Immune_Arena"}, -- Intervene
-  {330279 , "Immune_Arena"}, -- Overwatch
-  {335255 , "Immune_Arena"}, -- Mass Spell Reflection Legendary
 	{132169 , "CC_Arena"}, --Storm Bolt
 	{199085 , "CC_Arena"}, --Warpath
 	{132168 , "CC_Arena"}, --Shockwave
 	{5246 , "CC_Arena"}, --Intimidating Shout
   {236273 , "Special_High"}, -- Duel
   {23920 , "Special_High"}, -- Spell Reflection
+  {147833 , "Special_High"}, -- Intervene
+  {330279 , "Special_High"}, -- Overwatch
+  {335255 , "Special_High"}, -- Mass Spell Reflection Legendary
   {105771 , "Roots_90_Snares"}, --Charge
   {199042 , "Roots_90_Snares"}, --Thunderstruck
   {236236 , "Disarms"}, --Disarm
