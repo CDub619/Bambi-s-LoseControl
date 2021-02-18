@@ -6480,27 +6480,25 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
         if spellId == 321686 then
           icon = 135994
         end
+        if spellId == 157299 then
+          icon = 2065626
+        end
 
         print(sourceName.." Summoned "..namePrint.." "..substring(destGUID, -7).." for "..duration.." LC")
 
 				tblinsert(InterruptAuras[sourceGUID], { ["spellId"] = nil, ["name"] = name, ["duration"] = duration, ["expirationTime"] = expirationTime, ["priority"] = priority, ["spellCategory"] = spellCategory, ["icon"] = icon, ["spellSchool"] = spellSchool, ["hue"] = hue, ["destGUID"] = destGUID })
 				UpdateUnitAuraByUnitGUID(sourceGUID, -20)
         self.ticker = C_Timer.NewTicker(0.5, function()
-		      if GetGuardianOwner(destGUID) then
-            if not strmatch(GetGuardianOwner(destGUID), 'Corpse') and not strmatch(GetGuardianOwner(destGUID), 'Level') then
-              --print(GetGuardianOwner(destGUID).." "..destGUID.." "..namePrint.." Up LC "..expirationTime-GetTime())
-            else
-              if InterruptAuras[sourceGUID] then
-                for k, v in pairs(InterruptAuras[sourceGUID]) do
-                  if substring(v.destGUID, -5) == substring(destGUID, -5) then --string.sub is to help witj Mirror Images bug
-                    if strmatch(GetGuardianOwner(v.destGUID), 'Corpse') or strmatch(GetGuardianOwner(v.destGUID), 'Level') then
-                      InterruptAuras[sourceGUID][k] = nil
-											tremove(InterruptAuras[sourceGUID], k)
-                      print(sourceName.." "..GetGuardianOwner(destGUID).." "..namePrint.." "..substring(v.destGUID, -7).." left w/ "..string.format("%.2f", expirationTime-GetTime()).." LC")
-                      UpdateUnitAuraByUnitGUID(sourceGUID, -20)
-                      self.ticker:Cancel()
-                      break
-                    end
+          if InterruptAuras[sourceGUID] then
+            for k, v in pairs(InterruptAuras[sourceGUID]) do
+    					if v.destGUID then
+                if substring(v.destGUID, -5) == substring(destGUID, -5) then --string.sub is to help witj Mirror Images bug
+                  if strmatch(GetGuardianOwner(v.destGUID), 'Corpse') or strmatch(GetGuardianOwner(v.destGUID), 'Level') then
+                    InterruptAuras[sourceGUID][k] = nil
+                    print(sourceName.." "..GetGuardianOwner(v.destGUID).." "..namePrint.." "..substring(v.destGUID, -7).." left w/ "..string.format("%.2f", expirationTime-GetTime()).." LC")
+                    UpdateUnitAuraByUnitGUID(sourceGUID, -20)
+                    self.ticker:Cancel()
+                    break
                   end
                 end
               end
