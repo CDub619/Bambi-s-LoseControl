@@ -179,6 +179,7 @@ local cleuSpells = { -- nil = Do Not Show
  {123040, 12, nil,  "Small_Offenisive_CDs", "Mindbender", "Mindbender"}, --Disc Pet Summmon
  {321686, 40, "PvE",  "Small_Defensive_CDs", "Mirror Image", "Mirror Image"}, --Mirror Images
  {111685, 30, nil,  "Ranged_Major_OffenisiveCDs", "Infernals", "Infernals"}, --Warlock Infernals
+ {205180, 20, nil,  "Ranged_Major_OffenisiveCDs", "Darkglare", "Darkglare"}, --Warlock Darkglare
  {8143, 10, "CC_Reduction",  "Special_High", "Tremor", "Tremor"}, --Shaman Tremor Totem
  --{spellId, duration. prio, prioArena, name, nameArena} --must have both names
 }
@@ -604,6 +605,7 @@ local spellsArenaTable = {
   {212295 , "Big_Defensive_CDs"}, --Nether Ward
   {200587, "Player_Party_OffensiveCDs"}, --Fel Fissure (PvP Talent 50% MS)
   {344566 , "Small_Offenisive_CDs"}, --Rapid Contagion
+  {328774 , "Small_Offenisive_CDs"}, --Amplify Curse
   {1714 , "Small_Offenisive_CDs"}, --Curse of Tongues
   {199954 , "Small_Offenisive_CDs"}, --Curse of Fragility
   {80240 , "Small_Offenisive_CDs"}, --Havoc
