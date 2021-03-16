@@ -6438,8 +6438,8 @@ function LoseControl:COMBAT_LOG_EVENT_UNFILTERED()
 					end
 					DuelAura[sourceGUID] = { ["duration"] = duration, ["expirationTime"] = expirationTime, ["destGUID"] = destGUID }
 					DuelAura[destGUID] = { ["duration"] = duration, ["expirationTime"] = expirationTime, ["destGUID"] = destGUID }
-					print("cleu enemy Dueled Data Stored destGUID is"..destGUID)
-					print("cleu enemy Dueled Data Stored sourceGUID is"..sourceGUID)
+					--print("cleu enemy Dueled Data Stored destGUID is"..destGUID)
+					--print("cleu enemy Dueled Data Stored sourceGUID is"..sourceGUID)
 					Ctimer(duration + 1, function()	-- execute in some close next frame to accurate use of UnitAura function
 					DuelAura[sourceGUID] = nil
 					DuelAura[destGUID] = nil
