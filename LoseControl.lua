@@ -6646,12 +6646,12 @@ function LoseControl:UNIT_AURA(unitId, typeUpdate) -- fired when a (de)buff is g
 				if DuelAura[UnitGUID(unitId)] then --enemyDuel
 					name = "EnemyShadowyDuel"
 					spellIds[spellId] = "Enemy_Smoke_Bomb"
-					print(unitId.."Duel is Enemy")
+					--print(unitId.."Duel is Enemy")
 					if (UnitGUID(unitId) == "arena1") or (unitId == "arena2") or (unitId == "arena3") or (UnitGUID(unitId) == UnitGUID("arena1")) or (UnitGUID(unitId) == UnitGUID("arena2")) or (UnitGUID(unitId) == UnitGUID("arena3")) then
 					spellIds[spellId] = "Special_High"
 					end
 				else
-					print(UnitGUID(unitId).."Duel is Friendly")
+					--print(UnitGUID(unitId).."Duel is Friendly")
 					name = "FriendlyShadowyDuel"
 					spellIds[spellId] = "Friendly_Smoke_Bomb"
 					if (unitId == "arena1") or (unitId == "arena2") or (unitId == "arena3") or (UnitGUID(unitId) == UnitGUID("arena1")) or (UnitGUID(unitId) == UnitGUID("arena2")) or (UnitGUID(unitId) == UnitGUID("arena3")) then
