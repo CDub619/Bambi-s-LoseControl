@@ -375,6 +375,7 @@ local spellsArenaTable = {
 	{305497 , "Small_Defensive_CDs"}, --Thorns
 	{1850 , "Freedoms_Speed"}, --Dash
 	{77764 , "Freedoms_Speed"}, --Stampeding Roar
+	{106898 , "Freedoms_Speed"}, --Stampeding Roar
 	{252216 , "Freedoms_Speed"}, --Tiger's Dash
 	{201940, "Special_Low"}, --Protector of the Pack
 	{768 , "Special_Low"}, --Cat Forn
@@ -976,6 +977,7 @@ local spellsTable = {
   {192082 , "Freedoms"},		-- Wind Rush
   {58875 , "Freedoms"},		-- Spirit Walk
   {77764 , "Freedoms"},		-- Stampeding Roar
+  {106898 , "Freedoms"},		-- Stampeding Roar
   {1850 , "Freedoms"},		-- Dash
   {252216 , "Freedoms"},		-- Tiger Dash
   {201447 , "Freedoms"},		-- Ride the Wind
@@ -985,7 +987,9 @@ local spellsTable = {
   {221886 , "Freedoms"},		-- Divine Steed
   {36554 , "Freedoms"},		-- Shadowstep
   {2983 , "Freedoms"},		-- Sprint
+  {111400 , "Freedoms"},		-- Burning Rush
   {68992 , "Freedoms"},		-- Darkflight
+  {54861 , "Freedoms"},		-- Nitro Boots
 
   {6940 , "Friendly_Defensives"},		-- Blessing of Sacrifice
   {147833 , "Friendly_Defensives"},		-- Intervene
@@ -7864,6 +7868,32 @@ function Unlock:OnClick()
 				v:SetMovable(true)
 				v:RegisterForDrag("LeftButton")
 				v:EnableMouse(true)
+        if k == "arena3" and (frame.anchor == "Gladius" or frame.anchor == "Gladdy") then
+          if GladiusClassIconFramearena3 then
+            GladiusButtonFramearena3:SetAlpha(.5)
+            GladiusClassIconFramearena3:SetAlpha(0)
+            v:SetAlpha(.5)
+          end
+        end
+        if LoseControlDB.EnableGladiusGloss and (frame.anchor == "Gladius") then
+          v.gloss:SetNormalTexture("Interface\\AddOns\\Gladius\\Images\\Gloss")
+          v.gloss.normalTexture = _G[v.gloss:GetName().."NormalTexture"]
+          v.gloss.normalTexture:SetHeight(v.frame.size)
+          v.gloss.normalTexture:SetWidth(v.frame.size)
+          v.gloss.normalTexture:SetScale(.9)
+          v.gloss.normalTexture:ClearAllPoints()
+          v.gloss.normalTexture:SetPoint("CENTER", v, "CENTER")
+          v.gloss:SetNormalTexture("Interface\\AddOns\\LoseControl\\Textures\\Gloss")
+          v.gloss.normalTexture:SetVertexColor(1, 1, 1, 0.4)
+          v.gloss:SetFrameLevel((v:GetParent():GetFrameLevel()) + 10)
+          if (not v.gloss:IsShown()) then
+            v.gloss:Show()
+          end
+        else
+          if v.gloss:IsShown() then
+            v.gloss:Hide()
+          end
+        end
 			end
 		end
 		LCframeplayer2.maxExpirationTime = 0
@@ -7888,8 +7918,16 @@ function Unlock:OnClick()
 		end
 	else
 		_G[O.."UnlockText"]:SetText(L["Unlock"])
-		for _, v in pairs(LCframes) do
+		for k, v in pairs(LCframes) do
 			unlocknewline:Hide()
+      local frame = LoseControlDB.frames[k]
+      if k == "arena3" and (frame.anchor == "Gladius") then
+        if GladiusClassIconFramearena3 then
+          GladiusButtonFramearena3:SetAlpha(1)
+          GladiusClassIconFramearena3:SetAlpha(1)
+          v:SetAlpha(1)
+        end
+      end
 			v.unlockMode = falseI
 			v:EnableMouse(false)
 			v:RegisterForDrag()
@@ -8966,6 +9004,9 @@ for _, v in ipairs({ "player", "pet", "target", "targettarget", "focus", "focust
 		_G[O..v.."EnableGladiusGlossText"]:SetText(L["EnableGladiusGloss"])
 		EnableGladiusGloss:SetScript("OnClick", function(self)
 			LoseControlDB.EnableGladiusGloss = self:GetChecked()
+      if Unlock:GetChecked() then
+        Unlock:OnClick()
+      end
 		end)
 	end
 
